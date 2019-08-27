@@ -21,7 +21,7 @@ const TabPanel = (props: TabPanelProps) => {
   const { children, value, index } = props;
   return (
     <Typography component='div' role='tabpanel' hidden={value !== index}>
-      <Box p={3}>{children}</Box>
+      <Box pt={3} p={1}>{children}</Box>
     </Typography>
   );
 };
