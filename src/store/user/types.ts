@@ -1,6 +1,6 @@
 // State
 export interface UserState {
-  id: number | undefined;
+  id: number | null;
   username: string;
 }
 
