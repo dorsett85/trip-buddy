@@ -1,21 +1,28 @@
-import React, { memo } from 'react';
+import React, { memo, ReactNode } from 'react';
 import Button, { ButtonProps } from '@material-ui/core/Button';
-import { getColor } from '../../common/js/functions/getColor';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import * as colors from '@material-ui/core/colors';
 
 interface ColoredButtonProps extends ButtonProps {
-  bgClr: string;
+  children?: ReactNode;
   clr: string;
 }
 
-const ColoredButton = (props: ColoredButtonProps) => {
-  // eslint-disable-next-line prefer-const
-  let { bgClr, clr, children, style, ...rest } = props;
-  const background = getColor(bgClr);
-  const color = getColor(clr);
+/**
+ * Colored button component using material UI
+ */
+const ColoredButton = ({ clr, children, ...rest }: ColoredButtonProps) => {
+  const theme = createMuiTheme({
+    palette: {
+      primary: (colors as any)[clr]
+    }
+  });
   return (
-    <Button style={{ background, color, ...style }} {...rest}>
-      {children}
-    </Button>
+    <MuiThemeProvider theme={theme}>
+      <Button {...rest} color='primary'>
+        {children}
+      </Button>
+    </MuiThemeProvider>
   );
 };
 

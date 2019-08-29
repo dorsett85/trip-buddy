@@ -4,23 +4,38 @@ import TextField from '@material-ui/core/TextField';
 import { useDispatch } from 'react-redux';
 import ColoredButton from '../Buttons/ColoredButton';
 import { setUser } from '../../store/user/actions';
-import { LandingFormInputs } from './types';
+
+enum LandingFormInputs {
+  username = '',
+  password = ''
+}
 
 interface LandingFormProps {
   action: 'login' | 'register';
 }
 
-const Login: React.FC<LandingFormProps> = props => {
+// Define and get action property values
+const getActionObj = (action: LandingFormProps['action']) => {
+  const login = action === 'login';
+  return {
+    submitBtnColor: login ? 'blue' : 'green',
+    btnText: login ? 'Login' : 'Register',
+    inputProps: {
+      maxLength: login ? null : 12,
+      minLength: login ? null : 4
+    }
+  }
+}
+
+const LandingForm: React.FC<LandingFormProps> = ({ action }) => {
   const [loginInputs, setLoginInputs] = useState(LandingFormInputs);
   const { username, password } = loginInputs;
-  const { action } = props;
   const dispatch = useDispatch();
 
   // Modify form when the action prop changes
   useEffect(() => {
-    // TODO form resets on prop change
-    console.log(action);
-  }, [action])
+    setLoginInputs(LandingFormInputs);
+  }, [action]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginInputs({
@@ -34,9 +49,7 @@ const Login: React.FC<LandingFormProps> = props => {
     dispatch(setUser({ id: 1, username: 'clayton' }));
   };
 
-  // Set the button background and text based on the action
-  const [btnBackground, btnText] =
-    action === 'login' ? ['blue.500', 'Login'] : ['green.500', 'Register'];
+  const { submitBtnColor, btnText, inputProps } = getActionObj(action);;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -49,6 +62,8 @@ const Login: React.FC<LandingFormProps> = props => {
           placeholder='enter username...'
           variant='outlined'
           margin='normal'
+          required
+          inputProps={inputProps}
           InputLabelProps={{
             shrink: true
           }}
@@ -63,6 +78,8 @@ const Login: React.FC<LandingFormProps> = props => {
           placeholder='enter password...'
           variant='outlined'
           margin='normal'
+          required
+          inputProps={inputProps}
           InputLabelProps={{
             shrink: true
           }}
@@ -70,8 +87,7 @@ const Login: React.FC<LandingFormProps> = props => {
       </FormGroup>
       <p>
         <ColoredButton
-          bgClr={btnBackground}
-          clr='white'
+          clr={submitBtnColor}
           type='submit'
           variant='contained'
           fullWidth
@@ -83,4 +99,4 @@ const Login: React.FC<LandingFormProps> = props => {
   );
 };
 
-export default memo(Login);
+export default memo(LandingForm);
