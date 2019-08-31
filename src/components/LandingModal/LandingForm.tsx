@@ -4,18 +4,11 @@ import TextField from '@material-ui/core/TextField';
 import { useDispatch } from 'react-redux';
 import ColoredButton from '../Buttons/ColoredButton';
 import { setUser } from '../../store/user/actions';
+import { LandingFormInputs, LandingFormProps, ActionType } from './LandingModal.types';
 
-enum LandingFormInputs {
-  username = '',
-  password = ''
-}
-
-interface LandingFormProps {
-  action: 'login' | 'register';
-}
 
 // Define and get action property values
-const getActionObj = (action: LandingFormProps['action']) => {
+const getActionObj = (action: LandingFormProps['action']): ActionType => {
   const login = action === 'login';
   return {
     submitBtnColor: login ? 'blue' : 'green',

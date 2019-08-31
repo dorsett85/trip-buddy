@@ -5,7 +5,7 @@ import * as colors from '@material-ui/core/colors';
 
 interface ColoredButtonProps extends ButtonProps {
   children?: ReactNode;
-  clr: string;
+  clr: MuiColor;
 }
 
 /**

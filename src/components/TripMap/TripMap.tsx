@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import MapGl, { FullscreenControl, NavigationControl, ViewportProps } from 'react-map-gl';
+import MapGl, { FullscreenControl, NavigationControl, ViewState } from 'react-map-gl';
 import styles from './TripMap.module.scss';
 
 const MAPBOX_API_TOKEN =
   'pk.eyJ1IjoiZG9yc2V0dDg1IiwiYSI6ImNqcHppM204MDBjYmozeHIxazF3NnBqNXkifQ.9sZzzAFl48z9rBc9s1LTEQ';
 
-const initialViewport: Partial<ViewportProps> = {
+const initialViewport: ViewState = {
   latitude: 37.785164,
   longitude: -100,
   zoom: 3.5,
@@ -16,7 +16,7 @@ const initialViewport: Partial<ViewportProps> = {
 const TripMap: React.FC = () => {
   const [viewport, setViewport] = useState(initialViewport);
 
-  const updateViewport = (newViewport: Partial<ViewportProps>) => {
+  const updateViewport = (newViewport: ViewState) => {
     setViewport(newViewport)
   }
 
