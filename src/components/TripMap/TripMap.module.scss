@@ -1,8 +1,19 @@
 .mapContainer {
-  position: fixed;
+  position: absolute;
   height: 100%;
   width: 100%;
-  :global(#map) {
-    height: inherit;
-  }
+}
+
+.mapFullscreenControl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px
+}
+
+.mapNavControl {
+  position: absolute;
+  top: 36px;
+  left: 0;
+  padding: 10px
 }
