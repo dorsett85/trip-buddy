@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/api', (req: any, res: any, next: any) => {
+app.use('/api', (req: any, res: any) => {
   console.log(req);
   return res.json('success');
 });

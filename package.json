@@ -25,7 +25,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "nodemon --config ./backend/config/nodemon.json",
-    "migrations": "ts-node -P backend/config/tsconfig.json backend/db/migrate.ts"
+    "db": "ts-node -P backend/config/tsconfig.json backend/db/cli/cli.ts"
   },
   "browserslist": {
     "production": [
