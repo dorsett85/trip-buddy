@@ -16,7 +16,8 @@ export const db: PgConfig = {
     connectionString: DB_CONNECTION
   },
   migrations: {
-    path: 'migrations'
+    path: 'migrations',
+    table: 'pg_migrations'
   },
   seeds: {
     path: 'seeds'

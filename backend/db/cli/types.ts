@@ -9,4 +9,15 @@ export interface MigrationFlags {
   all: boolean;
 }
 
-export type AllFlags = MigrationFlags;
+export interface SeedFlags {
+  create: string;
+  run: string;
+  all: boolean;
+}
+
+export enum SubDir {
+  migrations = 'migrations',
+  seeds = 'seeds'
+}
+
+export type AllFlags = MigrationFlags | SeedFlags;

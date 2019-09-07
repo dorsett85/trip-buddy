@@ -7,10 +7,11 @@ export interface ExpressConfig {
 
 export interface PgConfig {
   connection: PoolConfig,
-  migrations: {
-    path: string
+  migrations?: {
+    path?: string,
+    table?: string
   },
-  seeds: {
+  seeds?: {
     path: string
   },
   dirName?: string
