@@ -13,7 +13,7 @@ import * as colors from '@material-ui/core/colors';
  * // return "#2196f3"
  * getColor('blue.500')
  */
-export function getMuiColor(colorString: string): string {
+export function getMuiColor(colorString: string) {
   const colorArr = colorString.split('.');
   const [color, hue] = colorArr;
   let muiColor;

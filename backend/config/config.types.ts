@@ -1,14 +1,17 @@
-export interface ConfigType {
-  env: string,
-  db: {
-    client: string,
-    connection: string,
-    pool: {
-      min: number,
-      max: number
-    }
-    migrations: {
-      tableName: string
-    }
-  }
+import { PoolConfig } from 'pg';
+
+export interface ExpressConfig {
+  port: number;
+  jwtSecretKey: string;
+}
+
+export interface PgConfig {
+  connection: PoolConfig,
+  migrations: {
+    path: string
+  },
+  seeds: {
+    path: string
+  },
+  dirName?: string
 }

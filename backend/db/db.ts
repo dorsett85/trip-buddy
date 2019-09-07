@@ -1,4 +1,6 @@
-import knex from 'knex';
-import { db } from '../config/config';
+import { Pool } from 'pg';
+import db from './pgFile';
 
-export default knex(db);
+// node-postgres connection for database service
+const { connectionString } = db.connection;
+export const pg = new Pool({ connectionString });
