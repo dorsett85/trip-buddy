@@ -39,10 +39,11 @@ const LandingForm: React.FC<LandingFormProps> = ({ action }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(setUser({ id: 1, username: 'clayton' }));
+    fetch('/api?query={bill}').then(res => res.json()).then(data => console.log(data));
+    // dispatch(setUser({ id: 1, username: 'clayton' }));
   };
 
-  const { submitBtnColor, btnText, inputProps } = getActionObj(action);;
+  const { submitBtnColor, btnText, inputProps } = getActionObj(action);
 
   return (
     <form onSubmit={handleSubmit}>

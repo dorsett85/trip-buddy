@@ -7,7 +7,7 @@ process.env.NODE_ENV = ENV;
 export const env: string = ENV;
 
 export const expressServer: ExpressConfig = {
-  port: 3000,
+  port: 4001,
   jwtSecretKey: JWT_SECRET_KEY
 };
 
