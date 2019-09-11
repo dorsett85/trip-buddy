@@ -12,10 +12,10 @@ app.use(cookieParser());
 app.use('/api', graphqlHTTP({ schema, graphiql: true }));
 
 // Serve static assets if not on the webpack dev server
-app.use('/', express.static(path.resolve(__dirname, '../build')));
-app.use('/', (req: any, res: any) => {
-  res.sendFile(path.resolve(__dirname, '../build/index.html'));
-});
+// app.use('/', express.static(path.resolve(__dirname, '../build')));
+// app.use('/', (req: any, res: any) => {
+//   res.sendFile(path.resolve(__dirname, '../build/index.html'));
+// });
 
 app.listen(expressServer.port, () =>
   console.log(`App listening on port ${expressServer.port}!`)

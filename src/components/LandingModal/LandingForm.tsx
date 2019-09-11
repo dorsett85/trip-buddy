@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import ColoredButton from '../Buttons/ColoredButton';
 import { setUser } from '../../store/user/actions';
 import { LandingFormInputs, LandingFormProps, ActionType } from './LandingModal.types';
+import { graphqlPost, graphqlGet } from '../../api/graphqlFetch';
 
 
 // Define and get action property values
@@ -39,7 +40,22 @@ const LandingForm: React.FC<LandingFormProps> = ({ action }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    fetch('/api?query={bill}').then(res => res.json()).then(data => console.log(data));
+    const query = `
+      {
+        user(id: 1) {
+          username
+        }
+      }
+    `;
+    const mutation = `
+      mutation {
+        createUser(username: "rob", password: "password", email: "bill_russel@gmail.com") {
+          id
+        }
+      }
+    `;
+    graphqlGet('/api', query).then(data => console.log(data));
+    // graphqlPost('/api', mutation).then(data => console.log(data));
     // dispatch(setUser({ id: 1, username: 'clayton' }));
   };
 
