@@ -2,10 +2,11 @@ import React, { useState, memo, useEffect } from 'react';
 import FormGroup from '@material-ui/core/FormGroup';
 import TextField from '@material-ui/core/TextField';
 import { useDispatch } from 'react-redux';
+import { useLazyQuery } from '@apollo/react-hooks';
 import ColoredButton from '../Buttons/ColoredButton';
 import { setUser } from '../../store/user/actions';
 import { LandingFormInputs, LandingFormProps, ActionType } from './LandingModal.types';
-import { graphqlPost, graphqlGet } from '../../api/graphqlFetch';
+import { GET_USER } from './queries';
 
 
 // Define and get action property values
@@ -25,6 +26,7 @@ const LandingForm: React.FC<LandingFormProps> = ({ action }) => {
   const [loginInputs, setLoginInputs] = useState(LandingFormInputs);
   const { username, password } = loginInputs;
   const dispatch = useDispatch();
+  const [getUser, { loading, data }] = useLazyQuery(GET_USER);
 
   // Modify form when the action prop changes
   useEffect(() => {
@@ -37,16 +39,12 @@ const LandingForm: React.FC<LandingFormProps> = ({ action }) => {
       [e.target.name]: e.target.value
     });
   };
+  console.log(data);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const query = `
-      {
-        user(id: 1) {
-          username
-        }
-      }
-    `;
+    getUser()
+    
     const mutation = `
       mutation {
         createUser(username: "rob", password: "password", email: "bill_russel@gmail.com") {
@@ -54,7 +52,7 @@ const LandingForm: React.FC<LandingFormProps> = ({ action }) => {
         }
       }
     `;
-    graphqlGet('/api', query).then(data => console.log(data));
+    
     // graphqlPost('/api', mutation).then(data => console.log(data));
     // dispatch(setUser({ id: 1, username: 'clayton' }));
   };

@@ -1,11 +1,8 @@
+import { makeExecutableSchema } from 'apollo-server-express';
+import { typeDefs } from './typeDefs';
+import { resolvers } from './resolvers';
 
-import { GraphQLSchema } from 'graphql';
-import { RootQuery as query } from './queries';
-import { RootMutation as mutation } from './mutations';
-
-const schema = new GraphQLSchema({
-  query,
-  mutation
-})
-
-export default schema;
+export const schema = makeExecutableSchema({
+  typeDefs,
+  resolvers
+});

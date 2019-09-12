@@ -1,15 +1,18 @@
 import express from 'express';
-import graphqlHTTP from 'express-graphql';
+import { ApolloServer } from 'apollo-server-express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import { expressServer } from './config/config';
-import schema from './schema/schema';
+import { schema } from './schema/schema';
 
+// Express app
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/api', graphqlHTTP({ schema, graphiql: true }));
+// Apollo server
+const server = new ApolloServer({ schema });
+server.applyMiddleware({ app });
 
 // Serve static assets if not on the webpack dev server
 // app.use('/', express.static(path.resolve(__dirname, '../build')));
