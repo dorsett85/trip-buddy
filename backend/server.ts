@@ -3,7 +3,7 @@ import { ApolloServer } from 'apollo-server-express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import { expressServer } from './config/config';
-import { schema } from './schema/schema';
+import { schema } from './schema';
 
 // Express app
 const app = express();

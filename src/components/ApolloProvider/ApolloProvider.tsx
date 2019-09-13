@@ -3,18 +3,13 @@ import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
 
 interface Props {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export const client = new ApolloClient();
 
-const Provider: React.FC<Props> = ({ children }) => {
-  return (
-    <ApolloProvider client={client}>
-      {children}
-    </ApolloProvider>
-  )
-}
-
+const Provider: React.FC<Props> = ({ children }) => (
+  <ApolloProvider client={client}>{children}</ApolloProvider>
+);
 
 export default Provider;

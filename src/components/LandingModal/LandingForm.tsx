@@ -39,7 +39,6 @@ const LandingForm: React.FC<LandingFormProps> = ({ action }) => {
       [e.target.name]: e.target.value
     });
   };
-  console.log(data);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
