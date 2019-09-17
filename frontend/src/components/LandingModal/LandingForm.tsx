@@ -3,7 +3,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import TextField from '@material-ui/core/TextField';
 import { useDispatch } from 'react-redux';
 import { useLazyQuery } from '@apollo/react-hooks';
-import ColoredButton from '../Buttons/ColoredButton';
+import ColoredButton from '../generic/ColoredButton';
 import { setUser } from '../../store/user/actions';
 import { LandingFormInputs, LandingFormProps, ActionType } from './LandingModal.types';
 import { GET_USER } from './queries';

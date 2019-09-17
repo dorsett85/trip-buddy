@@ -1,4 +1,4 @@
-import { ENV, JWT_SECRET_KEY, DB_CONNECTION } from '../../.env.json';
+import { ENV, JWT_SECRET_KEY, DB_CONNECTION } from '../.env.json';
 import { ExpressConfig, PgConfig } from './config.types';
 
 // Define the process NODE_ENV env var to work with Express defaults

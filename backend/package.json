@@ -1,0 +1,40 @@
+{
+  "name": "trip-buddy-backend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "apollo-server-express": "^2.9.3",
+    "axios": "^0.19.0",
+    "bcrypt": "^3.0.6",
+    "commander": "^3.0.1",
+    "cookie-parser": "^1.4.4",
+    "express": "^4.17.1",
+    "pg": "^7.12.1"
+  },
+  "scripts": {
+    "server": "nodemon --config ./nodemon.json",
+    "db": "ts-node -P tsconfig.json db/cli/cli.ts",
+    "migrate": "npm run db -- --pg-file db/pgFile.ts migrate",
+    "seed": "npm run db -- --pg-file db/pgFile.ts seed"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/cookie-parser": "^1.4.2",
+    "@types/jest": "^24.0.18",
+    "@types/node": "^12.7.2",
+    "@types/pg": "^7.11.1",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
+    "@typescript-eslint/parser": "^2.0.0",
+    "eslint": "^6.2.2",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.3",
+    "nodemon": "^1.19.1",
+    "prettier": "^1.18.2",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3"
+  }
+}
