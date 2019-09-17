@@ -3,8 +3,10 @@ export enum LandingFormInputs {
   password = ''
 }
 
+export type LandingFormType = 'login' | 'register';
+
 export interface LandingFormProps {
-  action: 'login' | 'register';
+  action: LandingFormType;
 }
 
 export interface ActionType {

@@ -8,14 +8,8 @@
     "@material-ui/core": "^4.3.3",
     "@material-ui/icons": "^4.2.1",
     "apollo-boost": "^0.4.4",
-    "apollo-server-express": "^2.9.3",
     "axios": "^0.19.0",
-    "bcrypt": "^3.0.6",
-    "commander": "^3.0.1",
-    "cookie-parser": "^1.4.4",
-    "express": "^4.17.1",
-    "graphql": "^14.5.4",
-    "pg": "^7.12.1",
+    "graphql": "^14.5.6",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-map-gl": "^5.0.10",
@@ -28,11 +22,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "server": "nodemon --config ./backend/config/nodemon.json",
-    "db": "ts-node -P backend/config/tsconfig.json backend/db/cli/cli.ts",
-    "migrate": "npm run db -- --pg-file backend/db/pgFile.ts migrate",
-    "seed": "npm run db -- --pg-file backend/db/pgFile.ts seed"
+    "eject": "react-scripts eject"
   },
   "browserslist": {
     "production": [
@@ -47,11 +37,7 @@
     ]
   },
   "devDependencies": {
-    "@types/bcrypt": "^3.0.0",
-    "@types/cookie-parser": "^1.4.2",
     "@types/jest": "^24.0.18",
-    "@types/node": "^12.7.2",
-    "@types/pg": "^7.11.1",
     "@types/react": "^16.9.2",
     "@types/react-dom": "^16.9.0",
     "@types/react-map-gl": "^5.0.0",
@@ -68,7 +54,6 @@
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^2.0.1",
     "node-sass": "^4.12.0",
-    "nodemon": "^1.19.1",
     "prettier": "^1.18.2",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.3"
