@@ -1,4 +1,4 @@
-import { UserSchema } from "./user.types";
+import { UserSchema, BasicUserArgs } from './user.types';
 
 const dummyUser: UserSchema = {
   id: 1,
@@ -7,7 +7,7 @@ const dummyUser: UserSchema = {
   email: 'claytonphillipsdorsett@gmail.com',
   email_validated: false,
   created: new Date().getTime()
-}
+};
 
 export const userResolvers = {
   Query: {
@@ -15,7 +15,12 @@ export const userResolvers = {
     users: (): Array<UserSchema> => [dummyUser]
   },
   Mutation: {
-    registerUser: () => {
+    loginUser: (_: any, args: BasicUserArgs) => {
+      console.log(args);
+      return dummyUser;
+    },
+    registerUser: (_: any, args: BasicUserArgs) => {
+      console.log(args);
       return dummyUser;
     }
   }

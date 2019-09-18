@@ -9,17 +9,24 @@ export interface TabBarProps {
   children?: React.ReactElement<TabProps>[] | React.ReactElement<TabProps>;
 }
 
-const TabBar: React.FC<TabBarProps> = ({ appBarProps, tabsProps, children }) => {
+const TabBar: React.FC<TabBarProps> = ({
+  appBarProps = {},
+  tabsProps = {},
+  children
+}) => {
   // Set defaults for the AppBar and Tabs components
-  const { position = 'static', color = 'default', ...restAppBarProps } =
-    (appBarProps as AppBarProps) || {};
+  const {
+    position = 'static',
+    color = 'default',
+    ...restAppBarProps
+  } = appBarProps as AppBarProps;
   const {
     indicatorColor = 'primary',
     textColor = 'primary',
     variant = 'fullWidth',
     ...restTabsProps
-  } = (tabsProps as TabsProps) || {};
-  
+  } = tabsProps as TabsProps;
+
   return (
     <AppBar position={position} color={color} {...restAppBarProps}>
       <Tabs

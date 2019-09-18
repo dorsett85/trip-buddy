@@ -9,10 +9,17 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import Slide from '@material-ui/core/Slide';
 import { TransitionProps } from '@material-ui/core/transitions';
-import LandingForm from './LandingForm';
 import { AppState } from '../../store';
 import TabBar from '../generic/TabBar/TabBar';
-import { LandingFormType } from './LandingModal.types';
+import LoginForm from './LoginForm';
+import RegisterForm from './RegisterForm';
+
+interface FormProps {
+  formType: string;
+}
+
+const Form: React.FC<FormProps> = ({ formType }) =>
+  formType === 'login' ? <LoginForm /> : <RegisterForm />;
 
 const Transition = React.forwardRef<unknown, TransitionProps>((props, ref) => {
   return <Slide direction='up' ref={ref} {...props} />;
@@ -49,7 +56,7 @@ const LandingModal: React.FC = () => {
           <Tab label='Register' value='register' />
         </TabBar>
         <Box pt={3} p={1}>
-          <LandingForm action={tabValue as LandingFormType} />
+          <Form formType={tabValue} />
         </Box>
       </DialogContent>
     </Dialog>

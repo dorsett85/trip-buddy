@@ -7,3 +7,9 @@ export interface UserSchema {
   email_validated: boolean;
   created: number;
 }
+
+export interface BasicUserArgs {
+  username: string;
+  password: string;
+  email: string;
+}

@@ -1,9 +1,0 @@
-import { gql } from 'apollo-boost';
-
-export const GET_USER = gql`
-  {
-    user {
-      username
-    }
-  }
-`;
