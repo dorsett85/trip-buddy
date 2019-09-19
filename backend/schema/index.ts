@@ -1,9 +1,9 @@
 import { makeExecutableSchema } from 'apollo-server-express';
-import { rootSchema } from './rootSchema';
-import { userSchema, userResolvers } from './user';
+import { rootTypeDefs, userTypeDefs } from './typeDefs';
+import { userResolvers } from './resolvers';
 
-const typeDefs = [rootSchema, userSchema]
-const resolvers =  [userResolvers]
+const typeDefs = [rootTypeDefs, userTypeDefs];
+const resolvers = [userResolvers];
 
 export const schema = makeExecutableSchema({
   typeDefs,

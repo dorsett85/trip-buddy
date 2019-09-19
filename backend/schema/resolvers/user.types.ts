@@ -1,3 +1,5 @@
+import UserService from '../../services/User/User';
+
 export interface UserSchema {
   id: number;
   username: string;
@@ -12,4 +14,8 @@ export interface BasicUserArgs {
   username: string;
   password: string;
   email: string;
+}
+
+export interface UserResolversDeps {
+  UserService: typeof UserService
 }

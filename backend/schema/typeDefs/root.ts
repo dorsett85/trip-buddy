@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server-express';
 
-export const rootSchema = gql`
+export const rootTypeDefs = gql`
   # Add defaults to the base schema
   type Query {
     default: Boolean

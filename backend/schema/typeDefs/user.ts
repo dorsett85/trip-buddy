@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server-express';
 
-export const userSchema = gql`
+export const userTypeDefs = gql`
   extend type Query {
     user: User
     users: [User]
