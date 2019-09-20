@@ -1,4 +1,4 @@
-import UserService from '../../services/User/User';
+import UserService from '../../services/User';
 
 export interface UserSchema {
   id: number;
@@ -7,7 +7,7 @@ export interface UserSchema {
   email: string;
   // eslint-disable-next-line camelcase
   email_validated: boolean;
-  created: number;
+  created: Date;
 }
 
 export interface BasicUserArgs {

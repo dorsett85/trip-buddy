@@ -1,2 +1,3 @@
-export { rootTypeDefs } from './root';
-export { userTypeDefs } from './user'
+export { queryType } from './query';
+export { mutationType } from './mutation';
+export { subscriptionType } from './subscription';

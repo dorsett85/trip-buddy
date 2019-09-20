@@ -1,3 +1,9 @@
+import UserModel from "../models/User";
+
+export interface UserServiceDeps {
+  UserModel?: typeof UserModel
+}
+
 export interface UserBasic {
   username?: string;
   password: string;
