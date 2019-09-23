@@ -1,14 +1,21 @@
-import { GraphQLObjectType, GraphQLID, GraphQLString } from 'graphql';
-import { GraphQLDateTime } from 'graphql-iso-date';
+import { gql } from 'apollo-server-express';
 
-export const userType = new GraphQLObjectType({
-  name: 'User',
-  fields: {
-    id: { type: GraphQLID },
-    username: { type: GraphQLString },
-    password: { type: GraphQLString },
-    email: { type: GraphQLString },
-    email_validated: { type: GraphQLString },
-    created: { type: GraphQLDateTime }
+export const userTypeDefs = gql`
+  extend type Query {
+    user: User
+    users: [User]
   }
-});
+  
+  extend type Mutation {
+    loginUser(username: String!, password: String!): User
+    registerUser(email: String!, password: String!): User
+  }
+  type User {
+    id: ID!
+    username: String!
+    password: String
+    email: String!
+    email_validated: Boolean!
+    created: String!
+  }
+`;
