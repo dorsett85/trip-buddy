@@ -1,10 +1,9 @@
-import { UserSchema, UserResolversDeps } from './user.types';
+import { UserResolversDeps } from './user.types';
 import { LoginArgs, RegisterArgs } from '../../services/User.types';
 
-export const dummyUser: UserSchema = {
+export const dummyUser = {
   id: 1,
   username: 'clayton',
-  password: 'clayton',
   email: 'claytonphillipsdorsett@gmail.com',
   email_validated: false,
   created: new Date()
@@ -18,11 +17,11 @@ export const userResolvers = (dependencies: UserResolversDeps) => {
       users: (_: any, args: any) => [dummyUser]
     },
     Mutation: {
-      loginUser: (_: any, args: any) => {
+      loginUser: (_: any, args: LoginArgs) => {
         const user = new UserService();
         return user.login(args);
       },
-      registerUser: (_: any, args: any) => {
+      registerUser: (_: any, args: RegisterArgs) => {
         const user = new UserService();
         return user.register(args);
       }

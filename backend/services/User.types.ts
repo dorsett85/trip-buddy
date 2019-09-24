@@ -5,10 +5,9 @@ export interface UserServiceDeps {
 }
 
 export interface UserBasic {
-  username?: string;
   password: string;
-  email?: string
+  email: string
 }
 
-export type LoginArgs = UserBasic;
+export type LoginArgs = UserBasic & { username: string };
 export type RegisterArgs = UserBasic;

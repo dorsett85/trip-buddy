@@ -14,12 +14,9 @@ export default class UserService {
     return user;
   }
 
-  public register(args: RegisterArgs) {
+  public async register(args: RegisterArgs) {
     const { password, email } = args;
-    this.UserModel.findOne({ email })
-    return {
-      email,
-      password
-    };
+    const user = await this.UserModel.findOne({ email });
+    return user;
   }
 }
