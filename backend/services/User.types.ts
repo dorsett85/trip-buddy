@@ -1,12 +1,12 @@
-import UserModel from "../models/User";
+import UserModel from '../models/User';
 
 export interface UserServiceDeps {
-  UserModel?: typeof UserModel
+  UserModel?: typeof UserModel;
 }
 
 export interface UserBasic {
   password: string;
-  email: string
+  email: string;
 }
 
 export type LoginArgs = UserBasic & { username: string };

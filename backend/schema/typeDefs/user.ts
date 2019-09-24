@@ -14,7 +14,6 @@ export const userTypeDefs = gql`
   type User {
     id: Int
     username: String
-    password: String
     email: String
     email_validated: Boolean
     created: Date

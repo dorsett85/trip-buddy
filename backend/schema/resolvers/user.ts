@@ -1,7 +1,6 @@
-import { UserResolversDeps } from './user.types';
-import { LoginArgs, RegisterArgs } from '../../services/User.types';
+import { UserResolversDeps, LoginArgs, RegisterArgs, UserSchema } from './user.types';
 
-export const dummyUser = {
+export const dummyUser: UserSchema = {
   id: 1,
   username: 'clayton',
   email: 'claytonphillipsdorsett@gmail.com',
@@ -13,18 +12,18 @@ export const userResolvers = (dependencies: UserResolversDeps) => {
   const { UserService } = dependencies;
   return {
     Query: {
-      user: (_: any, args: any) => dummyUser,
-      users: (_: any, args: any) => [dummyUser]
+      user: (_: any, args: any): UserSchema => dummyUser,
+      users: (_: any, args: any): UserSchema[] => [dummyUser]
     },
     Mutation: {
-      loginUser: (_: any, args: LoginArgs) => {
+      loginUser: (_: any, args: LoginArgs): Promise<UserSchema> => {
         const user = new UserService();
         return user.login(args);
       },
-      registerUser: (_: any, args: RegisterArgs) => {
+      registerUser: (_: any, args: RegisterArgs): Promise<UserSchema> => {
         const user = new UserService();
         return user.register(args);
       }
     }
-  }
-}
+  };
+};
