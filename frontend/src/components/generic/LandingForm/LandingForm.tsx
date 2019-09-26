@@ -2,21 +2,31 @@ import React, { memo, useState } from 'react';
 import FormGroup from '@material-ui/core/FormGroup';
 import TextField from '@material-ui/core/TextField';
 import ColoredButton from '../ColoredButton/ColoredButton';
-import { LandingFormProps, LandingFormInputs } from './LandingForm.types';
+import { LandingFormProps, LandingFormInputs, FormVals } from './LandingForm.types';
 
-const LandingForm: React.FC<LandingFormProps> = ({
-  onSubmit,
-  inputProps,
-  submitBtnColor = 'blue',
-  submitBtnText
-}) => {
+const getFormVals = (action: string): FormVals => ({
+  usernameLabel: action === 'login' ? 'Username or Email' : 'Email',
+  usernamePlaceholder: action === 'login' ? 'enter username or email' : 'enter email',
+  submitBtnColor: action === 'login' ? 'blue' : 'green',
+  submitBtnText: action === 'login' ? 'Login' : 'Register',
+  inputProps:
+    action === 'login'
+      ? {}
+      : {
+          minLength: 4,
+          maxLength: 12
+        }
+});
+
+const LandingForm: React.FC<LandingFormProps> = ({ action, onSubmit }) => {
   const [loginInputs, setLoginInputs] = useState(LandingFormInputs);
   const { username, password } = loginInputs;
+  const formVals = getFormVals(action);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(username, password);
-  }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginInputs({
@@ -32,12 +42,12 @@ const LandingForm: React.FC<LandingFormProps> = ({
           onChange={handleChange}
           value={username}
           name='username'
-          label='Username'
-          placeholder='enter username...'
+          label={formVals.usernameLabel}
+          placeholder={formVals.usernamePlaceholder}
           variant='outlined'
           margin='normal'
           required
-          inputProps={inputProps}
+          inputProps={formVals.inputProps}
           InputLabelProps={{
             shrink: true
           }}
@@ -53,15 +63,20 @@ const LandingForm: React.FC<LandingFormProps> = ({
           variant='outlined'
           margin='normal'
           required
-          inputProps={inputProps}
+          inputProps={formVals.inputProps}
           InputLabelProps={{
             shrink: true
           }}
         />
       </FormGroup>
       <p>
-        <ColoredButton clr={submitBtnColor} type='submit' variant='contained' fullWidth>
-          {submitBtnText}
+        <ColoredButton
+          clr={formVals.submitBtnColor}
+          type='submit'
+          variant='contained'
+          fullWidth
+        >
+          {formVals.submitBtnText}
         </ColoredButton>
       </p>
     </form>

@@ -4,10 +4,12 @@ export interface UserServiceDeps {
   UserModel?: typeof UserModel;
 }
 
-export interface UserBasic {
+export interface LoginArgs {
+  username: string;
   password: string;
-  email: string;
 }
 
-export type LoginArgs = UserBasic & { username: string };
-export type RegisterArgs = UserBasic;
+export interface RegisterArgs {
+  email: string;
+  password: string;
+}

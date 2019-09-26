@@ -6,8 +6,14 @@ export enum LandingFormInputs {
 }
 
 export interface LandingFormProps {
+  action: 'login' | 'register',
   onSubmit: (username: string, password: string) => void;
-  inputProps?: InputProps['inputProps'];
-  submitBtnColor?: MuiColor;
-  submitBtnText: string;
+}
+
+export interface FormVals {
+  usernameLabel: 'Username or Email' | 'Email';
+  usernamePlaceholder: 'enter username or email' | 'enter email';
+  submitBtnColor: MuiColor;
+  submitBtnText: 'Login' | 'Register';
+  inputProps: InputProps['inputProps'];
 }

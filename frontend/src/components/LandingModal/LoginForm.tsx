@@ -7,7 +7,7 @@ import LandingForm from '../generic/LandingForm/LandingForm';
 
 const LOGIN_USER = gql`
   mutation LoginUser($username: String!, $password: String!) {
-    loginUser(username: $username, password: $password, email: $username) {
+    loginUser(username: $username, password: $password) {
       id
     }
   }
@@ -23,12 +23,11 @@ const LoginForm: React.FC = () => {
   }
 
   const handleSubmit = (username: string, password: string) => {
-    // console.log(username, password);
     loginUser({ variables: { username, password } });
   };
 
   return (
-    <LandingForm onSubmit={handleSubmit} submitBtnColor='blue' submitBtnText='Login' />
+    <LandingForm action='login' onSubmit={handleSubmit} />
   );
 };
 

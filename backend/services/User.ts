@@ -9,14 +9,12 @@ export default class UserService {
   }
 
   public async login(args: LoginArgs) {
-    const { username, password, email } = args;
-    const user = await this.UserModel.findOne({ username });
+    const user = await this.UserModel.findOne(args);
     return user;
   }
 
   public async register(args: RegisterArgs) {
-    const { password, email } = args;
-    const user = await this.UserModel.findOne({ email });
+    const user = await this.UserModel.findOne(args);
     return user;
   }
 }
