@@ -15,11 +15,15 @@ const LOGIN_USER = gql`
 
 const LoginForm: React.FC = () => {
   const dispatch = useDispatch();
-  const [loginUser, { loading, data }] = useMutation(LOGIN_USER);
+  const [loginUser, { loading, error, data }] = useMutation(LOGIN_USER);
 
   if (data) {
     console.log(data);
     dispatch(setUser(data));
+  }
+
+  if (error) {
+    console.log(error)
   }
 
   const handleSubmit = (username: string, password: string) => {
