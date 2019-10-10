@@ -21,7 +21,7 @@ export default class UserService {
     // check if password matches
     const passwordIsValid = await bcrypt.compare(password, user.password);
     if (!passwordIsValid) {
-      return {};
+      return { id: user.id };
     }
 
     return user;
