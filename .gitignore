@@ -1,7 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # misc
-trip-buddy-workspace.code-workspace
+trip-buddy.code-workspace
+.DS_Store
 
 # IDE's
 .vscode/

@@ -13,8 +13,8 @@ export const userResolvers = (dependencies: UserResolversDeps) => {
   const { UserService } = dependencies;
   return {
     Query: {
-      user: (_: any, args: any): UserSchema => dummyUser,
-      users: (_: any, args: any): UserSchema[] => [dummyUser]
+      user: (): UserSchema => dummyUser,
+      users: (): UserSchema[] => [dummyUser]
     },
     Mutation: {
       loginUser: async (_: any, args: LoginArgs): Promise<UserSchema> => {
