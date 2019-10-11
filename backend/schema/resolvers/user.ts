@@ -19,7 +19,7 @@ export const userResolvers = (dependencies: UserResolversDeps) => {
     Mutation: {
       loginUser: async (_: any, args: LoginArgs): Promise<UserSchema> => {
         const us = new UserService();
-        const user = await us.login(args);
+        const { user, token } = await us.login(args);
 
         // Check for errors if no user is found or if password is incorrect
         if (!user.id || !user.password) {

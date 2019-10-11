@@ -80,7 +80,13 @@ const RegisterForm: React.FC = () => {
         />
       </FormGroup>
       <Box pt={1}>
-        <ColoredButton clr='green' type='submit' variant='contained' fullWidth disabled={loading}>
+        <ColoredButton
+          clr='green'
+          type='submit'
+          variant='contained'
+          fullWidth
+          disabled={loading}
+        >
           Register
         </ColoredButton>
         {loading && <LinearProgress />}

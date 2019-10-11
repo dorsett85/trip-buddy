@@ -1,12 +1,21 @@
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import UserModel from '../models/User';
-import { LoginArgs, RegisterArgs, UserServiceDeps } from './User.types';
+import { LoginArgs, RegisterArgs, UserServiceDeps, JWTSignArgs } from './User.types';
+import { expressServer } from '../config/config';
+
+const { jwtSecretKey } = expressServer;
 
 export default class UserService {
   private UserModel: typeof UserModel;
 
   constructor(dependencies: UserServiceDeps = {}) {
     this.UserModel = dependencies.UserModel || UserModel;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  public sign(args: JWTSignArgs) {
+    return jwt.sign(args, jwtSecretKey);
   }
 
   public async login(args: LoginArgs) {
@@ -24,7 +33,10 @@ export default class UserService {
       return { id: user.id };
     }
 
-    return user;
+    // sign token
+    const token = this.sign({ id: user.id, username });
+
+    return { user, token };
   }
 
   public async register(args: RegisterArgs) {
