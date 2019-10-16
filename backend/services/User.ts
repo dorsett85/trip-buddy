@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import UserModel from '../models/User';
-import { LoginArgs, RegisterArgs, UserServiceDeps, JWTSignArgs } from './User.types';
+import { LoginArgs, RegisterArgs, UserServiceDeps, LoginResponse, RegisterResponse } from './User.types';
 import { expressServer } from '../config/config';
+import { UserRecord } from '../models/User.types';
 
 const { jwtSecretKey } = expressServer;
 
@@ -14,15 +15,15 @@ export default class UserService {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  public sign(args: JWTSignArgs) {
-    return jwt.sign(args, jwtSecretKey);
+  public sign(user: UserRecord) {
+    return jwt.sign(user, jwtSecretKey);
   }
 
-  public async login(args: LoginArgs) {
+  public async login(args: LoginArgs): Promise<LoginResponse> {
     const { username, password } = args;
 
     // check if username or email exists
-    const user = await this.UserModel.findOne({ username });
+    const user = await this.UserModel.findOne({}, { username, email: username });
     if (!user) {
       return {};
     }
@@ -33,14 +34,21 @@ export default class UserService {
       return { id: user.id };
     }
 
-    // sign token
-    const token = this.sign({ id: user.id, username });
-
-    return { user, token };
+    const token = this.sign(user);
+    return { token };
   }
 
-  public async register(args: RegisterArgs) {
+  public async register(args: RegisterArgs): Promise<RegisterResponse> {
     const user = await this.UserModel.findOne(args);
-    return user;
+
+    // Check if user exists
+    if (user) {
+      return { id: user.id };
+    }
+
+    // TODO Create a user
+
+    const token = this.sign(user);
+    return { token };
   }
 }

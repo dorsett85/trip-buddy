@@ -14,7 +14,10 @@ export interface LoginArgs {
   password: string;
 }
 
-export interface JWTSignArgs {
-  id: number;
-  username: string;
+export interface LoginResponse {
+  id?: number;
+  password?: string;
+  token?: string;
 }
+
+export type RegisterResponse = LoginResponse;

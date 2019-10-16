@@ -1,9 +1,9 @@
-export interface UserFields {
+export interface UserRecord {
   id: number;
-  username: String;
-  email: String;
-  password: String;
+  username: string;
+  email: string;
+  password: string;
   // eslint-disable-next-line camelcase
-  email_validated: Boolean;
+  email_validated: boolean;
   created: Date;
 }
