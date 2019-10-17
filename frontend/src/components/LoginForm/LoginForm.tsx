@@ -12,9 +12,7 @@ import { LoginFormInputs } from './LoginForm.types';
 
 const LOGIN_USER = gql`
   mutation LoginUser($username: String!, $password: String!) {
-    loginUser(username: $username, password: $password) {
-      id
-    }
+    loginUser(username: $username, password: $password)
   }
 `;
 

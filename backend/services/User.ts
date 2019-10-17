@@ -1,7 +1,13 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import UserModel from '../models/User';
-import { LoginArgs, RegisterArgs, UserServiceDeps, LoginResponse, RegisterResponse } from './User.types';
+import {
+  LoginArgs,
+  RegisterArgs,
+  UserServiceDeps,
+  LoginResponse,
+  RegisterResponse
+} from './User.types';
 import { expressServer } from '../config/config';
 import { UserRecord } from '../models/User.types';
 
@@ -31,24 +37,33 @@ export default class UserService {
     // check if password matches
     const passwordIsValid = await bcrypt.compare(password, user.password);
     if (!passwordIsValid) {
-      return { id: user.id };
+      return { username };
     }
 
     const token = this.sign(user);
-    return { token };
+    return { username, password, token };
   }
 
   public async register(args: RegisterArgs): Promise<RegisterResponse> {
-    const user = await this.UserModel.findOne(args);
+    const { email } = args;
 
     // Check if user exists
+    const user = await this.UserModel.findOne({ email });
     if (user) {
-      return { id: user.id };
+      return { email };
     }
 
-    // TODO Create a user
+    // TODO Create new user to db
+    const fakeUser = {
+      id: 1,
+      username: 'user',
+      email: 'email',
+      password: 'password',
+      email_validated: false,
+      created: new Date()
+    }
 
-    const token = this.sign(user);
+    const token = this.sign(fakeUser);
     return { token };
   }
 }

@@ -1,45 +1,76 @@
 import { isEmptyObject } from './isEmptyObject';
-import { AllDbFields } from '../types/DbTypes';
 
 type Operator = 'AND' | 'OR';
 
+type Values = (string | number | boolean | null | undefined)[];
+
+interface AddWhere {
+  text: string;
+  values: Values;
+}
+
 interface WhereArgs {
-  andWhereArgs?: AllDbFields;
-  orWhereArgs?: AllDbFields;
+  andWhereArgs: {
+    [key: string]: any;
+  };
+  orWhereArgs: {
+    [key: string]: any;
+  };
 }
 
 /**
  * Function to create partial parameterized query
  *
- * Given an args object, loop over the keys (column names) so that they equal a
- * parameter value (e.g., $1).  This helps in building dynamic parameterized queries
- * used for node postgres (pg)
+ * Given an array of column names, loop them so they equal a parameter
+ * value (e.g., id = $1).  This helps in building dynamic parameterized
+ * queries used for node postgres (pg)
+ *
+ * @example
+ * // Outputs 'id = $1 AND username = $2'
+ * columnEqualsParam(['id', 'username'], 'AND');
  */
 export const columnEqualsParam = (
-  args: AllDbFields,
-  operator: Operator,
+  colNames: string[],
+  operator: Operator = 'AND',
   startingParamVal = 1
-) => {
-  return Object.keys(args)
-    .map((key: string, idx) => `${key} = $${idx + startingParamVal}`)
+): string => {
+  return colNames
+    .map((colName: string, idx: number) => `${colName} = $${idx + startingParamVal}`)
     .join(` ${operator} `);
 };
 
-export const addWhere = ({ andWhereArgs, orWhereArgs }: WhereArgs): string => {
+/*
+ * WHERE helper functions
+ */
+
+export const addWhere = (
+  { andWhereArgs = {}, orWhereArgs = {} }: WhereArgs,
+  values: Values = [],
+  paramVal = 1
+): AddWhere => {
   let whereClause = '';
+  let newParamVal = paramVal;
+  let newValues = values.flat();
 
   // Add the AND and OR where clauses if they exist
-  if (andWhereArgs && !isEmptyObject(andWhereArgs)) {
-    whereClause += columnEqualsParam(andWhereArgs, 'AND');
+  if (!isEmptyObject(andWhereArgs)) {
+    const colNames = Object.keys(andWhereArgs);
+    const colValues = Object.values(andWhereArgs);
+    whereClause += columnEqualsParam(colNames, 'AND', newParamVal);
+    newParamVal += colNames.length;
+    newValues = newValues.concat(colValues);
   }
-  if (orWhereArgs && !isEmptyObject(orWhereArgs)) {
-    const addSpace = whereClause.length ? ' OR ' : '';
-    const startingParamVal =
-      andWhereArgs && Object.keys(andWhereArgs).length
-        ? Object.keys(andWhereArgs).length + 1
-        : 1;
-    whereClause += `${addSpace}${columnEqualsParam(orWhereArgs, 'OR', startingParamVal)}`;
+  if (!isEmptyObject(orWhereArgs)) {
+    const colNames = Object.keys(orWhereArgs);
+    const colValues = Object.values(orWhereArgs);
+    whereClause += whereClause.length ? ' OR ' : '';
+    whereClause += columnEqualsParam(colNames, 'OR', newParamVal);
+    newParamVal += colNames.length;
+    newValues = newValues.concat(colValues);
   }
 
-  return whereClause && `WHERE ${whereClause}`;
+  return {
+    text: whereClause ? `WHERE ${whereClause}` : '',
+    values: newValues
+  };
 };

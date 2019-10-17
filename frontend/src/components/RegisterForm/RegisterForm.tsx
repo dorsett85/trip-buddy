@@ -12,16 +12,23 @@ import { RegisterFormInputs } from './RegisterForm.types';
 
 const REGISTER_USER = gql`
   mutation RegisterUser($email: String!, $password: String!) {
-    registerUser(email: $email, password: $password) {
-      id
-    }
+    registerUser(email: $email, password: $password)
   }
 `;
 
 const inputProps = {
-  minLength: 4,
-  maxLength: 12
+  minLength: 4
 };
+
+const emailInputProps = {
+  ...inputProps,
+  maxLength: 50
+}
+
+const passwordInputProps = {
+  ...inputProps,
+  maxLength: 12
+}
 
 const RegisterForm: React.FC = () => {
   const dispatch = useDispatch();
@@ -57,7 +64,7 @@ const RegisterForm: React.FC = () => {
           variant='outlined'
           margin='normal'
           required
-          inputProps={inputProps}
+          inputProps={emailInputProps}
           InputLabelProps={{
             shrink: true
           }}
@@ -73,7 +80,7 @@ const RegisterForm: React.FC = () => {
           variant='outlined'
           margin='normal'
           required
-          inputProps={inputProps}
+          inputProps={passwordInputProps}
           InputLabelProps={{
             shrink: true
           }}

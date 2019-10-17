@@ -15,9 +15,12 @@ export interface LoginArgs {
 }
 
 export interface LoginResponse {
-  id?: number;
+  username?: string;
   password?: string;
   token?: string;
 }
 
-export type RegisterResponse = LoginResponse;
+export interface RegisterResponse {
+  email?: string;
+  token?: string;
+}

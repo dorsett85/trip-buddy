@@ -16,8 +16,9 @@ export default class UserModel {
     andWhereArgs: Partial<UserRecord> = {},
     orWhereArgs: Partial<UserRecord> = {}
   ): Promise<UserRecord[]> {
-    const text = `select * from users ${addWhere({ andWhereArgs, orWhereArgs })};`;
-    const values = [...Object.values(andWhereArgs), ...Object.values(orWhereArgs)];
+    const where = addWhere({ andWhereArgs, orWhereArgs });
+    const text = `select * from users ${where.text};`;
+    const { values } = where;
 
     const query: QueryConfig = { text, values };
     const { rows }: { rows: UserRecord[] } = await db.query(query);

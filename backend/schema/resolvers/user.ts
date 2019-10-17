@@ -19,22 +19,25 @@ export const userResolvers = (dependencies: UserResolversDeps) => {
     Mutation: {
       loginUser: async (_: any, args: LoginArgs): Promise<string | undefined> => {
         const us = new UserService();
-        const { id, password, token } = await us.login(args);
+        const { username, password, token } = await us.login(args);
 
-        if (!id || !password) {
-          throw new UserInputError('Invalid username or password');
+        if (!username) {
+          throw new UserInputError('User does not exist');
         }
 
+        if (!password) {
+          throw new UserInputError('Invalid username or password');
+        }
+        
         return token;
       },
       registerUser: async (_: any, args: RegisterArgs): Promise<string | undefined> => {
         const us = new UserService();
-        const { id, token } = await us.register(args);
-
-        if (id) {
+        const { email, token } = await us.register(args);
+        if (email) {
           throw new UserInputError('User already exists');
         }
-
+        
         return token;
       }
     }
