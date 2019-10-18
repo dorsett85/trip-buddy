@@ -3,7 +3,7 @@ import { ApolloServer } from 'apollo-server-express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import { expressServer } from './config/config';
-import { schema } from './schema';
+import { config } from './schema';
 
 // Express app
 const app = express();
@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Apollo server
-const server = new ApolloServer({ schema });
+const server = new ApolloServer(config);
 server.applyMiddleware({ app });
 
 // Serve static assets if not on the webpack dev server

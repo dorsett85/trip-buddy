@@ -1,5 +1,6 @@
 import { UserInputError } from 'apollo-server-express';
-import { UserResolversDeps, LoginArgs, RegisterArgs, UserSchema } from './user.types';
+import { LoginArgs, RegisterArgs, UserSchema } from './user.types';
+import { ContextObj } from '../context.types';
 
 export const dummyUser: UserSchema = {
   id: 1,
@@ -9,38 +10,41 @@ export const dummyUser: UserSchema = {
   created: new Date()
 };
 
-export const userResolvers = (dependencies: UserResolversDeps) => {
-  const { UserService } = dependencies;
-  return {
-    Query: {
-      user: (): UserSchema => dummyUser,
-      users: (): UserSchema[] => [dummyUser]
-    },
-    Mutation: {
-      loginUser: async (_: any, args: LoginArgs): Promise<string | undefined> => {
-        const us = new UserService();
-        const { username, password, token } = await us.login(args);
+export const userResolvers = {
+  Query: {
+    user: (): UserSchema => dummyUser,
+    users: (): UserSchema[] => [dummyUser]
+  },
+  Mutation: {
+    loginUser: async (
+      _: any,
+      args: LoginArgs,
+      { UserService }: ContextObj
+    ): Promise<string | undefined> => {
+      const { username, password, token } = await UserService.login(args);
 
-        if (!username) {
-          throw new UserInputError('User does not exist');
-        }
-
-        if (!password) {
-          throw new UserInputError('Invalid username or password');
-        }
-        
-        return token;
-      },
-      registerUser: async (_: any, args: RegisterArgs): Promise<string | undefined> => {
-        const us = new UserService();
-        const { email, token } = await us.register(args);
-        
-        if (email) {
-          throw new UserInputError('User already exists');
-        }
-        
-        return token;
+      if (!username) {
+        throw new UserInputError('User does not exist');
       }
+
+      if (!password) {
+        throw new UserInputError('Invalid username or password');
+      }
+
+      return token;
+    },
+    registerUser: async (
+      _: any,
+      args: RegisterArgs,
+      { UserService }: ContextObj
+    ): Promise<string | undefined> => {
+      const { email, token } = await UserService.register(args);
+
+      if (email) {
+        throw new UserInputError('User already exists');
+      }
+
+      return token;
     }
-  };
+  }
 };

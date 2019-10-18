@@ -1,1 +1,1 @@
-export { schema } from './schemaContainer';
+export { config } from './config';

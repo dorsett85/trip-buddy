@@ -7,7 +7,7 @@ describe('dbHelpers module', () => {
     it('should have text with values', () => {
       const username = 'clayton';
       const { text, values } = addInsert(table, { username });
-      expect(text).toBe('INSERT INTO users (username) VALUES ($1)');
+      expect(text).toBe('INSERT INTO users (username) VALUES ($1) RETURNING *;');
       expect(values).toStrictEqual([username]);
     });
 
@@ -15,7 +15,7 @@ describe('dbHelpers module', () => {
       const username = 'clayton';
       const password = 'password123';
       const { text, values } = addInsert(table, { username, password });
-      expect(text).toBe('INSERT INTO users (username, password) VALUES ($1, $2)');
+      expect(text).toBe('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *;');
       expect(values).toStrictEqual([username, password]);
     });
 
@@ -23,7 +23,7 @@ describe('dbHelpers module', () => {
       const username = 'clayton';
       const password = 'password123';
       const { text, values } = addInsert(table, { username, password }, ['value'], 5);
-      expect(text).toBe('INSERT INTO users (username, password) VALUES ($5, $6)');
+      expect(text).toBe('INSERT INTO users (username, password) VALUES ($5, $6) RETURNING *;');
       expect(values).toStrictEqual(['value', username, password]);
     });
 
@@ -31,7 +31,7 @@ describe('dbHelpers module', () => {
       const username = 'clayton';
       const password = 'password123';
       const { text, values } = addInsert(table, { username, password }, [], 5);
-      expect(text).toBe('INSERT INTO users (username, password) VALUES ($5, $6)');
+      expect(text).toBe('INSERT INTO users (username, password) VALUES ($5, $6) RETURNING *;');
       expect(values).toStrictEqual([username, password]);
     });
   });

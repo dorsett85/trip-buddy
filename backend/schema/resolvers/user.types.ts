@@ -1,5 +1,3 @@
-import UserService from '../../services/User';
-
 export interface UserSchema {
   id: number;
   username: String;
@@ -7,10 +5,6 @@ export interface UserSchema {
   // eslint-disable-next-line camelcase
   email_validated: Boolean;
   created: Date;
-}
-
-export interface UserResolversDeps {
-  UserService: typeof UserService;
 }
 
 export interface LoginArgs {

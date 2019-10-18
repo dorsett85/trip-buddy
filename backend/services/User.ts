@@ -25,6 +25,15 @@ export default class UserService {
     return jwt.sign(user, jwtSecretKey);
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  public verify(token: string): UserRecord | null {
+    try {
+      return jwt.verify(token, jwtSecretKey) as UserRecord;
+    } catch (err) {
+      return null;
+    }
+  }
+
   public async login(args: LoginArgs): Promise<LoginResponse> {
     const { username, password } = args;
 
