@@ -34,6 +34,7 @@ export const userResolvers = (dependencies: UserResolversDeps) => {
       registerUser: async (_: any, args: RegisterArgs): Promise<string | undefined> => {
         const us = new UserService();
         const { email, token } = await us.register(args);
+        
         if (email) {
           throw new UserInputError('User already exists');
         }

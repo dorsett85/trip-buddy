@@ -1,25 +1,38 @@
-import { columnEqualsParam, addWhere } from './dbHelpers';
+import { addInsert, addWhere } from './dbHelpers';
 
 describe('dbHelpers module', () => {
-  describe('columnEqualsParam function', () => {
-    it('should be empty', () => {
-      const string = columnEqualsParam([], 'OR');
-      expect(string).toBe('');
+  describe('addInsert function', () => {
+    const table = 'users';
+
+    it('should have text with values', () => {
+      const username = 'clayton';
+      const { text, values } = addInsert(table, { username });
+      expect(text).toBe('INSERT INTO users (username) VALUES ($1)');
+      expect(values).toStrictEqual([username]);
     });
 
-    it('should have id', () => {
-      const string = columnEqualsParam(['id']);
-      expect(string).toBe('id = $1');
+    it('should have text with multiple values', () => {
+      const username = 'clayton';
+      const password = 'password123';
+      const { text, values } = addInsert(table, { username, password });
+      expect(text).toBe('INSERT INTO users (username, password) VALUES ($1, $2)');
+      expect(values).toStrictEqual([username, password]);
     });
 
-    it('should have id and username with AND', () => {
-      const string = columnEqualsParam(['id', 'username'], 'AND');
-      expect(string).toBe('id = $1 AND username = $2');
+    it('should have text with multiple values and different starting values', () => {
+      const username = 'clayton';
+      const password = 'password123';
+      const { text, values } = addInsert(table, { username, password }, ['value'], 5);
+      expect(text).toBe('INSERT INTO users (username, password) VALUES ($5, $6)');
+      expect(values).toStrictEqual(['value', username, password]);
     });
 
-    it('should have id and username with OR', () => {
-      const string = columnEqualsParam(['id', 'username'], 'OR');
-      expect(string).toBe('id = $1 OR username = $2');
+    it('should have text with multiple values and different paramVal', () => {
+      const username = 'clayton';
+      const password = 'password123';
+      const { text, values } = addInsert(table, { username, password }, [], 5);
+      expect(text).toBe('INSERT INTO users (username, password) VALUES ($5, $6)');
+      expect(values).toStrictEqual([username, password]);
     });
   });
 
@@ -29,10 +42,9 @@ describe('dbHelpers module', () => {
       orWhereArgs: {}
     };
 
-    it('should be empty', () => {
-      const { text, values } = addWhere(whereArgs, []);
-      expect(text).toBe('');
-      expect(values).toStrictEqual([]);
+    it('should return an error when both properties are empty objects', () => {
+      const err = () => addWhere(whereArgs);
+      expect(err).toThrow();
     });
 
     it('should have text and values', () => {
@@ -42,6 +54,16 @@ describe('dbHelpers module', () => {
 
       const { text, values } = addWhere(whereArgs, []);
       expect(text).toBe('WHERE id = $1');
+      expect(values).toStrictEqual([id]);
+    });
+
+    it('should have text and values with different starting value', () => {
+      const id = 1;
+      whereArgs.andWhereArgs = { id };
+      whereArgs.orWhereArgs = {};
+
+      const { text, values } = addWhere(whereArgs, [], 5);
+      expect(text).toBe('WHERE id = $5');
       expect(values).toStrictEqual([id]);
     });
 

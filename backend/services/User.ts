@@ -45,7 +45,7 @@ export default class UserService {
   }
 
   public async register(args: RegisterArgs): Promise<RegisterResponse> {
-    const { email } = args;
+    const { email, password } = args;
 
     // Check if user exists
     const user = await this.UserModel.findOne({ email });
@@ -53,17 +53,11 @@ export default class UserService {
       return { email };
     }
 
-    // TODO Create new user to db
-    const fakeUser = {
-      id: 1,
-      username: 'user',
-      email: 'email',
-      password: 'password',
-      email_validated: false,
-      created: new Date()
-    }
+    // Now we can create a new user and sign the token
+    const newUser = await this.UserModel.createOne({ username: email, password, email });
+    console.log(newUser);
+    const token = this.sign(newUser);
 
-    const token = this.sign(fakeUser);
     return { token };
   }
 }

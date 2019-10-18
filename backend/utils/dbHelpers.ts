@@ -1,72 +1,94 @@
+import { QueryConfig } from 'pg';
 import { isEmptyObject } from './isEmptyObject';
+import { KeyValue } from '../types';
 
 type Operator = 'AND' | 'OR';
 
 type Values = (string | number | boolean | null | undefined)[];
 
-interface AddWhere {
-  text: string;
-  values: Values;
-}
-
 interface WhereArgs {
-  andWhereArgs: {
-    [key: string]: any;
-  };
-  orWhereArgs: {
-    [key: string]: any;
-  };
+  andWhereArgs: KeyValue<any>;
+  orWhereArgs: KeyValue<any>;
 }
 
 /**
- * Function to create partial parameterized query
+ * Add insert clause text
  *
- * Given an array of column names, loop them so they equal a parameter
- * value (e.g., id = $1).  This helps in building dynamic parameterized
- * queries used for node postgres (pg)
- *
- * @example
- * // Outputs 'id = $1 AND username = $2'
- * columnEqualsParam(['id', 'username'], 'AND');
+ * Given an object of key (column name) / value (column values) pairs, create
+ * an insert clause text string
  */
-export const columnEqualsParam = (
-  colNames: string[],
-  operator: Operator = 'AND',
-  startingParamVal = 1
-): string => {
-  return colNames
-    .map((colName: string, idx: number) => `${colName} = $${idx + startingParamVal}`)
-    .join(` ${operator} `);
+export const addInsert = (
+  table: string,
+  insertArgs: KeyValue<any>,
+  values: Values = [],
+  paramVal = 1
+): QueryConfig => {
+  const newValues = [...values];
+  let newParamVal = paramVal;
+
+  // Loop through the insertArg entries to build the query and update variables
+  const { insertText, valueText } = Object.entries(insertArgs).reduce(
+    (acc, [key, value], idx, arr) => {
+      const addOpenParan = idx === 0 ? '(' : '';
+      const addCloseParan = idx === arr.length - 1 ? ')' : '';
+      const addCommaAndSpace = idx === arr.length - 1 ? '' : ', ';
+      acc.insertText += `${addOpenParan}${key}${addCommaAndSpace}${addCloseParan}`;
+      acc.valueText += `${addOpenParan}$${newParamVal}${addCommaAndSpace}${addCloseParan}`;
+      newValues.push(value);
+      newParamVal += 1;
+      return acc;
+    },
+    {
+      insertText: '',
+      valueText: 'VALUES '
+    }
+  );
+
+  return {
+    text: `INSERT INTO ${table} ${insertText} ${valueText} RETURNING *;`,
+    values: newValues
+  };
 };
 
-/*
- * WHERE helper functions
+/**
+ * Add where clause text
+ *
+ * Given an object of properties that contain key (column name) / value (column values) pairs,
+ * create a where clause text string
  */
-
 export const addWhere = (
   { andWhereArgs = {}, orWhereArgs = {} }: WhereArgs,
   values: Values = [],
   paramVal = 1
-): AddWhere => {
+): QueryConfig => {
   let whereClause = '';
+  const newValues = [...values];
   let newParamVal = paramVal;
-  let newValues = values.flat();
+
+  // Check for empty arg objects
+  const isAndEmpty = isEmptyObject(andWhereArgs);
+  const isOrEmpty = isEmptyObject(orWhereArgs);
+  if (isAndEmpty && isOrEmpty) {
+    throw Error('andWhereArgs and orWhereArgs are both empty');
+  }
+
+  // Define function for adding to the query config variables
+  const addtoQueryConfig = (args: object, operator: Operator) => {
+    Object.entries(args).forEach(([key, value], idx, arr) => {
+      const addOperator = idx === arr.length - 1 ? '' : ` ${operator} `;
+      whereClause += `${key} = $${newParamVal}${addOperator}`;
+      newValues.push(value);
+      newParamVal += 1;
+    });
+  };
 
   // Add the AND and OR where clauses if they exist
-  if (!isEmptyObject(andWhereArgs)) {
-    const colNames = Object.keys(andWhereArgs);
-    const colValues = Object.values(andWhereArgs);
-    whereClause += columnEqualsParam(colNames, 'AND', newParamVal);
-    newParamVal += colNames.length;
-    newValues = newValues.concat(colValues);
+  if (!isAndEmpty) {
+    addtoQueryConfig(andWhereArgs, 'AND');
   }
-  if (!isEmptyObject(orWhereArgs)) {
-    const colNames = Object.keys(orWhereArgs);
-    const colValues = Object.values(orWhereArgs);
+  if (!isOrEmpty) {
     whereClause += whereClause.length ? ' OR ' : '';
-    whereClause += columnEqualsParam(colNames, 'OR', newParamVal);
-    newParamVal += colNames.length;
-    newValues = newValues.concat(colValues);
+    addtoQueryConfig(orWhereArgs, 'OR');
   }
 
   return {
