@@ -55,7 +55,6 @@ export default class UserService {
 
     // Now we can create a new user and sign the token
     const newUser = await this.UserModel.createOne({ username: email, password, email });
-    console.log(newUser);
     const token = this.sign(newUser);
 
     return { token };
