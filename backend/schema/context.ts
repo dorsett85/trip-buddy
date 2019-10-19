@@ -6,10 +6,10 @@ export const getContext = (dependencies: ContextDeps) => ({ req }: ExpressContex
   const { UserService } = dependencies;
   const us = new UserService();
 
-  // Verifify user
+  // Verify user
   const token = getToken(req.headers.authorization);
-  const user = token && us.verify(token);
-  console.log(user);
+  const user = token ? us.verify(token) : null;
+  
   return {
     UserService: us,
     user

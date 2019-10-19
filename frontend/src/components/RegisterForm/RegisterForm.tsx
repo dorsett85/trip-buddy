@@ -7,7 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import ColoredButton from '../generic/ColoredButton/ColoredButton';
-import { setUser } from '../../store/user/actions';
+import { setLoggedIn } from '../../store/user/actions';
 import { RegisterFormInputs } from './RegisterForm.types';
 
 const REGISTER_USER = gql`
@@ -23,33 +23,42 @@ const inputProps = {
 const emailInputProps = {
   ...inputProps,
   maxLength: 50
-}
+};
 
 const passwordInputProps = {
   ...inputProps,
   maxLength: 12
-}
+};
 
 const RegisterForm: React.FC = () => {
   const dispatch = useDispatch();
-  const [registerUser, { loading, data }] = useMutation(REGISTER_USER);
   const [registerInputs, setRegisterInputs] = useState(RegisterFormInputs);
   const { email, password } = registerInputs;
+  const [registerError, setRegisterError] = useState('');
 
-  if (data) {
-    dispatch(setUser(data));
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    registerUser({ variables: { email, password } });
-  };
+  // Define registration mutation and handlers
+  const [registerUser, { loading }] = useMutation(REGISTER_USER, {
+    onCompleted: data => {
+      setRegisterError('');
+      localStorage.setItem('token', data.registerUser);
+      dispatch(setLoggedIn(true));
+    },
+    onError: error => {
+      const { message } = error.graphQLErrors[0];
+      setRegisterError(message);
+    }
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRegisterInputs({
       ...registerInputs,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    registerUser({ variables: { email, password } });
   };
 
   return (
@@ -64,6 +73,7 @@ const RegisterForm: React.FC = () => {
           variant='outlined'
           margin='normal'
           required
+          error={!!registerError}
           inputProps={emailInputProps}
           InputLabelProps={{
             shrink: true
@@ -80,6 +90,8 @@ const RegisterForm: React.FC = () => {
           variant='outlined'
           margin='normal'
           required
+          error={!!registerError}
+          helperText={registerError}
           inputProps={passwordInputProps}
           InputLabelProps={{
             shrink: true

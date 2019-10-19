@@ -1,7 +1,5 @@
-import { UserState, UserActionTypes } from './user/types';
+import { UserState } from './user/types';
 
 export interface AppState {
   user: UserState
 }
-
-export type AppActionTypes = UserActionTypes;

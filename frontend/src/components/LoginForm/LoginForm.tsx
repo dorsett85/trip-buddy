@@ -7,7 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import ColoredButton from '../generic/ColoredButton/ColoredButton';
-import { setUser } from '../../store/user/actions';
+import { setLoggedIn } from '../../store/user/actions';
 import { LoginFormInputs } from './LoginForm.types';
 
 const LOGIN_USER = gql`
@@ -18,14 +18,24 @@ const LOGIN_USER = gql`
 
 const LoginForm: React.FC = () => {
   const dispatch = useDispatch();
-  const [loginUser, { loading, error, data }] = useMutation(LOGIN_USER);
   const [loginInputs, setLoginInputs] = useState(LoginFormInputs);
   const { username, password } = loginInputs;
   const [loginError, setLoginError] = useState('');
-  const [enableError, setEnableError] = useState(false);
+
+  // Define login mutation and handlers
+  const [loginUser, { loading }] = useMutation(LOGIN_USER, {
+    onCompleted: data => {
+      setLoginError('');
+      localStorage.setItem('token', data.loginUser);
+      dispatch(setLoggedIn(true));
+    },
+    onError: error => {
+      const { message } = error.graphQLErrors[0];
+      setLoginError(message);
+    }
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEnableError(false);
     setLoginError('');
     setLoginInputs({
       ...loginInputs,
@@ -35,22 +45,8 @@ const LoginForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setEnableError(true);
     loginUser({ variables: { username, password } });
   };
-
-  if (data) {
-    console.log(data.loginUser);
-    dispatch(setUser(data));
-  }
-
-  // Update the UI with error message from the graphql request
-  if (error && enableError) {
-    const { message } = error.graphQLErrors[0];
-    if (loginError !== message) {
-      setLoginError(message);
-    }
-  }
 
   return (
     <form onSubmit={handleSubmit}>

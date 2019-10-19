@@ -1,7 +1,7 @@
 import { createStore, combineReducers, applyMiddleware, Store, Action } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { userReducer } from './user/reducer';
-import { AppState, AppActionTypes } from './types';
+import { AppState } from './types';
 
 const rootReducer = combineReducers<AppState>({
   user: userReducer
@@ -9,7 +9,7 @@ const rootReducer = combineReducers<AppState>({
 
 export type AppState = ReturnType<typeof rootReducer>;
 
-function configureStore(): Store<AppState, Action<AppActionTypes>> {
+function configureStore(): Store<AppState, Action> {
   const middlewares = [thunkMiddleware];
   const middleWareEnhancer = applyMiddleware(...middlewares);
   const store = createStore(rootReducer, undefined, middleWareEnhancer);

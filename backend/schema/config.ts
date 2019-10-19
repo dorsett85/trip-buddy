@@ -1,4 +1,4 @@
-import { makeExecutableSchema } from 'apollo-server-express';
+import { makeExecutableSchema, ApolloServerExpressConfig } from 'apollo-server-express';
 import UserService from '../services/User';
 import { rootTypeDefs, userTypeDefs, dateTypeDefs } from './typeDefs';
 import { userResolvers, dateResolvers } from './resolvers';
@@ -10,20 +10,16 @@ import { shallowMerge } from '../utils/shallowMerge';
  * schema (make up of typeDefs and resolvers), and the context 
  */
 
-/* ***** SCHEMA ***** */
 const resolvers = shallowMerge([userResolvers, dateResolvers]);
 const typeDefs = [rootTypeDefs, userTypeDefs, dateTypeDefs];
-
 const schema = makeExecutableSchema({
   typeDefs,
   resolvers
 });
 
-/* ***** CONTEXT ***** */
 const context = getContext({ UserService });
 
-/* ***** ApolloServerExpressConfig ***** */
-export const config = {
+export const config: ApolloServerExpressConfig = {
   schema,
   context
 }
