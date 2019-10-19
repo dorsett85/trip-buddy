@@ -1,5 +1,7 @@
 import { PoolConfig } from 'pg';
 
+export type Env = 'development' | 'testing' | 'production';
+
 export interface ExpressConfig {
   port: number;
   jwtSecretKey: string;

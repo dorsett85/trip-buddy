@@ -1,10 +1,10 @@
 import { ENV, JWT_SECRET_KEY, DB_CONNECTION } from '../.env.json';
-import { ExpressConfig, PgConfig } from './config.types';
+import { ExpressConfig, PgConfig, Env } from './config.types';
 
 // Define the process NODE_ENV env var to work with Express defaults
 process.env.NODE_ENV = ENV;
 
-export const env: string = ENV;
+export const env = ENV as Env;
 
 export const expressServer: ExpressConfig = {
   port: 4001,

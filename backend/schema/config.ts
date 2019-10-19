@@ -1,25 +1,48 @@
-import { makeExecutableSchema, ApolloServerExpressConfig } from 'apollo-server-express';
+import { ApolloServerExpressConfig } from 'apollo-server-express';
+import { GraphQLError } from 'graphql';
 import UserService from '../services/User';
 import { rootTypeDefs, userTypeDefs, dateTypeDefs } from './typeDefs';
 import { userResolvers, dateResolvers } from './resolvers';
 import { getContext } from './context';
 import { shallowMerge } from '../utils/shallowMerge';
+import {
+  INTERNAL_SERVER_ERROR,
+  INTERNAL_SERVER_ERROR_MESSAGE
+} from '../utils/constants/errors';
+import { env } from '../config/config';
 
 /*
- * Define the ApolloServerExpressConfig here, which includes the 
- * schema (make up of typeDefs and resolvers), and the context 
+ * Define the ApolloServerExpressConfig here, which includes the
+ * schema (make up of typeDefs and resolvers), and the context
  */
 
-const resolvers = shallowMerge([userResolvers, dateResolvers]);
 const typeDefs = [rootTypeDefs, userTypeDefs, dateTypeDefs];
-const schema = makeExecutableSchema({
-  typeDefs,
-  resolvers
-});
-
+const resolvers = shallowMerge([userResolvers, dateResolvers]);
 const context = getContext({ UserService });
 
+const formatError = (err: GraphQLError) => {
+  const formattedErr = err;
+  const { extensions } = err;
+
+  if (extensions) {
+    console.log('\n', extensions.exception.stacktrace.join('\n'));
+
+    // Define production overrides for errors sent to the client
+    if (env === 'production') {
+      if (extensions.code === INTERNAL_SERVER_ERROR) {
+        formattedErr.message = INTERNAL_SERVER_ERROR_MESSAGE;
+      }
+
+      delete extensions.exception;
+    }
+  }
+
+  return formattedErr;
+};
+
 export const config: ApolloServerExpressConfig = {
-  schema,
-  context
-}
+  typeDefs,
+  resolvers,
+  context,
+  formatError
+};

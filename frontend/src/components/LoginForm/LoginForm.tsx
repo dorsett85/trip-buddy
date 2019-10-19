@@ -9,6 +9,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import ColoredButton from '../generic/ColoredButton/ColoredButton';
 import { setLoggedIn } from '../../store/user/actions';
 import { LoginFormInputs } from './LoginForm.types';
+import { reduceApolloError, getFirstError } from '../../utils/apolloErrors';
 
 const LOGIN_USER = gql`
   mutation LoginUser($username: String!, $password: String!) {
@@ -30,8 +31,8 @@ const LoginForm: React.FC = () => {
       dispatch(setLoggedIn(true));
     },
     onError: error => {
-      const { message } = error.graphQLErrors[0];
-      setLoginError(message);
+      const reducedErr = reduceApolloError(error);
+      return setLoginError(getFirstError(reducedErr));
     }
   });
 

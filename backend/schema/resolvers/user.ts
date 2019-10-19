@@ -46,6 +46,6 @@ const Mutation = {
 
     return token;
   }
-}
+};
 
 export const userResolvers = { Query, Mutation };
