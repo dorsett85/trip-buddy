@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, memo } from 'react';
+import React, { lazy, Suspense } from 'react';
 
 const TripMap = lazy(() => import('./TripMap'));
 
@@ -8,4 +8,4 @@ const TripMapLazy = () => (
   </Suspense>
 );
 
-export default memo(TripMapLazy);
+export default TripMapLazy;

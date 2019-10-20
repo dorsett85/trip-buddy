@@ -4,7 +4,7 @@ import { addWhere, addInsert } from '../utils/dbHelpers';
 import { UserRecord } from './User.types';
 
 export default class UserModel {
-  public static async createOne(user: UserRecord): Promise<UserRecord> {
+  public static async createOne(user: Partial<UserRecord>): Promise<UserRecord> {
     const query = addInsert('users', user);
     const {
       rows: [row]

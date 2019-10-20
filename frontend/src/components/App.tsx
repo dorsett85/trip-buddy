@@ -1,11 +1,11 @@
 import React from 'react';
-import TripMapLazyLoad from './TripMap/TripMapLazyLoad';
+import TripMapLazy from './TripMap/TripMapLazy';
 import CheckLoggedIn from './CheckLoggedIn/CheckLoggedIn';
 
 const App: React.FC = () => {
   return (
     <>
-      <TripMapLazyLoad />
+      <TripMapLazy />
       <CheckLoggedIn />
     </>
   );

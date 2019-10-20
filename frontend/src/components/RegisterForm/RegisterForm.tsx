@@ -9,9 +9,9 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import ColoredButton from '../generic/ColoredButton/ColoredButton';
 import { setLoggedIn } from '../../store/user/actions';
 import { RegisterFormInputs } from './RegisterForm.types';
-import { reduceApolloError, getFirstError } from '../../utils/apolloErrors';
+import { getFirstError } from '../../utils/apolloErrors';
 
-const REGISTER_USER = gql`
+export const REGISTER_USER = gql`
   mutation RegisterUser($email: String!, $password: String!) {
     registerUser(email: $email, password: $password)
   }
@@ -41,12 +41,11 @@ const RegisterForm: React.FC = () => {
   const [registerUser, { loading }] = useMutation(REGISTER_USER, {
     onCompleted: data => {
       setRegisterError('');
-      localStorage.setItem('token', data.registerUser);
+      localStorage.setItem('token', `Bearer ${data.loginUser}`);
       dispatch(setLoggedIn(true));
     },
     onError: error => {
-      const reducedErr = reduceApolloError(error);
-      return setRegisterError(getFirstError(reducedErr));
+      setRegisterError(getFirstError(error));
     }
   });
 

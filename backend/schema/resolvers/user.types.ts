@@ -1,10 +1,10 @@
 export interface UserSchema {
-  id: number;
-  username: String;
-  email: String;
+  id?: number;
+  username?: String;
+  email?: String;
   // eslint-disable-next-line camelcase
-  email_validated: Boolean;
-  created: Date;
+  email_validated?: boolean;
+  created?: Date;
 }
 
 export interface LoginArgs {

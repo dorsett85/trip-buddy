@@ -11,7 +11,9 @@ export const dummyUser: UserSchema = {
 };
 
 const Query = {
-  user: (): UserSchema => dummyUser,
+  user: (_: any, __: any, { user }: ContextObj): UserSchema => {
+    return user || {};
+  },
   users: (): UserSchema[] => [dummyUser]
 };
 
