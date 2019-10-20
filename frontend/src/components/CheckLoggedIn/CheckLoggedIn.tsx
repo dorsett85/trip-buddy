@@ -8,7 +8,7 @@ import { TOKEN } from '../../utils/constants/localStorage';
 
 const CheckLoggedIn: React.FC = () => {
   const dispatch = useDispatch();
-  const { isLoggedIn } = useSelector((state: AppState) => state.user);
+  const isLoggedIn = useSelector((state: AppState) => state.user.isLoggedIn);
   if (!isLoggedIn) {
     const token = localStorage.getItem(TOKEN);
     if (token) {
@@ -16,7 +16,12 @@ const CheckLoggedIn: React.FC = () => {
     }
   }
 
-  return !isLoggedIn ? <LandingModal /> : <Navigator />;
+  return (
+    <>
+      <LandingModal show={!isLoggedIn} />
+      <Navigator show={isLoggedIn} />
+    </>
+  );
 };
 
 export default CheckLoggedIn;

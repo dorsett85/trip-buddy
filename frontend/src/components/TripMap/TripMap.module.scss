@@ -1,19 +1,10 @@
 .mapContainer {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-}
-
-.mapFullscreenControl {
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 10px
+  height: 100vh;
 }
 
 .mapNavControl {
   position: absolute;
-  top: 36px;
+  top: 64px;
   left: 0;
   padding: 10px
 }

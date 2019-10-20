@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import MapGl, { FullscreenControl, NavigationControl, ViewState } from 'react-map-gl';
+import MapGl, { NavigationControl, ViewState } from 'react-map-gl';
 import styles from './TripMap.module.scss';
+import { useSelector } from 'react-redux';
+import { AppState } from '../../store';
+import { Slide } from '@material-ui/core';
 
 const MAPBOX_API_TOKEN =
   'pk.eyJ1IjoiZG9yc2V0dDg1IiwiYSI6ImNqcHppM204MDBjYmozeHIxazF3NnBqNXkifQ.9sZzzAFl48z9rBc9s1LTEQ';
@@ -14,11 +17,12 @@ const initialViewport: ViewState = {
 };
 
 const TripMap: React.FC = () => {
+  const { isLoggedIn } = useSelector((state: AppState) => state.user);
   const [viewport, setViewport] = useState(initialViewport);
 
   const updateViewport = (newViewport: ViewState) => {
-    setViewport(newViewport)
-  }
+    setViewport(newViewport);
+  };
 
   return (
     <div className={styles.mapContainer}>
@@ -30,12 +34,13 @@ const TripMap: React.FC = () => {
         onViewportChange={updateViewport}
         mapboxApiAccessToken={MAPBOX_API_TOKEN}
       >
-        <div className={styles.mapFullscreenControl}>
-          <FullscreenControl />
-        </div>
-        <div className={styles.mapNavControl}>
-          <NavigationControl />
-        </div>
+        {isLoggedIn && (
+          <Slide in direction='down'>
+            <div className={styles.mapNavControl}>
+              <NavigationControl />
+            </div>
+          </Slide>
+        )}
       </MapGl>
     </div>
   );
