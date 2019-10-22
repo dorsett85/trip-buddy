@@ -3,11 +3,14 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import Popover from '@material-ui/core/Popover';
 import Slide from '@material-ui/core/Slide';
 import MapIcon from '@material-ui/icons/Map';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
 import { useQuery } from '@apollo/react-hooks';
@@ -32,8 +35,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   title: {
     flexGrow: 1
   },
-  username: {
-    marginRight: theme.spacing(2)
+  userPopover: {
+    paddingTop: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    width: 200
   }
 }));
 
@@ -54,7 +60,7 @@ const Navigator: React.FC<ShowComponent> = ({ show }) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handlePopoverClose = () => {
     setAnchorEl(null);
   };
 
@@ -81,26 +87,39 @@ const Navigator: React.FC<ShowComponent> = ({ show }) => {
           <IconButton edge='end' onClick={handleMenu} color='inherit'>
             <AccountCircle />
           </IconButton>
-          <Menu
+          <Popover
+            open={!!anchorEl}
             anchorEl={anchorEl}
-            getContentAnchorEl={null}
+            classes={{
+              paper: classes.userPopover
+            }}
             anchorOrigin={{
               vertical: 'bottom',
               horizontal: 'right'
             }}
-            keepMounted
             transformOrigin={{
               vertical: 'top',
               horizontal: 'right'
             }}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
+            onClose={handlePopoverClose}
+            disableRestoreFocus
           >
-            <MenuItem disabled>{user.username}</MenuItem>
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>My account</MenuItem>
-            <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
-          </Menu>
+            <Typography variant='h6' gutterBottom>
+              {user.username}
+            </Typography>
+            <Divider />
+            <List>
+              <ListItem button onClick={handlePopoverClose}>
+                <ListItemText primary='Profile' />
+              </ListItem>
+              <ListItem button onClick={handlePopoverClose}>
+                <ListItemText primary='My Account' />
+              </ListItem>
+              <ListItem button onClick={handleLogoutClick}>
+                <ListItemText primary='Logout' />
+              </ListItem>
+            </List>
+          </Popover>
         </Toolbar>
       </AppBar>
     </Slide>
