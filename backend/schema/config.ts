@@ -1,7 +1,7 @@
 import { ApolloServerExpressConfig } from 'apollo-server-express';
 import { GraphQLError } from 'graphql';
 import UserService from '../services/User';
-import { rootTypeDefs, userTypeDefs, dateTypeDefs } from './typeDefs';
+import { rootTypeDefs, userTypeDefs, dateTypeDefs, tripTypeDefs } from './typeDefs';
 import { userResolvers, dateResolvers } from './resolvers';
 import { getContext } from './context';
 import { shallowMerge } from '../utils/shallowMerge';
@@ -16,7 +16,7 @@ import { env } from '../config/config';
  * schema (make up of typeDefs and resolvers), and the context
  */
 
-const typeDefs = [rootTypeDefs, userTypeDefs, dateTypeDefs];
+const typeDefs = [rootTypeDefs, userTypeDefs, dateTypeDefs, tripTypeDefs];
 const resolvers = shallowMerge([userResolvers, dateResolvers]);
 const context = getContext({ UserService });
 

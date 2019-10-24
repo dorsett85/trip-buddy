@@ -1,20 +1,21 @@
-import { UserInputError } from 'apollo-server-express';
+import { UserInputError, IResolverObject, IResolvers } from 'apollo-server-express';
 import { LoginArgs, RegisterArgs, UserSchema } from './user.types';
 import { ContextObj } from '../context.types';
 
-export const dummyUser: UserSchema = {
-  id: 1,
-  username: 'clayton',
-  email: 'claytonphillipsdorsett@gmail.com',
-  email_validated: false,
-  created: new Date()
-};
+const User: IResolverObject = {
+  trips: (user: UserSchema) => {
+    console.log(user);
+    return [];
+  }
+}
 
 const Query = {
   user: (_: any, __: any, { user }: ContextObj): UserSchema => {
     return user || {};
   },
-  users: (): UserSchema[] => [dummyUser]
+  users: (_: any, __: any, { user }: ContextObj): UserSchema[] => {
+    return [user || {}];
+  }
 };
 
 const Mutation = {
@@ -50,4 +51,4 @@ const Mutation = {
   }
 };
 
-export const userResolvers = { Query, Mutation };
+export const userResolvers: IResolvers = { User, Query, Mutation };

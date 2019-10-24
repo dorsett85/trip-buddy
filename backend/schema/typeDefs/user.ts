@@ -17,5 +17,6 @@ export const userTypeDefs = gql`
     email: String
     email_validated: Boolean
     created: Date
+    trips: [Trip]
   }
 `;
