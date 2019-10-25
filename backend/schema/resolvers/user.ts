@@ -1,29 +1,26 @@
-import { UserInputError, IResolverObject, IResolvers } from 'apollo-server-express';
-import { LoginArgs, RegisterArgs, UserSchema } from './user.types';
-import { ContextObj } from '../context.types';
+import { UserInputError } from 'apollo-server-express';
+import { UserResolvers } from './user.types';
 
-const User: IResolverObject = {
-  trips: (user: UserSchema) => {
-    console.log(user);
-    return [];
+const User: UserResolvers['User'] = {
+  trips: (_, __, { user }) => {
+    if (!user) {
+      return [];
+    }
+    return [{ id: 1 }];
   }
-}
+};
 
-const Query = {
-  user: (_: any, __: any, { user }: ContextObj): UserSchema => {
+const Query: UserResolvers['Query'] = {
+  user: (_, __, { user }) => {
     return user || {};
   },
-  users: (_: any, __: any, { user }: ContextObj): UserSchema[] => {
+  users: (_, __, { user }) => {
     return [user || {}];
   }
 };
 
-const Mutation = {
-  loginUser: async (
-    _: any,
-    args: LoginArgs,
-    { UserService }: ContextObj
-  ): Promise<string | undefined> => {
+const Mutation: UserResolvers['Mutation'] = {
+  loginUser: async (_, args, { UserService }) => {
     const { username, password, token } = await UserService.login(args);
 
     if (!username) {
@@ -36,11 +33,7 @@ const Mutation = {
 
     return token;
   },
-  registerUser: async (
-    _: any,
-    args: RegisterArgs,
-    { UserService }: ContextObj
-  ): Promise<string | undefined> => {
+  registerUser: async (_, args, { UserService }) => {
     const { email, token } = await UserService.register(args);
 
     if (email) {
@@ -51,4 +44,4 @@ const Mutation = {
   }
 };
 
-export const userResolvers: IResolvers = { User, Query, Mutation };
+export const userResolvers: UserResolvers = { User, Query, Mutation };

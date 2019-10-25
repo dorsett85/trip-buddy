@@ -1,4 +1,5 @@
 import UserService from '../services/User';
+// eslint-disable-next-line import/no-cycle
 import { UserSchema } from './resolvers/user.types';
 
 export interface ContextDeps {
