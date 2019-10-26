@@ -5,15 +5,15 @@ import { getToken } from '../utils/getToken';
 export const getContext = (dependencies: ContextDeps) => ({
   req
 }: ExpressContext): ContextObj => {
-  const { UserService } = dependencies;
-  const us = new UserService();
+  const { UserService, TripService } = dependencies;
 
   // Verify user
   const token = getToken(req.headers.authorization);
-  const user = token ? us.verify(token) : null;
+  const user = token ? UserService.verify(token) : null;
 
   return {
-    UserService: us,
-    user
+    user,
+    UserService: new UserService(),
+    TripService: new TripService()
   };
 };

@@ -20,13 +20,11 @@ export default class UserService {
     this.UserModel = dependencies.UserModel || UserModel;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  public sign(user: UserRecord) {
+  public static sign(user: UserRecord) {
     return jwt.sign(user, jwtSecretKey);
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  public verify(token: string): UserRecord | null {
+  public static verify(token: string): UserRecord | null {
     try {
       return jwt.verify(token, jwtSecretKey) as UserRecord;
     } catch (err) {
@@ -49,7 +47,7 @@ export default class UserService {
       return { username };
     }
 
-    const token = this.sign(user);
+    const token = UserService.sign(user);
     return { username, password, token };
   }
 
@@ -64,7 +62,7 @@ export default class UserService {
 
     // Now we can create a new user and sign the token
     const newUser = await this.UserModel.createOne({ username: email, password, email });
-    const token = this.sign(newUser);
+    const token = UserService.sign(newUser);
 
     return { token };
   }

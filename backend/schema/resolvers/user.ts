@@ -2,7 +2,7 @@ import { UserInputError } from 'apollo-server-express';
 import { UserResolvers } from './user.types';
 
 const User: UserResolvers['User'] = {
-  trips: (_, __, { user }) => {
+  trips: (_, __, { user, TripService }) => {
     if (!user) {
       return [];
     }

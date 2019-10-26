@@ -1,4 +1,4 @@
-// Match the user table
+// Match the users table
 export interface UserRecord {
   id: number;
   username: string;

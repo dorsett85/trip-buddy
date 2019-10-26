@@ -1,6 +1,7 @@
 import { ApolloServerExpressConfig } from 'apollo-server-express';
 import { GraphQLError } from 'graphql';
 import UserService from '../services/User';
+import TripService from '../services/Trip';
 import { rootTypeDefs, userTypeDefs, dateTypeDefs, tripTypeDefs } from './typeDefs';
 import { userResolvers, dateResolvers, tripResolvers } from './resolvers';
 import { getContext } from './context';
@@ -18,7 +19,7 @@ import { env } from '../config/config';
 
 const typeDefs = [rootTypeDefs, userTypeDefs, dateTypeDefs, tripTypeDefs];
 const resolvers = shallowMerge([userResolvers, tripResolvers, dateResolvers]);
-const context = getContext({ UserService });
+const context = getContext({ UserService, TripService });
 
 const formatError = (err: GraphQLError) => {
   const formattedErr = err;
