@@ -4,12 +4,23 @@ import { KeyValue } from '../types';
 
 type Operator = 'AND' | 'OR';
 
-type Values = (string | number | boolean | null | undefined)[];
-
 interface WhereArgs {
-  andWhereArgs: KeyValue<any>;
-  orWhereArgs: KeyValue<any>;
+  andWhereArgs: KeyValue;
+  orWhereArgs: KeyValue;
 }
+
+/**
+ * Add select clause text
+ *
+ * Given a table name and an array of column names, create an insert clause
+ * text string.  If no column names are given, default to '*' (all columns)
+ */
+export const addSelect = (table: string, columns: string[] = []): QueryConfig => {
+  const columnText = columns.length ? columns.join(', ') : '*';
+  const text = `SELECT ${columnText || '*'} FROM ${table}`;
+
+  return { text };
+};
 
 /**
  * Add insert clause text
@@ -19,11 +30,10 @@ interface WhereArgs {
  */
 export const addInsert = (
   table: string,
-  insertArgs: KeyValue<any>,
-  values: Values = [],
+  insertArgs: KeyValue,
   paramVal = 1
 ): QueryConfig => {
-  const newValues = [...values];
+  const values: string[] = [];
   let newParamVal = paramVal;
 
   // Loop through the insertArg entries to build the query and update variables
@@ -34,7 +44,7 @@ export const addInsert = (
       const addCommaAndSpace = idx === arr.length - 1 ? '' : ', ';
       acc.insertText += `${addOpenParan}${key}${addCommaAndSpace}${addCloseParan}`;
       acc.valueText += `${addOpenParan}$${newParamVal}${addCommaAndSpace}${addCloseParan}`;
-      newValues.push(value);
+      values.push(value);
       newParamVal += 1;
       return acc;
     },
@@ -46,7 +56,7 @@ export const addInsert = (
 
   return {
     text: `INSERT INTO ${table} ${insertText} ${valueText} RETURNING *;`,
-    values: newValues
+    values
   };
 };
 
@@ -58,11 +68,10 @@ export const addInsert = (
  */
 export const addWhere = (
   { andWhereArgs = {}, orWhereArgs = {} }: WhereArgs,
-  values: Values = [],
   paramVal = 1
 ): QueryConfig => {
-  let whereClause = '';
-  const newValues = [...values];
+  let whereText = '';
+  const values: string[] = [];
   let newParamVal = paramVal;
 
   // Check for empty arg objects
@@ -76,8 +85,8 @@ export const addWhere = (
   const addtoQueryConfig = (args: object, operator: Operator) => {
     Object.entries(args).forEach(([key, value], idx, arr) => {
       const addOperator = idx === arr.length - 1 ? '' : ` ${operator} `;
-      whereClause += `${key} = $${newParamVal}${addOperator}`;
-      newValues.push(value);
+      whereText += `${key} = $${newParamVal}${addOperator}`;
+      values.push(value);
       newParamVal += 1;
     });
   };
@@ -87,12 +96,12 @@ export const addWhere = (
     addtoQueryConfig(andWhereArgs, 'AND');
   }
   if (!isOrEmpty) {
-    whereClause += whereClause.length ? ' OR ' : '';
+    whereText += whereText.length ? ' OR ' : '';
     addtoQueryConfig(orWhereArgs, 'OR');
   }
 
   return {
-    text: whereClause ? `WHERE ${whereClause}` : '',
-    values: newValues
+    text: whereText ? `WHERE ${whereText}` : '',
+    values
   };
 };

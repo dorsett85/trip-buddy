@@ -10,8 +10,8 @@ import { KeyValue } from '../types';
  * If there are conflicts within nested properties then the old property will be
  * overridden.
  */
-export const shallowMerge = (arrOfObjects: KeyValue<any>[]): KeyValue<any> => {
-  const resolverAccumulator: KeyValue<any> = {};
+export const shallowMerge = (arrOfObjects: KeyValue[]): KeyValue => {
+  const resolverAccumulator: KeyValue = {};
   return arrOfObjects.reduce((acc, obj) => {
     // eslint-disable-next-line no-restricted-syntax
     for (const key of Object.keys(obj)) {

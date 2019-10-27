@@ -10,6 +10,6 @@ export interface Example {
   world: string;
 }
 
-export interface KeyValue<T> {
+export interface KeyValue<T = any> {
   [key: string]: T;
 }

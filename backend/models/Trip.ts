@@ -1,35 +1,44 @@
-import { QueryConfig } from 'pg';
 import db from '../db/db';
-import { addWhere, addInsert } from '../utils/dbHelpers';
-import { TripRecord } from './Trip.types';
+import { TripRecord, UsersTripsRecord } from './Trip.types';
+import { UserRecord } from './User.types';
+import BaseModel from './Base';
 
-export default class TripModel {
+export default class TripModel extends BaseModel {
+  public static tableName = 'trips';
+
   public static async createOne(trip: Partial<TripRecord>): Promise<TripRecord> {
-    const query = addInsert('trip', trip);
-    const {
-      rows: [row]
-    }: { rows: TripRecord[] } = await db.query(query);
-    return row;
+    return this.baseCreateOne(trip);
+  }
+
+  public static async createUsersTrips(usersTrips: UsersTripsRecord) {
+    return this.baseCreateOne(usersTrips, 'users_trips');
   }
 
   public static async findOne(
     andWhereArgs: Partial<TripRecord> = {},
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord | undefined> {
-    const [row] = await TripModel.findMany(andWhereArgs, orWhereArgs);
-    return row;
+    return this.baseFindOne(andWhereArgs, orWhereArgs);
   }
 
   public static async findMany(
     andWhereArgs: Partial<TripRecord> = {},
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord[]> {
-    // eslint-disable-next-line prefer-const
-    let { text, values } = addWhere({ andWhereArgs, orWhereArgs });
-    text = `select * from trips ${text};`;
+    return this.baseFindMany(andWhereArgs, orWhereArgs);
+  }
 
-    const query: QueryConfig = { text, values };
-    const { rows }: { rows: TripRecord[] } = await db.query(query);
+  public static async findByUserId(userId: UserRecord['id']): Promise<TripRecord[]> {
+    const text = `
+      SELECT t.*
+      FROM trips t
+        JOIN users_trips ut ON ut.trip_id = t.id
+        JOIN users u ON u.id = ut.user_id
+      WHERE u.id = $1;
+    `;
+    const values = [userId];
+
+    const { rows }: { rows: TripRecord[] } = await db.query({ text, values });
     return rows;
   }
 }

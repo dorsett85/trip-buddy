@@ -2,11 +2,12 @@ import { UserInputError } from 'apollo-server-express';
 import { UserResolvers } from './user.types';
 
 const User: UserResolvers['User'] = {
-  trips: (_, __, { user, TripService }) => {
+  trips: async (_, __, { user, TripService }) => {
     if (!user) {
       return [];
     }
-    return [{ id: 1 }];
+    const userTrips = await TripService.getByUserId(user.id as number);
+    return userTrips;
   }
 };
 

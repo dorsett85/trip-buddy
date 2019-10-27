@@ -8,3 +8,8 @@ export interface TripRecord {
   end_date: Date;
   created: Date;
 }
+
+export interface UsersTripsRecord {
+  user_id: number;
+  trip_id: number;
+}

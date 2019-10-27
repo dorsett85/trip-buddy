@@ -17,7 +17,7 @@ interface RegisterArgs {
 // Resolvers object
 export interface UserResolvers extends IResolvers {
   User: {
-    trips: ContextFieldResolver<any, TripSchema[]>;
+    trips: ContextFieldResolver<any, Promise<TripSchema[]>>;
   };
   Query: {
     user: ContextFieldResolver<any, UserSchema>;
