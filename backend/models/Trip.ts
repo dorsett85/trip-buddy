@@ -1,5 +1,5 @@
 import db from '../db/db';
-import { TripRecord, UsersTripsRecord } from './Trip.types';
+import { TripRecord } from './Trip.types';
 import { UserRecord } from './User.types';
 import BaseModel from './Base';
 
@@ -8,10 +8,6 @@ export default class TripModel extends BaseModel {
 
   public static async createOne(trip: Partial<TripRecord>): Promise<TripRecord> {
     return this.baseCreateOne(trip);
-  }
-
-  public static async createUsersTrips(usersTrips: UsersTripsRecord) {
-    return this.baseCreateOne(usersTrips, 'users_trips');
   }
 
   public static async findOne(

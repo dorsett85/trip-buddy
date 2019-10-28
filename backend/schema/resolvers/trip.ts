@@ -1,18 +1,13 @@
 import { TripResolvers } from './trip.types';
+import { isAuthenticated } from '../../utils/isAuthenticated';
 
 const Query: TripResolvers['Query'] = {
-  trip: (_, __, { user }) => {
-    if (!user) {
-      return {};
-    }
+  trip: isAuthenticated((_, __, { user }) => {
     return { id: 1 };
-  },
-  trips: (_, __, { user }) => {
-    if (!user) {
-      return [];
-    }
+  }),
+  trips: isAuthenticated((_, __, { user }) => {
     return [{ id: 1 }];
-  }
+  })
 };
 
 export const tripResolvers: TripResolvers = {

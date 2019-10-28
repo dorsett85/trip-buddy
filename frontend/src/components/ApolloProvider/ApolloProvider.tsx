@@ -9,7 +9,7 @@ interface Props {
 export const client = new ApolloClient({
   headers: {
     authorization: localStorage.getItem('token'),
-  },
+  }
 });
 
 const Provider: React.FC<Props> = ({ children }) => (

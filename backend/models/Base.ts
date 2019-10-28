@@ -5,9 +5,8 @@ import { KeyValue } from '../types';
 export default class BaseModel {
   public static tableName: string;
 
-  public static async baseCreateOne(record: KeyValue, table?: string): Promise<any> {
-    const useTable = table || this.tableName;
-    const query = addInsert(useTable, record);
+  public static async baseCreateOne(record: KeyValue): Promise<any> {
+    const query = addInsert(this.tableName, record);
     const {
       rows: [row]
     }: { rows: KeyValue[] } = await db.query(query);

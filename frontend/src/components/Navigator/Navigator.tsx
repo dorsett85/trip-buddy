@@ -12,18 +12,22 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import { TOKEN } from '../../utils/constants/localStorage';
-import { setLoggedIn } from '../../store/user/actions';
+import { setLoggedIn, setUser } from '../../store/user/actions';
 import { User } from '../../types/user';
 import { ShowComponent } from '../../types/componentProps';
+import { AppState } from '../../store';
 
 export const GET_USER = gql`
   query {
     user {
       username
+      trips {
+        id
+      }
     }
   }
 `;
@@ -45,14 +49,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const Navigator: React.FC<ShowComponent> = ({ show }) => {
   const dispatch = useDispatch();
-  const [user, setUser] = useState({} as User);
+  const user = useSelector((state: AppState) => state.user);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null as HTMLElement | null);
-
   // Define get user and handlers
   const { loading } = useQuery(GET_USER, {
     onCompleted: (data: { user: User }) => {
-      setUser(data.user);
+      dispatch(setUser(data.user));
     }
   });
 

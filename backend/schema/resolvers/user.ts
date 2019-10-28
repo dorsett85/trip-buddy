@@ -1,23 +1,10 @@
 import { UserInputError } from 'apollo-server-express';
 import { UserResolvers } from './user.types';
-
-const User: UserResolvers['User'] = {
-  trips: async (_, __, { user, TripService }) => {
-    if (!user) {
-      return [];
-    }
-    const userTrips = await TripService.getByUserId(user.id as number);
-    return userTrips;
-  }
-};
+import { isAuthenticated } from '../../utils/isAuthenticated';
 
 const Query: UserResolvers['Query'] = {
-  user: (_, __, { user }) => {
-    return user || {};
-  },
-  users: (_, __, { user }) => {
-    return [user || {}];
-  }
+  user: isAuthenticated((_, __, { user }) => user),
+  users: isAuthenticated((_, __, { user }) => [user])
 };
 
 const Mutation: UserResolvers['Mutation'] = {
@@ -43,6 +30,17 @@ const Mutation: UserResolvers['Mutation'] = {
 
     return token;
   }
+};
+
+// Nested queries
+const User: UserResolvers['User'] = {
+  trips: isAuthenticated(async (_, __, { user, TripService }) => {
+    if (!user) {
+      return [];
+    }
+    const userTrips = await TripService.getByUserId(user.id as number);
+    return userTrips;
+  })
 };
 
 export const userResolvers: UserResolvers = { User, Query, Mutation };

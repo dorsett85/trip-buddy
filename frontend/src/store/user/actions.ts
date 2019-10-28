@@ -1,13 +1,11 @@
-import { Action, SetUserAction, SetLoggedInAction } from './types';
+import { UserActionType, SetUser, SetLoggedIn,  } from './types';
 
-export const setLoggedIn = (
-  payload: SetLoggedInAction['payload']
-): SetLoggedInAction => ({
-  type: Action.SET_LOGGED_IN,
+export const setLoggedIn: SetLoggedIn = payload => ({
+  type: UserActionType.SET_LOGGED_IN,
   payload
 });
 
-export const setUser = (payload: SetUserAction['payload']): SetUserAction => ({
-  type: Action.SET_USER,
+export const setUser: SetUser = payload => ({
+  type: UserActionType.SET_USER,
   payload
 });
