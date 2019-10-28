@@ -21,10 +21,6 @@ export type SetLoggedInAction = ActionWithPayload<
   UserActionType.SET_LOGGED_IN,
   UserState['isLoggedIn']
 >;
-export type ActionCreatorWithPayload<
-  TAction extends ActionWithPayload<string, any>
-> = (payload: TAction['payload']) => TAction;
-
 export type SetUserAction = ActionWithPayload<UserActionType.SET_USER, User>;
 export type UserAction = SetLoggedInAction | SetUserAction;
 
