@@ -1,5 +1,4 @@
 import { UserState, UserReducer, UserActionType } from './types';
-import { User } from '../../types/user';
 
 const { SET_LOGGED_IN, SET_USER } = UserActionType;
 
@@ -8,14 +7,12 @@ const initialState: UserState = {
 };
 
 export const userReducer: UserReducer = (state = initialState, action) => {
-  const { type, payload } = action;
-
-  if (type === SET_LOGGED_IN) {
-    return { isLoggedIn: payload as boolean };
+  if (action.type === SET_LOGGED_IN) {
+    return { isLoggedIn: action.payload };
   }
 
-  if (type === SET_USER) {
-    return { ...state, ...payload as User };
+  if (action.type === SET_USER) {
+    return { ...state, ...action.payload };
   }
   return state;
-}
+};
