@@ -7,8 +7,12 @@ interface Props {
 }
 
 export const client = new ApolloClient({
-  headers: {
-    authorization: localStorage.getItem('token'),
+  request: operation => {
+    operation.setContext({
+      headers: {
+        authorization: localStorage.getItem('token')
+      }
+    });
   }
 });
 

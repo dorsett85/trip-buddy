@@ -60,8 +60,13 @@ export default class UserService {
       return { email };
     }
 
-    // Now we can create a new user and sign the token
-    const newUser = await this.UserModel.createOne({ username: email, password, email });
+    // Now we can create a new user with hashed password and sign the token
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    const newUser = await this.UserModel.createOne({
+      username: email,
+      password: hashedPassword,
+      email
+    });
     const token = UserService.sign(newUser);
 
     return { token };

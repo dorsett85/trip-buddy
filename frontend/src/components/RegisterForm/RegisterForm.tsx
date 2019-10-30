@@ -41,7 +41,7 @@ const RegisterForm: React.FC = () => {
   const [registerUser, { loading }] = useMutation(REGISTER_USER, {
     onCompleted: data => {
       setRegisterError('');
-      localStorage.setItem('token', `Bearer ${data.loginUser}`);
+      localStorage.setItem('token', `Bearer ${data.registerUser}`);
       dispatch(setLoggedIn(true));
     },
     onError: error => {
