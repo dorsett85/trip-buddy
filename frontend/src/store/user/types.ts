@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
 import { User } from '../../types/user';
-import { ActionWithPayload } from '../../types/store';
+import { ActionWithPayload, GenericActionCreator } from '../../types/store';
 
 // State
 export interface UserState extends User {
@@ -25,5 +25,5 @@ export type SetUserAction = ActionWithPayload<UserActionType.SET_USER, User>;
 export type UserAction = SetLoggedInAction | SetUserAction;
 
 // Action creators
-export type SetLoggedIn = (payload: SetLoggedInAction['payload']) => SetLoggedInAction;
-export type SetUser = (payload: SetUserAction['payload']) => SetUserAction;
+export type SetLoggedIn = GenericActionCreator<SetLoggedInAction>;
+export type SetUser = GenericActionCreator<SetUserAction>;

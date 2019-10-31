@@ -1,5 +1,7 @@
 import { UserState } from './user/types';
+import { TripState } from './trip/types';
 
 export interface AppState {
-  user: UserState
+  user: UserState;
+  trip: TripState;
 }

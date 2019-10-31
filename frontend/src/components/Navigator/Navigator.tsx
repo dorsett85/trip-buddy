@@ -6,10 +6,15 @@ import IconButton from '@material-ui/core/IconButton';
 import Slide from '@material-ui/core/Slide';
 import MapIcon from '@material-ui/icons/Map';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { ShowComponent } from '../../types/componentProps';
+import { ShowProps } from '../../types/componentProps';
 import UserDropdown from './UserDropdown';
+import CreateTrip from './CreateTrip';
 
 const useStyles = makeStyles((theme: Theme) => ({
+  createTrip: {
+    marginRight: theme.spacing(2),
+    color: theme.palette.common.white
+  },
   menuIcon: {
     marginRight: theme.spacing(2)
   },
@@ -18,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const Navigator: React.FC<ShowComponent> = ({ show }) => {
+const Navigator: React.FC<ShowProps> = ({ show }) => {
   const classes = useStyles();
 
   return (
@@ -28,6 +33,7 @@ const Navigator: React.FC<ShowComponent> = ({ show }) => {
           <Typography variant='h6' className={classes.title}>
             Trip Buddy
           </Typography>
+          <CreateTrip color='inherit' />
           <IconButton color='inherit'>
             <MapIcon />
           </IconButton>

@@ -11,7 +11,7 @@ import { TransitionProps } from '@material-ui/core/transitions';
 import TabBar from '../generic/TabBar/TabBar';
 import LoginForm from '../LoginForm/LoginForm';
 import RegisterForm from '../RegisterForm/RegisterForm';
-import { ShowComponent } from '../../types/componentProps';
+import { ShowProps } from '../../types/componentProps';
 
 interface LandingFormProps {
   formType: string;
@@ -24,7 +24,7 @@ const Transition = React.forwardRef<unknown, TransitionProps>((props, ref) => {
   return <Slide direction='up' ref={ref} {...props} />;
 });
 
-const LandingModal: React.FC<ShowComponent> = ({ show }) => {
+const LandingModal: React.FC<ShowProps> = ({ show }) => {
   const [tabValue, setTabValue] = useState('login');
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));

@@ -1,10 +1,12 @@
 import { createStore, combineReducers, applyMiddleware, Store } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { userReducer } from './user/reducer';
+import { tripReducer } from './trip/reducer';
 import { AppState } from './types';
 
 const rootReducer = combineReducers<AppState>({
-  user: userReducer
+  user: userReducer,
+  trip: tripReducer
 });
 
 export type AppState = ReturnType<typeof rootReducer>;
