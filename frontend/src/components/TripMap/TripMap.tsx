@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import MapGl, { NavigationControl, ViewState, PointerEvent, Marker } from 'react-map-gl';
+import IconButton from '@material-ui/core/IconButton';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
 import { Slide } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import styles from './TripMap.module.scss';
@@ -19,7 +21,7 @@ const initialViewport: ViewState = {
 const TripMap: React.FC = () => {
   const { isLoggedIn } = useSelector((state: AppState) => state.user);
   const { creatingTrip } = useSelector((state: AppState) => state.trip);
-  const [marker, setMarker] = useState(null as any);
+  const [markers, setMarkers] = useState([] as any[]);
   const [viewport, setViewport] = useState(initialViewport);
 
   const updateViewport = (newViewport: ViewState) => {
@@ -30,13 +32,23 @@ const TripMap: React.FC = () => {
     if (creatingTrip) {
       const [lng, lat] = e.lngLat;
       const marker = (
-        <Marker longitude={lng} latitude={lat}>
-          NEW MARKER
+        <Marker
+          key={`${lng}-${lat}`}
+          longitude={lng}
+          latitude={lat}
+          offsetLeft={-12}
+          offsetTop={-12}
+        >
+          <IconButton>
+            <LocationOnIcon color='secondary' />
+          </IconButton>
         </Marker>
       );
-      setMarker(marker);
+      const newMarkers = markers.concat(marker);
+      setMarkers(newMarkers);
     }
   };
+  console.log(<LocationOnIcon />);
 
   return (
     <div className={styles.mapContainer}>
@@ -49,7 +61,7 @@ const TripMap: React.FC = () => {
         onViewportChange={updateViewport}
         mapboxApiAccessToken={MAPBOX_API_TOKEN}
       >
-        {marker}
+        {markers}
         {isLoggedIn && (
           <Slide in direction='down'>
             <div className={styles.mapNavControl}>

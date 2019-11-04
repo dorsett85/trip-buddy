@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../store';
 import { setCreatingTrip } from '../../store/trip/actions';
 
-const CreateTrip: React.FC<ButtonProps> = props => {
+const CreateTripButton: React.FC<ButtonProps> = props => {
   const dispatch = useDispatch();
   const creatingTrip = useSelector((state: AppState) => state.trip.creatingTrip);
 
@@ -19,4 +19,4 @@ const CreateTrip: React.FC<ButtonProps> = props => {
   );
 };
 
-export default CreateTrip;
+export default CreateTripButton;

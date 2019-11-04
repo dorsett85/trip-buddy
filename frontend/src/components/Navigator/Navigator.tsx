@@ -8,7 +8,7 @@ import MapIcon from '@material-ui/icons/Map';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { ShowProps } from '../../types/componentProps';
 import UserDropdown from './UserDropdown';
-import CreateTrip from './CreateTrip';
+import CreateTrip from './CreateTripButton';
 
 const useStyles = makeStyles((theme: Theme) => ({
   createTrip: {
