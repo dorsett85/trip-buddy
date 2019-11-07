@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { gql } from 'apollo-boost';
+import styled from 'styled-components';
 import { TOKEN } from '../../utils/constants/localStorage';
 import { setLoggedIn, setUser } from '../../store/user/actions';
 import { User } from '../../types/user';
@@ -29,10 +30,6 @@ export const GET_USER = gql`
 `;
 
 const useStyles = makeStyles((theme: Theme) => ({
-  loadingUser: {
-    position: 'absolute',
-    color: theme.palette.common.white
-  },
   userPopover: {
     paddingTop: theme.spacing(1),
     paddingLeft: theme.spacing(1),
@@ -40,6 +37,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: 200
   }
 }));
+
+const CircularProgressStyled = styled(CircularProgress)`
+  position: absolute;
+  color: ${props => props.theme.colors.white};
+`
 
 const UserDropdown: React.FC = () => {
   const dispatch = useDispatch();
@@ -74,7 +76,7 @@ const UserDropdown: React.FC = () => {
     <>
       <IconButton edge='end' onClick={handleMenu} color='inherit'>
         {loading && (
-          <CircularProgress className={classes.loadingUser} color='secondary' />
+          <CircularProgressStyled color='inherit' />
         )}
         <AccountCircle />
       </IconButton>
