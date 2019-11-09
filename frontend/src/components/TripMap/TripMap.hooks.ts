@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Marker, ViewState, PointerEvent } from 'react-map-gl';
+import { useState } from 'react';
+import { ViewState, PointerEvent } from 'react-map-gl';
 import { useSelector } from 'react-redux';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
 import { AppState } from '../../store';
+import { createMarker } from './mapHelpers';
 
 const initialViewport: ViewState = {
   latitude: 37.785164,
@@ -23,18 +23,7 @@ export const useTripMap = () => {
 
   const handleClick = (e: PointerEvent) => {
     if (creating) {
-      const [lng, lat] = e.lngLat;
-      const marker = (
-        <Marker
-          key={`${lng}-${lat}`}
-          longitude={lng}
-          latitude={lat}
-          offsetLeft={-12}
-          offsetTop={-12}
-        >
-          <LocationOnIcon color='secondary' />
-        </Marker>
-      );
+      const marker = createMarker(e);
       const newMarkers = tripMarkers.concat(marker);
       setTripMarkers(newMarkers);
     }
