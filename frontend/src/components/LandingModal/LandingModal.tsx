@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
@@ -61,4 +61,4 @@ const LandingModal: React.FC<ShowProps> = ({ show }) => {
   );
 };
 
-export default LandingModal;
+export default memo(LandingModal);

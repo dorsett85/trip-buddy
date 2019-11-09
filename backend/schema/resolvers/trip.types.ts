@@ -17,5 +17,5 @@ export interface TripSchema {
   end_location?: [number];
   start_date?: Date;
   end_date?: Date;
-  created?: Date;
+  created_date?: Date;
 }

@@ -4,7 +4,8 @@ import { ActionWithPayload, GenericActionCreator } from '../../types/store';
 
 // State
 export interface UserState extends User {
-  isLoggedIn: boolean;
+  loggedIn: boolean;
+  loading: boolean;
 }
 
 // Reducer
@@ -13,17 +14,23 @@ export type UserReducer = Reducer<UserState, UserAction>;
 // Action types
 export enum UserActionType {
   SET_LOGGED_IN = 'SET_LOGGED_IN',
+  SET_LOADING = 'SET_LOADING',
   SET_USER = 'SET_USER'
 }
 
 // Actions
 export type SetLoggedInAction = ActionWithPayload<
   UserActionType.SET_LOGGED_IN,
-  UserState['isLoggedIn']
+  UserState['loggedIn']
+>;
+export type SetLoadingAction = ActionWithPayload<
+  UserActionType.SET_LOADING,
+  UserState['loading']
 >;
 export type SetUserAction = ActionWithPayload<UserActionType.SET_USER, User>;
-export type UserAction = SetLoggedInAction | SetUserAction;
+export type UserAction = SetLoggedInAction | SetLoadingAction | SetUserAction;
 
 // Action creators
 export type SetLoggedIn = GenericActionCreator<SetLoggedInAction>;
+export type SetLoading = GenericActionCreator<SetLoadingAction>;
 export type SetUser = GenericActionCreator<SetUserAction>;

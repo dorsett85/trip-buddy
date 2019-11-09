@@ -10,6 +10,7 @@ import ColoredButton from '../generic/ColoredButton/ColoredButton';
 import { setLoggedIn } from '../../store/user/actions';
 import { RegisterFormInputs } from './RegisterForm.types';
 import { getFirstError } from '../../utils/apolloErrors';
+import { setLocalToken } from '../../utils/localToken';
 
 export const REGISTER_USER = gql`
   mutation RegisterUser($email: String!, $password: String!) {
@@ -41,7 +42,7 @@ const RegisterForm: React.FC = () => {
   const [registerUser, { loading }] = useMutation(REGISTER_USER, {
     onCompleted: data => {
       setRegisterError('');
-      localStorage.setItem('token', `Bearer ${data.registerUser}`);
+      setLocalToken(data.registerUser);
       dispatch(setLoggedIn(true));
     },
     onError: error => {

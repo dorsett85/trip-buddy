@@ -12,7 +12,7 @@ export const up = async (pool: Pool): Promise<QueryResult<any>> => {
       end_location point NOT NULL,
       start_date timestamp NOT NULL,
       end_date timestamp NOT NULL,
-      created timestamp DEFAULT NOW() NOT NULL
+      created_date timestamp DEFAULT NOW() NOT NULL
     );
   `);
 };

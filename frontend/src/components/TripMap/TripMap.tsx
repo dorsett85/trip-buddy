@@ -1,57 +1,30 @@
-import React, { useState } from 'react';
-import MapGl, { NavigationControl, ViewState, PointerEvent, Marker } from 'react-map-gl';
-import IconButton from '@material-ui/core/IconButton';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
+import React from 'react';
+import MapGl, { NavigationControl } from 'react-map-gl';
 import { Slide } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import styles from './TripMap.module.scss';
+import styled from 'styled-components';
 import { AppState } from '../../store';
+import { useTripMap } from './TripMap.hooks';
 
 const MAPBOX_API_TOKEN =
   'pk.eyJ1IjoiZG9yc2V0dDg1IiwiYSI6ImNqcHppM204MDBjYmozeHIxazF3NnBqNXkifQ.9sZzzAFl48z9rBc9s1LTEQ';
 
-const initialViewport: ViewState = {
-  latitude: 37.785164,
-  longitude: -100,
-  zoom: 3.5,
-  bearing: 0,
-  pitch: 0
-};
+const MapContainer = styled.div`
+  height: 100vh;
+  .mapNavControl {
+    position: absolute;
+    top: 64px;
+    left: 0;
+    padding: 10px;
+  }
+`;
 
 const TripMap: React.FC = () => {
-  const { isLoggedIn } = useSelector((state: AppState) => state.user);
-  const { creatingTrip } = useSelector((state: AppState) => state.trip);
-  const [markers, setMarkers] = useState([] as any[]);
-  const [viewport, setViewport] = useState(initialViewport);
-
-  const updateViewport = (newViewport: ViewState) => {
-    setViewport(newViewport);
-  };
-
-  const handleClick = (e: PointerEvent) => {
-    if (creatingTrip) {
-      const [lng, lat] = e.lngLat;
-      const marker = (
-        <Marker
-          key={`${lng}-${lat}`}
-          longitude={lng}
-          latitude={lat}
-          offsetLeft={-12}
-          offsetTop={-12}
-        >
-          <IconButton>
-            <LocationOnIcon color='secondary' />
-          </IconButton>
-        </Marker>
-      );
-      const newMarkers = markers.concat(marker);
-      setMarkers(newMarkers);
-    }
-  };
-  console.log(<LocationOnIcon />);
+  const loggedIn = useSelector((state: AppState) => state.user.loggedIn);
+  const { viewport, updateViewport, handleClick, tripMarkers } = useTripMap();
 
   return (
-    <div className={styles.mapContainer}>
+    <MapContainer>
       <MapGl
         {...viewport}
         width='100%'
@@ -61,16 +34,16 @@ const TripMap: React.FC = () => {
         onViewportChange={updateViewport}
         mapboxApiAccessToken={MAPBOX_API_TOKEN}
       >
-        {markers}
-        {isLoggedIn && (
+        {tripMarkers}
+        {loggedIn && (
           <Slide in direction='down'>
-            <div className={styles.mapNavControl}>
+            <div className='mapNavControl'>
               <NavigationControl />
             </div>
           </Slide>
         )}
       </MapGl>
-    </div>
+    </MapContainer>
   );
 };
 

@@ -16,7 +16,7 @@ export const userTypeDefs = gql`
     username: String
     email: String
     email_validated: Boolean
-    created: Date
+    created_date: Date
     trips: [Trip]
   }
 `;

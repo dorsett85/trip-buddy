@@ -6,7 +6,7 @@ import { setCreatingTrip } from '../../store/trip/actions';
 
 const CreateTripButton: React.FC<ButtonProps> = props => {
   const dispatch = useDispatch();
-  const creatingTrip = useSelector((state: AppState) => state.trip.creatingTrip);
+  const creatingTrip = useSelector(({ trip }: AppState) => trip.creating);
 
   const handleClick = () => {
     dispatch(setCreatingTrip(!creatingTrip));

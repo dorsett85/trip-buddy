@@ -10,6 +10,7 @@ import ColoredButton from '../generic/ColoredButton/ColoredButton';
 import { setLoggedIn } from '../../store/user/actions';
 import { LoginFormInputs } from './LoginForm.types';
 import { getFirstError } from '../../utils/apolloErrors';
+import { setLocalToken } from '../../utils/localToken';
 
 export const LOGIN_USER = gql`
   mutation LoginUser($username: String!, $password: String!) {
@@ -27,7 +28,7 @@ const LoginForm: React.FC = () => {
   const [loginUser, { loading }] = useMutation(LOGIN_USER, {
     onCompleted: data => {
       setLoginError('');
-      localStorage.setItem('token', `Bearer ${data.loginUser}`);
+      setLocalToken(data.loginUser);
       dispatch(setLoggedIn(true));
     },
     onError: error => {

@@ -3,7 +3,6 @@ import { IResolvers } from 'apollo-server-express';
 import { ContextFieldResolver } from '../../types/resolvers';
 import { TripSchema } from './trip.types';
 
-// Argument objects
 interface LoginArgs {
   username: string;
   password: string;
@@ -14,7 +13,6 @@ interface RegisterArgs {
   password: string;
 }
 
-// Resolvers object
 export interface UserResolvers extends IResolvers {
   User: {
     trips: ContextFieldResolver<any, Promise<TripSchema[]>>;
@@ -29,12 +27,11 @@ export interface UserResolvers extends IResolvers {
   };
 }
 
-// Schema object
+/* eslint-disable camelcase */
 export interface UserSchema {
   id?: number;
   username?: String;
   email?: String;
-  // eslint-disable-next-line camelcase
   email_validated?: boolean;
-  created?: Date;
+  created_date?: Date;
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -44,4 +44,4 @@ const Navigator: React.FC<ShowProps> = ({ show }) => {
   );
 };
 
-export default Navigator;
+export default memo(Navigator);

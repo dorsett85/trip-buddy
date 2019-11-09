@@ -1,10 +1,11 @@
 import { Reducer } from 'redux';
-import { ActionWithPayload } from '../../types/store';
+import { ActionWithPayload, GenericActionCreator } from '../../types/store';
 import { Trip } from '../../types/trip';
 
 // State
 export interface TripState {
-  creatingTrip: boolean;
+  creating: boolean;
+  loading: boolean;
   trips: Trip[];
 }
 
@@ -13,17 +14,27 @@ export type TripReducer = Reducer<TripState, TripAction>;
 
 // Action types
 export enum TripActionType {
-  SET_CREATING_TRIP = 'SET_CREATING_TRIP'
+  SET_CREATING = 'SET_CREATING',
+  SET_LOADING = 'SET_LOADING',
+  SET_TRIPS = 'SET_TRIPS'
 }
 
 // Actions
-export type SetCreatingTripAction = ActionWithPayload<
-  TripActionType.SET_CREATING_TRIP,
-  TripState['creatingTrip']
+export type SetCreatingAction = ActionWithPayload<
+  TripActionType.SET_CREATING,
+  TripState['creating']
 >;
-export type TripAction = SetCreatingTripAction;
+export type SetLoadingAction = ActionWithPayload<
+  TripActionType.SET_LOADING,
+  TripState['loading']
+>;
+export type SetTripsAction = ActionWithPayload<
+  TripActionType.SET_TRIPS,
+  TripState['trips']
+>;
+export type TripAction = SetCreatingAction | SetLoadingAction | SetTripsAction;
 
 // Action creators
-export type SetCreatingTrip = (
-  payload: SetCreatingTripAction['payload']
-) => SetCreatingTripAction;
+export type SetCreating = GenericActionCreator<SetCreatingAction>;
+export type SetLoading = GenericActionCreator<SetLoadingAction>;
+export type SetTrips = GenericActionCreator<SetTripsAction>;

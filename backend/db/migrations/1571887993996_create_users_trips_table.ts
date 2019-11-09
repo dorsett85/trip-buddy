@@ -9,7 +9,7 @@ export const up = async (pool: Pool): Promise<QueryResult<any>> => {
       id serial PRIMARY KEY,
       user_id integer REFERENCES users(id),
       trip_id integer REFERENCES trips(id),
-      created timestamp DEFAULT NOW() NOT NULL
+      created_date timestamp DEFAULT NOW() NOT NULL
     );
   `);
 };

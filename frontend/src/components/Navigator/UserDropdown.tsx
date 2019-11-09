@@ -9,25 +9,13 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { useDispatch, useSelector } from 'react-redux';
-import { useQuery, useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient } from '@apollo/react-hooks';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { gql } from 'apollo-boost';
 import styled from 'styled-components';
-import { TOKEN } from '../../utils/constants/localStorage';
-import { setLoggedIn, setUser } from '../../store/user/actions';
-import { User } from '../../types/user';
+import { setLoggedIn } from '../../store/user/actions';
 import { AppState } from '../../store';
-
-export const GET_USER = gql`
-  query {
-    user {
-      username
-      trips {
-        id
-      }
-    }
-  }
-`;
+import { setTrips } from '../../store/trip/actions';
+import { removeLocalToken } from '../../utils/localToken';
 
 const useStyles = makeStyles((theme: Theme) => ({
   userPopover: {
@@ -41,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const CircularProgressStyled = styled(CircularProgress)`
   position: absolute;
   color: ${props => props.theme.colors.white};
-`
+`;
 
 const UserDropdown: React.FC = () => {
   const dispatch = useDispatch();
@@ -49,13 +37,6 @@ const UserDropdown: React.FC = () => {
   const user = useSelector((state: AppState) => state.user);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null as HTMLElement | null);
-  
-  // Define get user and handlers
-  const { loading } = useQuery(GET_USER, {
-    onCompleted: (data: { user: User }) => {
-      dispatch(setUser(data.user));
-    }
-  });
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -67,17 +48,16 @@ const UserDropdown: React.FC = () => {
 
   const handleLogoutClick = () => {
     setAnchorEl(null);
-    localStorage.removeItem(TOKEN);
+    removeLocalToken();
     client.clearStore();
     dispatch(setLoggedIn(false));
+    dispatch(setTrips([]));
   };
 
   return (
     <>
       <IconButton edge='end' onClick={handleMenu} color='inherit'>
-        {loading && (
-          <CircularProgressStyled color='inherit' />
-        )}
+        {user.loading && <CircularProgressStyled color='inherit' />}
         <AccountCircle />
       </IconButton>
       <Popover

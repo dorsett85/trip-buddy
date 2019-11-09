@@ -18,6 +18,6 @@ export const tripTypeDefs = gql`
     end_location: [Float]
     start_date: Date
     end_date: Date
-    created: Date
+    created_date: Date
   }
 `;
