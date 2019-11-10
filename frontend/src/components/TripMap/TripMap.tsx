@@ -7,9 +7,6 @@ import { AppState } from '../../store';
 import { useTripMap } from './TripMap.hooks';
 import TripMapModal from './CreateTripModal';
 
-const MAPBOX_API_TOKEN =
-  'pk.eyJ1IjoiZG9yc2V0dDg1IiwiYSI6ImNqcHppM204MDBjYmozeHIxazF3NnBqNXkifQ.9sZzzAFl48z9rBc9s1LTEQ';
-
 const MapContainer = styled.div`
   height: 100vh;
   .mapNavControl {
@@ -34,7 +31,7 @@ const TripMap: React.FC = () => {
           mapStyle='mapbox://styles/mapbox/satellite-streets-v9'
           onClick={handleClick}
           onViewportChange={updateViewport}
-          mapboxApiAccessToken={MAPBOX_API_TOKEN}
+          mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_API_TOKEN}
         >
           {tripMarkers}
           {loggedIn && (
