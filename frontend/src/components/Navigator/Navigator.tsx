@@ -5,12 +5,12 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Slide from '@material-ui/core/Slide';
 import MapIcon from '@material-ui/icons/Map';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { ShowProps } from '../../types/componentProps';
 import UserDropdown from './UserDropdown';
 import CreateTrip from './CreateTripButton';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(theme => ({
   createTrip: {
     marginRight: theme.spacing(2),
     color: theme.palette.common.white

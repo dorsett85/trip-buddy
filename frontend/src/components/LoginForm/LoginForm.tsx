@@ -86,7 +86,7 @@ const LoginForm: React.FC = () => {
       </FormGroup>
       <Box pt={1}>
         <ColoredButton
-          clr='blue'
+          color='blue'
           type='submit'
           variant='contained'
           fullWidth

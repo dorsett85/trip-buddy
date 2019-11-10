@@ -1,22 +1,23 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Button, { ButtonProps } from '@material-ui/core/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../store';
-import { setCreatingTrip } from '../../store/trip/actions';
+import { setCreateTrip } from '../../store/trip/actions';
 
 const CreateTripButton: React.FC<ButtonProps> = props => {
   const dispatch = useDispatch();
-  const creatingTrip = useSelector(({ trip }: AppState) => trip.creating);
+  const createTrip = useSelector(({ trip }: AppState) => trip.createTrip);
 
   const handleClick = () => {
-    dispatch(setCreatingTrip(!creatingTrip));
+    const newTrip = !createTrip ? { openModal: true } : undefined;
+    dispatch(setCreateTrip(newTrip));
   };
 
   return (
     <Button onClick={handleClick} {...props}>
-      {`${creatingTrip ? 'Cancel' : 'Create'} Trip`}
+      {`${createTrip ? 'Cancel' : 'Create'} Trip`}
     </Button>
   );
 };
 
-export default CreateTripButton;
+export default memo(CreateTripButton);

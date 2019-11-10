@@ -101,7 +101,7 @@ const RegisterForm: React.FC = () => {
       </FormGroup>
       <Box pt={1}>
         <ColoredButton
-          clr='green'
+          color='green'
           type='submit'
           variant='contained'
           fullWidth
