@@ -6,7 +6,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import ColoredButton from '../generic/ColoredButton/ColoredButton';
+import Button from '@material-ui/core/Button';
 import { setLoggedIn } from '../../store/user/actions';
 import { RegisterFormInputs } from './RegisterForm.types';
 import { getFirstError } from '../../utils/apolloErrors';
@@ -100,15 +100,15 @@ const RegisterForm: React.FC = () => {
         />
       </FormGroup>
       <Box pt={1}>
-        <ColoredButton
-          color='green'
+        <Button
+          color='secondary'
           type='submit'
           variant='contained'
           fullWidth
           disabled={loading}
         >
           Register
-        </ColoredButton>
+        </Button>
         {loading && <LinearProgress />}
       </Box>
     </form>

@@ -9,7 +9,6 @@ export const up = async (pool: Pool): Promise<QueryResult<any>> => {
       id serial PRIMARY KEY,
       name varchar NOT NULL,
       start_location point NOT NULL,
-      end_location point NOT NULL,
       start_date timestamp NOT NULL,
       end_date timestamp NOT NULL,
       created_date timestamp DEFAULT NOW() NOT NULL

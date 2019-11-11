@@ -1,7 +1,7 @@
 import { UserTripRecord } from './UserTrip.types';
 import BaseModel from './Base';
 
-export default class TripModel extends BaseModel {
+export default class UserTripModel extends BaseModel {
   public static tableName = 'users_trips';
 
   public static async createOne(userTrip: UserTripRecord): Promise<UserTripRecord> {

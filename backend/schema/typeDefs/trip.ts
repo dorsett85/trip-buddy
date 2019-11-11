@@ -5,19 +5,25 @@ export const tripTypeDefs = gql`
     trip: Trip
     trips: [Trip]
   }
+
+  input CreateTripInput {
+    name: String
+    start_location: [Float]
+    start_date: Date
+    end_date: Date
+  }
   
   extend type Mutation {
-    addTrip(name: String): Trip
+    createTrip(input: CreateTripInput): Trip
     editTrip(name: String): Trip
   }
 
   type Trip {
     id: Int
     name: String
-    start_location: [Float]
-    end_location: [Float]
     start_date: Date
     end_date: Date
+    start_location: [Float]
     created_date: Date
   }
 `;

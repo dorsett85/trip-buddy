@@ -2,8 +2,7 @@
 export interface TripRecord {
   id: number;
   name: string;
-  start_location: [number];
-  end_location: [number];
+  start_location: [number, number];
   start_date: Date;
   end_date: Date;
   created_date: Date;

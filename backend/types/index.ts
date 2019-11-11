@@ -13,3 +13,5 @@ export interface Example {
 export interface KeyValue<T = any> {
   [key: string]: T;
 }
+
+export type LngLatArray = [number, number];

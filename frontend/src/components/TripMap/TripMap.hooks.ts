@@ -28,13 +28,9 @@ export const useTripMap = () => {
       dispatch(
         setCreateTrip({
           openModal: true,
-          start_location: e.lngLat,
-          end_location: e.lngLat
+          start_location: e.lngLat
         })
       );
-      const marker = createMarker(e);
-      const newMarkers = tripMarkers.concat(marker);
-      setTripMarkers(newMarkers);
     }
   };
 

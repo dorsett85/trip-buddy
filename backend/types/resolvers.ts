@@ -1,4 +1,4 @@
-import {  MergeInfo } from 'apollo-server-express';
+import { MergeInfo } from 'apollo-server-express';
 import { GraphQLResolveInfo } from 'graphql';
 // eslint-disable-next-line import/no-cycle
 import { ContextObj } from '../schema/context.types';
@@ -12,3 +12,7 @@ export type ContextFieldResolver<TArgs = any, TReturn = any> = (
     mergeInfo: MergeInfo;
   }
 ) => TReturn;
+
+export type IsAuthenticatedResolver<TArgs = any, TReturn = any> = (
+  next: ContextFieldResolver<TArgs, TReturn>
+) => ContextFieldResolver<TArgs, TReturn>;

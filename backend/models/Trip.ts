@@ -7,7 +7,19 @@ export default class TripModel extends BaseModel {
   public static tableName = 'trips';
 
   public static async createOne(trip: Partial<TripRecord>): Promise<TripRecord> {
-    return this.baseCreateOne(trip);
+    // We'll need to modify the lngLat so that postgres can insert into the 'point' type
+    const newTrip = {
+      ...trip,
+      start_location: `(${trip.start_location!.join(',')})`
+    };
+
+    const insertedTrip = await this.baseCreateOne(newTrip);
+
+    // Also need to modify the return point type back to an array
+    const { x, y } = insertedTrip.start_location;
+    insertedTrip.start_location = [x, y];
+
+    return insertedTrip;
   }
 
   public static async findOne(

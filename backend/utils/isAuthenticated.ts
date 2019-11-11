@@ -1,8 +1,8 @@
 import { AuthenticationError } from 'apollo-server-express';
-import { ContextFieldResolver } from '../types/resolvers';
+import { IsAuthenticatedResolver } from '../types/resolvers';
 import { AUTHENTICATED_ERROR_MESSAGE } from './constants/errors';
 
-export const isAuthenticated = (next: ContextFieldResolver): ContextFieldResolver => (
+export const isAuthenticated: IsAuthenticatedResolver = next => (
   source,
   args,
   context,

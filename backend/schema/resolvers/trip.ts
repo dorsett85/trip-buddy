@@ -10,6 +10,17 @@ const Query: TripResolvers['Query'] = {
   })
 };
 
+const Mutation: TripResolvers['Mutation'] = {
+  createTrip: isAuthenticated(async (_, { input }, { user, TripService }) => {
+    if (!user) {
+      return {};
+    }
+    const trip = await TripService.createOne(input, (user.id as number));
+    return trip;
+  })
+};
+
 export const tripResolvers: TripResolvers = {
-  Query
+  Query,
+  Mutation
 };

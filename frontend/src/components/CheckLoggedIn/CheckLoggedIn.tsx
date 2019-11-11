@@ -18,7 +18,6 @@ export const GET_LOGGED_IN_DATA = gql`
       id
       name
       start_location
-      end_location
       start_date
       end_date
       created_date
