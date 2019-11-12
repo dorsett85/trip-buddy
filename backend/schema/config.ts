@@ -42,7 +42,7 @@ const formatError = (err: GraphQLError): GraphQLError => {
   const { extensions } = err;
 
   if (extensions) {
-    console.log('\n', extensions.exception.stacktrace.join('\n'));
+    // console.log('\n', extensions.exception.stacktrace.join('\n'));
 
     // Define production overrides for errors sent to the client
     if (env === 'production') {

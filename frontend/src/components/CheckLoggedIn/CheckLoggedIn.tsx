@@ -52,7 +52,6 @@ const CheckLoggedIn: React.FC = () => {
   // Dispatch actions after data is loaded
   useEffect(() => {
     if (data) {
-      console.log(data.trips)
       dispatch(setUser(data.user));
       dispatch(setTrips(data.trips));
     }

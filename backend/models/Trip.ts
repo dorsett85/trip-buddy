@@ -46,7 +46,15 @@ export default class TripModel extends BaseModel {
     `;
     const values = [userId];
 
-    const { rows }: { rows: TripRecord[] } = await db.query({ text, values });
-    return rows;
+    const { rows }: { rows: any[] } = await db.query({ text, values });
+
+    // TODO create transform function for node-postgres point types
+    const transformedRows: TripRecord[] = rows.map(row => {
+      const { x, y } = row.start_location;
+      row.start_location = [x, y];
+      return row;
+    });
+
+    return transformedRows;
   }
 }
