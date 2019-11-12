@@ -22,14 +22,14 @@ export default class TripModel extends BaseModel {
     return insertedTrip;
   }
 
-  public static async findOne(
+  public static findOne(
     andWhereArgs: Partial<TripRecord> = {},
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord | undefined> {
     return this.baseFindOne(andWhereArgs, orWhereArgs);
   }
 
-  public static async findMany(
+  public static findMany(
     andWhereArgs: Partial<TripRecord> = {},
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord[]> {

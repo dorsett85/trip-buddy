@@ -5,11 +5,6 @@
  * to define types in separate files in this directory
  */
 
-export interface Example {
-  hello: string;
-  world: string;
-}
-
 export interface KeyValue<T = any> {
   [key: string]: T;
 }

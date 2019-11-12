@@ -1,7 +1,7 @@
 import { IResolvers } from 'apollo-server-express';
-/* eslint-disable import/no-cycle */
-import { ContextFieldResolver } from '../../types/resolvers';
+import { ContextFieldResolver, ContextAuthFieldResolver } from '../../types/resolvers';
 import { TripSchema } from './trip.types';
+import { UserRecord } from '../../models/User.types';
 
 interface LoginArgs {
   username: string;
@@ -15,11 +15,11 @@ interface RegisterArgs {
 
 export interface UserResolvers extends IResolvers {
   User: {
-    trips: ContextFieldResolver<any, Promise<TripSchema[]>>;
+    trips: ContextAuthFieldResolver<any, Promise<TripSchema[]>>;
   };
   Query: {
-    user: ContextFieldResolver<any, UserSchema>;
-    users: ContextFieldResolver<any, UserSchema[]>;
+    user: ContextAuthFieldResolver<any, UserSchema>;
+    users: ContextAuthFieldResolver<any, UserSchema[]>;
   };
   Mutation: {
     loginUser: ContextFieldResolver<LoginArgs, Promise<string | undefined>>;
@@ -27,11 +27,6 @@ export interface UserResolvers extends IResolvers {
   };
 }
 
-/* eslint-disable camelcase */
-export interface UserSchema {
-  id?: number;
-  username?: String;
-  email?: String;
-  email_validated?: boolean;
-  created_date?: Date;
+export interface UserSchema extends Partial<UserRecord> {
+  trips?: TripSchema[];
 }

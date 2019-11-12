@@ -14,7 +14,7 @@ export default class TripService {
     this.UserTripModel = dependencies.UserTripModel || UserTripModel;
   }
 
-  public async getByUserId(userId: number): Promise<TripRecord[]> {
+  public getByUserId(userId: number): Promise<TripRecord[]> {
     return this.TripModel.findByUserId(userId);
   }
 

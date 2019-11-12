@@ -1,23 +1,19 @@
 import { TripResolvers } from './trip.types';
-import { isAuthenticated } from '../../utils/isAuthenticated';
 
 const Query: TripResolvers['Query'] = {
-  trip: isAuthenticated((_, __, { user }) => {
+  trip: async (_, __, { user }) => {
     return { id: 1 };
-  }),
-  trips: isAuthenticated((_, __, { user }) => {
-    return [{ id: 1 }];
-  })
+  },
+  trips: (_, __, { user, TripService }) => {
+    return TripService.getByUserId(user.id);
+  }
 };
 
 const Mutation: TripResolvers['Mutation'] = {
-  createTrip: isAuthenticated(async (_, { input }, { user, TripService }) => {
-    if (!user) {
-      return {};
-    }
-    const trip = await TripService.createOne(input, (user.id as number));
+  createTrip: async (_, { input }, { user, TripService }) => {
+    const trip = await TripService.createOne(input, user.id);
     return trip;
-  })
+  }
 };
 
 export const tripResolvers: TripResolvers = {

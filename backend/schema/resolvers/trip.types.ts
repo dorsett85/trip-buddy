@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
 import { IResolvers } from 'apollo-server-express';
-// eslint-disable-next-line import/no-cycle
-import { ContextFieldResolver } from '../../types/resolvers';
+import { ContextAuthFieldResolver } from '../../types/resolvers';
 import { LngLatArray } from '../../types';
+import { TripRecord } from '../../models/Trip.types';
 
 export interface CreateTripInput {
   input: {
@@ -10,24 +10,17 @@ export interface CreateTripInput {
     start_date: Date;
     end_date: Date;
     start_location: LngLatArray;
-  }
+  };
 }
 
 export interface TripResolvers extends IResolvers {
   Query: {
-    trip: ContextFieldResolver<any, TripSchema>;
-    trips: ContextFieldResolver<any, TripSchema[]>;
+    trip: ContextAuthFieldResolver<any, Promise<TripSchema>>;
+    trips: ContextAuthFieldResolver<any, Promise<TripSchema[]>>;
   };
   Mutation: {
-    createTrip: ContextFieldResolver<CreateTripInput, Promise<TripSchema>>;
-  }
+    createTrip: ContextAuthFieldResolver<CreateTripInput, Promise<TripSchema>>;
+  };
 }
 
-export interface TripSchema {
-  id?: number;
-  name?: string;
-  start_date?: Date;
-  end_date?: Date;
-  start_location?: LngLatArray;
-  created_date?: Date;
-}
+export interface TripSchema extends Partial<TripRecord> {}

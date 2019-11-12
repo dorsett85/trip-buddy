@@ -2,7 +2,13 @@ import { ApolloServerExpressConfig } from 'apollo-server-express';
 import { GraphQLError } from 'graphql';
 import UserService from '../services/User';
 import TripService from '../services/Trip';
-import { rootTypeDefs, userTypeDefs, dateTypeDefs, tripTypeDefs } from './typeDefs';
+import {
+  rootTypeDefs,
+  directivesTypeDefs,
+  userTypeDefs,
+  dateTypeDefs,
+  tripTypeDefs
+} from './typeDefs';
 import { userResolvers, dateResolvers, tripResolvers } from './resolvers';
 import { getContext } from './context';
 import { shallowMerge } from '../utils/shallowMerge';
@@ -11,17 +17,27 @@ import {
   INTERNAL_SERVER_ERROR_MESSAGE
 } from '../utils/constants/errors';
 import { env } from '../config/config';
+import { IsAuthDirective } from './directives/IsAuthDirective';
 
 /*
  * Define the ApolloServerExpressConfig here, which includes the
  * schema (make up of typeDefs and resolvers), and the context
  */
 
-const typeDefs = [rootTypeDefs, userTypeDefs, dateTypeDefs, tripTypeDefs];
+const typeDefs = [
+  rootTypeDefs,
+  directivesTypeDefs,
+  userTypeDefs,
+  dateTypeDefs,
+  tripTypeDefs
+];
 const resolvers = shallowMerge([userResolvers, tripResolvers, dateResolvers]);
+const schemaDirectives = {
+  isAuth: IsAuthDirective
+};
 const context = getContext({ UserService, TripService });
 
-const formatError = (err: GraphQLError) => {
+const formatError = (err: GraphQLError): GraphQLError => {
   const formattedErr = err;
   const { extensions } = err;
 
@@ -44,6 +60,7 @@ const formatError = (err: GraphQLError) => {
 export const config: ApolloServerExpressConfig = {
   typeDefs,
   resolvers,
+  schemaDirectives,
   context,
   formatError
 };

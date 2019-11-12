@@ -2,8 +2,8 @@ import { gql } from 'apollo-server-express';
 
 export const tripTypeDefs = gql`
   extend type Query {
-    trip: Trip
-    trips: [Trip]
+    trip: Trip @isAuth
+    trips: [Trip] @isAuth
   }
 
   input CreateTripInput {
@@ -14,8 +14,8 @@ export const tripTypeDefs = gql`
   }
   
   extend type Mutation {
-    createTrip(input: CreateTripInput): Trip
-    editTrip(name: String): Trip
+    createTrip(input: CreateTripInput): Trip @isAuth
+    editTrip(name: String): Trip @isAuth
   }
 
   type Trip {

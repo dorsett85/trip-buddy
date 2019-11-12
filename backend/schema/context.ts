@@ -4,7 +4,7 @@ import { getToken } from '../utils/getToken';
 
 export const getContext = (dependencies: ContextDeps) => ({
   req
-}: ExpressContext): ContextObj => {
+}: ExpressContext): ContextObj | ContextObj<true> => {
   const { UserService, TripService } = dependencies;
 
   // Verify user
