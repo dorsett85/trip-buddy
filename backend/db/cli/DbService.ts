@@ -84,6 +84,8 @@ export default class DbService {
     const { create, up, down, all } = opts;
     return create
       ? this.migrateCreate(create)
+      : up && down
+      ? 'Cannot use both -u and -d flags'
       : up || down
       ? this.migrate({ up, down, all })
       : `-a flag must be used with -u or -d`;
@@ -106,59 +108,48 @@ export default class DbService {
     const migrationTable = await this.buildMigrationTable();
 
     // Get migration names from the db
-    // ** if --all flag is not set, only get the last migration
-    const last = !opts.all ? 'ORDER BY id DESC LIMIT 1' : '';
-    const { rows } = await this.db.query(`SELECT name from ${migrationTable} ${last}`);
+    const query = `SELECT name from ${migrationTable}`;
+    const { rows } = await this.db.query(query);
     const migrationNames: Array<string> = rows.map((row: any) => row.name);
 
     // Get list of migration files to run or rollback
     const dir = this.getDir(SubDir.migrations);
-    const files = readdirSync(dir);
+    const files = opts.up ? readdirSync(dir) : readdirSync(dir).reverse();
     const successArr: Array<string> = [];
 
     // eslint-disable-next-line no-restricted-syntax
     for (const file of files) {
-      // Logic cases to run or rollback the migration file
-      const run: boolean = opts.all
-        ? opts.up
-          ? !migrationNames.includes(file) // ALL UP: run anything not in the table
-          : migrationNames.includes(file) // ALL DOWN: rollback everything in the table
-        : opts.up
-        ? !migrationNames[0] || file > migrationNames[0] // UP: run newer than the last or if there's nothing
-        : file === migrationNames[0]; // DOWN: rollback the last migration;
+      // We only run the up migration if the it doesn't exist in the table and
+      // only run the down migration if it does exist in the table
+      const runUp = opts.up && !migrationNames.includes(file);
+      const runDown = opts.down && migrationNames.includes(file);
 
-      if (run) {
+      if (runUp || runDown) {
         const migrationPath = path.join(dir, file);
         // eslint-disable-next-line global-require
-        const migrationType = require(migrationPath);
+        const migration = require(migrationPath);
+        let text;
+        let values;
         if (opts.up) {
-          await migrationType.up(this.db);
-          await this.db.query(
-            `
-            INSERT INTO ${migrationTable} (name, path)
-            VALUES ($1, $2)
-          `,
-            [file, migrationPath]
-          );
+          await migration.up(this.db);
+          text = `INSERT INTO ${migrationTable} (name, path) VALUES ($1, $2)`;
+          values = [file, migrationPath];
         } else {
-          await migrationType.down(this.db);
-          await this.db.query(
-            `
-            DELETE FROM ${migrationTable}
-            WHERE name = $1
-          `,
-            [file]
-          );
+          await migration.down(this.db);
+          text = `DELETE FROM ${migrationTable} WHERE name = $1`;
+          values = [file];
         }
+        await this.db.query({ text, values });
+
         const migrationText: string = opts.up ? 'ran' : 'rolled back';
         successArr.push(`Successfully ${migrationText} migration ${file}`);
 
-        // Only run once if --all flag isn't set
         if (!opts.all) {
           break;
         }
       }
     }
+
     const successText = opts.up ? 'Migrations' : 'Rollbacks';
     return successArr.length ? successArr.join('\n') : `${successText} are up-to date!`;
   }
