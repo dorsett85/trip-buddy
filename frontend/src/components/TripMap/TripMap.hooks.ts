@@ -3,7 +3,7 @@ import { ViewState, PointerEvent } from 'react-map-gl';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppState } from '../../store';
 import { createMarker } from './mapHelpers';
-import { setCreateTrip } from '../../store/trip/actions';
+import { setTripCreator } from '../../store/trip/actions';
 
 const initialViewport: ViewState = {
   latitude: 37.785164,
@@ -16,7 +16,7 @@ const initialViewport: ViewState = {
 export const useTripMap = () => {
   const dispatch = useDispatch();
   const [viewport, setViewport] = useState(initialViewport);
-  const createTrip = useSelector(({ trip }: AppState) => trip.createTrip);
+  const tripCreator = useSelector(({ trip }: AppState) => trip.tripCreator);
   const [tripMarkers, setTripMarkers] = useState([] as JSX.Element[]);
 
   const updateViewport = (newViewport: ViewState) => {
@@ -24,9 +24,9 @@ export const useTripMap = () => {
   };
 
   const handleClick = (e: PointerEvent) => {
-    if (createTrip) {
+    if (tripCreator) {
       dispatch(
-        setCreateTrip({
+        setTripCreator({
           openModal: true,
           start_location: e.lngLat
         })

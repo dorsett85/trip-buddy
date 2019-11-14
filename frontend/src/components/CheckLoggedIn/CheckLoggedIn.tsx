@@ -13,14 +13,14 @@ export const GET_LOGGED_IN_DATA = gql`
   query {
     user {
       username
-    }
-    trips {
-      id
-      name
-      start_location
-      start_date
-      end_date
-      created_date
+      trips {
+        id
+        name
+        start_location
+        start_date
+        end_date
+        created_date
+      }
     }
   }
 `;
@@ -52,8 +52,11 @@ const CheckLoggedIn: React.FC = () => {
   // Dispatch actions after data is loaded
   useEffect(() => {
     if (data) {
-      dispatch(setUser(data.user));
-      dispatch(setTrips(data.trips));
+      const {
+        user: { trips, ...user }
+      } = data;
+      dispatch(setUser(user));
+      dispatch(setTrips(trips));
     }
   }, [dispatch, data]);
 

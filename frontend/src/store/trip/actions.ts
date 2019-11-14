@@ -1,7 +1,13 @@
-import { TripActionType, SetTrips, SetCreate, SetLoading } from './types';
+import {
+  TripActionType,
+  SetTrips,
+  SetTripCreator,
+  SetLoadingTrips,
+  SetAddTrip
+} from './types';
 
-export const setLoadingTrips: SetLoading = payload => ({
-  type: TripActionType.SET_LOADING,
+export const setLoadingTrips: SetLoadingTrips = payload => ({
+  type: TripActionType.SET_LOADING_TRIPS,
   payload
 });
 
@@ -10,7 +16,12 @@ export const setTrips: SetTrips = payload => ({
   payload
 });
 
-export const setCreateTrip: SetCreate = payload => ({
-  type: TripActionType.SET_CREATE,
+export const setTripCreator: SetTripCreator = payload => ({
+  type: TripActionType.SET_TRIP_CREATOR,
+  payload
+});
+
+export const setAddTrip: SetAddTrip = payload => ({
+  type: TripActionType.SET_ADD_TRIP,
   payload
 });

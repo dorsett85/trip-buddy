@@ -1,25 +1,39 @@
 import { TripState, TripReducer } from './types';
 
 const initialState: TripState = {
-  loading: false,
-  trips: [],
-  createTrip: undefined
+  loadingTrips: false,
+  trips: {},
+  tripCreator: undefined
 };
 
 export const tripReducer: TripReducer = (state = initialState, action): TripState => {
-  if (action.type === 'SET_LOADING') {
-    return { ...state, loading: action.payload };
+  if (action.type === 'SET_LOADING_TRIPS') {
+    return { ...state, loadingTrips: action.payload };
   }
 
   if (action.type === 'SET_TRIPS') {
-    return { ...state, trips: action.payload };
+    const trips: TripState['trips'] = {};
+    action.payload.forEach(trip => {
+      const { id, ...rest } = trip;
+      trips[id] = rest;
+    });
+    return { ...state, trips };
   }
 
-  if (action.type === 'SET_CREATE') {
+  if (action.type === 'SET_TRIP_CREATOR') {
     // If the payload is undefined (e.g., cancel creating trip), don't spread the
     // rest of the createTrip property
-    const createTrip = action.payload && { ...state.createTrip, ...action.payload };
-    return { ...state, createTrip };
+    const tripCreator = action.payload && { ...state.tripCreator, ...action.payload };
+    return { ...state, tripCreator };
+  }
+
+  if (action.type === 'SET_ADD_TRIP') {
+    const { id, ...rest } = action.payload;
+    const trips: TripState['trips'] = {
+      ...state.trips,
+      [id]: rest
+    };
+    return { ...state, trips };
   }
 
   return state;

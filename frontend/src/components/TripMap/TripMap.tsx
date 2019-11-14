@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { AppState } from '../../store';
 import { useTripMap } from './TripMap.hooks';
 import TripMapModal from './CreateTripModal';
+import { createTripMarkers } from './mapHelpers';
 
 const MapContainer = styled.div`
   height: 100vh;
@@ -19,8 +20,9 @@ const MapContainer = styled.div`
 
 const TripMap: React.FC = () => {
   const loggedIn = useSelector((state: AppState) => state.user.loggedIn);
+  const trips = useSelector((state: AppState) => state.trip.trips);
   const { viewport, updateViewport, handleClick, tripMarkers } = useTripMap();
-
+  const initialMarkers = createTripMarkers(trips);
   return (
     <>
       <MapContainer>
@@ -33,7 +35,7 @@ const TripMap: React.FC = () => {
           onViewportChange={updateViewport}
           mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_API_TOKEN}
         >
-          {tripMarkers}
+          {initialMarkers}
           {loggedIn && (
             <Slide in direction='down'>
               <div className='mapNavControl'>

@@ -4,8 +4,8 @@ const Query: TripResolvers['Query'] = {
   trip: async (_, __, { user }) => {
     return { id: 1 };
   },
-  trips: (_, __, { user, TripService }) => {
-    return TripService.getByUserId(user.id);
+  trips: async (_, __, { user, TripService }) => {
+    return [{ id: 1}];
   }
 };
 

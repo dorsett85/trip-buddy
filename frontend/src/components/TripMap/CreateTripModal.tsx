@@ -18,7 +18,7 @@ import styled from 'styled-components';
 import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
 import { AppState } from '../../store';
-import { setCreateTrip } from '../../store/trip/actions';
+import { setTripCreator, setAddTrip } from '../../store/trip/actions';
 import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { Feature } from '../../types/apiResponses';
@@ -43,7 +43,7 @@ const ErrorListStyled = styled.div`
 
 const CreateTripModal: React.FC = () => {
   const dispatch = useDispatch();
-  const createTrip = useSelector(({ trip }: AppState) => trip.createTrip);
+  const tripCreator = useSelector(({ trip }: AppState) => trip.tripCreator);
 
   const [locationOptions, setLocationOptions] = useState<Feature[]>();
   const [locationsLoading, setLocationsLoading] = useState(false);
@@ -54,7 +54,8 @@ const CreateTripModal: React.FC = () => {
   // Final form submit graphlql mutation
   const [createTripQuery, { loading }] = useMutation(CREATE_TRIP, {
     onCompleted: data => {
-      console.log(data);
+      dispatch(setAddTrip(data.createTrip));
+      dispatch(setTripCreator(undefined));
     },
     onError: error => {
       console.log(error);
@@ -62,7 +63,7 @@ const CreateTripModal: React.FC = () => {
   });
 
   const handleOnClose = () => {
-    dispatch(setCreateTrip(undefined));
+    dispatch(setTripCreator(undefined));
     setLocationOptions(undefined);
     setLocation('');
     setErrors(null);
@@ -71,8 +72,8 @@ const CreateTripModal: React.FC = () => {
   // When returning from dropping a pin for the location, perform a
   // reverse geocoding to update the locationOptions
   useEffect(() => {
-    if (!locationOptions && createTrip && createTrip.start_location) {
-      const [lng, lat] = createTrip.start_location;
+    if (!locationOptions && tripCreator && tripCreator.start_location) {
+      const [lng, lat] = tripCreator.start_location;
       MapboxService.getGeocodeFeatureCollection(`${lng},${lat}`, locations => {
         const { features } = locations;
         if (features.length) {
@@ -80,24 +81,24 @@ const CreateTripModal: React.FC = () => {
         }
       });
     }
-  }, [createTrip, locationOptions]);
+  }, [tripCreator, locationOptions]);
 
   // Here we only add add the modal form when creating a trip
   let openModal = false;
   let modalForm = null;
-  if (createTrip) {
-    openModal = !!createTrip.openModal;
+  if (tripCreator) {
+    openModal = !!tripCreator.openModal;
 
     const handleNameChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-      dispatch(setCreateTrip({ name: target.value }));
+      dispatch(setTripCreator({ name: target.value }));
     };
 
     const handleStartDateChange = (date: MaterialUiPickersDate) => {
-      dispatch(setCreateTrip({ start_date: date }));
+      dispatch(setTripCreator({ start_date: date }));
     };
 
     const handleEndDateChange = (date: MaterialUiPickersDate) => {
-      dispatch(setCreateTrip({ end_date: date }));
+      dispatch(setTripCreator({ end_date: date }));
     };
 
     const handleLocationChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,40 +124,40 @@ const CreateTripModal: React.FC = () => {
         const optionIdx = e.target.getAttribute('data-option-index');
         const { center } = locationOptions[optionIdx];
         setLocation(locationOptions[optionIdx].place_name);
-        dispatch(setCreateTrip({ start_location: center }));
+        dispatch(setTripCreator({ start_location: center }));
       } else {
         setLocation('');
-        dispatch(setCreateTrip({ start_location: undefined }));
+        dispatch(setTripCreator({ start_location: undefined }));
       }
     };
 
     const handleDropLocationPin = () => {
       setLocationOptions(undefined);
       setLocation('');
-      dispatch(setCreateTrip({ openModal: false, start_location: undefined }));
+      dispatch(setTripCreator({ openModal: false, start_location: undefined }));
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const errorList = [];
 
-      if (!createTrip.name) {
+      if (!tripCreator.name) {
         errorList.push('Missing trip name');
       }
-      if (!createTrip.start_date) {
+      if (!tripCreator.start_date) {
         errorList.push('Missing start date');
       }
-      if (!createTrip.end_date) {
+      if (!tripCreator.end_date) {
         errorList.push('Missing end date');
       }
       if (
-        createTrip.start_date &&
-        createTrip.end_date &&
-        createTrip.start_date > createTrip.end_date
+        tripCreator.start_date &&
+        tripCreator.end_date &&
+        tripCreator.start_date > tripCreator.end_date
       ) {
         errorList.push('Start date must be before end date');
       }
-      if (!createTrip.start_location) {
+      if (!tripCreator.start_location) {
         errorList.push('Missing start location');
       }
 
@@ -179,10 +180,10 @@ const CreateTripModal: React.FC = () => {
         }
         const variables = {
           input: {
-            name: createTrip.name,
-            start_location: createTrip.start_location,
-            start_date: createTrip.start_date,
-            end_date: createTrip.end_date
+            name: tripCreator.name,
+            start_location: tripCreator.start_location,
+            start_date: tripCreator.start_date,
+            end_date: tripCreator.end_date
           }
         };
         createTripQuery({ variables });
@@ -195,7 +196,7 @@ const CreateTripModal: React.FC = () => {
           <TextField
             label='Trip Name'
             onChange={handleNameChange}
-            value={createTrip.name || ''}
+            value={tripCreator.name || ''}
             variant='filled'
             margin='normal'
             fullWidth
@@ -205,7 +206,7 @@ const CreateTripModal: React.FC = () => {
               <DateTimePicker
                 label='Start Date'
                 onChange={handleStartDateChange}
-                value={createTrip.start_date}
+                value={tripCreator.start_date}
                 inputVariant='outlined'
                 margin='normal'
                 fullWidth
@@ -215,7 +216,7 @@ const CreateTripModal: React.FC = () => {
               <DateTimePicker
                 label='End Date'
                 onChange={handleEndDateChange}
-                value={createTrip.end_date}
+                value={tripCreator.end_date}
                 inputVariant='outlined'
                 margin='normal'
                 fullWidth
@@ -239,6 +240,7 @@ const CreateTripModal: React.FC = () => {
                   ...rest.inputProps,
                   value: location
                 }}
+                // eslint-disable-next-line react/jsx-no-duplicate-props
                 InputProps={{
                   ...InputProps,
                   endAdornment: (
