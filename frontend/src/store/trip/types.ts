@@ -10,7 +10,7 @@ export interface TripCreator extends Partial<Trip> {
 export interface TripState {
   loadingTrips: boolean;
   trips: {
-    [key in Trip['id']]: Omit<Trip, 'id'>;
+    [key in Trip['id']]: Trip;
   };
   tripCreator?: TripCreator;
 }

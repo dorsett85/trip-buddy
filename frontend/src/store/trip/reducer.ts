@@ -14,8 +14,8 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
   if (action.type === 'SET_TRIPS') {
     const trips: TripState['trips'] = {};
     action.payload.forEach(trip => {
-      const { id, ...rest } = trip;
-      trips[id] = rest;
+      const { id } = trip;
+      trips[id] = trip;
     });
     return { ...state, trips };
   }
@@ -28,10 +28,10 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
   }
 
   if (action.type === 'SET_ADD_TRIP') {
-    const { id, ...rest } = action.payload;
+    const { id } = action.payload;
     const trips: TripState['trips'] = {
       ...state.trips,
-      [id]: rest
+      [id]: action.payload
     };
     return { ...state, trips };
   }
