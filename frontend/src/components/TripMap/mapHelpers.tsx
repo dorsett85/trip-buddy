@@ -1,15 +1,6 @@
 import React from 'react';
-import { TripState } from '../../store/trip/types';
 import TripMarker from './TripMarker';
+import { TripState } from '../../store/trip/types';
 
-
-export const createTripMarkers = (trips: TripState['trips']) => {
-  const tripMarkers: any[] = [];
-  Object.keys(trips)
-    .map(Number)
-    .forEach(id => {
-      const marker = <TripMarker key={id} trip={trips[id]} />;
-      tripMarkers.push(marker);
-    });
-  return tripMarkers;
-};
+export const createTripMarkers = (tripIds: Array<keyof TripState['trips']>) =>
+  tripIds.map(id => <TripMarker key={id} id={id} />);

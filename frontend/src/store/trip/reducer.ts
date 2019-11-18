@@ -3,7 +3,8 @@ import { TripState, TripReducer } from './types';
 const initialState: TripState = {
   loadingTrips: false,
   trips: {},
-  tripCreator: undefined
+  tripCreator: undefined,
+  activeTrip: undefined
 };
 
 export const tripReducer: TripReducer = (state = initialState, action): TripState => {
@@ -34,6 +35,12 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
       [id]: action.payload
     };
     return { ...state, trips };
+  }
+
+  if (action.type === 'SET_ACTIVE_TRIP') {
+    // Only spread the active trip if it's NOT undefined (e.g., if not cancelling the active trip)
+    const activeTrip = action.payload && { ...state.activeTrip, ...action.payload };
+    return { ...state, activeTrip };
   }
 
   return state;

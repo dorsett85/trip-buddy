@@ -7,12 +7,18 @@ export interface TripCreator extends Partial<Trip> {
   openModal?: boolean;
 }
 
+export interface ActiveTrip extends Trip {
+  openModal?: boolean;
+  flyTo?: boolean;
+}
+
 export interface TripState {
   loadingTrips: boolean;
   trips: {
     [key in Trip['id']]: Trip;
   };
   tripCreator?: TripCreator;
+  activeTrip?: ActiveTrip;
 }
 
 // Reducer
@@ -23,7 +29,8 @@ export enum TripActionType {
   SET_LOADING_TRIPS = 'SET_LOADING_TRIPS',
   SET_TRIPS = 'SET_TRIPS',
   SET_TRIP_CREATOR = 'SET_TRIP_CREATOR',
-  SET_ADD_TRIP = 'SET_ADD_TRIP'
+  SET_ADD_TRIP = 'SET_ADD_TRIP',
+  SET_ACTIVE_TRIP = 'SET_ACTIVE_TRIP'
 }
 
 // Actions
@@ -37,14 +44,20 @@ export type SetTripCreatorAction = ActionWithPayload<
   TripState['tripCreator']
 >;
 export type SetAddTripAction = ActionWithPayload<TripActionType.SET_ADD_TRIP, Trip>;
+export type SetActiveTripAction = ActionWithPayload<
+  TripActionType.SET_ACTIVE_TRIP,
+  TripState['activeTrip']
+>;
 export type TripAction =
   | SetLoadingTripsAction
   | SetTripsAction
   | SetTripCreatorAction
-  | SetAddTripAction;
+  | SetAddTripAction
+  | SetActiveTripAction;
 
 // Action creators
 export type SetLoadingTrips = GenericActionCreator<SetLoadingTripsAction>;
 export type SetTrips = GenericActionCreator<SetTripsAction>;
 export type SetTripCreator = GenericActionCreator<SetTripCreatorAction>;
 export type SetAddTrip = GenericActionCreator<SetAddTripAction>;
+export type SetActiveTrip = GenericActionCreator<SetActiveTripAction>;

@@ -17,8 +17,9 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import styled from 'styled-components';
 import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
+import { LinearProgress } from '@material-ui/core';
 import { AppState } from '../../store';
-import { setTripCreator, setAddTrip } from '../../store/trip/actions';
+import { setTripCreator, setAddTrip, setActiveTrip } from '../../store/trip/actions';
 import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { Feature } from '../../types/apiResponses';
@@ -41,21 +42,22 @@ const ErrorListStyled = styled.div`
   color: ${Red[500]};
 `;
 
-const CreateTripModal: React.FC = () => {
+const TripCreatorModal: React.FC = () => {
   const dispatch = useDispatch();
   const tripCreator = useSelector(({ trip }: AppState) => trip.tripCreator);
 
   const [locationOptions, setLocationOptions] = useState<Feature[]>();
   const [locationsLoading, setLocationsLoading] = useState(false);
   const [location, setLocation] = useState('');
-  const [noOptionsText, setNoOptionsText] = useState('No Options');
-  const [errors, setErrors] = useState<JSX.Element | null>();
+  const [noOptionsText, setNoOptionsText] = useState('Enter at least four characters...');
+  const [errors, setErrors] = useState<JSX.Element>();
 
   // Final form submit graphlql mutation
   const [createTripQuery, { loading }] = useMutation(CREATE_TRIP, {
     onCompleted: data => {
       dispatch(setAddTrip(data.createTrip));
       dispatch(setTripCreator(undefined));
+      dispatch(setActiveTrip({ ...data.createTrip, flyTo: true }));
     },
     onError: error => {
       console.log(error);
@@ -66,7 +68,7 @@ const CreateTripModal: React.FC = () => {
     dispatch(setTripCreator(undefined));
     setLocationOptions(undefined);
     setLocation('');
-    setErrors(null);
+    setErrors(undefined);
   };
 
   // When returning from dropping a pin for the location, perform a
@@ -76,9 +78,8 @@ const CreateTripModal: React.FC = () => {
       const [lng, lat] = tripCreator.start_location;
       MapboxService.getGeocodeFeatureCollection(`${lng},${lat}`, locations => {
         const { features } = locations;
-        if (features.length) {
-          setLocation(features[0].place_name);
-        }
+        const locationText = features.length ? features[0].place_name : `${lng}, ${lat}`;
+        setLocation(locationText);
       });
     }
   }, [tripCreator, locationOptions]);
@@ -119,9 +120,9 @@ const CreateTripModal: React.FC = () => {
       }
     };
 
-    const handleLocationSelect = (e: React.ChangeEvent<any>) => {
-      if (locationOptions && !e.target.type) {
-        const optionIdx = e.target.getAttribute('data-option-index');
+    const handleLocationSelect = ({ target }: React.ChangeEvent<any>) => {
+      const optionIdx = target.getAttribute('data-option-index');
+      if (locationOptions && optionIdx) {
         const { center } = locationOptions[optionIdx];
         setLocation(locationOptions[optionIdx].place_name);
         dispatch(setTripCreator({ start_location: center }));
@@ -133,8 +134,7 @@ const CreateTripModal: React.FC = () => {
 
     const handleDropLocationPin = () => {
       setLocationOptions(undefined);
-      setLocation('');
-      dispatch(setTripCreator({ openModal: false, start_location: undefined }));
+      dispatch(setTripCreator({ openModal: false }));
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -176,7 +176,7 @@ const CreateTripModal: React.FC = () => {
         setErrors(errorUl);
       } else {
         if (errors) {
-          setErrors(null);
+          setErrors(undefined);
         }
         const variables = {
           input: {
@@ -197,7 +197,7 @@ const CreateTripModal: React.FC = () => {
             label='Trip Name'
             onChange={handleNameChange}
             value={tripCreator.name || ''}
-            variant='filled'
+            variant='outlined'
             margin='normal'
             fullWidth
           />
@@ -260,6 +260,7 @@ const CreateTripModal: React.FC = () => {
           />
           {errors}
         </DialogContent>
+        {loading && <LinearProgress />}
         <DialogActions>
           <Button onClick={handleOnClose} variant='contained'>
             Cancel
@@ -274,10 +275,10 @@ const CreateTripModal: React.FC = () => {
 
   return (
     <Dialog open={openModal} onClose={handleOnClose}>
-      {modalForm && <DialogTitle>Create Trip Wizard</DialogTitle>}
+      {modalForm && <DialogTitle>Create Your Trip</DialogTitle>}
       {modalForm}
     </Dialog>
   );
 };
 
-export default memo(CreateTripModal);
+export default memo(TripCreatorModal);

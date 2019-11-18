@@ -4,11 +4,19 @@ import { Slide } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { AppState } from '../../store';
-import { useTripMap, useMarkers } from './TripMap.hooks';
-import TripMapModal from './CreateTripModal';
+import { useTripMap, useTrips } from './hooks';
+import TripMapModal from './TripCreatorModal';
+import TripCreatorSnackbar from './TripCreatorSnackbar';
 
-const MapContainer = styled.div`
+interface MapContainerProps {
+  creatingTrip: boolean;
+}
+
+const MapContainer = styled.div<MapContainerProps>`
   height: 100vh;
+  > div > div {
+    cursor: ${({ creatingTrip }) => (creatingTrip ? 'pointer' : 'inherit')};
+  }
   .mapNavControl {
     position: absolute;
     top: 64px;
@@ -20,18 +28,18 @@ const MapContainer = styled.div`
 const TripMap: React.FC = () => {
   const loggedIn = useSelector((state: AppState) => state.user.loggedIn);
   const { viewport, updateViewport, handleClick } = useTripMap();
-  const { tripMarkers } = useMarkers();
+  const { creatingTrip, tripMarkers } = useTrips();
 
   return (
     <>
-      <MapContainer>
+      <MapContainer creatingTrip={creatingTrip}>
         <MapGl
           {...viewport}
+          onViewportChange={updateViewport}
+          onClick={handleClick}
           width='100%'
           height='100%'
           mapStyle='mapbox://styles/mapbox/satellite-streets-v9'
-          onClick={handleClick}
-          onViewportChange={updateViewport}
           mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_API_TOKEN}
         >
           {tripMarkers}
@@ -45,6 +53,7 @@ const TripMap: React.FC = () => {
         </MapGl>
       </MapContainer>
       <TripMapModal />
+      <TripCreatorSnackbar />
     </>
   );
 };

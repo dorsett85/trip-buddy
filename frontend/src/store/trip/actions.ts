@@ -3,7 +3,8 @@ import {
   SetTrips,
   SetTripCreator,
   SetLoadingTrips,
-  SetAddTrip
+  SetAddTrip,
+  SetActiveTrip
 } from './types';
 
 export const setLoadingTrips: SetLoadingTrips = payload => ({
@@ -23,5 +24,10 @@ export const setTripCreator: SetTripCreator = payload => ({
 
 export const setAddTrip: SetAddTrip = payload => ({
   type: TripActionType.SET_ADD_TRIP,
+  payload
+});
+
+export const setActiveTrip: SetActiveTrip = payload => ({
+  type: TripActionType.SET_ACTIVE_TRIP,
   payload
 });
