@@ -5,8 +5,9 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { AppState } from '../../store';
 import { useTripMap, useTrips } from './hooks';
-import TripMapModal from './TripCreatorModal';
-import TripCreatorSnackbar from './TripCreatorSnackbar';
+import TripMapModal from '../TripCreator/TripCreatorModal';
+import TripCreatorSnackbar from '../TripCreator/TripCreatorSnackbar';
+import TripDrawer from '../TripDrawer/TripDrawer';
 
 interface MapContainerProps {
   creatingTrip: boolean;
@@ -54,6 +55,7 @@ const TripMap: React.FC = () => {
       </MapContainer>
       <TripMapModal />
       <TripCreatorSnackbar />
+      <TripDrawer />
     </>
   );
 };

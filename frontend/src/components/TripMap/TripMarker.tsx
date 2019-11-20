@@ -43,7 +43,7 @@ const TripMarker: React.FC<TripMarkerProps> = ({ id, Icon = LocationOnIcon }) =>
   };
 
   const handleClick = () => {
-    dispatch(setActiveTrip(trip));
+    dispatch(setActiveTrip({ ...trip, openDrawer: true }));
   };
 
   return (

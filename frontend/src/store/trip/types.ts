@@ -8,7 +8,7 @@ export interface TripCreator extends Partial<Trip> {
 }
 
 export interface ActiveTrip extends Trip {
-  openModal?: boolean;
+  openDrawer?: boolean;
   flyTo?: boolean;
 }
 
