@@ -16,10 +16,12 @@ export const GET_LOGGED_IN_DATA = gql`
       trips {
         id
         name
-        start_location
-        start_date
-        end_date
-        created_date
+        status
+        legs {
+          id
+          name
+          location
+        }
       }
     }
   }

@@ -10,3 +10,8 @@ export interface KeyValue<T = any> {
 }
 
 export type LngLatArray = [number, number];
+
+export interface LngLatObj {
+  x: number;
+  y: number;
+}

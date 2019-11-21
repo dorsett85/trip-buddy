@@ -1,6 +1,6 @@
 import { IResolvers } from 'apollo-server-express';
 import { ContextFieldResolver, ContextAuthFieldResolver } from '../../types/resolvers';
-import { TripSchema } from './trip.types';
+import { TripSchema, TripLegSchema } from './trip.types';
 import { UserRecord } from '../../models/User.types';
 
 interface LoginArgs {

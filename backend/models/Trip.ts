@@ -6,20 +6,8 @@ import BaseModel from './Base';
 export default class TripModel extends BaseModel {
   public static tableName = 'trips';
 
-  public static async createOne(trip: Partial<TripRecord>): Promise<TripRecord> {
-    // We'll need to modify the lngLat so that postgres can insert into the 'point' type
-    const newTrip = {
-      ...trip,
-      start_location: `(${trip.start_location!.join(',')})`
-    };
-
-    const insertedTrip = await this.baseCreateOne(newTrip);
-
-    // Also need to modify the return point type back to an array
-    const { x, y } = insertedTrip.start_location;
-    insertedTrip.start_location = [x, y];
-
-    return insertedTrip;
+  public static createOne(trip: Partial<TripRecord>): Promise<TripRecord> {
+    return this.baseCreateOne(trip);
   }
 
   public static findOne(
@@ -46,15 +34,8 @@ export default class TripModel extends BaseModel {
     `;
     const values = [userId];
 
-    const { rows }: { rows: any[] } = await db.query({ text, values });
+    const { rows }: { rows: TripRecord[] } = await db.query({ text, values });
 
-    // TODO create transform function for node-postgres point types
-    const transformedRows: TripRecord[] = rows.map(row => {
-      const { x, y } = row.start_location;
-      row.start_location = [x, y];
-      return row;
-    });
-
-    return transformedRows;
+    return rows;
   }
 }

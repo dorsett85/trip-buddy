@@ -1,10 +1,15 @@
 import { Reducer } from 'redux';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { ActionWithPayload, GenericActionCreator } from '../../types/store';
-import { Trip } from '../../types/trip';
+import { Trip, TripLeg } from '../../types/trip';
 
 // State
-export interface TripCreator extends Partial<Trip> {
+export interface TripCreator {
   openModal?: boolean;
+  name?: Trip['name'];
+  // eslint-disable-next-line camelcase
+  date_time?: MaterialUiPickersDate;
+  location?: TripLeg['location'];
 }
 
 export interface ActiveTrip extends Trip {

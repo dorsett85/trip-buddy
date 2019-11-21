@@ -2,8 +2,7 @@
 export interface TripRecord {
   id: number;
   name: string;
-  start_location: [number, number];
-  start_date: Date;
-  end_date: Date;
+  description: string;
+  status: 'pending' | 'active' | 'completed' | 'cancelled';
   created_date: Date;
 }

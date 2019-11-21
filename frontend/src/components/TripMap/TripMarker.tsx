@@ -9,7 +9,8 @@ import { AppState } from '../../store';
 import { TripState } from '../../store/trip/types';
 
 export interface TripMarkerProps {
-  id: keyof TripState['trips'];
+  tripId: keyof TripState['trips'];
+  tripLegId: number;
   Icon?: React.ComponentType<SvgIconProps>;
 }
 
@@ -26,17 +27,17 @@ const PopupStyled = styled(Popup)`
   z-index: 1;
 `;
 
-const TripMarker: React.FC<TripMarkerProps> = ({ id, Icon = LocationOnIcon }) => {
+const TripMarker: React.FC<TripMarkerProps> = ({ tripId, tripLegId, Icon = LocationOnIcon }) => {
   const dispatch = useDispatch();
-  const trip = useSelector((state: AppState) => state.trip.trips[id]);
+  const trip = useSelector((state: AppState) => state.trip.trips[tripId]);
   const isActive = useSelector((state: AppState) =>
     state.trip.activeTrip ? state.trip.activeTrip.id === trip.id : false
   );
   const [showHoverPopup, setShowHoverPopup] = useState(false);
 
   const {
-    start_location: [lng, lat]
-  } = trip;
+    location: [lng, lat]
+  } = trip.legs[tripLegId];
 
   const handleHover = ({ type }: React.MouseEvent) => {
     setShowHoverPopup(type === 'mouseenter');

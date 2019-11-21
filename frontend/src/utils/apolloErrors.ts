@@ -4,7 +4,7 @@ import { INTERNAL_SERVER_ERROR_MESSAGE } from './constants/errors';
 /**
  * Get first graphQLErrors error
  *
- * Return the first graphQLError is there is one, otherwise return an
+ * Return the first graphQLError if there is one, otherwise return an
  * INTERNAL_SERVER_ERROR_MESSAGE (which would mean there was a networkError).
  *
  * This should ONLY be used for single query graphql requests because they

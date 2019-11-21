@@ -8,9 +8,8 @@ export const tripTypeDefs = gql`
 
   input CreateTripInput {
     name: String
-    start_location: [Float]
-    start_date: Date
-    end_date: Date
+    date_time: Date
+    location: [Float]
   }
   
   extend type Mutation {
@@ -18,12 +17,39 @@ export const tripTypeDefs = gql`
     editTrip(name: String): Trip @isAuth
   }
 
+  enum TripStatus {
+    pending
+    active
+    completed
+    cancelled
+  }
+
   type Trip {
     id: Int
     name: String
-    start_date: Date
-    end_date: Date
-    start_location: [Float]
+    description: String
+    status: TripStatus
+    created_date: Date
+    legs: [TripLeg]
+  }
+
+  type TripLeg {
+    id: Int
+    trip_id: Int
+    name: String
+    description: String
+    location: [Float]
+    date_time: Date
+    created_date: Date
+    itinerary: [TripLegItinerary]
+  }
+
+  type TripLegItinerary {
+    id: Int
+    trip_leg_id: Int
+    description: String
+    start_time: Date
+    end_time: Date
     created_date: Date
   }
 `;
