@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { AppState } from '../../store';
 import { setTripCreator, setActiveTrip } from '../../store/trip/actions';
 import { getTripMarkers } from './mapHelpers';
-import { TripLeg } from '../../types/trip';
+import { LngLatArray } from '../../types/shared';
 
 const initialViewport: Partial<ViewportProps> = {
   latitude: 37.785164,
@@ -16,7 +16,7 @@ const initialViewport: Partial<ViewportProps> = {
 
 const transitionInterpolator = new FlyToInterpolator();
 
-const flyToViewport = (lngLat: TripLeg['location']) => (
+const flyToViewport = (lngLat: LngLatArray) => (
   viewport: Partial<ViewportProps>
 ): Partial<ViewportProps> => {
   const [longitude, latitude] = lngLat;
@@ -34,6 +34,7 @@ export const useTripMap = () => {
   const [viewport, setViewport] = useState(initialViewport);
   const creatingTrip = useSelector(({ trip }: AppState) => !!trip.tripCreator);
   const activeTrip = useSelector((state: AppState) => state.trip.activeTrip);
+  const flyTo = useSelector((state: AppState) => state.general.flyTo);
 
   const updateViewport = (newViewport: ViewState) => {
     setViewport(newViewport);
@@ -56,13 +57,12 @@ export const useTripMap = () => {
     }
   };
 
-  // Viewport shift when active trip changes
+  // Viewport shift when flyTo changes
   useEffect(() => {
-    // Shift on creating new trip
-    if (activeTrip && activeTrip.flyTo) {
-      setViewport(flyToViewport(activeTrip.legs[0].location));
+    if (flyTo) {
+      setViewport(flyToViewport(flyTo));
     }
-  }, [activeTrip]);
+  }, [flyTo]);
 
   return {
     viewport,

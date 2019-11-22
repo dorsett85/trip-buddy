@@ -3,8 +3,10 @@ import thunkMiddleware from 'redux-thunk';
 import { userReducer } from './user/reducer';
 import { tripReducer } from './trip/reducer';
 import { AppState } from './types';
+import { generalReducer } from './general/reducer';
 
 const rootReducer = combineReducers<AppState>({
+  general: generalReducer,
   user: userReducer,
   trip: tripReducer
 });

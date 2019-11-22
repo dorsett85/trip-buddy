@@ -24,6 +24,7 @@ import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { Feature } from '../../types/apiResponses';
 import { getFirstError } from '../../utils/apolloErrors';
+import { setFlyTo } from '../../store/general/actions';
 
 export const CREATE_TRIP = gql`
   mutation createTrip($input: CreateTripInput) {
@@ -63,7 +64,8 @@ const TripCreatorModal: React.FC = () => {
     onCompleted: data => {
       dispatch(setAddTrip(data.createTrip));
       dispatch(setTripCreator(undefined));
-      dispatch(setActiveTrip({ ...data.createTrip, flyTo: true }));
+      dispatch(setActiveTrip(data.createTrip));
+      dispatch(setFlyTo(data.createTrip.legs[0].location));
     },
     onError: error => {
       setErrors(<ErrorStyled>{getFirstError(error)}</ErrorStyled>);

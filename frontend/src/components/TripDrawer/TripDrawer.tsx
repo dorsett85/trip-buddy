@@ -2,20 +2,17 @@ import React, { memo } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from '../../store';
-import { setActiveTrip } from '../../store/trip/actions';
 import { TripLeg } from '../../types/trip';
+import { setOpenDrawer } from '../../store/general/actions';
 
 const TripDrawer: React.FC = () => {
   const dispatch = useDispatch();
   const activeTrip = useSelector(({ trip }: AppState) => trip.activeTrip);
+  const open = useSelector(({ general }: AppState) => general.openDrawer);
 
   const handleClose = () => {
-    if (activeTrip) {
-      dispatch(setActiveTrip({ ...activeTrip, openDrawer: false }));
-    }
+    dispatch(setOpenDrawer(false));
   };
-
-  const open = activeTrip && activeTrip.openDrawer;
 
   // Content to display within the Drawer
   const content =

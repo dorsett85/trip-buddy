@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setActiveTrip } from '../../store/trip/actions';
 import { AppState } from '../../store';
 import { TripState } from '../../store/trip/types';
+import { setOpenDrawer } from '../../store/general/actions';
 
 export interface TripMarkerProps {
   tripId: keyof TripState['trips'];
@@ -27,7 +28,11 @@ const PopupStyled = styled(Popup)`
   z-index: 1;
 `;
 
-const TripMarker: React.FC<TripMarkerProps> = ({ tripId, tripLegId, Icon = LocationOnIcon }) => {
+const TripMarker: React.FC<TripMarkerProps> = ({
+  tripId,
+  tripLegId,
+  Icon = LocationOnIcon
+}) => {
   const dispatch = useDispatch();
   const trip = useSelector((state: AppState) => state.trip.trips[tripId]);
   const isActive = useSelector((state: AppState) =>
@@ -44,7 +49,8 @@ const TripMarker: React.FC<TripMarkerProps> = ({ tripId, tripLegId, Icon = Locat
   };
 
   const handleClick = () => {
-    dispatch(setActiveTrip({ ...trip, openDrawer: true }));
+    dispatch(setActiveTrip(trip));
+    dispatch(setOpenDrawer(true));
   };
 
   return (

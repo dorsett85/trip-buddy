@@ -8,7 +8,7 @@ export const up = async (pool: Pool): Promise<QueryResult<any>> => {
     CREATE TABLE trip_legs (
       id serial PRIMARY KEY,
       trip_id integer NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
-      name varchar NOT NULL UNIQUE,
+      name varchar NOT NULL,
       description varchar,
       location point NOT NULL,
       date_time timestamp NOT NULL,

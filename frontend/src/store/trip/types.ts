@@ -12,18 +12,13 @@ export interface TripCreator {
   location?: TripLeg['location'];
 }
 
-export interface ActiveTrip extends Trip {
-  openDrawer?: boolean;
-  flyTo?: boolean;
-}
-
 export interface TripState {
   loadingTrips: boolean;
   trips: {
     [key in Trip['id']]: Trip;
   };
   tripCreator?: TripCreator;
-  activeTrip?: ActiveTrip;
+  activeTrip?: Trip;
 }
 
 // Reducer
