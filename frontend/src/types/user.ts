@@ -1,9 +1,9 @@
+/* eslint-disable camelcase */
 export interface User {
-  id?: number;
-  username?: string;
-  email?: string;
-  password?: string;
-  // eslint-disable-next-line camelcase
-  email_validated?: boolean;
-  created?: Date;
+  id: number;
+  username: string;
+  email: string;
+  password: string;
+  email_validated: boolean;
+  created_date: Date;
 }

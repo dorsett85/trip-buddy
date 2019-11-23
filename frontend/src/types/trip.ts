@@ -5,7 +5,7 @@ import { LngLatArray } from './shared';
 export interface Trip {
   id: number;
   name: string;
-  description: string;
+  description?: string;
   status: 'pending' | 'active' | 'completed' | 'cancelled';
   created_date: MaterialUiPickersDate;
   legs: TripLeg[];
@@ -14,7 +14,7 @@ export interface Trip {
 export interface TripLeg {
   id: number;
   name: string;
-  description: string;
+  description?: string;
   location: LngLatArray;
   date_time: MaterialUiPickersDate;
   created_date: MaterialUiPickersDate;
@@ -23,7 +23,7 @@ export interface TripLeg {
 
 export interface TripLegItinerary {
   id: number;
-  description: string;
+  description?: string;
   start_time: MaterialUiPickersDate;
-  end_time: MaterialUiPickersDate;
+  end_time?: MaterialUiPickersDate;
 }

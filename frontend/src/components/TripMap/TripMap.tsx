@@ -7,7 +7,6 @@ import { AppState } from '../../store';
 import { useTripMap, useTrips } from './hooks';
 import TripMapModal from '../TripCreator/TripCreatorModal';
 import TripCreatorSnackbar from '../TripCreator/TripCreatorSnackbar';
-import TripDrawer from '../TripDrawer/TripDrawer';
 
 interface MapContainerProps {
   creatingTrip: boolean;
@@ -55,7 +54,6 @@ const TripMap: React.FC = () => {
       </MapContainer>
       <TripMapModal />
       <TripCreatorSnackbar />
-      <TripDrawer />
     </>
   );
 };

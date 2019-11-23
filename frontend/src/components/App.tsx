@@ -8,6 +8,7 @@ import TripMapLazy from './TripMap/TripMapLazy';
 import CheckLoggedIn from './CheckLoggedIn/CheckLoggedIn';
 import store from '../store';
 import { theme } from '../styles/theme';
+import SideDrawerLazy from './SideDrawer/SideDrawer';
 
 const App: React.FC = () => {
   return (
@@ -17,6 +18,7 @@ const App: React.FC = () => {
           <ApolloProvider>
             <TripMapLazy />
             <CheckLoggedIn />
+            <SideDrawerLazy />
           </ApolloProvider>
         </MuiPickersUtilsProvider>
       </ThemeProvider>

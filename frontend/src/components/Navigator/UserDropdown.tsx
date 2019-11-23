@@ -12,10 +12,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useApolloClient } from '@apollo/react-hooks';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import styled from 'styled-components';
-import { setLoggedIn } from '../../store/user/actions';
+import { setLoggedIn, setViewProfile, setViewAccount } from '../../store/user/actions';
 import { AppState } from '../../store';
 import { setTrips } from '../../store/trip/actions';
 import { removeLocalToken } from '../../utils/localToken';
+import { setOpenDrawer } from '../../store/general/actions';
 
 const useStyles = makeStyles((theme: Theme) => ({
   userPopover: {
@@ -44,6 +45,16 @@ const UserDropdown: React.FC = () => {
 
   const handlePopoverClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleProfileClick = () => {
+    dispatch(setViewProfile(true));
+    dispatch(setOpenDrawer(true));
+  };
+
+  const handleAccountClick = () => {
+    dispatch(setViewAccount(true));
+    dispatch(setOpenDrawer(true));
   };
 
   const handleLogoutClick = () => {
@@ -83,10 +94,10 @@ const UserDropdown: React.FC = () => {
         <Divider />
         <List>
           <ListItem button onClick={handlePopoverClose}>
-            <ListItemText primary='Profile' />
+            <ListItemText onClick={handleProfileClick} primary='Profile' />
           </ListItem>
           <ListItem button onClick={handlePopoverClose}>
-            <ListItemText primary='My Account' />
+            <ListItemText onClick={handleAccountClick} primary='My Account' />
           </ListItem>
           <ListItem button onClick={handleLogoutClick}>
             <ListItemText primary='Logout' />
