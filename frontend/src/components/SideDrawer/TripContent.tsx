@@ -10,6 +10,7 @@ export interface TripContentProps {
 const TripContent: React.FC<TripContentProps> = ({ dispatch, trip }) => {
   return (
     <div>
+      <h2>Trip Details</h2>
       {trip.legs.map(leg => (
         <div key={leg.id}>
           <p>{leg.name}</p>

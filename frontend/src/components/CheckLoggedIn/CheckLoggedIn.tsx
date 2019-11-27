@@ -12,6 +12,7 @@ import { setLoadingTrips, setTrips } from '../../store/trip/actions';
 export const GET_LOGGED_IN_DATA = gql`
   query {
     user {
+      id
       username
       trips {
         id
