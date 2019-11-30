@@ -4,22 +4,42 @@ import { TripState } from '../../store/trip/types';
 import { Trip } from '../../types/trip';
 
 /**
- * Get array of trip markers
- * 
- * This will get an array of trip markers for the first leg ONLY.  Once a
- * user clicks on the marker, the rest of the trip leg markers will appear
+ * Get array of trip leg markers
+ *
+ * This will get an array of trip leg markers with an optional argument
+ * to only get the first trip leg if "all" is set to false
  */
-export const getTripMarkers = (trips: TripState['trips']) => {
-  return Object.keys(trips).map(key => {
-    const trip = trips[(key as unknown) as keyof TripState['trips']];
-    return <TripMarker key={trip.id} tripId={trip.id} tripLegId={0} />;
-  });
+export const getTripLegsMarkers = (trip: Trip, all = true) => {
+  const markers: JSX.Element[] = [];
+  for (let i = 0; i < trip.legs.length; i += 1) {
+    const leg = trip.legs[i];
+    const marker = (
+      <TripMarker
+        key={leg.id}
+        tripId={trip.id}
+        tripName={trip.name}
+        tripLegId={leg.id}
+        location={leg.location}
+      />
+    );
+    markers.push(marker);
+
+    // Only get the first leg marker if all if false
+    if (!all) {
+      break;
+    }
+  }
+  return markers;
 };
 
 /**
- * Get array of trip leg markers
- * 
- * This will get an array of markers for a given trip
+ * Get array of trip markers
+ *
+ * This will get an array of trip markers (default is to get only the first leg of each trip).
+ * Set the "allLegs" argument to true if you want to show all legs for all trips
  */
-export const getTripLegsMarkers = (trip: Trip) =>
-  trip.legs.map(leg => <TripMarker key={leg.id} tripId={trip.id} tripLegId={leg.id} />);
+export const getTripMarkers = (trips: TripState['trips'], allLegs = false) => {
+  return Object.values(trips)
+    .map(trip => getTripLegsMarkers(trip, allLegs))
+    .flat();
+};

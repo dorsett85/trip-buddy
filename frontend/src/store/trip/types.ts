@@ -48,7 +48,7 @@ export type SetTripCreatorAction = ActionWithPayload<
 export type SetAddTripAction = ActionWithPayload<TripActionType.SET_ADD_TRIP, Trip>;
 export type SetActiveTripAction = ActionWithPayload<
   TripActionType.SET_ACTIVE_TRIP,
-  TripState['activeTrip']
+  Trip['id'] | undefined
 >;
 export type TripAction =
   | ResetStateAction

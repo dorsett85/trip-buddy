@@ -1,12 +1,14 @@
 import React from 'react';
 import MapGl, { NavigationControl } from 'react-map-gl';
 import { Slide } from '@material-ui/core';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { AppState } from '../../store';
 import { useTripMap, useTrips } from './hooks';
 import TripMapModal from '../TripCreator/TripCreatorModal';
 import TripCreatorSnackbar from '../TripCreator/TripCreatorSnackbar';
+
+interface TripMapProps {
+  loggedIn: boolean;
+}
 
 interface MapContainerProps {
   creatingTrip: boolean;
@@ -25,8 +27,7 @@ const MapContainer = styled.div<MapContainerProps>`
   }
 `;
 
-const TripMap: React.FC = () => {
-  const loggedIn = useSelector((state: AppState) => state.user.loggedIn);
+const TripMap: React.FC<TripMapProps> = ({ loggedIn }) => {
   const { viewport, updateViewport, handleClick } = useTripMap();
   const { creatingTrip, tripMarkers } = useTrips();
 

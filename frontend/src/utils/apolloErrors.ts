@@ -2,7 +2,18 @@ import { ApolloError } from 'apollo-boost';
 import { INTERNAL_SERVER_ERROR_MESSAGE } from './constants/errors';
 
 /**
- * Get first graphQLErrors error
+ * Get all graphqlQLErrors
+ * 
+ * Loop through the graphqlQlErrors property and return an array of error messages,
+ * otherwise return an array of length 1 containing an internal server error message
+ */
+export const getErrors = ({ graphQLErrors }: ApolloError): string[] => {
+  const errors = graphQLErrors.map(error => error.message);
+  return errors.length ? errors : [INTERNAL_SERVER_ERROR_MESSAGE];
+};
+
+/**
+ * Get first graphQLError
  *
  * Return the first graphQLError if there is one, otherwise return an
  * INTERNAL_SERVER_ERROR_MESSAGE (which would mean there was a networkError).
@@ -10,6 +21,4 @@ import { INTERNAL_SERVER_ERROR_MESSAGE } from './constants/errors';
  * This should ONLY be used for single query graphql requests because they
  * will only contain a single graphQLError.
  */
-export const getFirstError = ({ graphQLErrors }: ApolloError): string => {
-  return graphQLErrors.length ? graphQLErrors[0].message : INTERNAL_SERVER_ERROR_MESSAGE;
-};
+export const getFirstError = (error: ApolloError): string => getErrors(error)[0];

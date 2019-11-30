@@ -8,10 +8,13 @@ import { setActiveTrip } from '../../store/trip/actions';
 import { AppState } from '../../store';
 import { TripState } from '../../store/trip/types';
 import { setOpenDrawer } from '../../store/general/actions';
+import { Trip, TripLeg } from '../../types/trip';
 
 export interface TripMarkerProps {
   tripId: keyof TripState['trips'];
   tripLegId: number;
+  tripName: Trip['name'];
+  location: TripLeg['location']; 
   Icon?: React.ComponentType<SvgIconProps>;
 }
 
@@ -30,25 +33,24 @@ const PopupStyled = styled(Popup)`
 const TripMarker: React.FC<TripMarkerProps> = ({
   tripId,
   tripLegId,
+  tripName,
+  location,
   Icon = LocationOnIcon
 }) => {
   const dispatch = useDispatch();
-  const trip = useSelector((state: AppState) => state.trip.trips[tripId]);
   const isActive = useSelector((state: AppState) =>
-    state.trip.activeTrip ? state.trip.activeTrip.id === trip.id : false
+    state.trip.activeTrip ? state.trip.activeTrip.id === tripId : false
   );
   const [showHoverPopup, setShowHoverPopup] = useState(false);
 
-  const {
-    location: [lng, lat]
-  } = trip.legs[tripLegId];
+  const [lng, lat] = location;
 
   const handleHover = ({ type }: React.MouseEvent) => {
     setShowHoverPopup(type === 'mouseenter');
   };
 
   const handleClick = () => {
-    dispatch(setActiveTrip(trip));
+    dispatch(setActiveTrip(tripId));
     dispatch(setOpenDrawer(true));
   };
 
@@ -66,7 +68,7 @@ const TripMarker: React.FC<TripMarkerProps> = ({
       </Marker>
       {showHoverPopup && (
         <PopupStyled longitude={lng} latitude={lat} closeButton={false}>
-          {trip.name}
+          {tripName}
         </PopupStyled>
       )}
     </>

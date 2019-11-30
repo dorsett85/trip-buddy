@@ -25,16 +25,24 @@ import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { Feature } from '../../types/apiResponses';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setFlyTo } from '../../store/general/actions';
+import { Trip } from '../../types/trip';
 
 export const CREATE_TRIP = gql`
   mutation createTrip($input: CreateTripInput) {
     createTrip(input: $input) {
       id
       name
+      description
+      status
+      created_date
       legs {
         id
+        trip_id
         name
+        description
         location
+        date_time
+        created_date
       }
     }
   }
@@ -61,10 +69,10 @@ const TripCreatorModal: React.FC = () => {
 
   // Final form submit graphlql mutation
   const [createTripQuery, { loading }] = useMutation(CREATE_TRIP, {
-    onCompleted: data => {
+    onCompleted: (data: { createTrip: Trip }) => {
       dispatch(setAddTrip(data.createTrip));
       dispatch(setTripCreator(undefined));
-      dispatch(setActiveTrip(data.createTrip));
+      dispatch(setActiveTrip(data.createTrip.id));
       dispatch(setFlyTo(data.createTrip.legs[0].location));
     },
     onError: error => {

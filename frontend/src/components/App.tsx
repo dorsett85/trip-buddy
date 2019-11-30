@@ -4,11 +4,9 @@ import { ThemeProvider } from 'styled-components';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import ApolloProvider from './ApolloProvider/ApolloProvider';
-import TripMapLazy from './TripMap/TripMapLazy';
 import CheckLoggedIn from './CheckLoggedIn/CheckLoggedIn';
 import store from '../store';
 import { theme } from '../styles/theme';
-import SideDrawerLazy from './SideDrawer/SideDrawer';
 
 const App: React.FC = () => {
   return (
@@ -16,9 +14,7 @@ const App: React.FC = () => {
       <ThemeProvider theme={theme}>
         <MuiPickersUtilsProvider utils={MomentUtils}>
           <ApolloProvider>
-            <TripMapLazy />
             <CheckLoggedIn />
-            <SideDrawerLazy />
           </ApolloProvider>
         </MuiPickersUtilsProvider>
       </ThemeProvider>

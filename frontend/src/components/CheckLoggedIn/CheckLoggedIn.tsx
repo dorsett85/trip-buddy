@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { gql } from 'apollo-boost';
 import { useLazyQuery } from '@apollo/react-hooks';
@@ -8,6 +8,8 @@ import { AppState } from '../../store';
 import { setLoggedIn, setLoadingUser, setUser } from '../../store/user/actions';
 import { getLocalToken } from '../../utils/localToken';
 import { setLoadingTrips, setTrips } from '../../store/trip/actions';
+import TripMapLazy from '../TripMap/TripMapLazy';
+import SideDrawerLazy from '../SideDrawer/SideDrawerLazy';
 
 export const GET_LOGGED_IN_DATA = gql`
   query {
@@ -21,11 +23,17 @@ export const GET_LOGGED_IN_DATA = gql`
       trips {
         id
         name
+        description
         status
+        created_date
         legs {
           id
+          trip_id
           name
+          description
           location
+          date_time
+          created_date
         }
       }
     }
@@ -71,6 +79,8 @@ const CheckLoggedIn: React.FC = () => {
     <>
       <LandingModal show={!loggedIn} />
       <Navigator show={loggedIn} />
+      <TripMapLazy loggedIn={loggedIn} />
+      <SideDrawerLazy />
     </>
   );
 };

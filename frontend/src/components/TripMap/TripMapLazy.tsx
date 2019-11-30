@@ -1,10 +1,14 @@
 import React, { lazy, Suspense } from 'react';
 
+interface TripMapLazyProps {
+  loggedIn: boolean;
+}
+
 const TripMap = lazy(() => import('./TripMap'));
 
-const TripMapLazy = () => (
+const TripMapLazy: React.FC<TripMapLazyProps> = props => (
   <Suspense fallback={<div />}>
-    <TripMap />
+    <TripMap {...props} />
   </Suspense>
 );
 
