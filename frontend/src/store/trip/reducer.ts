@@ -8,6 +8,10 @@ const initialState: TripState = {
 };
 
 export const tripReducer: TripReducer = (state = initialState, action): TripState => {
+  if (action.type === 'RESET_STATE') {
+    return initialState;
+  }
+  
   if (action.type === 'SET_LOADING_TRIPS') {
     return { ...state, loadingTrips: action.payload };
   }

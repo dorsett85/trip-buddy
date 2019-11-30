@@ -1,52 +1,176 @@
-import React from 'react';
-import { Dispatch } from 'redux';
+import React, { useState } from 'react';
 import Tab from '@material-ui/core/Tab';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { DispatchProp } from 'react-redux';
+import { gql } from 'apollo-boost';
+import { useMutation } from '@apollo/react-hooks';
 import TabBar from '../generic/TabBar/TabBar';
 import { UserState } from '../../store/user/types';
-import { setViewProfile, setViewAccount } from '../../store/user/actions';
-import { AppState } from '../../store';
+import { setViewInfo, setUser } from '../../store/user/actions';
+import { User } from '../../types/user';
+import EditableTextField from '../generic/EditableTextField/EditableTextField';
+import { getFirstError } from '../../utils/apolloErrors';
 
-export interface UserContentProps {
-  dispatch: Dispatch;
-  user: UserState;
+export const UPDATE_USER = gql`
+  mutation UpdateUser($input: UpdateUserInput) {
+    updateUser(input: $input) {
+      username
+      email
+    }
+  }
+`;
+
+export interface UserContentProps extends DispatchProp {
+  user?: UserState;
+}
+
+export interface UserInfoProps extends DispatchProp {
+  user: User;
 }
 
 const UserInfo = styled.div`
   padding-top: 1rem;
 `;
 
-const UserContent: React.FC<UserContentProps> = ({ dispatch, user }) => {
-  const viewProfile = useSelector((state: AppState) => state.user.viewProfile);
+const UserProfile: React.FC<UserInfoProps> = ({ dispatch, user }) => {
+  const [username, setUsername] = useState(user.username);
+  const [editingUsername, setEditingUsername] = useState(false);
+  const [updateUsernameText, setUpdateUsernameText] = useState('');
+  const [updateUsernameError, setUpdateUsernameError] = useState(false);
 
-  const tabValue = viewProfile ? 'profile' : 'account';
+  // Define update user mutation and handlers
+  const [updateUser, { loading }] = useMutation(UPDATE_USER, {
+    onCompleted: () => {
+      setEditingUsername(false);
+      setUpdateUsernameError(false);
+      dispatch(setUser({ username }));
+      setUpdateUsernameText('Successfully updated!');
+    },
+    onError: error => {
+      setUpdateUsernameError(true);
+      setUpdateUsernameText(getFirstError(error));
+    }
+  });
 
-  const handleTabClick = (e: React.ChangeEvent<{}>, value: any) => {
-    if (value === 'profile') {
-      dispatch(setViewProfile(true));
-      dispatch(setViewAccount(false));
-    } else {
-      dispatch(setViewAccount(true));
-      dispatch(setViewProfile(false));
+  const handleUsernameChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingUsername(true);
+    if (target.value.length >= 4) {
+      setUsername(target.value);
     }
   };
 
-  // Define what's in the profile and acocunt tab
-  const content = viewProfile ? (
-    <ul>
-      <li>User Id: {user.id}</li>
-      <li>Username: {user.username}</li>
-    </ul>
-  ) : (
-    <div>Account information</div>
+  const handleSubmitUsername = () => {
+    setUpdateUsernameError(false);
+    setUpdateUsernameText('');
+    updateUser({ variables: { input: { username } } });
+  };
+
+  const handleCancelUsername = () => {
+    if (username !== user.username) {
+      setUsername(user.username);
+    }
+    setEditingUsername(false);
+    setUpdateUsernameError(false);
+    setUpdateUsernameText('');
+  };
+
+  return (
+    <>
+      <h2>Edit profile info:</h2>
+      <EditableTextField
+        label='Username'
+        value={username}
+        editing={editingUsername}
+        onChange={handleUsernameChange}
+        onSubmitEdit={handleSubmitUsername}
+        onCancelEdit={handleCancelUsername}
+        helperText={loading ? 'updating...' : updateUsernameText}
+        error={updateUsernameError}
+        fullWidth
+      />
+    </>
   );
+};
+
+const UserAccount: React.FC<UserInfoProps> = ({ dispatch, user }) => {
+  const [email, setEmail] = useState(user.email);
+  const [editingEmail, setEditingEmail] = useState(false);
+  const [updateEmailText, setUpdateEmailText] = useState('');
+  const [updateEmailError, setUpdateEmailError] = useState(false);
+
+  // Define update user mutation and handlers
+  const [updateUser, { loading }] = useMutation(UPDATE_USER, {
+    onCompleted: () => {
+      setEditingEmail(false);
+      setUpdateEmailError(false);
+      dispatch(setUser({ email }));
+      setUpdateEmailText('Successfully updated!');
+    },
+    onError: error => {
+      setUpdateEmailError(true);
+      setUpdateEmailText(getFirstError(error));
+    }
+  });
+
+  const handleEmailChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingEmail(true);
+    if (target.value.length >= 4) {
+      setEmail(target.value);
+    }
+  };
+
+  const handleSubmitEmail = () => {
+    setUpdateEmailError(false);
+    setUpdateEmailText('');
+    updateUser({ variables: { input: { email } } });
+  };
+
+  const handleCancelEmail = () => {
+    if (email !== user.email) {
+      setEmail(user.email);
+    }
+    setEditingEmail(false);
+    setUpdateEmailError(false);
+    setUpdateEmailText('');
+  };
+
+  return (
+    <>
+      <h2>Edit Account info:</h2>
+      <EditableTextField
+        label='Email'
+        value={email}
+        editing={editingEmail}
+        onChange={handleEmailChange}
+        onSubmitEdit={handleSubmitEmail}
+        onCancelEdit={handleCancelEmail}
+        helperText={loading ? 'updating...' : updateEmailText}
+        error={updateEmailError}
+        fullWidth
+      />
+    </>
+  );
+};
+
+const UserContent: React.FC<UserContentProps> = ({ dispatch, user }) => {
+  const handleTabClick = (e: React.ChangeEvent<{}>, value: any) => {
+    dispatch(setViewInfo(value));
+  };
+
+  // Check to display profile or account tab
+  const content =
+    user &&
+    (user.viewInfo === 'profile' ? (
+      <UserProfile dispatch={dispatch} user={user as User} />
+    ) : (
+      <UserAccount dispatch={dispatch} user={user as User} />
+    ));
 
   return (
     <>
       <TabBar
         tabsProps={{
-          value: tabValue,
+          value: user && user.viewInfo,
           onChange: handleTabClick
         }}
       >

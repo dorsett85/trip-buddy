@@ -14,6 +14,10 @@ export const GET_LOGGED_IN_DATA = gql`
     user {
       id
       username
+      email
+      password
+      email_validated
+      created_date
       trips {
         id
         name

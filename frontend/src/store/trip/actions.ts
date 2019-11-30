@@ -4,8 +4,13 @@ import {
   SetTripCreator,
   SetLoadingTrips,
   SetAddTrip,
-  SetActiveTrip
+  SetActiveTrip,
+  ResetTripState
 } from './types';
+
+export const resetTripState: ResetTripState = () => ({
+  type: TripActionType.RESET_STATE
+});
 
 export const setLoadingTrips: SetLoadingTrips = payload => ({
   type: TripActionType.SET_LOADING_TRIPS,

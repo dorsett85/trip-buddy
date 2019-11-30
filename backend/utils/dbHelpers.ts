@@ -61,6 +61,34 @@ export const addInsert = (
 };
 
 /**
+ * Add update clause text
+ * 
+ * Given an object of properties that contain key (column name) / value (column values) pairs,
+ * create an update clause text string
+ */
+export const addUpdate = (
+  table: string,
+  updateArgs: KeyValue,
+  paramVal = 1
+): QueryConfig => {
+  const values: string[] = [];
+  let updateText = '';
+  let newParamVal = paramVal;
+
+  Object.entries(updateArgs).forEach(([key, value], idx, arr) => {
+    const addCommaAndSpace = idx === arr.length - 1 ? '' : ', ';
+    updateText += `${key} = $${newParamVal}${addCommaAndSpace}`;
+    values.push(value)
+    newParamVal += 1;
+  });
+
+  return {
+    text: `UPDATE ${table} SET ${updateText}`,
+    values
+  };
+};
+
+/**
  * Add where clause text
  *
  * Given an object of properties that contain key (column name) / value (column values) pairs,

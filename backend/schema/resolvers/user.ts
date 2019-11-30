@@ -35,6 +35,10 @@ const Mutation: UserResolvers['Mutation'] = {
     }
 
     return token;
+  },
+  updateUser: async (_, { input }, { user, UserService }) => {
+    const updatedUser = await UserService.updateOne(input, user.id);
+    return updatedUser;
   }
 };
 

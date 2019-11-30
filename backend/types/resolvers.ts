@@ -1,5 +1,6 @@
 import { MergeInfo } from 'apollo-server-express';
 import { GraphQLResolveInfo } from 'graphql';
+// eslint-disable-next-line import/no-cycle
 import { ContextObj } from '../schema/context.types';
 
 // Shortcut type for reducing arguments, adding context object, and optional return type.
@@ -19,3 +20,8 @@ export type ContextAuthFieldResolver<TArgs = any, TReturn = any> = ContextFieldR
   TReturn,
   true
 >;
+
+// Input type as resolver arg
+export interface InputResolverArg<T> {
+  input: T;
+}

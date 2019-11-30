@@ -6,6 +6,10 @@ const initialState: GeneralState = {
 };
 
 export const generalReducer: GeneralReducer = (state = initialState, action): GeneralState => {
+  if (action.type === 'RESET_STATE') {
+    return initialState;
+  }
+  
   if (action.type === 'SET_OPEN_DRAWER') {
     return { ...state, openDrawer: action.payload };
   }

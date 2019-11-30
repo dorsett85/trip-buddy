@@ -1,17 +1,24 @@
+/* eslint-disable import/no-cycle */
 import { IResolvers } from 'apollo-server-express';
-import { ContextFieldResolver, ContextAuthFieldResolver } from '../../types/resolvers';
-import { TripSchema, TripLegSchema } from './trip.types';
+import {
+  ContextFieldResolver,
+  ContextAuthFieldResolver,
+  InputResolverArg
+} from '../../types/resolvers';
+import { TripSchema } from './trip.types';
 import { UserRecord } from '../../models/User.types';
 
-interface LoginArgs {
+export interface LoginArgs {
   username: string;
   password: string;
 }
 
-interface RegisterArgs {
+export interface RegisterArgs {
   email: string;
   password: string;
 }
+
+export type UpdateUserInput = InputResolverArg<Omit<UserRecord, 'id'>>;
 
 export interface UserResolvers extends IResolvers {
   User: {
@@ -24,6 +31,7 @@ export interface UserResolvers extends IResolvers {
   Mutation: {
     loginUser: ContextFieldResolver<LoginArgs, Promise<string | undefined>>;
     registerUser: ContextFieldResolver<RegisterArgs, Promise<string | undefined>>;
+    updateUser: ContextAuthFieldResolver<UpdateUserInput, Promise<UserSchema>>;
   };
 }
 

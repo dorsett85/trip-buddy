@@ -21,4 +21,12 @@ export default class UserModel extends BaseModel {
   ): Promise<UserRecord[]> {
     return this.baseFindMany(andWhereArgs, orWhereArgs);
   }
+
+  public static updateOne(
+    updateArgs: Partial<UserRecord>,
+    andWhereArgs: Partial<UserRecord> = {},
+    orWhereArgs: Partial<UserRecord> = {}
+  ): Promise<UserRecord> {
+    return this.baseUpdateOne(updateArgs, andWhereArgs, orWhereArgs);
+  }
 }

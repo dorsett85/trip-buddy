@@ -1,18 +1,14 @@
 /* eslint-disable camelcase */
 import { IResolvers } from 'apollo-server-express';
 // eslint-disable-next-line import/no-cycle
-import { ContextAuthFieldResolver } from '../../types/resolvers';
+import { ContextAuthFieldResolver, InputResolverArg } from '../../types/resolvers';
 import { TripRecord } from '../../models/Trip.types';
 import { TripLegRecord } from '../../models/TripLeg.types';
 import { TripLegItineraryRecord } from '../../models/TripLegItinerary.types';
 
-export interface CreateTripInput {
-  input: {
-    name: TripRecord['name'];
-    date_time: TripLegRecord['date_time'];
-    location: TripLegRecord['location'];
-  };
-}
+export type CreateTripInput = InputResolverArg<
+  Pick<TripLegRecord, 'name' | 'date_time' | 'location'>
+>;
 
 export interface TripResolvers extends IResolvers {
   Trip: {

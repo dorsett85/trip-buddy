@@ -12,11 +12,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useApolloClient } from '@apollo/react-hooks';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import styled from 'styled-components';
-import { setLoggedIn, setViewProfile, setViewAccount } from '../../store/user/actions';
+import { setOpenDrawer, resetGeneralState } from '../../store/general/actions';
+import { setViewInfo, resetUserState } from '../../store/user/actions';
+import { resetTripState } from '../../store/trip/actions';
 import { AppState } from '../../store';
-import { setTrips } from '../../store/trip/actions';
 import { removeLocalToken } from '../../utils/localToken';
-import { setOpenDrawer } from '../../store/general/actions';
 
 const useStyles = makeStyles((theme: Theme) => ({
   userPopover: {
@@ -48,12 +48,12 @@ const UserDropdown: React.FC = () => {
   };
 
   const handleProfileClick = () => {
-    dispatch(setViewProfile(true));
+    dispatch(setViewInfo('profile'));
     dispatch(setOpenDrawer(true));
   };
 
   const handleAccountClick = () => {
-    dispatch(setViewAccount(true));
+    dispatch(setViewInfo('account'));
     dispatch(setOpenDrawer(true));
   };
 
@@ -61,8 +61,9 @@ const UserDropdown: React.FC = () => {
     setAnchorEl(null);
     removeLocalToken();
     client.clearStore();
-    dispatch(setLoggedIn(false));
-    dispatch(setTrips([]));
+    dispatch(resetGeneralState());
+    dispatch(resetUserState());
+    dispatch(resetTripState());
   };
 
   return (

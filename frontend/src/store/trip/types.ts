@@ -1,4 +1,4 @@
-import { Reducer } from 'redux';
+import { Reducer, Action, ActionCreator } from 'redux';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { ActionWithPayload, GenericActionCreator } from '../../types/store';
 import { Trip, TripLeg } from '../../types/trip';
@@ -26,6 +26,7 @@ export type TripReducer = Reducer<TripState, TripAction>;
 
 // Action types
 export enum TripActionType {
+  RESET_STATE = 'RESET_STATE',
   SET_LOADING_TRIPS = 'SET_LOADING_TRIPS',
   SET_TRIPS = 'SET_TRIPS',
   SET_TRIP_CREATOR = 'SET_TRIP_CREATOR',
@@ -34,6 +35,7 @@ export enum TripActionType {
 }
 
 // Actions
+export type ResetStateAction = Action<TripActionType.RESET_STATE>;
 export type SetLoadingTripsAction = ActionWithPayload<
   TripActionType.SET_LOADING_TRIPS,
   TripState['loadingTrips']
@@ -49,6 +51,7 @@ export type SetActiveTripAction = ActionWithPayload<
   TripState['activeTrip']
 >;
 export type TripAction =
+  | ResetStateAction
   | SetLoadingTripsAction
   | SetTripsAction
   | SetTripCreatorAction
@@ -56,6 +59,7 @@ export type TripAction =
   | SetActiveTripAction;
 
 // Action creators
+export type ResetTripState = ActionCreator<ResetStateAction>;
 export type SetLoadingTrips = GenericActionCreator<SetLoadingTripsAction>;
 export type SetTrips = GenericActionCreator<SetTripsAction>;
 export type SetTripCreator = GenericActionCreator<SetTripCreatorAction>;

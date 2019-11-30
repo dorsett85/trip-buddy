@@ -1,15 +1,11 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import UserModel from '../models/User';
-import {
-  LoginArgs,
-  RegisterArgs,
-  UserServiceDeps,
-  LoginResponse,
-  RegisterResponse
-} from './User.types';
+import { UserServiceDeps, LoginResponse, RegisterResponse } from './User.types';
 import { expressServer } from '../config/config';
 import { UserRecord } from '../models/User.types';
+// eslint-disable-next-line import/no-cycle
+import { LoginArgs, RegisterArgs, UpdateUserInput } from '../schema/resolvers/user.types';
 
 const { jwtSecretKey } = expressServer;
 
@@ -70,5 +66,12 @@ export default class UserService {
     const token = UserService.sign(newUser);
 
     return { token };
+  }
+
+  public updateOne(
+    updateUserInput: UpdateUserInput['input'],
+    userId: UserRecord['id']
+  ): Promise<UserRecord> {
+    return this.UserModel.updateOne(updateUserInput, { id: userId });
   }
 }

@@ -1,14 +1,13 @@
 import React from 'react';
-import { Dispatch } from 'redux';
+import { DispatchProp } from 'react-redux';
 import { Trip, TripLeg } from '../../types/trip';
 
-export interface TripContentProps {
-  dispatch: Dispatch;
-  trip: Trip;
+export interface TripContentProps extends DispatchProp {
+  trip?: Trip;
 }
 
 const TripContent: React.FC<TripContentProps> = ({ dispatch, trip }) => {
-  return (
+  return trip ? (
     <div>
       <h2>Trip Details</h2>
       {trip.legs.map(leg => (
@@ -24,7 +23,7 @@ const TripContent: React.FC<TripContentProps> = ({ dispatch, trip }) => {
         </div>
       ))}
     </div>
-  );
+  ) : null;
 };
 
 export default TripContent;

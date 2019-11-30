@@ -15,13 +15,12 @@ export interface TripMarkerProps {
   Icon?: React.ComponentType<SvgIconProps>;
 }
 
-export interface IconWrapperProps {
-  isActive: boolean;
-}
-
-const IconWrapper = styled.div<IconWrapperProps>`
+const IconWrapper = styled.div`
   cursor: pointer;
-  transform: scale(${props => (props.isActive ? 1.5 : 1)});
+  transition: transform 0.25s;
+  &.active {
+    transform: scale(1.5)
+  }
 `;
 
 const PopupStyled = styled(Popup)`
@@ -56,7 +55,7 @@ const TripMarker: React.FC<TripMarkerProps> = ({
   return (
     <>
       <Marker longitude={lng} latitude={lat} offsetLeft={-12} offsetTop={-12}>
-        <IconWrapper isActive={isActive}>
+        <IconWrapper className={`${isActive ? 'active' : ''}`}>
           <Icon
             onClick={handleClick}
             onMouseEnter={handleHover}

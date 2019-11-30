@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+// eslint-disable-next-line import/no-cycle
 import UserService from '../services/User';
 // eslint-disable-next-line import/no-cycle
 import TripService from '../services/Trip';

@@ -1,4 +1,4 @@
-import { addInsert, addWhere, addSelect } from './dbHelpers';
+import { addInsert, addWhere, addSelect, addUpdate } from './dbHelpers';
 
 describe('dbHelpers module', () => {
   describe('addSelect function', () => {
@@ -52,6 +52,43 @@ describe('dbHelpers module', () => {
         `INSERT INTO ${table} (username, password) VALUES ($5, $6) RETURNING *;`
       );
       expect(values).toStrictEqual([username, password]);
+    });
+  });
+
+  describe('addUpdate function', () => {
+    const table = 'users';
+
+    it('should have update text and values', () => {
+      const username = 'bill';
+      const { text, values } = addUpdate(table, { username });
+      expect(text).toBe(`UPDATE ${table} SET username = $1`);
+      expect(values).toStrictEqual([username]);
+    });
+
+    it('should have multiple update text and values', () => {
+      const username = 'bill';
+      const email = 'bill@gmail.com';
+      const { text, values } = addUpdate(table, { username, email });
+      expect(text).toBe(`UPDATE ${table} SET username = $1, email = $2`);
+      expect(values).toStrictEqual([username, email]);
+    });
+
+    it('should have correct text and values with where clause', () => {
+      const id = 1;
+      const username = 'bill';
+      const email = 'bill@gmail.com';
+      const update = addUpdate(table, { username, email });
+
+      const whereArgs = {
+        andWhereArgs: { id },
+        orWhereArgs: {}
+      };
+      const where = addWhere(whereArgs, update.values!.length + 1);
+      const text = `${update.text} ${where.text};`;
+      const values = [...update.values!, ...where.values!];
+
+      expect(text).toBe(`UPDATE ${table} SET username = $1, email = $2 WHERE id = $3;`);
+      expect(values).toStrictEqual([username, email, id]);
     });
   });
 

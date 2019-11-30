@@ -4,23 +4,15 @@ export interface UserServiceDeps {
   UserModel?: typeof UserModel;
 }
 
-export interface RegisterArgs {
-  email: string;
-  password: string;
+export interface TokenResponse {
+  token?: string;
 }
 
-export interface LoginArgs {
-  username: string;
-  password: string;
-}
-
-export interface LoginResponse {
+export interface LoginResponse extends TokenResponse {
   username?: string;
   password?: string;
-  token?: string;
 }
 
-export interface RegisterResponse {
+export interface RegisterResponse extends TokenResponse {
   email?: string;
-  token?: string;
 }
