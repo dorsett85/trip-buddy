@@ -10,6 +10,7 @@ import { setViewInfo, setUser } from '../../store/user/actions';
 import { User } from '../../types/user';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { getFirstError } from '../../utils/apolloErrors';
+import { SUCCESSFUL_UPDATE_MESSAGE, UPDATING_MESSAGE } from '../../utils/constants/messages';
 
 export const UPDATE_USER = gql`
   mutation UpdateUser($input: UpdateUserInput) {
@@ -44,7 +45,7 @@ const UserProfile: React.FC<UserInfoProps> = ({ dispatch, user }) => {
       setEditingUsername(false);
       setUpdateUsernameError(false);
       dispatch(setUser({ username }));
-      setUpdateUsernameText('Successfully updated!');
+      setUpdateUsernameText(SUCCESSFUL_UPDATE_MESSAGE);
     },
     onError: error => {
       setUpdateUsernameError(true);
@@ -84,7 +85,7 @@ const UserProfile: React.FC<UserInfoProps> = ({ dispatch, user }) => {
         onChange={handleUsernameChange}
         onSubmitEdit={handleSubmitUsername}
         onCancelEdit={handleCancelUsername}
-        helperText={loading ? 'updating...' : updateUsernameText}
+        helperText={loading ? UPDATING_MESSAGE : updateUsernameText}
         error={updateUsernameError}
         fullWidth
       />
@@ -104,7 +105,7 @@ const UserAccount: React.FC<UserInfoProps> = ({ dispatch, user }) => {
       setEditingEmail(false);
       setUpdateEmailError(false);
       dispatch(setUser({ email }));
-      setUpdateEmailText('Successfully updated!');
+      setUpdateEmailText(SUCCESSFUL_UPDATE_MESSAGE);
     },
     onError: error => {
       setUpdateEmailError(true);
@@ -144,7 +145,7 @@ const UserAccount: React.FC<UserInfoProps> = ({ dispatch, user }) => {
         onChange={handleEmailChange}
         onSubmitEdit={handleSubmitEmail}
         onCancelEdit={handleCancelEmail}
-        helperText={loading ? 'updating...' : updateEmailText}
+        helperText={loading ? UPDATING_MESSAGE : updateEmailText}
         error={updateEmailError}
         fullWidth
       />

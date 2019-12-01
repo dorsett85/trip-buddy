@@ -1,11 +1,16 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import UserModel from '../models/User';
-import { UserServiceDeps, LoginResponse, RegisterResponse } from './User.types';
+import { UserServiceDeps } from './User.types';
 import { expressServer } from '../config/config';
 import { UserRecord } from '../models/User.types';
 // eslint-disable-next-line import/no-cycle
 import { LoginArgs, RegisterArgs, UpdateUserInput } from '../schema/resolvers/user.types';
+import {
+  USER_NOT_FOUND_MESSAGE,
+  INVALID_LOGIN_MESSAGE,
+  USER_ALREADY_EXISTS_MESSAGE
+} from '../utils/constants/errors';
 
 const { jwtSecretKey } = expressServer;
 
@@ -28,32 +33,31 @@ export default class UserService {
     }
   }
 
-  public async login(args: LoginArgs): Promise<LoginResponse> {
+  public async login(args: LoginArgs): Promise<string> {
     const { username, password } = args;
 
     // check if username or email exists
     const user = await this.UserModel.findOne({}, { username, email: username });
     if (!user) {
-      return {};
+      return USER_NOT_FOUND_MESSAGE;
     }
 
     // check if password matches
     const passwordIsValid = await bcrypt.compare(password, user.password);
     if (!passwordIsValid) {
-      return { username };
+      return INVALID_LOGIN_MESSAGE;
     }
 
-    const token = UserService.sign(user);
-    return { username, password, token };
+    return UserService.sign(user);
   }
 
-  public async register(args: RegisterArgs): Promise<RegisterResponse> {
+  public async register(args: RegisterArgs): Promise<string> {
     const { email, password } = args;
 
     // Check if user exists
     const user = await this.UserModel.findOne({ email });
     if (user) {
-      return { email };
+      return USER_ALREADY_EXISTS_MESSAGE;
     }
 
     // Now we can create a new user with hashed password and sign the token
@@ -63,15 +67,22 @@ export default class UserService {
       password: hashedPassword,
       email
     });
-    const token = UserService.sign(newUser);
 
-    return { token };
+    return UserService.sign(newUser);
+  }
+
+  public findOne(
+    andWhereArgs: Partial<UserRecord> = {},
+    orWhereArgs: Partial<UserRecord> = {}
+  ): Promise<UserRecord | undefined> {
+    return this.UserModel.findOne(andWhereArgs, orWhereArgs);
   }
 
   public updateOne(
     updateUserInput: UpdateUserInput['input'],
-    userId: UserRecord['id']
-  ): Promise<UserRecord> {
-    return this.UserModel.updateOne(updateUserInput, { id: userId });
+    andWhereArgs: Partial<UserRecord> = {},
+    orWhereArgs: Partial<UserRecord> = {}
+  ): Promise<UserRecord | undefined> {
+    return this.UserModel.updateOne(updateUserInput, andWhereArgs, orWhereArgs);
   }
 }

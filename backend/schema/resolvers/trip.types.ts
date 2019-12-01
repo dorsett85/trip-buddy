@@ -7,8 +7,10 @@ import { TripLegRecord } from '../../models/TripLeg.types';
 import { TripLegItineraryRecord } from '../../models/TripLegItinerary.types';
 
 export type CreateTripInput = InputResolverArg<
-  Pick<TripLegRecord, 'name' | 'date_time' | 'location'>
+  Pick<TripRecord, 'name' | 'description'> & Pick<TripLegRecord, 'location' | 'date_time'>
 >;
+
+export type UpdateTripInput = InputResolverArg<TripRecord>;
 
 export interface TripResolvers extends IResolvers {
   Trip: {
@@ -20,6 +22,7 @@ export interface TripResolvers extends IResolvers {
   };
   Mutation: {
     createTrip: ContextAuthFieldResolver<CreateTripInput, Promise<TripSchema>>;
+    updateTrip: ContextAuthFieldResolver<UpdateTripInput, Promise<TripRecord>>;
   };
 }
 

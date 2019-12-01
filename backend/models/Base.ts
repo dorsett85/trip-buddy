@@ -40,12 +40,21 @@ export default class BaseModel {
     andWhereArgs: KeyValue = {},
     orWhereArgs: KeyValue = {}
   ): Promise<any> {
-    const update = addUpdate(this.tableName, updateArgs);
-    const where = addWhere({ andWhereArgs, orWhereArgs }, update.values!.length + 1);
-    const text = `${update.text} ${where.text} RETURNING *;`;
-    const values = [...update.values!, ...where.values!];
+    let paramVal = 1;
 
-    const { rows: [row] }: { rows: KeyValue[] } = await db.query({ text, values });
+    // Select statement is needed in the where clause subquery that returns only 1 id
+    const select = addSelect(this.tableName, ['id']);
+
+    const update = addUpdate(this.tableName, updateArgs, paramVal);
+    paramVal += update.values!.length;
+    const where = addWhere({ andWhereArgs, orWhereArgs }, paramVal);
+
+    const text = `${update.text} WHERE id = (${select.text} ${where.text} ORDER BY id LIMIT 1) RETURNING *;`;
+    const values = [update.values!, where.values!].flat();
+
+    const {
+      rows: [row]
+    }: { rows: KeyValue[] } = await db.query({ text, values });
     return row;
   }
 }

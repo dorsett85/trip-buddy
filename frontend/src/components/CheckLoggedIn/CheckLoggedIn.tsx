@@ -30,10 +30,8 @@ export const GET_LOGGED_IN_DATA = gql`
           id
           trip_id
           name
-          description
           location
           date_time
-          created_date
         }
       }
     }

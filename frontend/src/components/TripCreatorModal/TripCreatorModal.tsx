@@ -19,7 +19,7 @@ import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
 import { LinearProgress } from '@material-ui/core';
 import { AppState } from '../../store';
-import { setTripCreator, setAddTrip, setActiveTrip } from '../../store/trip/actions';
+import { setTripCreator, addTrip, setActiveTrip, setActiveMarker } from '../../store/trip/actions';
 import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { Feature } from '../../types/apiResponses';
@@ -39,10 +39,8 @@ export const CREATE_TRIP = gql`
         id
         trip_id
         name
-        description
         location
         date_time
-        created_date
       }
     }
   }
@@ -70,10 +68,15 @@ const TripCreatorModal: React.FC = () => {
   // Final form submit graphlql mutation
   const [createTripQuery, { loading }] = useMutation(CREATE_TRIP, {
     onCompleted: (data: { createTrip: Trip }) => {
-      dispatch(setAddTrip(data.createTrip));
+      dispatch(addTrip(data.createTrip));
       dispatch(setTripCreator(undefined));
       dispatch(setActiveTrip(data.createTrip.id));
-      dispatch(setFlyTo(data.createTrip.legs[0].location));
+
+      // Set trip leg specific redux state so the created trip will
+      // automatically have an active marker and fly to its location
+      const leg = data.createTrip.legs[0];
+      dispatch(setActiveMarker(leg.id));
+      dispatch(setFlyTo(leg.location));
     },
     onError: error => {
       setErrors(<ErrorStyled>{getFirstError(error)}</ErrorStyled>);
@@ -110,8 +113,14 @@ const TripCreatorModal: React.FC = () => {
       dispatch(setTripCreator({ name: target.value }));
     };
 
+    const handleDescriptionChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+      dispatch(setTripCreator({ description: target.value }));
+    };
+
     const handleStartDateChange = (date: MaterialUiPickersDate) => {
-      dispatch(setTripCreator({ date_time: date }));
+      if (date) {
+        dispatch(setTripCreator({ date_time: date.toISOString() }));
+      }
     };
 
     const handleLocationChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
@@ -183,6 +192,7 @@ const TripCreatorModal: React.FC = () => {
         const variables = {
           input: {
             name: tripCreator.name,
+            description: tripCreator.description,
             location: tripCreator.location,
             date_time: tripCreator.date_time
           }
@@ -198,6 +208,17 @@ const TripCreatorModal: React.FC = () => {
             label='Trip Name'
             onChange={handleNameChange}
             value={tripCreator.name || ''}
+            variant='outlined'
+            margin='normal'
+            fullWidth
+          />
+          <TextField
+            label='Description'
+            onChange={handleDescriptionChange}
+            value={tripCreator.description || ''}
+            placeholder='Optional... describe your trip here'
+            multiline
+            rows={3}
             variant='outlined'
             margin='normal'
             fullWidth

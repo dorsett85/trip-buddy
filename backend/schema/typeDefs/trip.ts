@@ -7,18 +7,28 @@ export const tripTypeDefs = gql`
   }
 
   input CreateTripInput {
+    name: String!
+    description: String
+    location: [Float]!
+    date_time: Date!
+  }
+
+  input UpdateTripInput {
+    id: Int!
     name: String
-    date_time: Date
-    location: [Float]
+    description: String
+    status: TripStatus
+    created_date: Date
   }
   
   extend type Mutation {
     createTrip(input: CreateTripInput): Trip @isAuth
-    editTrip(name: String): Trip @isAuth
+    updateTrip(input: UpdateTripInput): Trip @isAuth
   }
 
   enum TripStatus {
     pending
+    confirmed
     active
     completed
     cancelled

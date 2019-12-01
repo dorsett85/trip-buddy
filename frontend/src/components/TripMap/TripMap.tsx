@@ -3,8 +3,9 @@ import MapGl, { NavigationControl } from 'react-map-gl';
 import { Slide } from '@material-ui/core';
 import styled from 'styled-components';
 import { useTripMap, useTrips } from './hooks';
-import TripMapModal from '../TripCreator/TripCreatorModal';
-import TripCreatorSnackbar from '../TripCreator/TripCreatorSnackbar';
+import TripCreatorModal from '../TripCreatorModal/TripCreatorModal';
+import TripCreatorSnackbar from '../TripCreatorSnackbar/TripCreatorSnackbar';
+import ActiveTripSnackbar from '../ActiveTripSnackbar/ActiveTripSnackbar';
 
 interface TripMapProps {
   loggedIn: boolean;
@@ -53,8 +54,9 @@ const TripMap: React.FC<TripMapProps> = ({ loggedIn }) => {
           )}
         </MapGl>
       </MapContainer>
-      <TripMapModal />
+      <TripCreatorModal />
       <TripCreatorSnackbar />
+      <ActiveTripSnackbar />
     </>
   );
 };

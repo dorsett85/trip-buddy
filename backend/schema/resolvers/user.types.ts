@@ -18,19 +18,19 @@ export interface RegisterArgs {
   password: string;
 }
 
-export type UpdateUserInput = InputResolverArg<Omit<UserRecord, 'id'>>;
+export type UpdateUserInput = InputResolverArg<Omit<Partial<UserRecord>, 'id'>>;
 
 export interface UserResolvers extends IResolvers {
   User: {
     trips: ContextAuthFieldResolver<any, Promise<TripSchema[]>>;
   };
   Query: {
-    user: ContextAuthFieldResolver<any, UserSchema>;
+    user: ContextAuthFieldResolver<any, Promise<UserSchema>>;
     users: ContextAuthFieldResolver<any, UserSchema[]>;
   };
   Mutation: {
-    loginUser: ContextFieldResolver<LoginArgs, Promise<string | undefined>>;
-    registerUser: ContextFieldResolver<RegisterArgs, Promise<string | undefined>>;
+    loginUser: ContextFieldResolver<LoginArgs, Promise<string>>;
+    registerUser: ContextFieldResolver<RegisterArgs, Promise<string>>;
     updateUser: ContextAuthFieldResolver<UpdateUserInput, Promise<UserSchema>>;
   };
 }

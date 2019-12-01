@@ -5,5 +5,5 @@ export interface User {
   email: string;
   password: string;
   email_validated: boolean;
-  created_date: Date;
+  created_date: string;
 }

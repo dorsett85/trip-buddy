@@ -1,13 +1,20 @@
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { LngLatArray } from './shared';
+
+export const tripStatus = [
+  'pending',
+  'confirmed',
+  'active',
+  'completed',
+  'cancelled'
+] as const;
 
 /* eslint-disable camelcase */
 export interface Trip {
   id: number;
   name: string;
   description?: string;
-  status: 'pending' | 'active' | 'completed' | 'cancelled';
-  created_date: MaterialUiPickersDate;
+  status: typeof tripStatus[number];
+  created_date: string;
   legs: TripLeg[];
 }
 
@@ -16,14 +23,14 @@ export interface TripLeg {
   name: string;
   description?: string;
   location: LngLatArray;
-  date_time: MaterialUiPickersDate;
-  created_date: MaterialUiPickersDate;
+  date_time: string;
+  created_date: string;
   itinerary: TripLegItinerary[];
 }
 
 export interface TripLegItinerary {
   id: number;
   description?: string;
-  start_time: MaterialUiPickersDate;
-  end_time?: MaterialUiPickersDate;
+  start_time: string;
+  end_time?: string;
 }

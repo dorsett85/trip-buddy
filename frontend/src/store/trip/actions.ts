@@ -3,9 +3,11 @@ import {
   SetTrips,
   SetTripCreator,
   SetLoadingTrips,
-  SetAddTrip,
   SetActiveTrip,
-  ResetTripState
+  ResetTripState,
+  SetActiveMarker,
+  AddTrip,
+  UpdateTrip
 } from './types';
 
 export const resetTripState: ResetTripState = () => ({
@@ -27,12 +29,22 @@ export const setTripCreator: SetTripCreator = payload => ({
   payload
 });
 
-export const setAddTrip: SetAddTrip = payload => ({
-  type: TripActionType.SET_ADD_TRIP,
+export const addTrip: AddTrip = payload => ({
+  type: TripActionType.ADD_TRIP,
+  payload
+});
+
+export const updateTrip: UpdateTrip = payload => ({
+  type: TripActionType.UPDATE_TRIP,
   payload
 });
 
 export const setActiveTrip: SetActiveTrip = payload => ({
   type: TripActionType.SET_ACTIVE_TRIP,
+  payload
+});
+
+export const setActiveMarker: SetActiveMarker = payload => ({
+  type: TripActionType.SET_ACTIVE_MARKER,
   payload
 });

@@ -38,4 +38,12 @@ export default class TripModel extends BaseModel {
 
     return rows;
   }
+
+  public static updateOne(
+    updateArgs: Partial<TripRecord>,
+    andWhereArgs: Partial<TripRecord> = {},
+    orWhereArgs: Partial<TripRecord> = {}
+  ): Promise<TripRecord | undefined> {
+    return this.baseUpdateOne(updateArgs, andWhereArgs, orWhereArgs);
+  }
 }

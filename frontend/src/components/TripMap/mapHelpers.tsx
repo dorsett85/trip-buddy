@@ -17,9 +17,12 @@ export const getTripLegsMarkers = (trip: Trip, all = true) => {
       <TripMarker
         key={leg.id}
         tripId={trip.id}
-        tripName={trip.name}
         tripLegId={leg.id}
+        tripName={trip.name}
+        tripLegName={leg.name}
+        status={trip.status}
         location={leg.location}
+        dateTime={leg.date_time}
       />
     );
     markers.push(marker);

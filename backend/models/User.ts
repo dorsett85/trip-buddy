@@ -26,7 +26,7 @@ export default class UserModel extends BaseModel {
     updateArgs: Partial<UserRecord>,
     andWhereArgs: Partial<UserRecord> = {},
     orWhereArgs: Partial<UserRecord> = {}
-  ): Promise<UserRecord> {
+  ): Promise<UserRecord | undefined> {
     return this.baseUpdateOne(updateArgs, andWhereArgs, orWhereArgs);
   }
 }

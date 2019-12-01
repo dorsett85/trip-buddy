@@ -63,7 +63,7 @@ const SideDrawerContainer: React.FC = () => {
   return (
     <>
       <SideDrawer open={openTripDrawer} onClose={handleClose}>
-        <TripContent dispatch={dispatch} trip={activeTrip} />
+        {activeTrip && <TripContent dispatch={dispatch} trip={activeTrip} />}
       </SideDrawer>
       <SideDrawer open={openUserDrawer} onClose={handleClose}>
         <UserContent dispatch={dispatch} user={user} />

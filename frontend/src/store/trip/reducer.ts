@@ -11,7 +11,7 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
   if (action.type === 'RESET_STATE') {
     return initialState;
   }
-  
+
   if (action.type === 'SET_LOADING_TRIPS') {
     return { ...state, loadingTrips: action.payload };
   }
@@ -32,7 +32,7 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
     return { ...state, tripCreator };
   }
 
-  if (action.type === 'SET_ADD_TRIP') {
+  if (action.type === 'ADD_TRIP') {
     const { id } = action.payload;
     const trips: TripState['trips'] = {
       ...state.trips,
@@ -41,8 +41,24 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
     return { ...state, trips };
   }
 
+  if (action.type === 'UPDATE_TRIP') {
+    // When updating a trip, we need to update it on the trip object 
+    // and the active trip property
+    const trips = { ...state.trips };
+    trips[action.payload.id] = action.payload;
+    return { ...state, trips, activeTrip: action.payload };
+  }
+
   if (action.type === 'SET_ACTIVE_TRIP') {
     const activeTrip = action.payload ? state.trips[action.payload] : undefined;
+    return { ...state, activeTrip };
+  }
+
+  if (action.type === 'SET_ACTIVE_MARKER') {
+    const activeTrip = state.activeTrip && {
+      ...state.activeTrip,
+      activeMarker: action.payload
+    };
     return { ...state, activeTrip };
   }
 

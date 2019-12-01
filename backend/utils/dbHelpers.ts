@@ -15,9 +15,12 @@ interface WhereArgs {
  * Given a table name and an array of column names, create an insert clause
  * text string.  If no column names are given, default to '*' (all columns)
  */
-export const addSelect = (table: string, columns: string[] = []): QueryConfig => {
+export const addSelect = (
+  table: string,
+  columns: string[] = []
+): Pick<QueryConfig, 'text'> => {
   const columnText = columns.length ? columns.join(', ') : '*';
-  const text = `SELECT ${columnText || '*'} FROM ${table}`;
+  const text = `SELECT ${columnText} FROM ${table}`;
 
   return { text };
 };
@@ -62,7 +65,7 @@ export const addInsert = (
 
 /**
  * Add update clause text
- * 
+ *
  * Given an object of properties that contain key (column name) / value (column values) pairs,
  * create an update clause text string
  */
@@ -78,7 +81,7 @@ export const addUpdate = (
   Object.entries(updateArgs).forEach(([key, value], idx, arr) => {
     const addCommaAndSpace = idx === arr.length - 1 ? '' : ', ';
     updateText += `${key} = $${newParamVal}${addCommaAndSpace}`;
-    values.push(value)
+    values.push(value);
     newParamVal += 1;
   });
 
