@@ -7,7 +7,6 @@ import {
 } from '../../types/resolvers';
 import { TripSchema } from './trip.types';
 import { UserRecord } from '../../models/User.types';
-import { OmitProtected } from '../../types';
 
 export interface LoginArgs {
   username: string;
@@ -19,7 +18,7 @@ export interface RegisterArgs {
   password: string;
 }
 
-export type UpdateUserInput = InputResolverArg<OmitProtected<UserSchema>>;
+export type UpdateUserInput = InputResolverArg<Omit<UserSchema, 'id' | 'created_date'>>;
 
 export interface UserResolvers extends IResolvers {
   User: {

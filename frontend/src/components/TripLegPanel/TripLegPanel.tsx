@@ -11,13 +11,8 @@ import { TripLeg, TripLegItinerary } from '../../types/trip';
 
 export const GET_ITINERARY = gql`
   query GetItinerary($input: TripLegItineraryInput) {
-    itinerary(input: $input) {
+    trip {
       id
-      trip_leg_id
-      description
-      start_time
-      end_time
-      created_date
     }
   }
 `;

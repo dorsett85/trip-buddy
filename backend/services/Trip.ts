@@ -4,7 +4,11 @@ import { TripServiceDeps } from './Trip.types';
 import { TripRecord } from '../models/Trip.types';
 import { UserRecord } from '../models/User.types';
 // eslint-disable-next-line import/no-cycle
-import { CreateTripInput, TripInput, TripSchema } from '../schema/resolvers/trip.types';
+import {
+  CreateTripInput,
+  UpdateTripInput,
+  TripSchema
+} from '../schema/resolvers/trip.types';
 import TripLegModel from '../models/TripLeg';
 import { TripLegRecord } from '../models/TripLeg.types';
 import TripLegItineraryModel from '../models/TripLegItinerary';
@@ -61,7 +65,7 @@ export default class TripService {
   }
 
   public updateOne(
-    updateTripInput: TripInput['input'],
+    updateTripInput: UpdateTripInput['input'],
     andWhereArgs: Partial<TripRecord> = {},
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord | undefined> {
@@ -69,15 +73,15 @@ export default class TripService {
   }
 
   public findTripLegs(
-    andWhereArgs: Partial<TripRecord> = {},
-    orWhereArgs: Partial<TripRecord> = {}
+    andWhereArgs: Partial<TripLegRecord> = {},
+    orWhereArgs: Partial<TripLegRecord> = {}
   ): Promise<TripLegRecord[]> {
     return this.TripLegModel.findMany(andWhereArgs, orWhereArgs);
   }
 
   public findTripLegItinerary(
-    andWhereArgs: Partial<TripRecord> = {},
-    orWhereArgs: Partial<TripRecord> = {}
+    andWhereArgs: Partial<TripLegItineraryRecord> = {},
+    orWhereArgs: Partial<TripLegItineraryRecord> = {}
   ): Promise<TripLegItineraryRecord[]> {
     return this.TripLegItineraryModel.findMany(andWhereArgs, orWhereArgs);
   }

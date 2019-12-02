@@ -11,7 +11,6 @@ import {
   INVALID_LOGIN_MESSAGE,
   USER_ALREADY_EXISTS_MESSAGE
 } from '../utils/constants/errors';
-import { OmitProtected } from '../types';
 
 const { jwtSecretKey } = expressServer;
 

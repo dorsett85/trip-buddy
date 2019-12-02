@@ -4,14 +4,23 @@ import { INTERNAL_SERVER_ERROR_MESSAGE } from '../../utils/constants/errors';
 
 const Trip: TripResolvers['Trip'] = {
   legs: async ({ id }, __, { TripService }) => {
-    const legs = await TripService.findTripLegs({ id });
+    const legs = await TripService.findTripLegs({ trip_id: id });
+    return legs;
+  }
+};
+
+const TripLeg: TripResolvers['TripLeg'] = {
+  itinerary: async ({ id }, __, { TripService }) => {
+    const legs = await TripService.findTripLegItinerary({ trip_leg_id: id });
     return legs;
   }
 };
 
 const Query: TripResolvers['Query'] = {
-  trips: (_, __, { user, TripService }) => TripService.findByUserId(user.id),
-  itinerary: (_, { input }, { TripService }) => TripService.findTripLegItinerary(input)
+  // TODO Add TripService method to get a Trip based on tripinput and user id 
+  trip: async (_, { input }, { user, TripService }) =>
+    (await TripService.findByUserId(user.id))[0],
+  trips: (_, __, { user, TripService }) => TripService.findByUserId(user.id)
 };
 
 const Mutation: TripResolvers['Mutation'] = {
@@ -19,6 +28,7 @@ const Mutation: TripResolvers['Mutation'] = {
     const trip = await TripService.createOne(input, user.id);
     return trip;
   },
+  // TODO Only allow updates to user's trips
   updateTrip: async (_, args, { TripService }) => {
     const {
       input: { id, ...input }
@@ -33,6 +43,7 @@ const Mutation: TripResolvers['Mutation'] = {
 
 export const tripResolvers: TripResolvers = {
   Trip,
+  TripLeg,
   Query,
   Mutation
 };

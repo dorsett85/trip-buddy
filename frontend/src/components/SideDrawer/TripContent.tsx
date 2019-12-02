@@ -15,7 +15,7 @@ import { getFirstError } from '../../utils/apolloErrors';
 import TripLegPanel from '../TripLegPanel/TripLegPanel';
 
 export const UPDATE_TRIP = gql`
-  mutation UpdateTrip($input: TripInput) {
+  mutation UpdateTrip($input: UpdateTripInput) {
     updateTrip(input: $input) {
       name
       status

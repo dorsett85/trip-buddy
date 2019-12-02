@@ -10,24 +10,28 @@ export type CreateTripInput = InputResolverArg<
   Pick<TripRecord, 'name' | 'description'> & Pick<TripLegRecord, 'location' | 'date_time'>
 >;
 
-export type TripInput = InputResolverArg<Partial<TripRecord>>;
-export type TripLegItineraryInput = InputResolverArg<Partial<TripLegItineraryRecord>>;
+export type FindTripInput = InputResolverArg<TripSchema>;
+export type UpdateTripInput = InputResolverArg<Omit<TripSchema, 'created_date'>>;
+export type TripLegItineraryInput = InputResolverArg<TripLegItinerarySchema>;
 
 export interface TripResolvers extends IResolvers {
   Trip: {
     legs: AuthFieldResolver<TripSchema, any, Promise<TripLegSchema[]>>;
   };
-  Query: {
-    trips: AuthFieldResolver<any, any, Promise<TripSchema[]>>;
+  TripLeg: {
     itinerary: AuthFieldResolver<
-      any,
+      TripLegSchema,
       TripLegItineraryInput,
       Promise<TripLegItinerarySchema[]>
     >;
   };
+  Query: {
+    trip: AuthFieldResolver<any, FindTripInput, Promise<TripSchema>>;
+    trips: AuthFieldResolver<any, any, Promise<TripSchema[]>>;
+  };
   Mutation: {
     createTrip: AuthFieldResolver<any, CreateTripInput, Promise<TripSchema>>;
-    updateTrip: AuthFieldResolver<any, TripInput, Promise<TripSchema>>;
+    updateTrip: AuthFieldResolver<any, UpdateTripInput, Promise<TripSchema>>;
   };
 }
 

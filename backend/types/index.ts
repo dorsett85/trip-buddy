@@ -16,9 +16,6 @@ export interface LngLatObj {
   y: number;
 }
 
-// Shortcut type to omit specific properties that we want to protect
-export type OmitProtected<T, TOmit = unknown> = Omit<T, 'id' | 'created_date' | TOmit>;
-
 // Change the return type of function types
 export type ChangeReturnType<TFunction, TReturn> = TFunction extends (
   ...a: infer A

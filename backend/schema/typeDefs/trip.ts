@@ -16,12 +16,19 @@ export const tripTypeDefs = gql`
     date_time: Date!
   }
 
-  input TripInput {
+  input FindTripInput {
     id: Int
     name: String
     description: String
     status: TripStatus
     created_date: Date
+  }
+
+  input UpdateTripInput {
+    id: Int
+    name: String
+    description: String
+    status: TripStatus
   }
 
   input TripLegInput {
@@ -41,17 +48,6 @@ export const tripTypeDefs = gql`
     start_time: Date
     end_time: Date
     created_date: Date
-  }
-  
-  extend type Query {
-    trip(input: TripInput): Trip @isAuth
-    trips: [Trip] @isAuth
-    itinerary(input: TripLegItineraryInput): [TripLegItinerary] @isAuth
-  }
-
-  extend type Mutation {
-    createTrip(input: CreateTripInput): Trip @isAuth
-    updateTrip(input: TripInput): Trip @isAuth
   }
 
   type Trip {
@@ -81,5 +77,15 @@ export const tripTypeDefs = gql`
     start_time: Date
     end_time: Date
     created_date: Date
+  }
+  
+  extend type Query {
+    trip(input: FindTripInput): Trip @isAuth
+    trips: [Trip] @isAuth
+  }
+
+  extend type Mutation {
+    createTrip(input: CreateTripInput): Trip @isAuth
+    updateTrip(input: UpdateTripInput): Trip @isAuth
   }
 `;
