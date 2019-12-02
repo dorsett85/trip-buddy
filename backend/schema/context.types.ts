@@ -3,7 +3,7 @@
 import UserService from '../services/User';
 // eslint-disable-next-line import/no-cycle
 import TripService from '../services/Trip';
-import { UserRecord } from '../models/User.types';
+import { UserToken } from '../services/User.types';
 
 export interface ContextDeps {
   UserService: typeof UserService;
@@ -11,7 +11,7 @@ export interface ContextDeps {
 }
 
 export interface ContextObj<TAuth = false> {
-  user: TAuth extends false ? null : UserRecord;
+  user: TAuth extends false ? null : UserToken;
   UserService: UserService;
   TripService: TripService;
 }

@@ -20,6 +20,7 @@ export interface Trip {
 
 export interface TripLeg {
   id: number;
+  trip_id: number;
   name: string;
   description?: string;
   location: LngLatArray;
@@ -30,7 +31,9 @@ export interface TripLeg {
 
 export interface TripLegItinerary {
   id: number;
+  trip_leg_id: number;
   description?: string;
   start_time: string;
   end_time?: string;
+  created_date: string;
 }

@@ -1,9 +1,12 @@
 import { gql } from 'apollo-server-express';
 
 export const tripTypeDefs = gql`
-  extend type Query {
-    trip: Trip @isAuth
-    trips: [Trip] @isAuth
+  enum TripStatus {
+    pending
+    confirmed
+    active
+    completed
+    cancelled
   }
 
   input CreateTripInput {
@@ -13,25 +16,42 @@ export const tripTypeDefs = gql`
     date_time: Date!
   }
 
-  input UpdateTripInput {
-    id: Int!
+  input TripInput {
+    id: Int
     name: String
     description: String
     status: TripStatus
     created_date: Date
   }
-  
-  extend type Mutation {
-    createTrip(input: CreateTripInput): Trip @isAuth
-    updateTrip(input: UpdateTripInput): Trip @isAuth
+
+  input TripLegInput {
+    id: Int
+    trip_id: Int
+    name: String
+    description: String
+    location: [Float]
+    date_time: Date
+    created_date: Date
   }
 
-  enum TripStatus {
-    pending
-    confirmed
-    active
-    completed
-    cancelled
+  input TripLegItineraryInput {
+    id: Int
+    trip_leg_id: Int
+    description: String
+    start_time: Date
+    end_time: Date
+    created_date: Date
+  }
+  
+  extend type Query {
+    trip(input: TripInput): Trip @isAuth
+    trips: [Trip] @isAuth
+    itinerary(input: TripLegItineraryInput): [TripLegItinerary] @isAuth
+  }
+
+  extend type Mutation {
+    createTrip(input: CreateTripInput): Trip @isAuth
+    updateTrip(input: TripInput): Trip @isAuth
   }
 
   type Trip {

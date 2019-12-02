@@ -4,7 +4,7 @@ import {
   USER_ALREADY_EXISTS_MESSAGE,
   USER_NOT_FOUND_MESSAGE,
   INVALID_LOGIN_MESSAGE,
-  INTERNAL_SERVER_ERROR_MESSAGE
+  NOT_FOUND_MESSAGE
 } from '../../utils/constants/errors';
 
 const User: UserResolvers['User'] = {
@@ -18,11 +18,10 @@ const Query: UserResolvers['Query'] = {
   user: async (_, __, { user, UserService }) => {
     const foundUser = await UserService.findOne({ id: user.id });
     if (!foundUser) {
-      throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
+      throw new UserInputError(USER_NOT_FOUND_MESSAGE);
     }
     return foundUser;
-  },
-  users: (_, __, { user }) => [user]
+  }
 };
 
 const Mutation: UserResolvers['Mutation'] = {
@@ -51,7 +50,7 @@ const Mutation: UserResolvers['Mutation'] = {
   updateUser: async (_, { input }, { user, UserService }) => {
     const updatedUser = await UserService.updateOne(input, { id: user.id });
     if (!updatedUser) {
-      throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
+      throw new UserInputError(NOT_FOUND_MESSAGE);
     }
     return updatedUser;
   }

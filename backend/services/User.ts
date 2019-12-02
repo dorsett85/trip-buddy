@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import UserModel from '../models/User';
-import { UserServiceDeps } from './User.types';
+import { UserServiceDeps, UserToken } from './User.types';
 import { expressServer } from '../config/config';
 import { UserRecord } from '../models/User.types';
 // eslint-disable-next-line import/no-cycle
@@ -11,6 +11,7 @@ import {
   INVALID_LOGIN_MESSAGE,
   USER_ALREADY_EXISTS_MESSAGE
 } from '../utils/constants/errors';
+import { OmitProtected } from '../types';
 
 const { jwtSecretKey } = expressServer;
 
@@ -21,13 +22,14 @@ export default class UserService {
     this.UserModel = dependencies.UserModel || UserModel;
   }
 
-  public static sign(user: UserRecord) {
-    return jwt.sign(user, jwtSecretKey);
+  public static sign(user: UserRecord): string {
+    const { id, password } = user;
+    return jwt.sign({ id, password }, jwtSecretKey);
   }
 
-  public static verify(token: string): UserRecord | null {
+  public static verify(token: string): UserToken | null {
     try {
-      return jwt.verify(token, jwtSecretKey) as UserRecord;
+      return jwt.verify(token, jwtSecretKey) as UserToken;
     } catch (err) {
       return null;
     }

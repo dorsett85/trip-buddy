@@ -1,12 +1,13 @@
 /* eslint-disable import/no-cycle */
 import { IResolvers } from 'apollo-server-express';
 import {
-  ContextFieldResolver,
-  ContextAuthFieldResolver,
-  InputResolverArg
+  InputResolverArg,
+  FieldResolver,
+  AuthFieldResolver
 } from '../../types/resolvers';
 import { TripSchema } from './trip.types';
 import { UserRecord } from '../../models/User.types';
+import { OmitProtected } from '../../types';
 
 export interface LoginArgs {
   username: string;
@@ -18,23 +19,20 @@ export interface RegisterArgs {
   password: string;
 }
 
-export type UpdateUserInput = InputResolverArg<Omit<Partial<UserRecord>, 'id'>>;
+export type UpdateUserInput = InputResolverArg<OmitProtected<UserSchema>>;
 
 export interface UserResolvers extends IResolvers {
   User: {
-    trips: ContextAuthFieldResolver<any, Promise<TripSchema[]>>;
+    trips: AuthFieldResolver<UserSchema, any, Promise<TripSchema[]>>;
   };
   Query: {
-    user: ContextAuthFieldResolver<any, Promise<UserSchema>>;
-    users: ContextAuthFieldResolver<any, UserSchema[]>;
+    user: AuthFieldResolver<any, any, Promise<UserSchema>>;
   };
   Mutation: {
-    loginUser: ContextFieldResolver<LoginArgs, Promise<string>>;
-    registerUser: ContextFieldResolver<RegisterArgs, Promise<string>>;
-    updateUser: ContextAuthFieldResolver<UpdateUserInput, Promise<UserSchema>>;
+    loginUser: FieldResolver<any, LoginArgs, Promise<string>>;
+    registerUser: FieldResolver<any, RegisterArgs, Promise<string>>;
+    updateUser: AuthFieldResolver<any, UpdateUserInput, Promise<UserSchema>>;
   };
 }
 
-export interface UserSchema extends Partial<UserRecord> {
-  trips?: TripSchema[];
-}
+export interface UserSchema extends Partial<UserRecord> {}

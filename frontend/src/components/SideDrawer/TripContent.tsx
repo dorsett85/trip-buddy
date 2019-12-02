@@ -4,11 +4,7 @@ import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { Trip, TripLeg, tripStatus } from '../../types/trip';
+import { Trip, tripStatus } from '../../types/trip';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import {
   UPDATING_MESSAGE,
@@ -16,9 +12,10 @@ import {
 } from '../../utils/constants/messages';
 import { updateTrip } from '../../store/trip/actions';
 import { getFirstError } from '../../utils/apolloErrors';
+import TripLegPanel from '../TripLegPanel/TripLegPanel';
 
 export const UPDATE_TRIP = gql`
-  mutation UpdateTrip($input: UpdateTripInput) {
+  mutation UpdateTrip($input: TripInput) {
     updateTrip(input: $input) {
       name
       status
@@ -134,20 +131,7 @@ const TripContent: React.FC<TripContentProps> = ({ dispatch, trip }) => {
       <TripNameInput dispatch={dispatch} trip={trip} />
       <TripStatusSelect dispatch={dispatch} trip={trip} />
       {trip.legs.map(leg => (
-        <ExpansionPanel key={leg.id}>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            {leg.name}
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails style={{ display: 'block'}}>
-            {Object.keys(leg).map(key => (
-              <div style={{flexBasis: '100%'}} key={key}>
-                <span>
-                  <b>{key}</b>: {leg[key as keyof TripLeg]}
-                </span>
-              </div>
-            ))}
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+        <TripLegPanel key={leg.id} leg={leg} />
       ))}
     </div>
   );

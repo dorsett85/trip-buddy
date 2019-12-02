@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import { IResolvers } from 'apollo-server-express';
 // eslint-disable-next-line import/no-cycle
-import { ContextAuthFieldResolver, InputResolverArg } from '../../types/resolvers';
+import { InputResolverArg, AuthFieldResolver } from '../../types/resolvers';
 import { TripRecord } from '../../models/Trip.types';
 import { TripLegRecord } from '../../models/TripLeg.types';
 import { TripLegItineraryRecord } from '../../models/TripLegItinerary.types';
@@ -10,26 +10,27 @@ export type CreateTripInput = InputResolverArg<
   Pick<TripRecord, 'name' | 'description'> & Pick<TripLegRecord, 'location' | 'date_time'>
 >;
 
-export type UpdateTripInput = InputResolverArg<TripRecord>;
+export type TripInput = InputResolverArg<Partial<TripRecord>>;
+export type TripLegItineraryInput = InputResolverArg<Partial<TripLegItineraryRecord>>;
 
 export interface TripResolvers extends IResolvers {
   Trip: {
-    legs: ContextAuthFieldResolver<any, Promise<TripLegSchema[]>>;
+    legs: AuthFieldResolver<TripSchema, any, Promise<TripLegSchema[]>>;
   };
   Query: {
-    trip: ContextAuthFieldResolver<any, Promise<TripSchema>>;
-    trips: ContextAuthFieldResolver<any, Promise<TripSchema[]>>;
+    trips: AuthFieldResolver<any, any, Promise<TripSchema[]>>;
+    itinerary: AuthFieldResolver<
+      any,
+      TripLegItineraryInput,
+      Promise<TripLegItinerarySchema[]>
+    >;
   };
   Mutation: {
-    createTrip: ContextAuthFieldResolver<CreateTripInput, Promise<TripSchema>>;
-    updateTrip: ContextAuthFieldResolver<UpdateTripInput, Promise<TripRecord>>;
+    createTrip: AuthFieldResolver<any, CreateTripInput, Promise<TripSchema>>;
+    updateTrip: AuthFieldResolver<any, TripInput, Promise<TripSchema>>;
   };
 }
 
-export interface TripSchema extends Partial<TripRecord> {
-  legs?: TripLegSchema[];
-}
-
-export interface TripLegSchema extends Partial<TripLegRecord> {
-  itinerary?: Partial<TripLegItineraryRecord>;
-}
+export interface TripSchema extends Partial<TripRecord> {}
+export interface TripLegSchema extends Partial<TripLegRecord> {}
+export interface TripLegItinerarySchema extends Partial<TripLegItineraryRecord> {}

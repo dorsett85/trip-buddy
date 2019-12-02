@@ -24,9 +24,4 @@ export default class TripLegItineraryModel extends BaseModel {
   ): Promise<TripLegItineraryRecord[]> {
     return this.baseFindMany(andWhereArgs, orWhereArgs);
   }
-
-  public static async findByTripLegId(tripLegId: TripLegRecord['id']): Promise<TripLegItineraryRecord[]> {
-    const { rows }: { rows: TripLegItineraryRecord[] } = await this.findMany({ trip_leg_id: tripLegId });
-    return rows;
-  }
 }

@@ -1,21 +1,17 @@
+import { UserInputError } from 'apollo-server-express';
 import { TripResolvers } from './trip.types';
-import { UserInputError } from 'apollo-server-core';
 import { INTERNAL_SERVER_ERROR_MESSAGE } from '../../utils/constants/errors';
 
 const Trip: TripResolvers['Trip'] = {
   legs: async ({ id }, __, { TripService }) => {
-    const legs = await TripService.getTripLegs(id);
+    const legs = await TripService.findTripLegs({ id });
     return legs;
   }
 };
 
 const Query: TripResolvers['Query'] = {
-  trip: async (_, __, { user }) => {
-    return { id: 1 };
-  },
-  trips: async (_, __, { user, TripService }) => {
-    return [{ id: 1 }];
-  }
+  trips: (_, __, { user, TripService }) => TripService.findByUserId(user.id),
+  itinerary: (_, { input }, { TripService }) => TripService.findTripLegItinerary(input)
 };
 
 const Mutation: TripResolvers['Mutation'] = {
