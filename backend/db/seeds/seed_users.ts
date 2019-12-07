@@ -6,10 +6,11 @@ import brcypt from 'bcrypt';
  */
 export const seed = async (pool: Pool): Promise<QueryResult<any>> =>
   pool.query(`
-    INSERT INTO users (username, password, email)
+    INSERT INTO users (username, password, email, role)
     values (
       'clayton',
       '${brcypt.hashSync('password123', 10)}',
-      'claytonphillipsdorsett@gmail.com'
+      'claytonphillipsdorsett@gmail.com',
+      'admin'
     );
   `);

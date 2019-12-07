@@ -2,6 +2,7 @@ import db from '../db/db';
 import { TripRecord } from './Trip.types';
 import { UserRecord } from './User.types';
 import BaseModel from './Base';
+import { addSelect, addWhere } from '../utils/dbHelpers';
 
 export default class TripModel extends BaseModel {
   public static tableName = 'trips';
@@ -24,15 +25,31 @@ export default class TripModel extends BaseModel {
     return this.baseFindMany(andWhereArgs, orWhereArgs);
   }
 
-  public static async findByUserId(userId: UserRecord['id']): Promise<TripRecord[]> {
+  public static async findOneByUserId(
+    userId: UserRecord['id'],
+    andWhereArgs: Partial<TripRecord> = {},
+    orWhereArgs: Partial<TripRecord> = {}
+  ): Promise<TripRecord | undefined> {
+    return (await this.findManyByUserId(userId, andWhereArgs, orWhereArgs))[0];
+  }
+
+  public static async findManyByUserId(
+    userId: UserRecord['id'],
+    andWhereArgs: Partial<TripRecord> = {},
+    orWhereArgs: Partial<TripRecord> = {}
+  ): Promise<TripRecord[]> {
+    const select = addSelect(this.tableName);
+    const where = addWhere({
+      andWhereArgs: { ...andWhereArgs, user_id: userId },
+      orWhereArgs
+    });
     const text = `
-      SELECT t.*
-      FROM trips t
-        JOIN users_trips ut ON ut.trip_id = t.id
+      ${select.text}
+        JOIN users_trips ut ON ut.trip_id = ${this.tableName}.id
         JOIN users u ON u.id = ut.user_id
-      WHERE u.id = $1;
+      ${where.text};
     `;
-    const values = [userId];
+    const values = where.values!;
 
     const { rows }: { rows: TripRecord[] } = await db.query({ text, values });
 

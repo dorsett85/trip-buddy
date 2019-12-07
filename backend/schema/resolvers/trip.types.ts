@@ -27,7 +27,7 @@ export interface TripResolvers extends IResolvers {
   };
   Query: {
     trip: AuthFieldResolver<any, FindTripInput, Promise<TripSchema>>;
-    trips: AuthFieldResolver<any, any, Promise<TripSchema[]>>;
+    trips: AuthFieldResolver<any, FindTripInput, Promise<TripSchema[]>>;
   };
   Mutation: {
     createTrip: AuthFieldResolver<any, CreateTripInput, Promise<TripSchema>>;

@@ -30,7 +30,7 @@ const ExpansionPanelStyled = styled(ExpansionPanel)`
 `;
 
 const TripLegPanel: React.FC<TripLegPanelProps> = ({ leg }) => {
-  const [itinerary, setItinerary] = useState<TripLegItinerary[]>();
+  const [itinerary, setItinerary] = useState<TripLegItinerary[]>([]);
   const [getItinerary, { loading }] = useLazyQuery(GET_ITINERARY, {
     onCompleted: (data: { itinerary: TripLegItinerary[] }) => {
       setItinerary(data.itinerary);
@@ -43,7 +43,31 @@ const TripLegPanel: React.FC<TripLegPanelProps> = ({ leg }) => {
     }
   };
 
-  const content = loading ? <LinearProgress /> : <div>{itinerary}</div>;
+  const tripLegInfo = (
+    <div>
+      {Object.keys(leg).map(key => (
+        <div key={key}>
+          <span>
+            <b>{key}</b>: {leg[key as keyof TripLeg]}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+
+  const itineraryInfo = loading ? (
+    <LinearProgress />
+  ) : (
+    <div>
+      {itinerary.map(i => (
+        <div key={i.id}>
+          <span>
+            <b>Start Date</b>: {i.start_time}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <ExpansionPanelStyled onChange={handleOnChange}>
@@ -54,15 +78,8 @@ const TripLegPanel: React.FC<TripLegPanelProps> = ({ leg }) => {
         {leg.name}
       </ExpansionPanelSummary>
       <ExpansionPanelDetails className='itineraryPanel-content'>
-        <div>
-          {Object.keys(leg).map(key => (
-            <div key={key}>
-              <span>
-                <b>{key}</b>: {leg[key as keyof TripLeg]}
-              </span>
-            </div>
-          ))}
-        </div>
+        {tripLegInfo}
+        {itineraryInfo}
       </ExpansionPanelDetails>
     </ExpansionPanelStyled>
   );

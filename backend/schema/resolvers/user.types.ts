@@ -22,7 +22,7 @@ export type UpdateUserInput = InputResolverArg<Omit<UserSchema, 'id' | 'created_
 
 export interface UserResolvers extends IResolvers {
   User: {
-    trips: AuthFieldResolver<UserSchema, any, Promise<TripSchema[]>>;
+    trips: AuthFieldResolver<UserRecord, any, Promise<TripSchema[]>>;
   };
   Query: {
     user: AuthFieldResolver<any, any, Promise<UserSchema>>;

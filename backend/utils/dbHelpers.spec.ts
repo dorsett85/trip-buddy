@@ -8,7 +8,7 @@ describe('dbHelpers module', () => {
       const columns: string[] = [];
       let select = addSelect(table);
 
-      expect(select.text).toBe(`SELECT * FROM ${table}`);
+      expect(select.text).toBe(`SELECT ${table}.* FROM ${table}`);
 
       columns.push('id');
       select = addSelect(table, columns);

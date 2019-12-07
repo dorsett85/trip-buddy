@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import UserModel from '../models/User';
-import { UserServiceDeps, UserToken } from './User.types';
+import { UserServiceDeps } from './User.types';
 import { expressServer } from '../config/config';
 import { UserRecord } from '../models/User.types';
 // eslint-disable-next-line import/no-cycle
@@ -26,9 +26,9 @@ export default class UserService {
     return jwt.sign({ id, password }, jwtSecretKey);
   }
 
-  public static verify(token: string): UserToken | null {
+  public static verify(token: string): UserRecord | null {
     try {
-      return jwt.verify(token, jwtSecretKey) as UserToken;
+      return jwt.verify(token, jwtSecretKey) as UserRecord;
     } catch (err) {
       return null;
     }

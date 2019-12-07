@@ -31,10 +31,6 @@ export default class TripService {
     this.UserTripModel = dependencies.UserTripModel || UserTripModel;
   }
 
-  public findByUserId(userId: number): Promise<TripRecord[]> {
-    return this.TripModel.findByUserId(userId);
-  }
-
   public async createOne(
     createTripInput: CreateTripInput['input'],
     userId: UserRecord['id']
@@ -62,6 +58,29 @@ export default class TripService {
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord | undefined> {
     return this.TripModel.findOne(andWhereArgs, orWhereArgs);
+  }
+
+  public findMany(
+    andWhereArgs: Partial<TripRecord> = {},
+    orWhereArgs: Partial<TripRecord> = {}
+  ): Promise<TripRecord[]> {
+    return this.TripModel.findMany(andWhereArgs, orWhereArgs);
+  }
+
+  public findOneByUserId(
+    userId: UserRecord['id'],
+    andWhereArgs: Partial<TripRecord> = {},
+    orWhereArgs: Partial<TripRecord> = {}
+  ): Promise<TripRecord | undefined> {
+    return this.TripModel.findOneByUserId(userId, andWhereArgs, orWhereArgs);
+  }
+
+  public findManyByUserId(
+    userId: UserRecord['id'],
+    andWhereArgs: Partial<TripRecord> = {},
+    orWhereArgs: Partial<TripRecord> = {}
+  ): Promise<TripRecord[]> {
+    return this.TripModel.findManyByUserId(userId, andWhereArgs, orWhereArgs);
   }
 
   public updateOne(

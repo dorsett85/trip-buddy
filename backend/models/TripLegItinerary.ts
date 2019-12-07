@@ -1,9 +1,8 @@
-import { TripLegRecord } from './TripLeg.types';
 import BaseModel from './Base';
 import { TripLegItineraryRecord } from './TripLegItinerary.types';
 
 export default class TripLegItineraryModel extends BaseModel {
-  public static tableName = 'trip_legs';
+  public static tableName = 'trip_legs_itinerary';
 
   public static createOne(
     tripLegItinerary: Partial<TripLegItineraryRecord>

@@ -1,6 +1,6 @@
 import { UserInputError } from 'apollo-server-express';
 import { TripResolvers } from './trip.types';
-import { INTERNAL_SERVER_ERROR_MESSAGE } from '../../utils/constants/errors';
+import { INTERNAL_SERVER_ERROR_MESSAGE, NOT_FOUND_MESSAGE } from '../../utils/constants/errors';
 
 const Trip: TripResolvers['Trip'] = {
   legs: async ({ id }, __, { TripService }) => {
@@ -11,16 +11,29 @@ const Trip: TripResolvers['Trip'] = {
 
 const TripLeg: TripResolvers['TripLeg'] = {
   itinerary: async ({ id }, __, { TripService }) => {
-    const legs = await TripService.findTripLegItinerary({ trip_leg_id: id });
-    return legs;
+    const itinerary = await TripService.findTripLegItinerary({ trip_leg_id: id });
+    return itinerary;
   }
 };
 
 const Query: TripResolvers['Query'] = {
-  // TODO Add TripService method to get a Trip based on tripinput and user id 
-  trip: async (_, { input }, { user, TripService }) =>
-    (await TripService.findByUserId(user.id))[0],
-  trips: (_, __, { user, TripService }) => TripService.findByUserId(user.id)
+  trip: async (_, { input }, { user, TripService }) => {
+    const trip =
+      user.role === 'admin'
+        ? await TripService.findOne(input)
+        : await TripService.findOneByUserId(user.id, input);
+      if (!trip) {
+        throw new UserInputError(NOT_FOUND_MESSAGE);
+      }
+    return trip;
+  },
+  trips: async (_, { input }, { user, TripService }) => {
+    const trips =
+      user.role === 'admin'
+        ? await TripService.findMany(input)
+        : await TripService.findManyByUserId(user.id, input);
+    return trips;
+  }
 };
 
 const Mutation: TripResolvers['Mutation'] = {
