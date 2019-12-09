@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DispatchProp } from 'react-redux';
 import { gql } from 'apollo-boost';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Trip, tripStatus } from '../../types/trip';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import { Trip, tripStatus, TripItinerary } from '../../types/trip';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import {
   UPDATING_MESSAGE,
@@ -12,13 +13,28 @@ import {
 } from '../../utils/constants/messages';
 import { updateTrip } from '../../store/trip/actions';
 import { getFirstError } from '../../utils/apolloErrors';
-import TripLegPanel from '../TripLegPanel/TripLegPanel';
+import TripItineraryPanel from '../TripItineraryPanel/TripItineraryPanel';
 
 export const UPDATE_TRIP = gql`
   mutation UpdateTrip($input: UpdateTripInput) {
     updateTrip(input: $input) {
       name
       status
+    }
+  }
+`;
+
+export const GET_ITINERARY = gql`
+  query GetItinerary($input: FindTripInput) {
+    trip(input: $input) {
+      itineraries {
+        id
+        name
+        description
+        location
+        start_time
+        end_time
+      }
     }
   }
 `;
@@ -125,14 +141,31 @@ const TripStatusSelect: React.FC<TripContentProps> = ({ dispatch, trip }) => {
 };
 
 const TripContent: React.FC<TripContentProps> = ({ dispatch, trip }) => {
+  const [itineraries, setItineraries] = useState<TripItinerary[]>([]);
+  const { data, loading } = useQuery(GET_ITINERARY, {
+    variables: { input: { id: trip.id } }
+  });
+
+  useEffect(() => {
+    if (data) {
+      setItineraries(data.trip.itineraries);
+    }
+  }, [data]);
+
+  const tripItinerary = loading ? (
+    <LinearProgress />
+  ) : (
+    itineraries.map(itinerary => (
+      <TripItineraryPanel key={itinerary.id} itinerary={itinerary} />
+    ))
+  );
+
   return (
     <div>
       <h2>Trip Details</h2>
       <TripNameInput dispatch={dispatch} trip={trip} />
       <TripStatusSelect dispatch={dispatch} trip={trip} />
-      {trip.legs.map(leg => (
-        <TripLegPanel key={leg.id} leg={leg} />
-      ))}
+      {tripItinerary}
     </div>
   );
 };

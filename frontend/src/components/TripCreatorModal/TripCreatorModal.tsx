@@ -33,15 +33,10 @@ export const CREATE_TRIP = gql`
       id
       name
       description
+      location
+      start_date
       status
       created_date
-      legs {
-        id
-        trip_id
-        name
-        location
-        date_time
-      }
     }
   }
 `;
@@ -72,11 +67,10 @@ const TripCreatorModal: React.FC = () => {
       dispatch(setTripCreator(undefined));
       dispatch(setActiveTrip(data.createTrip.id));
 
-      // Set trip leg specific redux state so the created trip will
+      // Set trip specific redux state so the created trip will
       // automatically have an active marker and fly to its location
-      const leg = data.createTrip.legs[0];
-      dispatch(setActiveMarker(leg.id));
-      dispatch(setFlyTo(leg.location));
+      dispatch(setActiveMarker(data.createTrip.id));
+      dispatch(setFlyTo(data.createTrip.location));
     },
     onError: error => {
       setErrors(<ErrorStyled>{getFirstError(error)}</ErrorStyled>);
@@ -119,7 +113,7 @@ const TripCreatorModal: React.FC = () => {
 
     const handleStartDateChange = (date: MaterialUiPickersDate) => {
       if (date) {
-        dispatch(setTripCreator({ date_time: date.toISOString() }));
+        dispatch(setTripCreator({ start_date: date.toISOString() }));
       }
     };
 
@@ -165,7 +159,7 @@ const TripCreatorModal: React.FC = () => {
       if (!tripCreator.name) {
         errorList.push('Missing trip name');
       }
-      if (!tripCreator.date_time) {
+      if (!tripCreator.start_date) {
         errorList.push('Missing start date');
       }
       if (!tripCreator.location) {
@@ -194,7 +188,7 @@ const TripCreatorModal: React.FC = () => {
             name: tripCreator.name,
             description: tripCreator.description,
             location: tripCreator.location,
-            date_time: tripCreator.date_time
+            start_date: tripCreator.start_date
           }
         };
         createTripQuery({ variables });
@@ -228,7 +222,7 @@ const TripCreatorModal: React.FC = () => {
               <DateTimePicker
                 label='Start Date'
                 onChange={handleStartDateChange}
-                value={tripCreator.date_time || null}
+                value={tripCreator.start_date || null}
                 inputVariant='outlined'
                 margin='normal'
                 fullWidth

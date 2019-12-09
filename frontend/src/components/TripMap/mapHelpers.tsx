@@ -4,45 +4,66 @@ import { TripState } from '../../store/trip/types';
 import { Trip } from '../../types/trip';
 
 /**
- * Get array of trip leg markers
- *
- * This will get an array of trip leg markers with an optional argument
- * to only get the first trip leg if "all" is set to false
+ * Get array of trip itinerary markers
  */
-export const getTripLegsMarkers = (trip: Trip, all = true) => {
+export const getTripItineraryMarkers = (trip: Trip) => {
   const markers: JSX.Element[] = [];
-  for (let i = 0; i < trip.legs.length; i += 1) {
-    const leg = trip.legs[i];
+  for (let i = 0; i < trip.itineraries.length; i += 1) {
+    const itinerary = trip.itineraries[i];
+    const hoverContent = (
+      <>
+        <div className='markerPopup-tripName'>{trip.name}</div>
+        <div className='markerPopup-itineraryName'>{itinerary.name}</div>
+        <div>
+          <span>Date:</span>
+          {' '}
+          <span>{new Date(itinerary.start_time).toLocaleDateString()}</span>
+        </div>
+      </>
+    );
     const marker = (
       <TripMarker
-        key={leg.id}
+        key={`${trip.id}${itinerary.id}`}
         tripId={trip.id}
-        tripLegId={leg.id}
-        tripName={trip.name}
-        tripLegName={leg.name}
-        status={trip.status}
-        location={leg.location}
-        dateTime={leg.date_time}
+        markerId={trip.id}
+        location={itinerary.location}
+        hoverContent={hoverContent}
       />
     );
     markers.push(marker);
-
-    // Only get the first leg marker if all if false
-    if (!all) {
-      break;
-    }
   }
   return markers;
 };
 
 /**
  * Get array of trip markers
- *
- * This will get an array of trip markers (default is to get only the first leg of each trip).
- * Set the "allLegs" argument to true if you want to show all legs for all trips
  */
-export const getTripMarkers = (trips: TripState['trips'], allLegs = false) => {
-  return Object.values(trips)
-    .map(trip => getTripLegsMarkers(trip, allLegs))
-    .flat();
+export const getTripMarkers = (trips: TripState['trips']) => {
+  return Object.values(trips).map(trip => {
+    const hoverContent = (
+      <>
+        <div className='markerPopup-tripName'>{trip.name}</div>
+        <div>
+          <span>Date:</span>
+          {' '}
+          <span>{new Date(trip.start_date).toLocaleDateString()}</span>
+        </div>
+        <div>
+          <span>Status:</span>
+          {' '}
+          <span>{trip.status}</span>
+        </div>
+      </>
+    );
+
+    return (
+      <TripMarker
+        key={trip.id}
+        tripId={trip.id}
+        markerId={trip.id}
+        location={trip.location}
+        hoverContent={hoverContent}
+      />
+    );
+  });
 };

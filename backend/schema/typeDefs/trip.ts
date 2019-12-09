@@ -13,13 +13,15 @@ export const tripTypeDefs = gql`
     name: String!
     description: String
     location: [Float]!
-    date_time: Date!
+    start_date: Date!
   }
 
   input FindTripInput {
     id: Int
     name: String
     description: String
+    location: [Float]
+    start_date: Date
     status: TripStatus
     created_date: Date
   }
@@ -28,52 +30,38 @@ export const tripTypeDefs = gql`
     id: Int
     name: String
     description: String
+    location: [Float]
+    start_date: Date
     status: TripStatus
   }
 
-  input TripLegInput {
+  input UpdateTripItineraryInput {
     id: Int
     trip_id: Int
-    name: String
+    name: Int
     description: String
     location: [Float]
-    date_time: Date
-    created_date: Date
-  }
-
-  input TripLegItineraryInput {
-    id: Int
-    trip_leg_id: Int
-    description: String
     start_time: Date
     end_time: Date
-    created_date: Date
   }
 
   type Trip {
     id: Int
     name: String
     description: String
+    location: [Float]
+    start_date: Date
     status: TripStatus
     created_date: Date
-    legs: [TripLeg]
+    itineraries: [TripItinerary]
   }
 
-  type TripLeg {
+  type TripItinerary {
     id: Int
     trip_id: Int
     name: String
     description: String
     location: [Float]
-    date_time: Date
-    created_date: Date
-    itinerary: [TripLegItinerary]
-  }
-
-  type TripLegItinerary {
-    id: Int
-    trip_leg_id: Int
-    description: String
     start_time: Date
     end_time: Date
     created_date: Date

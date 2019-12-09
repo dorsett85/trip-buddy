@@ -5,13 +5,16 @@ import { Pool, QueryResult } from 'pg';
  */
 export const up = async (pool: Pool): Promise<QueryResult<any>> => {
   return pool.query(`
-    CREATE TABLE trip_legs_itinerary (
+    CREATE TABLE trip_itineraries (
       id serial PRIMARY KEY,
-      trip_leg_id integer NOT NULL REFERENCES trip_legs(id) ON DELETE CASCADE,
-      description varchar NOT NULL,
+      trip_id integer NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
+      name varchar NOT NULL,
+      description varchar,
+      location numeric[] CHECK (cardinality(location) = 2),
       start_time timestamp NOT NULL,
       end_time timestamp,
-      created_date timestamp DEFAULT NOW() NOT NULL
+      created_date timestamp DEFAULT NOW() NOT NULL,
+      UNIQUE(trip_id, name)
     );
   `);
 };
@@ -21,6 +24,6 @@ export const up = async (pool: Pool): Promise<QueryResult<any>> => {
  */
 export const down = async (pool: Pool): Promise<QueryResult<any>> => {
   return pool.query(`
-    DROP TABLE IF EXISTS trip_legs_itinerary;
+    DROP TABLE IF EXISTS trip_itineraries;
   `);
 };

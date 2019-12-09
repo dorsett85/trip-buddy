@@ -9,25 +9,19 @@ import {
   UpdateTripInput,
   TripSchema
 } from '../schema/resolvers/trip.types';
-import TripLegModel from '../models/TripLeg';
-import { TripLegRecord } from '../models/TripLeg.types';
-import TripLegItineraryModel from '../models/TripLegItinerary';
-import { TripLegItineraryRecord } from '../models/TripLegItinerary.types';
+import TripItineraryModel from '../models/TripItinerary';
+import { TripItineraryRecord } from '../models/TripItinerary.types';
 
 export default class TripService {
   private TripModel: typeof TripModel;
 
-  private TripLegModel: typeof TripLegModel;
-
-  private TripLegItineraryModel: typeof TripLegItineraryModel;
+  private TripItineraryModel: typeof TripItineraryModel;
 
   private UserTripModel: typeof UserTripModel;
 
   constructor(dependencies: TripServiceDeps = {}) {
     this.TripModel = dependencies.TripModel || TripModel;
-    this.TripLegModel = dependencies.TripLegModel || TripLegModel;
-    this.TripLegItineraryModel =
-      dependencies.TripLegItineraryModel || TripLegItineraryModel;
+    this.TripItineraryModel = dependencies.TripItineraryModel || TripItineraryModel;
     this.UserTripModel = dependencies.UserTripModel || UserTripModel;
   }
 
@@ -36,19 +30,8 @@ export default class TripService {
     userId: UserRecord['id']
   ): Promise<TripSchema> {
     // Create the new trip and add a record to the users_trips pivot table
-    const trip = await this.TripModel.createOne({
-      name: createTripInput.name,
-      description: createTripInput.description
-    });
+    const trip = await this.TripModel.createOne(createTripInput);
     await this.UserTripModel.createOne({ user_id: userId, trip_id: trip.id });
-
-    // Also create the initial trip leg
-    await this.TripLegModel.createOne({
-      trip_id: trip.id,
-      name: 'Leg 1',
-      location: createTripInput.location,
-      date_time: createTripInput.date_time
-    });
 
     return trip;
   }
@@ -91,17 +74,10 @@ export default class TripService {
     return this.TripModel.updateOne(updateTripInput, andWhereArgs, orWhereArgs);
   }
 
-  public findTripLegs(
-    andWhereArgs: Partial<TripLegRecord> = {},
-    orWhereArgs: Partial<TripLegRecord> = {}
-  ): Promise<TripLegRecord[]> {
-    return this.TripLegModel.findMany(andWhereArgs, orWhereArgs);
-  }
-
-  public findTripLegItinerary(
-    andWhereArgs: Partial<TripLegItineraryRecord> = {},
-    orWhereArgs: Partial<TripLegItineraryRecord> = {}
-  ): Promise<TripLegItineraryRecord[]> {
-    return this.TripLegItineraryModel.findMany(andWhereArgs, orWhereArgs);
+  public findTripItinerary(
+    andWhereArgs: Partial<TripItineraryRecord> = {},
+    orWhereArgs: Partial<TripItineraryRecord> = {}
+  ): Promise<TripItineraryRecord[]> {
+    return this.TripItineraryModel.findMany(andWhereArgs, orWhereArgs);
   }
 }

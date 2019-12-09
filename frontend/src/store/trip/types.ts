@@ -1,6 +1,6 @@
 import { Reducer, Action, ActionCreator } from 'redux';
 import { ActionWithPayload, GenericActionCreator } from '../../types/store';
-import { Trip, TripLeg } from '../../types/trip';
+import { Trip } from '../../types/trip';
 
 // State
 export interface TripCreator {
@@ -8,12 +8,12 @@ export interface TripCreator {
   name?: Trip['name'];
   description?: Trip['description'];
   // eslint-disable-next-line camelcase
-  date_time?: string;
-  location?: TripLeg['location'];
+  start_date?: string;
+  location?: Trip['location'];
 }
 
 export interface ActiveTrip extends Trip {
-  activeMarker?: TripLeg['id'];
+  activeMarker?: number;
 }
 
 export interface TripState {

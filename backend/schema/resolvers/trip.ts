@@ -3,16 +3,9 @@ import { TripResolvers } from './trip.types';
 import { INTERNAL_SERVER_ERROR_MESSAGE, NOT_FOUND_MESSAGE } from '../../utils/constants/errors';
 
 const Trip: TripResolvers['Trip'] = {
-  legs: async ({ id }, __, { TripService }) => {
-    const legs = await TripService.findTripLegs({ trip_id: id });
-    return legs;
-  }
-};
-
-const TripLeg: TripResolvers['TripLeg'] = {
-  itinerary: async ({ id }, __, { TripService }) => {
-    const itinerary = await TripService.findTripLegItinerary({ trip_leg_id: id });
-    return itinerary;
+  itineraries: async ({ id }, __, { TripService }) => {
+    const itineraries = await TripService.findTripItinerary({ trip_id: id });
+    return itineraries;
   }
 };
 
@@ -56,7 +49,6 @@ const Mutation: TripResolvers['Mutation'] = {
 
 export const tripResolvers: TripResolvers = {
   Trip,
-  TripLeg,
   Query,
   Mutation
 };

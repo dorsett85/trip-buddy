@@ -13,26 +13,19 @@ export interface Trip {
   id: number;
   name: string;
   description?: string;
+  location: LngLatArray;
+  start_date: string;
   status: typeof tripStatus[number];
   created_date: string;
-  legs: TripLeg[];
+  itineraries: TripItinerary[];
 }
 
-export interface TripLeg {
+export interface TripItinerary {
   id: number;
   trip_id: number;
   name: string;
   description?: string;
   location: LngLatArray;
-  date_time: string;
-  created_date: string;
-  itinerary: TripLegItinerary[];
-}
-
-export interface TripLegItinerary {
-  id: number;
-  trip_leg_id: number;
-  description?: string;
   start_time: string;
   end_time?: string;
   created_date: string;

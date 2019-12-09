@@ -3,7 +3,7 @@ import { ViewState, PointerEvent, ViewportProps, FlyToInterpolator } from 'react
 import { useSelector, useDispatch } from 'react-redux';
 import { AppState } from '../../store';
 import { setTripCreator, setActiveTrip } from '../../store/trip/actions';
-import { getTripMarkers, getTripLegsMarkers } from './mapHelpers';
+import { getTripMarkers, getTripItineraryMarkers } from './mapHelpers';
 import { LngLatArray } from '../../types/shared';
 
 const initialViewport: Partial<ViewportProps> = {
@@ -77,16 +77,19 @@ export const useTrips = () => {
   const activeTrip = useSelector((state: AppState) => state.trip.activeTrip);
   const [tripMarkers, setTripMarkers] = useState<JSX.Element[]>([]);
 
-  // If there's an active trip, only show those legs on the map, otherwise show
+  // If there's an active trip, only show that itinear on the map, otherwise show
   // the first leg of every trip
   useEffect(() => {
+    let markers;
     if (activeTrip) {
-      const markers = getTripLegsMarkers(activeTrip);
-      setTripMarkers(markers);
+      markers = getTripMarkers([activeTrip]);
+      if (activeTrip.itineraries) {
+        markers.concat(getTripItineraryMarkers(activeTrip));
+      }
     } else {
-      const markers = getTripMarkers(trips);
-      setTripMarkers(markers);
+      markers = getTripMarkers(trips);
     }
+    setTripMarkers(markers);
   }, [trips, activeTrip]);
 
   return {

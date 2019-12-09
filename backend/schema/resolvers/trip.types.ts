@@ -3,27 +3,19 @@ import { IResolvers } from 'apollo-server-express';
 // eslint-disable-next-line import/no-cycle
 import { InputResolverArg, AuthFieldResolver } from '../../types/resolvers';
 import { TripRecord } from '../../models/Trip.types';
-import { TripLegRecord } from '../../models/TripLeg.types';
-import { TripLegItineraryRecord } from '../../models/TripLegItinerary.types';
+import { TripItineraryRecord } from '../../models/TripItinerary.types';
 
 export type CreateTripInput = InputResolverArg<
-  Pick<TripRecord, 'name' | 'description'> & Pick<TripLegRecord, 'location' | 'date_time'>
+  Pick<TripRecord, 'name' | 'description' | 'location' | 'start_date'>
 >;
 
 export type FindTripInput = InputResolverArg<TripSchema>;
 export type UpdateTripInput = InputResolverArg<Omit<TripSchema, 'created_date'>>;
-export type TripLegItineraryInput = InputResolverArg<TripLegItinerarySchema>;
+export type TripItineraryInput = InputResolverArg<TripItinerarySchema>;
 
 export interface TripResolvers extends IResolvers {
   Trip: {
-    legs: AuthFieldResolver<TripSchema, any, Promise<TripLegSchema[]>>;
-  };
-  TripLeg: {
-    itinerary: AuthFieldResolver<
-      TripLegSchema,
-      TripLegItineraryInput,
-      Promise<TripLegItinerarySchema[]>
-    >;
+    itineraries: AuthFieldResolver<TripSchema, any, Promise<TripLegSchema[]>>;
   };
   Query: {
     trip: AuthFieldResolver<any, FindTripInput, Promise<TripSchema>>;
@@ -36,5 +28,4 @@ export interface TripResolvers extends IResolvers {
 }
 
 export interface TripSchema extends Partial<TripRecord> {}
-export interface TripLegSchema extends Partial<TripLegRecord> {}
-export interface TripLegItinerarySchema extends Partial<TripLegItineraryRecord> {}
+export interface TripItinerarySchema extends Partial<TripItineraryRecord> {}

@@ -39,8 +39,11 @@ export default class TripModel extends BaseModel {
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord[]> {
     const select = addSelect(this.tableName);
+
+    // Strip out id so it's not ambiguous with user id during the query
+    const { id, ...restAndWhereArgs } = andWhereArgs;
     const where = addWhere({
-      andWhereArgs: { ...andWhereArgs, user_id: userId },
+      andWhereArgs: { ...restAndWhereArgs, user_id: userId },
       orWhereArgs
     });
     const text = `
@@ -51,8 +54,13 @@ export default class TripModel extends BaseModel {
     `;
     const values = where.values!;
 
-    const { rows }: { rows: TripRecord[] } = await db.query({ text, values });
+    let { rows } = await db.query({ text, values });
 
+    // Mega inefficient, but we stripped out trip id from the query to not
+    // be ambiguous with user id so we need to filter for it here
+    // TODO Add the trip id to the where clause without being ambiguous with user id
+    rows = id ? rows.filter(row => row.id === id) : rows;
+    
     return rows;
   }
 

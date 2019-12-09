@@ -9,6 +9,8 @@ export const up = async (pool: Pool): Promise<QueryResult<any>> => {
       id serial PRIMARY KEY,
       name varchar NOT NULL,
       description varchar,
+      location numeric[] CHECK (cardinality(location) = 2),
+      start_date timestamp NOT NULL,
       status varchar DEFAULT 'pending' NOT NULL CHECK (status in ('pending', 'confirmed', 'active', 'completed', 'cancelled')),
       created_date timestamp DEFAULT NOW() NOT NULL
     );
