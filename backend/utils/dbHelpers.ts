@@ -136,3 +136,18 @@ export const addWhere = (
     values
   };
 };
+
+/**
+ * Add table name prefix
+ *
+ * Given an object of properties that contain key (column name) / value (column values) pairs,
+ * return a new object that has keys prefixed with a table name
+ */
+export const prefixTableName = (table: string, args: KeyValue): KeyValue => {
+  const keysWithTablePrefix: KeyValue = {};
+  return Object.keys(args).reduce((acc, key) => {
+    const obj = { ...acc };
+    obj[`${table}.${key}`] = args[key];
+    return obj;
+  }, keysWithTablePrefix);
+}

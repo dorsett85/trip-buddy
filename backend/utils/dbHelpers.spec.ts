@@ -1,4 +1,4 @@
-import { addInsert, addWhere, addSelect, addUpdate } from './dbHelpers';
+import { addInsert, addWhere, addSelect, addUpdate, prefixTableName } from './dbHelpers';
 
 describe('dbHelpers module', () => {
   describe('addSelect function', () => {
@@ -155,6 +155,21 @@ describe('dbHelpers module', () => {
       const { text, values } = addWhere(whereArgs);
       expect(text).toBe('WHERE id = $1 AND username = $2 OR email = $3');
       expect(values).toStrictEqual([id, username, email]);
+    });
+  });
+
+  describe('prefixTableName function', () => {
+    it('should prefix the table name to each key', () => {
+      const tableName = 'trips';
+      const args = {
+        id: 1,
+        name: 'Cali trip'
+      };
+      const argsWithTableNamePrefix = prefixTableName(tableName, args);
+      expect(argsWithTableNamePrefix).toStrictEqual({
+        'trips.id': 1,
+        'trips.name': 'Cali trip'
+      });
     });
   });
 });

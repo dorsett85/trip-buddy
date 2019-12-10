@@ -5,41 +5,41 @@ import { KeyValue } from '../types';
 export default class BaseModel {
   public static tableName: string;
 
-  public static async baseCreateOne(record: KeyValue): Promise<any> {
+  public static async baseCreateOne<T>(record: KeyValue): Promise<T> {
     const query = addInsert(this.tableName, record);
     const {
       rows: [row]
-    }: { rows: KeyValue[] } = await db.query(query);
+    }: { rows: T[] } = await db.query(query);
 
     return row;
   }
 
-  public static async baseFindOne(
+  public static async baseFindOne<T>(
     andWhereArgs: KeyValue = {},
     orWhereArgs: KeyValue = {}
-  ): Promise<any> {
-    const [row] = await this.baseFindMany(andWhereArgs, orWhereArgs);
+  ): Promise<T> {
+    const [row]: T[] = await this.baseFindMany(andWhereArgs, orWhereArgs);
     return row;
   }
 
-  public static async baseFindMany(
+  public static async baseFindMany<T>(
     andWhereArgs: KeyValue = {},
     orWhereArgs: KeyValue = {}
-  ): Promise<any[]> {
+  ): Promise<T[]> {
     const select = addSelect(this.tableName);
     const where = addWhere({ andWhereArgs, orWhereArgs });
     const text = `${select.text} ${where.text};`;
     const { values } = where;
 
-    const { rows }: { rows: KeyValue[] } = await db.query({ text, values });
+    const { rows }: { rows: T[] } = await db.query({ text, values });
     return rows;
   }
 
-  public static async baseUpdateOne(
+  public static async baseUpdateOne<T>(
     updateArgs: KeyValue = {},
     andWhereArgs: KeyValue = {},
     orWhereArgs: KeyValue = {}
-  ): Promise<any> {
+  ): Promise<T> {
     let paramVal = 1;
 
     // Select statement is needed in the where clause subquery that returns only 1 id
@@ -54,7 +54,7 @@ export default class BaseModel {
 
     const {
       rows: [row]
-    }: { rows: KeyValue[] } = await db.query({ text, values });
+    }: { rows: T[] } = await db.query({ text, values });
     return row;
   }
 }
