@@ -17,7 +17,7 @@ export interface Trip {
   start_date: string;
   status: typeof tripStatus[number];
   created_date: string;
-  itineraries: TripItinerary[];
+  itineraries?: TripItinerary[];
 }
 
 export interface TripItinerary {

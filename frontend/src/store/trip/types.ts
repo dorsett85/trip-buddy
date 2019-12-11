@@ -1,6 +1,6 @@
 import { Reducer, Action, ActionCreator } from 'redux';
 import { ActionWithPayload, GenericActionCreator } from '../../types/store';
-import { Trip } from '../../types/trip';
+import { Trip, TripItinerary } from '../../types/trip';
 
 // State
 export interface TripCreator {
@@ -37,6 +37,7 @@ export enum TripActionType {
   ADD_TRIP = 'ADD_TRIP',
   UPDATE_TRIP = 'UPDATE_TRIP',
   SET_ACTIVE_TRIP = 'SET_ACTIVE_TRIP',
+  SET_ACTIVE_TRIP_ITINERARIES = 'SET_ACTIVE_TRIP_ITINERARIES',
   SET_ACTIVE_MARKER = 'SET_ACTIVE_MARKER'
 }
 
@@ -57,6 +58,10 @@ export type SetActiveTripAction = ActionWithPayload<
   TripActionType.SET_ACTIVE_TRIP,
   Trip['id'] | undefined
 >;
+export type SetActiveTripItinerariesAction = ActionWithPayload<
+  TripActionType.SET_ACTIVE_TRIP_ITINERARIES,
+  TripItinerary[]
+>;
 export type SetActiveMarkerAction = ActionWithPayload<
   TripActionType.SET_ACTIVE_MARKER,
   ActiveTrip['activeMarker'] | undefined
@@ -69,6 +74,7 @@ export type TripAction =
   | AddTripAction
   | UpdateTripAction
   | SetActiveTripAction
+  | SetActiveTripItinerariesAction
   | SetActiveMarkerAction;
 
 // Action creators
@@ -79,4 +85,7 @@ export type SetTripCreator = GenericActionCreator<SetTripCreatorAction>;
 export type AddTrip = GenericActionCreator<AddTripAction>;
 export type UpdateTrip = GenericActionCreator<UpdateTripAction>;
 export type SetActiveTrip = GenericActionCreator<SetActiveTripAction>;
+export type SetActiveTripItineraries = GenericActionCreator<
+  SetActiveTripItinerariesAction
+>;
 export type SetActiveMarker = GenericActionCreator<SetActiveMarkerAction>;

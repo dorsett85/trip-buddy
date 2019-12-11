@@ -8,8 +8,12 @@ import { Trip } from '../../types/trip';
  */
 export const getTripItineraryMarkers = (trip: Trip) => {
   const markers: JSX.Element[] = [];
-  for (let i = 0; i < trip.itineraries.length; i += 1) {
-    const itinerary = trip.itineraries[i];
+
+  // Loop through the itineraries to build markers, it's okay to assume
+  // we have the itineraries property because this is checked where
+  // getTripItineraryMarkers is called 
+  for (let i = 0; i < trip.itineraries!.length; i += 1) {
+    const itinerary = trip.itineraries![i];
     const hoverContent = (
       <>
         <div className='markerPopup-tripName'>{trip.name}</div>
@@ -25,7 +29,7 @@ export const getTripItineraryMarkers = (trip: Trip) => {
       <TripMarker
         key={`${trip.id}${itinerary.id}`}
         tripId={trip.id}
-        markerId={trip.id}
+        markerId={+`${trip.id}${itinerary.id}`}
         location={itinerary.location}
         hoverContent={hoverContent}
       />

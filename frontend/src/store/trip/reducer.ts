@@ -54,6 +54,11 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
     return { ...state, activeTrip };
   }
 
+  if (action.type === 'SET_ACTIVE_TRIP_ITINERARIES') {
+    const activeTrip = state.activeTrip && { ...state.activeTrip, itineraries: action.payload };
+    return { ...state, activeTrip };
+  }
+
   if (action.type === 'SET_ACTIVE_MARKER') {
     const activeTrip = state.activeTrip && {
       ...state.activeTrip,

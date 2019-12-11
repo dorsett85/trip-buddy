@@ -7,8 +7,8 @@ import styled from 'styled-components';
 import { AppState } from '../../store';
 import { setOpenDrawer } from '../../store/general/actions';
 import { setViewInfo } from '../../store/user/actions';
-import UserContent from './UserContent';
-import TripContent from './TripContent';
+import UserContent from '../UserContent/UserContent';
+import TripContent from '../TripContent/TripContent';
 
 export interface SideDrawerProps extends DrawerProps {
   onClose: () => void;
