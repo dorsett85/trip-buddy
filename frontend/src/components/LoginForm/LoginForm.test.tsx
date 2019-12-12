@@ -78,8 +78,8 @@ describe('LoginForm component', () => {
 
     fireEvent.change(usernameInput, { target: { value: 'clayton' } });
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
-    fireEvent.submit(form);
-    await waitForDomChange(container);
+    fireEvent.submit(form!);
+    await waitForDomChange();
 
     expect(loginMutationCalled).toBe(true);
   });
@@ -91,11 +91,11 @@ describe('LoginForm component', () => {
 
     fireEvent.change(usernameInput, { target: { value: 'invalid' } });
     fireEvent.change(passwordInput, { target: { value: 'user' } });
-    fireEvent.submit(form);
-    await waitForDomChange(container);
+    fireEvent.submit(form!);
+    await waitForDomChange();
 
     expect(loginMutationCalled).toBe(true);
-    const hasErrorMessage = container.textContent.includes(ERROR_MESSAGE);
+    const hasErrorMessage = container.textContent!.includes(ERROR_MESSAGE);
     expect(hasErrorMessage).toBe(true);
   });
 });

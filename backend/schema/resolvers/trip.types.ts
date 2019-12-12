@@ -15,7 +15,7 @@ export type TripItineraryInput = InputResolverArg<TripItinerarySchema>;
 
 export interface TripResolvers extends IResolvers {
   Trip: {
-    itineraries: AuthFieldResolver<TripSchema, any, Promise<TripLegSchema[]>>;
+    itineraries: AuthFieldResolver<TripSchema, any, Promise<TripItinerarySchema[]>>;
   };
   Query: {
     trip: AuthFieldResolver<any, FindTripInput, Promise<TripSchema>>;

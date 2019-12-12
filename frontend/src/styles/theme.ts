@@ -1,6 +1,24 @@
 import { DefaultTheme } from 'styled-components';
 
+// Theme sizes to be used as values and types
+export const themeSizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
+export type ThemeSizes = typeof themeSizes[number];
+export type SizedType<T = number> = {
+  [key in ThemeSizes]: T;
+}
+export type ThemeSizeArg = ThemeSizes | number;
+
 export class ThemeStyles implements DefaultTheme {
+  readonly breakpoints = {
+    values: {
+      xs: 0,
+      sm: 576,
+      md: 768,
+      lg: 992,
+      xl: 1200
+    }
+  }
+
   readonly colors = {
     primary: 'red',
     secondary: 'blue',
