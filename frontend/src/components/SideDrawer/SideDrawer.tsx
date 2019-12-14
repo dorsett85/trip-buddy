@@ -3,7 +3,7 @@ import Drawer, { DrawerProps } from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { AppState } from '../../store';
 import { setOpenDrawer } from '../../store/general/actions';
 import { setViewInfo } from '../../store/user/actions';
@@ -14,15 +14,21 @@ export interface SideDrawerProps extends DrawerProps {
   onClose: () => void;
 }
 
-const DrawerContentContainer = styled.div`
-  margin: 1rem;
-  & > button {
-    margin-bottom: 0.5rem;
-  }
-  .drawerContentContainer-content {
-    padding-top: 0.5rem;
-  }
-`;
+const DrawerContentContainer = styled.div(
+  ({ theme }) => css`
+    width: 100vw;
+    ${theme.breakpoints.up('sm')} {
+      width: 400px;
+    }
+    padding: 1rem;
+    > button {
+      margin-bottom: 0.5rem;
+    }
+    .drawerContentContainer-content {
+      padding-top: 0.5rem;
+    }
+  `
+);
 
 const SideDrawer: React.FC<SideDrawerProps> = ({ open, onClose, children }) => (
   <Drawer open={open} anchor='right' onClose={onClose}>
