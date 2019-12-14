@@ -84,7 +84,7 @@ export const useTrips = () => {
     if (activeTrip) {
       markers = getTripMarkers([activeTrip]);
       if (activeTrip.itineraries) {
-        markers.concat(getTripItineraryMarkers(activeTrip));
+        markers = markers.concat(getTripItineraryMarkers(activeTrip));
       }
     } else {
       markers = getTripMarkers(trips);
