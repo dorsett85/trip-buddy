@@ -19,6 +19,8 @@ declare module 'styled-components' {
       black: string;
     };
 
+    spacing: (size: ThemeSizeArg) => string;
+
     borderRadius: string;
   }
 }

@@ -42,6 +42,19 @@ export class ThemeStyles implements DefaultTheme {
     black: '#000000'
   };
 
+  private _spacing: SizedType = {
+    xs: 0.33,
+    sm: 0.66,
+    md: 1,
+    lg: 1.5,
+    xl: 2
+  };
+  
+  readonly spacing = (size: ThemeSizeArg = 'md') => {
+    // eslint-disable-next-line no-underscore-dangle
+    return `${typeof size === 'number' ? size : this._spacing[size] }rem`;
+  }
+
   readonly borderRadius = '6px';
 }
 
