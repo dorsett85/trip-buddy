@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
+import { hot } from 'react-hot-loader/root';
 import ApolloProvider from './ApolloProvider/ApolloProvider';
 import CheckLoggedIn from './CheckLoggedIn/CheckLoggedIn';
 import store from '../store';
@@ -22,4 +23,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default hot(App);
