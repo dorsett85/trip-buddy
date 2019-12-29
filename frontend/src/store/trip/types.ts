@@ -13,7 +13,7 @@ export interface TripCreator {
 }
 
 export interface ActiveTrip extends Trip {
-  activeMarker?: number;
+  activeMarker?: string;
 }
 
 export interface TripState {

@@ -18,7 +18,7 @@ export interface TripMarkerProps {
   /**
    * Used for displaying if the marker is active
    */
-  markerId: number;
+  markerId: string;
   /**
    * Used for placing the marker on the map
    */
@@ -45,7 +45,6 @@ const IconWrapper = styled.div`
 
 const PopupStyled = styled(Popup)`
   z-index: 1;
-  .markerP
   .markerPopup-tripName,
   .markerPopup-itineraryName {
     text-align: center;
@@ -82,7 +81,9 @@ const TripMarker: React.FC<TripMarkerProps> = ({
   };
 
   const handleClick = () => {
-    dispatch(setActiveTrip(tripId));
+    if (!isActive) {
+      dispatch(setActiveTrip(tripId));
+    }
     dispatch(setActiveMarker(markerId));
     dispatch(setOpenDrawer(true));
   };

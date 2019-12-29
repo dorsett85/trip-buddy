@@ -29,7 +29,7 @@ export const getTripItineraryMarkers = (trip: Trip) => {
       <TripMarker
         key={`${trip.id}${itinerary.id}`}
         tripId={trip.id}
-        markerId={+`${trip.id}${itinerary.id}`}
+        markerId={`${trip.id}-${itinerary.id}`}
         location={itinerary.location}
         hoverContent={hoverContent}
       />
@@ -64,7 +64,7 @@ export const getTripMarkers = (trips: TripState['trips']) => {
       <TripMarker
         key={trip.id}
         tripId={trip.id}
-        markerId={trip.id}
+        markerId={trip.id.toString()}
         location={trip.location}
         hoverContent={hoverContent}
       />

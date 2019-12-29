@@ -52,7 +52,7 @@ export const useTripMap = () => {
     }
 
     // Any click on the map should cancel the active trip
-    if (activeTrip) {
+    if (activeTrip && e.target.classList.contains('overlays')) {
       dispatch(setActiveTrip(undefined));
     }
   };

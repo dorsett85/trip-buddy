@@ -69,7 +69,7 @@ const TripCreatorModal: React.FC = () => {
 
       // Set trip specific redux state so the created trip will
       // automatically have an active marker and fly to its location
-      dispatch(setActiveMarker(data.createTrip.id));
+      dispatch(setActiveMarker(data.createTrip.id.toString()));
       dispatch(setFlyTo(data.createTrip.location));
     },
     onError: error => {

@@ -165,7 +165,6 @@ const TripStatusSelect: React.FC<TripContentProps> = ({ dispatch, trip }) => {
 };
 
 const TripContent: React.FC<TripContentProps> = ({ dispatch, trip }) => {
-  console.log(trip);
   return (
     <div>
       <h2>Trip Details</h2>
