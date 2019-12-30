@@ -13,6 +13,7 @@ export const GET_ITINERARY = gql`
     trip(input: $input) {
       itineraries {
         id
+        trip_id
         name
         description
         location

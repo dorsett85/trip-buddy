@@ -4,70 +4,35 @@ import { TripState } from '../../store/trip/types';
 import { Trip } from '../../types/trip';
 
 /**
- * Get array of trip itinerary markers
+ * Check if an object is a trip
  */
-export const getTripItineraryMarkers = (trip: Trip) => {
-  const markers: JSX.Element[] = [];
-
-  // Loop through the itineraries to build markers, it's okay to assume
-  // we have the itineraries property because this is checked where
-  // getTripItineraryMarkers is called 
-  for (let i = 0; i < trip.itineraries!.length; i += 1) {
-    const itinerary = trip.itineraries![i];
-    const hoverContent = (
-      <>
-        <div className='markerPopup-tripName'>{trip.name}</div>
-        <div className='markerPopup-itineraryName'>{itinerary.name}</div>
-        <div>
-          <span>Date:</span>
-          {' '}
-          <span>{new Date(itinerary.start_time).toLocaleDateString()}</span>
-        </div>
-      </>
-    );
-    const marker = (
-      <TripMarker
-        key={`${trip.id}${itinerary.id}`}
-        tripId={trip.id}
-        markerId={`${trip.id}-${itinerary.id}`}
-        location={itinerary.location}
-        hoverContent={hoverContent}
-      />
-    );
-    markers.push(marker);
-  }
-  return markers;
-};
+const isTrip = (obj: TripState['trips'] | Trip): obj is Trip => 'id' in obj;
 
 /**
  * Get array of trip markers
  */
-export const getTripMarkers = (trips: TripState['trips']) => {
-  return Object.values(trips).map(trip => {
-    const hoverContent = (
-      <>
-        <div className='markerPopup-tripName'>{trip.name}</div>
-        <div>
-          <span>Date:</span>
-          {' '}
-          <span>{new Date(trip.start_date).toLocaleDateString()}</span>
-        </div>
-        <div>
-          <span>Status:</span>
-          {' '}
-          <span>{trip.status}</span>
-        </div>
-      </>
-    );
+export const getTripMarkers = (tripData: TripState['trips'] | Trip) => {
+  const markers: JSX.Element[] = [];
 
-    return (
-      <TripMarker
-        key={trip.id}
-        tripId={trip.id}
-        markerId={trip.id.toString()}
-        location={trip.location}
-        hoverContent={hoverContent}
-      />
-    );
-  });
+  // If the tripData is a Trip (e.g., activeTrip) also check if we need to
+  // add itineraries
+  if (isTrip(tripData)) {
+    markers.push(<TripMarker markerData={tripData} />);
+    if (tripData.itineraries) {
+      tripData.itineraries.forEach(itinerary => {
+        // Only show itinerary markers that are at different locations than
+        // the trip marker
+        const [tripLng, tripLat] = tripData.location;
+        const [itinLng, itinLat] = itinerary.location;
+        if (tripLng !== itinLng || tripLat !== itinLat) {
+          markers.push(<TripMarker markerData={itinerary} />);
+        }
+      });
+    }
+  } else {
+    Object.values(tripData).forEach(trip => {
+      markers.push(<TripMarker markerData={trip} />);
+    });
+  }
+  return markers;
 };

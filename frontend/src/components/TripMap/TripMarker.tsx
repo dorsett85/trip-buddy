@@ -1,5 +1,5 @@
-import React, { useState, memo, ReactElement } from 'react';
-import { Marker, Popup } from 'react-map-gl';
+import React, { useState, memo } from 'react';
+import { Marker } from 'react-map-gl';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import styled from 'styled-components';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
@@ -7,26 +7,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setActiveTrip, setActiveMarker } from '../../store/trip/actions';
 import { AppState } from '../../store';
 import { setOpenDrawer } from '../../store/general/actions';
-import { Trip } from '../../types/trip';
-import { LngLatArray } from '../../types/shared';
+import { Trip, TripItinerary } from '../../types/trip';
+import TripMarkerPopup from './TripMarkerPopup';
 
 export interface TripMarkerProps {
   /**
-   * Used when clicking on a marker to set the activeTrip
+   * Data for the trip marker
    */
-  tripId: Trip['id'];
-  /**
-   * Used for displaying if the marker is active
-   */
-  markerId: string;
-  /**
-   * Used for placing the marker on the map
-   */
-  location: LngLatArray;
-  /**
-   * Used for displaying hover content
-   */
-  hoverContent: ReactElement | string;
+  markerData: Trip | TripItinerary;
   /**
    * What icon to display for the marker.
    * TODO this currently only allows Svg icons from the
@@ -34,6 +22,11 @@ export interface TripMarkerProps {
    */
   Icon?: React.ComponentType<SvgIconProps>;
 }
+
+/**
+ * Check that the marker data is a Trip or not
+ */
+const isTrip = (obj: Trip | TripItinerary): obj is Trip => !('trip_id' in obj);
 
 const IconWrapper = styled.div`
   cursor: pointer;
@@ -43,38 +36,18 @@ const IconWrapper = styled.div`
   }
 `;
 
-const PopupStyled = styled(Popup)`
-  z-index: 1;
-  .markerPopup-tripName,
-  .markerPopup-itineraryName {
-    text-align: center;
-  }
-  .markerPopup-tripName {
-    font-size: 1.25rem;
-    font-weight: bold;
-  }
-  .markerPopup-itineraryName {
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-    color: gray;
-  }
-`;
-
-const TripMarker: React.FC<TripMarkerProps> = ({
-  tripId,
-  markerId,
-  location,
-  hoverContent,
-  Icon = LocationOnIcon
-}) => {
+const TripMarker: React.FC<TripMarkerProps> = ({ markerData, Icon = LocationOnIcon }) => {
   const dispatch = useDispatch();
   const activeMarker = useSelector(
     (state: AppState) => state.trip.activeTrip && state.trip.activeTrip.activeMarker
   );
   const [showHoverPopup, setShowHoverPopup] = useState(false);
 
+  const markerId = isTrip(markerData)
+    ? `${markerData.id}`
+    : `${markerData.trip_id}-${markerData.id}`;
   const isActive = activeMarker === markerId;
-  const [lng, lat] = location;
+  const [lng, lat] = markerData.location;
 
   const handleHover = ({ type }: React.MouseEvent) => {
     setShowHoverPopup(type === 'mouseenter');
@@ -82,7 +55,8 @@ const TripMarker: React.FC<TripMarkerProps> = ({
 
   const handleClick = () => {
     if (!isActive) {
-      dispatch(setActiveTrip(tripId));
+      const activeTripId = isTrip(markerData) ? markerData.id : markerData.trip_id;
+      dispatch(setActiveTrip(activeTripId));
     }
     dispatch(setActiveMarker(markerId));
     dispatch(setOpenDrawer(true));
@@ -100,11 +74,7 @@ const TripMarker: React.FC<TripMarkerProps> = ({
           />
         </IconWrapper>
       </Marker>
-      {showHoverPopup && (
-        <PopupStyled longitude={lng} latitude={lat} closeButton={false}>
-          {hoverContent}
-        </PopupStyled>
-      )}
+      {showHoverPopup && <TripMarkerPopup popupData={markerData} />}
     </>
   );
 };
