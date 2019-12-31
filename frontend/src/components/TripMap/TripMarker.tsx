@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react';
+import React, { useState, memo, FunctionComponentElement } from 'react';
 import { Marker } from 'react-map-gl';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import styled from 'styled-components';
@@ -8,7 +8,8 @@ import { setActiveTrip, setActiveMarker } from '../../store/trip/actions';
 import { AppState } from '../../store';
 import { setOpenDrawer } from '../../store/general/actions';
 import { Trip, TripItinerary } from '../../types/trip';
-import TripMarkerPopup from './TripMarkerPopup';
+import { isTrip } from '../../utils/isTrip';
+import { TripMarkerPopupProps } from './TripMarkerPopup';
 
 export interface TripMarkerProps {
   /**
@@ -16,17 +17,16 @@ export interface TripMarkerProps {
    */
   markerData: Trip | TripItinerary;
   /**
+   * Popup for the marker
+   */
+  popup?: FunctionComponentElement<TripMarkerPopupProps>;
+  /**
    * What icon to display for the marker.
    * TODO this currently only allows Svg icons from the
    * material ui library.  Should we make it more flexible??
    */
   Icon?: React.ComponentType<SvgIconProps>;
 }
-
-/**
- * Check that the marker data is a Trip or not
- */
-const isTrip = (obj: Trip | TripItinerary): obj is Trip => !('trip_id' in obj);
 
 const IconWrapper = styled.div`
   cursor: pointer;
@@ -36,7 +36,11 @@ const IconWrapper = styled.div`
   }
 `;
 
-const TripMarker: React.FC<TripMarkerProps> = ({ markerData, Icon = LocationOnIcon }) => {
+const TripMarker: React.FC<TripMarkerProps> = ({
+  markerData,
+  popup,
+  Icon = LocationOnIcon
+}) => {
   const dispatch = useDispatch();
   const activeMarker = useSelector(
     (state: AppState) => state.trip.activeTrip && state.trip.activeTrip.activeMarker
@@ -74,7 +78,7 @@ const TripMarker: React.FC<TripMarkerProps> = ({ markerData, Icon = LocationOnIc
           />
         </IconWrapper>
       </Marker>
-      {showHoverPopup && <TripMarkerPopup popupData={markerData} />}
+      {showHoverPopup && popup}
     </>
   );
 };

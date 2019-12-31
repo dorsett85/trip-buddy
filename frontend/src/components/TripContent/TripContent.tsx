@@ -49,20 +49,20 @@ const TripNameInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
     }
   });
 
-  const handleTripNameChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNameChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
     setEditingName(true);
     if (target.value.length >= 4) {
       setName(target.value);
     }
   };
 
-  const handleSubmitTripName = () => {
+  const handleSubmitName = () => {
     setUpdateNameError(false);
     setUpdateNameText('');
     updateTripQuery({ variables: { input: { id: trip.id, name } } });
   };
 
-  const handleCancelTripName = () => {
+  const handleCancelName = () => {
     if (name !== trip.name) {
       setName(trip.name);
     }
@@ -76,11 +76,71 @@ const TripNameInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
       label='Name'
       value={name}
       editing={editingName}
-      onChange={handleTripNameChange}
-      onSubmitEdit={handleSubmitTripName}
-      onCancelEdit={handleCancelTripName}
+      onChange={handleNameChange}
+      onSubmitEdit={handleSubmitName}
+      onCancelEdit={handleCancelName}
       helperText={loading ? UPDATING_MESSAGE : updateNameText}
       error={updateNameError}
+      fullWidth
+      margin='normal'
+    />
+  );
+};
+
+const TripDescriptionInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
+  const [description, setDescription] = useState(trip.description);
+  const [editingDescription, setEditingDescription] = useState(false);
+  const [updateDescriptionText, setUpdateDescriptionText] = useState('');
+  const [updateDescriptionError, setUpdateDescriptionError] = useState(false);
+
+  const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
+    onCompleted: () => {
+      setEditingDescription(false);
+      setUpdateDescriptionError(false);
+      dispatch(updateTrip({ ...trip, description }));
+      setUpdateDescriptionText(SUCCESSFUL_UPDATE_MESSAGE);
+    },
+    onError: error => {
+      setUpdateDescriptionError(true);
+      setUpdateDescriptionText(getFirstError(error));
+    }
+  });
+
+  const handleDescriptionChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingDescription(true);
+    setDescription(target.value);
+  };
+
+  const handleSubmitDescription = () => {
+    setUpdateDescriptionError(false);
+    setUpdateDescriptionText('');
+    updateTripQuery({ variables: { input: { id: trip.id, description } } });
+  };
+
+  const handleCancelDescription = () => {
+    if (description !== trip.description) {
+      setDescription(trip.description);
+    }
+    setEditingDescription(false);
+    setUpdateDescriptionError(false);
+    setUpdateDescriptionText('');
+  };
+
+  return (
+    <EditableTextField
+      label='Description'
+      value={description || ''}
+      type='textarea'
+      multiline
+      rows={2}
+      rowsMax={10}
+      variant='filled'
+      editing={editingDescription}
+      onChange={handleDescriptionChange}
+      onSubmitEdit={handleSubmitDescription}
+      onCancelEdit={handleCancelDescription}
+      helperText={loading ? UPDATING_MESSAGE : updateDescriptionText}
+      error={updateDescriptionError}
       fullWidth
       margin='normal'
     />
@@ -170,6 +230,7 @@ const TripContent: React.FC<TripContentProps> = ({ dispatch, trip }) => {
       <h2>Trip Details</h2>
       <TripNameInput dispatch={dispatch} trip={trip} />
       <TripStartDateSelect dispatch={dispatch} trip={trip} />
+      <TripDescriptionInput dispatch={dispatch} trip={trip} />
       <TripStatusSelect dispatch={dispatch} trip={trip} />
       <TripItineraries dispatch={dispatch} tripId={trip.id} />
     </div>

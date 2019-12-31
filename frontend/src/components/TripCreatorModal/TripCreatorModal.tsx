@@ -212,8 +212,8 @@ const TripCreatorModal: React.FC = () => {
             value={tripCreator.description || ''}
             placeholder='Optional... describe your trip here'
             multiline
-            rows={3}
-            variant='outlined'
+            rows={2}
+            variant='filled'
             margin='normal'
             fullWidth
           />
