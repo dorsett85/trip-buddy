@@ -30,4 +30,12 @@ export default class TripItineraryModel extends BaseModel {
   ): Promise<TripItineraryRecord[]> {
     return this.findMany({ trip_id: tripId });
   }
+
+  public static updateOne(
+    updateArgs: Partial<TripItineraryRecord>,
+    andWhereArgs: Partial<TripItineraryRecord> = {},
+    orWhereArgs: Partial<TripItineraryRecord> = {}
+  ): Promise<TripItineraryRecord | undefined> {
+    return this.baseUpdateOne(updateArgs, andWhereArgs, orWhereArgs);
+  }
 }

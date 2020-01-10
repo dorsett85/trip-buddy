@@ -7,7 +7,8 @@ import { UserRecord } from '../models/User.types';
 import {
   CreateTripInput,
   UpdateTripInput,
-  TripSchema
+  TripSchema,
+  UpdateTripItineraryInput
 } from '../schema/resolvers/trip.types';
 import TripItineraryModel from '../models/TripItinerary';
 import { TripItineraryRecord } from '../models/TripItinerary.types';
@@ -79,5 +80,17 @@ export default class TripService {
     orWhereArgs: Partial<TripItineraryRecord> = {}
   ): Promise<TripItineraryRecord[]> {
     return this.TripItineraryModel.findMany(andWhereArgs, orWhereArgs);
+  }
+
+  public updateTripItinerary(
+    updateTripItineraryInput: UpdateTripItineraryInput['input'],
+    andWhereArgs: Partial<TripItineraryRecord> = {},
+    orWhereArgs: Partial<TripItineraryRecord> = {}
+  ): Promise<TripItineraryRecord | undefined> {
+    return this.TripItineraryModel.updateOne(
+      updateTripItineraryInput,
+      andWhereArgs,
+      orWhereArgs
+    );
   }
 }

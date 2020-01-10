@@ -11,7 +11,11 @@ export type CreateTripInput = InputResolverArg<
 
 export type FindTripInput = InputResolverArg<TripSchema>;
 export type UpdateTripInput = InputResolverArg<Omit<TripSchema, 'created_date'>>;
+
 export type TripItineraryInput = InputResolverArg<TripItinerarySchema>;
+export type UpdateTripItineraryInput = InputResolverArg<
+  Omit<TripItinerarySchema, 'created_date'>
+>;
 
 export interface TripResolvers extends IResolvers {
   Trip: {
@@ -24,6 +28,11 @@ export interface TripResolvers extends IResolvers {
   Mutation: {
     createTrip: AuthFieldResolver<any, CreateTripInput, Promise<TripSchema>>;
     updateTrip: AuthFieldResolver<any, UpdateTripInput, Promise<TripSchema>>;
+    updateTripItinerary: AuthFieldResolver<
+      any,
+      UpdateTripItineraryInput,
+      Promise<TripItinerarySchema>
+    >;
   };
 }
 

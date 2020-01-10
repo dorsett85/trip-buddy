@@ -37,10 +37,10 @@ const TripNameInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
   const [updateNameError, setUpdateNameError] = useState(false);
 
   const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
-    onCompleted: () => {
+    onCompleted: data => {
       setEditingName(false);
       setUpdateNameError(false);
-      dispatch(updateTrip({ ...trip, name }));
+      dispatch(updateTrip({ ...data.updateTrip, name }));
       setUpdateNameText(SUCCESSFUL_UPDATE_MESSAGE);
     },
     onError: error => {

@@ -44,6 +44,16 @@ const Mutation: TripResolvers['Mutation'] = {
       throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
     }
     return trip;
+  },
+  updateTripItinerary: async (_, args, { TripService }) => {
+    const {
+      input: { id, ...input }
+    } = args;
+    const itinerary = await TripService.updateTripItinerary(input, { id });
+    if (!itinerary) {
+      throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
+    }
+    return itinerary;
   }
 };
 

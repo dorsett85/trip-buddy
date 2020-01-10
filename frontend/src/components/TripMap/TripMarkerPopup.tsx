@@ -24,7 +24,6 @@ const PopupStyled = styled(Popup)`
   z-index: 1;
   .${BEM_MARKER_POPUP}-header {
     text-align: center;
-    margin-bottom: 0.5rem;
     .${BEM_MARKER_POPUP}-tripName {
       font-size: 1.25rem;
       font-weight: bold;
@@ -57,18 +56,17 @@ const TripMarkerPopup: React.FC<TripMarkerPopupProps> = ({ popupData }) => {
             <div className={`${BEM_MARKER_POPUP}-itineraryName`}>{popupData.name}</div>
           </>
         )}
-      </div>
-      <hr />
-      <div>
-        <span>Date: </span>
         <span>{date}</span>
-        {isTrip(popupData) && (
+      </div>
+      {isTrip(popupData) && (
+        <>
+          <hr />
           <div>
             <span>Status: </span>
             <span>{popupData.status}</span>
           </div>
-        )}
-      </div>
+        </>
+      )}
     </>
   );
   return (

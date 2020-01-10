@@ -75,5 +75,6 @@ export const tripTypeDefs = gql`
   extend type Mutation {
     createTrip(input: CreateTripInput): Trip @isAuth
     updateTrip(input: UpdateTripInput): Trip @isAuth
+    updateTripItinerary(input: UpdateTripItineraryInput): TripItinerary @isAuth
   }
 `;

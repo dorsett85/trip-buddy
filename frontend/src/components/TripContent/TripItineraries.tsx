@@ -46,8 +46,13 @@ const TripItineraries: React.FC<TripItinerariesProps> = ({ dispatch, tripId }) =
     <LinearProgress />
   ) : (
     itineraries &&
-    itineraries.map(itinerary => (
-      <TripItineraryPanel key={itinerary.id} itinerary={itinerary} />
+    itineraries.map((itinerary, idx) => (
+      <TripItineraryPanel
+        key={itinerary.id}
+        dispatch={dispatch}
+        itinerary={itinerary}
+        index={idx}
+      />
     ))
   );
   return (

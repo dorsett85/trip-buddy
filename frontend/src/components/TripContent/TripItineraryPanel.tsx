@@ -1,13 +1,45 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import styled from 'styled-components';
+import { DateTimePicker } from '@material-ui/pickers';
+import { DispatchProp } from 'react-redux';
+import { gql } from 'apollo-boost';
+import { useMutation } from '@apollo/react-hooks';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { TripItinerary } from '../../types/trip';
+import {
+  UPDATING_MESSAGE,
+  SUCCESSFUL_UPDATE_MESSAGE
+} from '../../utils/constants/messages';
+import { getFirstError } from '../../utils/apolloErrors';
+import { updateTripItinerary } from '../../store/trip/actions';
+import EditableTextField from '../generic/EditableTextField/EditableTextField';
 
-interface TripItineraryPanelProps {
+export const UPDATE_ITINERARY = gql`
+  mutation UpdateTripItinerary($input: UpdateTripItineraryInput) {
+    updateTripItinerary(input: $input) {
+      name
+      description
+      location
+      start_time
+      end_time
+    }
+  }
+`;
+
+interface TripItineraryPanelProps extends DispatchProp {
+  /**
+   * Itinerary of the active trip
+   */
   itinerary: TripItinerary;
+  /**
+   * Index of the trip itinerary, used for easy updating
+   * of the active trip itinerary
+   */
+  index: number;
 }
 
 const ExpansionPanelStyled = styled(ExpansionPanel)`
@@ -18,21 +50,143 @@ const ExpansionPanelStyled = styled(ExpansionPanel)`
   }
 `;
 
-const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({ itinerary }) => {
-  const itineraryInfo = (
-    <div>
-      {Object.keys(itinerary).map(key => (
-        <div key={key}>
-          <span>
-            <b>{key}</b>: {itinerary[key as keyof TripItinerary]}
-          </span>
-        </div>
-      ))}
-    </div>
+const ItineraryContent = styled.div`
+  width: 100%;
+`;
+
+const ItineraryStartDateSelect: React.FC<TripItineraryPanelProps> = ({
+  dispatch,
+  itinerary,
+  index
+}) => {
+  const [updateStartDateText, setUpdateStartDateText] = useState('');
+  const [updateStartDateError, setUpdateStartDateError] = useState(false);
+
+  const [updateTripItineraryQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
+    onCompleted: data => {
+      setUpdateStartDateError(false);
+      dispatch(
+        updateTripItinerary({
+          ...data.updateTripItinerary,
+          index
+        })
+      );
+      setUpdateStartDateText(SUCCESSFUL_UPDATE_MESSAGE);
+    },
+    onError: error => {
+      setUpdateStartDateError(true);
+      setUpdateStartDateText(getFirstError(error));
+    }
+  });
+
+  const handleStartDateChange = (date: MaterialUiPickersDate) => {
+    if (date) {
+      updateTripItineraryQuery({
+        variables: { input: { id: itinerary.id, start_time: date.toISOString() } }
+      });
+    }
+  };
+
+  return (
+    <DateTimePicker
+      label='Start Time'
+      onChange={handleStartDateChange}
+      helperText={loading ? UPDATING_MESSAGE : updateStartDateText}
+      error={updateStartDateError}
+      value={itinerary.start_time || null}
+      margin='normal'
+      fullWidth
+    />
+  );
+};
+
+const ItineraryDescriptionInput: React.FC<TripItineraryPanelProps> = ({
+  dispatch,
+  itinerary,
+  index
+}) => {
+  const [description, setDescription] = useState(itinerary.description);
+  const [editingDescription, setEditingDescription] = useState(false);
+  const [updateDescriptionText, setUpdateDescriptionText] = useState('');
+  const [updateDescriptionError, setUpdateDescriptionError] = useState(false);
+
+  const [updateTripQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
+    onCompleted: data => {
+      setEditingDescription(false);
+      setUpdateDescriptionError(false);
+      dispatch(updateTripItinerary({ ...data.updateTripItinerary, index }));
+      setUpdateDescriptionText(SUCCESSFUL_UPDATE_MESSAGE);
+    },
+    onError: error => {
+      setUpdateDescriptionError(true);
+      setUpdateDescriptionText(getFirstError(error));
+    }
+  });
+
+  const handleDescriptionChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingDescription(true);
+    setDescription(target.value);
+  };
+
+  const handleSubmitDescription = () => {
+    setUpdateDescriptionError(false);
+    setUpdateDescriptionText('');
+    updateTripQuery({ variables: { input: { id: itinerary.id, description } } });
+  };
+
+  const handleCancelDescription = () => {
+    if (description !== itinerary.description) {
+      setDescription(itinerary.description);
+    }
+    setEditingDescription(false);
+    setUpdateDescriptionError(false);
+    setUpdateDescriptionText('');
+  };
+
+  return (
+    <EditableTextField
+      label='Description'
+      value={description || ''}
+      type='textarea'
+      multiline
+      rows={2}
+      rowsMax={10}
+      variant='filled'
+      editing={editingDescription}
+      onChange={handleDescriptionChange}
+      onSubmitEdit={handleSubmitDescription}
+      onCancelEdit={handleCancelDescription}
+      helperText={loading ? UPDATING_MESSAGE : updateDescriptionText}
+      error={updateDescriptionError}
+      fullWidth
+      margin='normal'
+    />
+  );
+};
+
+const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({
+  dispatch,
+  itinerary,
+  index
+}) => {
+  const [expanded, setExpanded] = useState(true);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  }
+  const itineraryContent = (
+    <ItineraryContent>
+      <ItineraryStartDateSelect dispatch={dispatch} itinerary={itinerary} index={index} />
+      <ItineraryDescriptionInput
+        dispatch={dispatch}
+        itinerary={itinerary}
+        index={index}
+      />
+    </ItineraryContent>
   );
 
   return (
-    <ExpansionPanelStyled>
+    <ExpansionPanelStyled expanded={expanded} onChange={handleExpandClick}>
       <ExpansionPanelSummary
         className='itineraryPanel-summary'
         expandIcon={<ExpandMoreIcon />}
@@ -40,7 +194,7 @@ const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({ itinerary }) =>
         {itinerary.name}
       </ExpansionPanelSummary>
       <ExpansionPanelDetails className='itineraryPanel-content'>
-        {itineraryInfo}
+        {itineraryContent}
       </ExpansionPanelDetails>
     </ExpansionPanelStyled>
   );

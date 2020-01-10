@@ -38,7 +38,8 @@ export enum TripActionType {
   UPDATE_TRIP = 'UPDATE_TRIP',
   SET_ACTIVE_TRIP = 'SET_ACTIVE_TRIP',
   SET_ACTIVE_TRIP_ITINERARIES = 'SET_ACTIVE_TRIP_ITINERARIES',
-  SET_ACTIVE_MARKER = 'SET_ACTIVE_MARKER'
+  SET_ACTIVE_MARKER = 'SET_ACTIVE_MARKER',
+  UPDATE_TRIP_ITINERARY = 'UPDATE_TRIP_ITINERARY'
 }
 
 // Actions
@@ -66,6 +67,12 @@ export type SetActiveMarkerAction = ActionWithPayload<
   TripActionType.SET_ACTIVE_MARKER,
   ActiveTrip['activeMarker'] | undefined
 >;
+export type UpdateTripItineraryAction = ActionWithPayload<
+  TripActionType.UPDATE_TRIP_ITINERARY,
+  TripItinerary & {
+    index: number;
+  }
+>;
 export type TripAction =
   | ResetStateAction
   | SetLoadingTripsAction
@@ -75,7 +82,8 @@ export type TripAction =
   | UpdateTripAction
   | SetActiveTripAction
   | SetActiveTripItinerariesAction
-  | SetActiveMarkerAction;
+  | SetActiveMarkerAction
+  | UpdateTripItineraryAction;
 
 // Action creators
 export type ResetTripState = ActionCreator<ResetStateAction>;
@@ -89,3 +97,4 @@ export type SetActiveTripItineraries = GenericActionCreator<
   SetActiveTripItinerariesAction
 >;
 export type SetActiveMarker = GenericActionCreator<SetActiveMarkerAction>;
+export type UpdateTripItinerary = GenericActionCreator<UpdateTripItineraryAction>;

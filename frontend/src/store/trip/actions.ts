@@ -8,7 +8,8 @@ import {
   SetActiveMarker,
   AddTrip,
   UpdateTrip,
-  SetActiveTripItineraries
+  SetActiveTripItineraries,
+  UpdateTripItinerary
 } from './types';
 
 export const resetTripState: ResetTripState = () => ({
@@ -52,5 +53,10 @@ export const setActiveTripItineraries: SetActiveTripItineraries = payload => ({
 
 export const setActiveMarker: SetActiveMarker = payload => ({
   type: TripActionType.SET_ACTIVE_MARKER,
+  payload
+});
+
+export const updateTripItinerary: UpdateTripItinerary = payload => ({
+  type: TripActionType.UPDATE_TRIP_ITINERARY,
   payload
 });

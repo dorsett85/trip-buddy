@@ -55,16 +55,30 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
   }
 
   if (action.type === 'SET_ACTIVE_TRIP_ITINERARIES') {
-    const activeTrip = state.activeTrip && { ...state.activeTrip, itineraries: action.payload };
+    const activeTrip = { ...state.activeTrip!, itineraries: action.payload };
     return { ...state, activeTrip };
   }
 
   if (action.type === 'SET_ACTIVE_MARKER') {
-    const activeTrip = state.activeTrip && {
-      ...state.activeTrip,
+    const activeTrip = {
+      ...state.activeTrip!,
       activeMarker: action.payload
     };
     return { ...state, activeTrip };
+  }
+
+  if (action.type === 'UPDATE_TRIP_ITINERARY') {
+    const { index, ...rest } = action.payload;
+
+    // Update the trip at the given index
+    const itineraries = [...state.activeTrip!.itineraries!];
+    itineraries[index] = { ...itineraries[index], ...rest };
+
+    const activeTrip = {
+      ...state.activeTrip!,
+      itineraries
+    }
+    return { ...state, activeTrip }
   }
 
   return state;
