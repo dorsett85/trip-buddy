@@ -3,13 +3,14 @@ import { Marker } from 'react-map-gl';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import styled from 'styled-components';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { setActiveTrip, setActiveMarker } from '../../store/trip/actions';
 import { AppState } from '../../store';
 import { setOpenDrawer } from '../../store/general/actions';
 import { Trip, TripItinerary } from '../../types/trip';
 import { isTrip } from '../../utils/isTrip';
 import { TripMarkerPopupProps } from './TripMarkerPopup';
+import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 
 export interface TripMarkerProps {
   /**
@@ -41,7 +42,7 @@ const TripMarker: React.FC<TripMarkerProps> = ({
   popup,
   Icon = LocationOnIcon
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const activeMarker = useSelector(
     (state: AppState) => state.trip.activeTrip && state.trip.activeTrip.activeMarker
   );

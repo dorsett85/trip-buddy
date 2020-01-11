@@ -2,7 +2,7 @@ import React from 'react';
 import Drawer, { DrawerProps } from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styled, { css } from 'styled-components';
 import { AppState } from '../../store';
 import { setOpenDrawer } from '../../store/general/actions';
@@ -10,6 +10,7 @@ import { setViewInfo } from '../../store/user/actions';
 import UserContent from '../UserContent/UserContent';
 import TripContent from '../TripContent/TripContent';
 import { useActiveTrip } from '../../utils/hooks/useActiveTrip';
+import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 
 export interface SideDrawerProps extends DrawerProps {
   onClose: () => void;
@@ -50,7 +51,7 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ open, onClose, children }) => (
 );
 
 const SideDrawerContainer: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const user = useSelector((state: AppState) => state.user);
   const activeTrip = useActiveTrip();
   const open = useSelector(({ general }: AppState) => general.openDrawer);

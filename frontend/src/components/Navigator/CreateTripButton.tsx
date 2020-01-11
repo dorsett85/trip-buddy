@@ -1,11 +1,12 @@
 import React, { memo } from 'react';
 import Button, { ButtonProps } from '@material-ui/core/Button';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { AppState } from '../../store';
 import { setTripCreator, setActiveTrip } from '../../store/trip/actions';
+import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 
 const CreateTripButton: React.FC<ButtonProps> = props => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const tripCreator = useSelector(({ trip }: AppState) => trip.tripCreator);
   const activeTrip = useSelector(({ trip }: AppState) => trip.activeTrip);
 

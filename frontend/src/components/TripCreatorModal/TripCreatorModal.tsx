@@ -12,7 +12,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Button from '@material-ui/core/Button';
 import Red from '@material-ui/core/colors/red';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import styled from 'styled-components';
 import { gql } from 'apollo-boost';
@@ -26,6 +26,7 @@ import { Feature } from '../../types/apiResponses';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setFlyTo } from '../../store/general/actions';
 import { Trip } from '../../types/trip';
+import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 
 export const CREATE_TRIP = gql`
   mutation createTrip($input: CreateTripInput) {
@@ -51,7 +52,7 @@ const ErrorStyled = styled.div`
 `;
 
 const TripCreatorModal: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const tripCreator = useSelector(({ trip }: AppState) => trip.tripCreator);
 
   const [locationOptions, setLocationOptions] = useState<Feature[]>();

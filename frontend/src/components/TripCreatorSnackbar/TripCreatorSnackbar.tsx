@@ -1,13 +1,14 @@
 import React, { memo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { AppState } from '../../store';
 import { setTripCreator } from '../../store/trip/actions';
+import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 
 const TripCreatorSnackbar = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const open = useSelector(
     ({ trip }: AppState) => !!trip.tripCreator && !trip.tripCreator.openModal
   );

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ViewState, PointerEvent, ViewportProps, FlyToInterpolator } from 'react-map-gl';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { AppState } from '../../store';
 import { setTripCreator, setActiveTrip } from '../../store/trip/actions';
 import { getTripMarkers } from './mapHelpers';
@@ -9,6 +9,7 @@ import { useActiveTrip } from '../../utils/hooks/useActiveTrip';
 import { useActiveTripItineraries } from '../../utils/hooks/useActiveTripItineraries';
 import { TripState } from '../../store/trip/types';
 import { Trip } from '../../types/trip';
+import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 
 const initialViewport: Partial<ViewportProps> = {
   latitude: 37.785164,
@@ -34,7 +35,7 @@ const flyToViewport = (lngLat: LngLatArray) => (
 };
 
 export const useTripMap = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [viewport, setViewport] = useState(initialViewport);
   const creatingTrip = useSelector(({ trip }: AppState) => !!trip.tripCreator);
   const activeTrip = useSelector((state: AppState) => state.trip.activeTrip);

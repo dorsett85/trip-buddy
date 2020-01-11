@@ -1,5 +1,4 @@
 import React, { memo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -11,6 +10,7 @@ import { setLoggedIn } from '../../store/user/actions';
 import { RegisterFormInputs } from './RegisterForm.types';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setLocalToken } from '../../utils/localToken';
+import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 
 export const REGISTER_USER = gql`
   mutation RegisterUser($email: String!, $password: String!) {
@@ -33,7 +33,7 @@ const passwordInputProps = {
 };
 
 const RegisterForm: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [registerInputs, setRegisterInputs] = useState(RegisterFormInputs);
   const { email, password } = registerInputs;
   const [registerError, setRegisterError] = useState('');

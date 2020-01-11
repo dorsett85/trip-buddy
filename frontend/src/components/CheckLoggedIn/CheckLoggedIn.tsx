@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { gql } from 'apollo-boost';
 import { useLazyQuery } from '@apollo/react-hooks';
 import LandingModal from '../LandingModal/LandingModal';
@@ -10,6 +10,7 @@ import { getLocalToken } from '../../utils/localToken';
 import { setLoadingTrips, setTrips } from '../../store/trip/actions';
 import TripMapLazy from '../TripMap/TripMapLazy';
 import SideDrawerLazy from '../SideDrawer/SideDrawerLazy';
+import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 
 export const GET_LOGGED_IN_DATA = gql`
   query {
@@ -34,7 +35,7 @@ export const GET_LOGGED_IN_DATA = gql`
 `;
 
 const CheckLoggedIn: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const loggedIn = useSelector((state: AppState) => state.user.loggedIn);
   const [getLoggedInData, { loading, data }] = useLazyQuery(GET_LOGGED_IN_DATA);
 
