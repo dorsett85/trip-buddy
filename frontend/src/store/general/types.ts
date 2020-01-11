@@ -1,11 +1,11 @@
 import { Reducer, ActionCreator, Action } from 'redux';
-import { ActionWithPayload, GenericActionCreator } from '../../types/store';
+import { GenericAction, GenericActionCreator } from '../../types/store';
 import { LngLatArray } from '../../types/shared';
 
 // State
 export interface GeneralState {
   openDrawer: boolean;
-  flyTo: LngLatArray | undefined;
+  flyTo?: LngLatArray;
 }
 
 // Reducer
@@ -20,11 +20,11 @@ export enum GeneralActionType {
 
 // Actions
 export type ResetStateAction = Action<GeneralActionType.RESET_STATE>;
-export type SetOpenDrawerAction = ActionWithPayload<
+export type SetOpenDrawerAction = GenericAction<
   GeneralActionType.SET_OPEN_DRAWER,
   GeneralState['openDrawer']
 >;
-export type SetFlyToAction = ActionWithPayload<
+export type SetFlyToAction = GenericAction<
   GeneralActionType.SET_FLY_TO,
   GeneralState['flyTo']
 >;

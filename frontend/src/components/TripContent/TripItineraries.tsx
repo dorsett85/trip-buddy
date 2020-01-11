@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { DispatchProp, useSelector } from 'react-redux';
+import { DispatchProp } from 'react-redux';
 import TripItineraryPanel from './TripItineraryPanel';
 import { ActiveTrip } from '../../store/trip/types';
-import { AppState } from '../../store';
 import { setActiveTripItineraries } from '../../store/trip/actions';
+import { useActiveTripItineraries } from '../../utils/hooks/useActiveTripItineraries';
 
 export const GET_ITINERARY = gql`
   query GetItinerary($input: FindTripInput) {
@@ -29,9 +29,7 @@ interface TripItinerariesProps extends DispatchProp {
 }
 
 const TripItineraries: React.FC<TripItinerariesProps> = ({ dispatch, tripId }) => {
-  const itineraries = useSelector(
-    (state: AppState) => state.trip.activeTrip!.itineraries
-  );
+  const itineraries = useActiveTripItineraries();
   const { data, loading } = useQuery(GET_ITINERARY, {
     variables: { input: { id: tripId } }
   });

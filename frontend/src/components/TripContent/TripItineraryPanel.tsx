@@ -3,6 +3,9 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import Button from '@material-ui/core/Button';
+import LightBlue from '@material-ui/core/colors/lightBlue';
 import styled from 'styled-components';
 import { DateTimePicker } from '@material-ui/pickers';
 import { DispatchProp } from 'react-redux';
@@ -42,17 +45,96 @@ interface TripItineraryPanelProps extends DispatchProp {
   index: number;
 }
 
+interface IntineraryNameInputProps extends TripItineraryPanelProps {
+  /**
+   * Event handler for when the input is submitted or cancelled
+   */
+  onSubmitOrCancel: () => void;
+}
+
+const BEM_ITINERARY_PANEL = 'itineraryPanel';
+const BEM_ITINERARY_PANEL_SUMMARY = `${BEM_ITINERARY_PANEL}-summary`;
+const BEM_ITINERARY_PANEL_CONTENT = `${BEM_ITINERARY_PANEL}-content`;
+
 const ExpansionPanelStyled = styled(ExpansionPanel)`
-  & .itineraryPanel-summary,
-  & .itineraryPanel-content {
+  & .${BEM_ITINERARY_PANEL_SUMMARY}, & .${BEM_ITINERARY_PANEL_CONTENT} {
     padding-left: 1rem;
     padding-right: 1rem;
+  }
+  & .${BEM_ITINERARY_PANEL_SUMMARY} {
+    background-color: ${LightBlue[400]};
+    span {
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+  }
+  & .${BEM_ITINERARY_PANEL_CONTENT} {
+    padding-bottom: 1rem;
   }
 `;
 
 const ItineraryContent = styled.div`
   width: 100%;
 `;
+
+const ItineraryNameInput: React.FC<IntineraryNameInputProps> = ({
+  dispatch,
+  itinerary,
+  index,
+  onSubmitOrCancel
+}) => {
+  const [name, setName] = useState(itinerary.name);
+  const [updateNameText, setUpdateNameText] = useState('');
+  const [updateNameError, setUpdateNameError] = useState(false);
+
+  const [updateTripItineraryQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
+    onCompleted: data => {
+      onSubmitOrCancel();
+      dispatch(updateTripItinerary({ ...data.updateTripItinerary, index }));
+    },
+    onError: error => {
+      setUpdateNameError(true);
+      setUpdateNameText(getFirstError(error));
+    }
+  });
+
+  const handleNameChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+    setName(target.value);
+  };
+
+  const handleSubmitName = () => {
+    if (name.length >= 4) {
+      onSubmitOrCancel();
+      updateTripItineraryQuery({ variables: { input: { id: itinerary.id, name } } });
+    } else {
+      setUpdateNameError(true);
+      setUpdateNameText('Trip name must be at least 4 characters');
+    }
+  };
+
+  const handleCancelName = () => {
+    if (name !== itinerary.name) {
+      setName(itinerary.name);
+    }
+    onSubmitOrCancel();
+  };
+
+  return (
+    <EditableTextField
+      label='Name'
+      value={name}
+      editing
+      onChange={handleNameChange}
+      onSubmitEdit={handleSubmitName}
+      onCancelEdit={handleCancelName}
+      helperText={loading ? UPDATING_MESSAGE : updateNameText}
+      error={updateNameError}
+      fullWidth
+      margin='normal'
+    />
+  );
+};
 
 const ItineraryStartDateSelect: React.FC<TripItineraryPanelProps> = ({
   dispatch,
@@ -170,12 +252,34 @@ const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({
   index
 }) => {
   const [expanded, setExpanded] = useState(true);
+  const [editingName, setEditingName] = useState(false);
 
   const handleExpandClick = () => {
-    setExpanded(!expanded);
-  }
+    setExpanded(state => !state);
+  };
+
+  const handleEditNameOnChange = () => {
+    setEditingName(!editingName);
+  };
+
   const itineraryContent = (
     <ItineraryContent>
+      <ButtonGroup size='small' color='primary' fullWidth>
+        <Button onClick={handleEditNameOnChange} variant='text'>
+          Edit Name
+        </Button>
+        <Button color='secondary' variant='text'>
+          Remove Itinerary
+        </Button>
+      </ButtonGroup>
+      {editingName && (
+        <ItineraryNameInput
+          dispatch={dispatch}
+          itinerary={itinerary}
+          index={index}
+          onSubmitOrCancel={handleEditNameOnChange}
+        />
+      )}
       <ItineraryStartDateSelect dispatch={dispatch} itinerary={itinerary} index={index} />
       <ItineraryDescriptionInput
         dispatch={dispatch}
@@ -191,7 +295,11 @@ const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({
         className='itineraryPanel-summary'
         expandIcon={<ExpandMoreIcon />}
       >
-        {itinerary.name}
+        <span>
+          {index + 1}
+          .&nbsp;
+          {itinerary.name}
+        </span>
       </ExpansionPanelSummary>
       <ExpansionPanelDetails className='itineraryPanel-content'>
         {itineraryContent}

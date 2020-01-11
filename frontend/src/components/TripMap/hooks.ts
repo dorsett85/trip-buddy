@@ -5,6 +5,10 @@ import { AppState } from '../../store';
 import { setTripCreator, setActiveTrip } from '../../store/trip/actions';
 import { getTripMarkers } from './mapHelpers';
 import { LngLatArray } from '../../types/shared';
+import { useActiveTrip } from '../../utils/hooks/useActiveTrip';
+import { useActiveTripItineraries } from '../../utils/hooks/useActiveTripItineraries';
+import { TripState } from '../../store/trip/types';
+import { Trip } from '../../types/trip';
 
 const initialViewport: Partial<ViewportProps> = {
   latitude: 37.785164,
@@ -53,7 +57,7 @@ export const useTripMap = () => {
 
     // Any click on the map should cancel the active trip
     if (activeTrip && e.target.classList.contains('overlays')) {
-      dispatch(setActiveTrip(undefined));
+      dispatch(setActiveTrip());
     }
   };
 
@@ -74,15 +78,25 @@ export const useTripMap = () => {
 export const useTrips = () => {
   const trips = useSelector((state: AppState) => state.trip.trips);
   const creatingTrip = useSelector((state: AppState) => !!state.trip.tripCreator);
-  const activeTrip = useSelector((state: AppState) => state.trip.activeTrip);
+  const activeTrip = useActiveTrip();
+  const itineraries = useActiveTripItineraries();
   const [tripMarkers, setTripMarkers] = useState<JSX.Element[]>([]);
 
   // If there's an active trip, only show that itinerary on the map,
   // otherwise show all the trips without itinerary
   useEffect(() => {
-    const markers = getTripMarkers(activeTrip || trips);
+    let dataForMarkers: Trip | TripState['trips'];
+    if (activeTrip) {
+      dataForMarkers = {
+        ...activeTrip,
+        itineraries
+      };
+    } else {
+      dataForMarkers = trips;
+    }
+    const markers = getTripMarkers(dataForMarkers);
     setTripMarkers(markers);
-  }, [trips, activeTrip]);
+  }, [trips, activeTrip, itineraries]);
 
   return {
     creatingTrip,

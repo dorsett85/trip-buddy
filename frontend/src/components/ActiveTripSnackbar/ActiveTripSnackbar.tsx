@@ -2,9 +2,10 @@ import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
 import Snackbar from '@material-ui/core/Snackbar';
 import { AppState } from '../../store';
+import { useActiveTrip } from '../../utils/hooks/useActiveTrip';
 
 const ActiveTripSnackbar = () => {
-  const activeTrip = useSelector((state: AppState) => state.trip.activeTrip);
+  const activeTrip = useActiveTrip();
   const openDrawer = useSelector((state: AppState) => state.general.openDrawer);
 
   const open = !!activeTrip && !openDrawer;

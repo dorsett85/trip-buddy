@@ -12,7 +12,7 @@ const CreateTripButton: React.FC<ButtonProps> = props => {
   const handleClick = () => {
     const newTrip = !tripCreator ? { openModal: true } : undefined;
     if (activeTrip) {
-      dispatch(setActiveTrip(undefined));
+      dispatch(setActiveTrip());
     }
     dispatch(setTripCreator(newTrip));
   };

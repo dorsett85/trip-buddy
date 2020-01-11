@@ -64,7 +64,7 @@ const TripCreatorModal: React.FC = () => {
   const [createTripQuery, { loading }] = useMutation(CREATE_TRIP, {
     onCompleted: (data: { createTrip: Trip }) => {
       dispatch(addTrip(data.createTrip));
-      dispatch(setTripCreator(undefined));
+      dispatch(setTripCreator());
       dispatch(setActiveTrip(data.createTrip.id));
 
       // Set trip specific redux state so the created trip will
@@ -78,7 +78,7 @@ const TripCreatorModal: React.FC = () => {
   });
 
   const handleOnClose = () => {
-    dispatch(setTripCreator(undefined));
+    dispatch(setTripCreator());
     setLocationOptions(undefined);
     setLocation('');
     setErrors(undefined);

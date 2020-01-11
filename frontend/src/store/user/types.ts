@@ -1,6 +1,6 @@
 import { Reducer, Action, ActionCreator } from 'redux';
 import { User } from '../../types/user';
-import { ActionWithPayload, GenericActionCreator } from '../../types/store';
+import { GenericAction, GenericActionCreator } from '../../types/store';
 
 // State
 export type UserInfoType = 'profile' | 'account';
@@ -24,19 +24,19 @@ export enum UserActionType {
 
 // Actions
 export type ResetStateAction = Action<UserActionType.RESET_STATE>;
-export type SetLoggedInAction = ActionWithPayload<
+export type SetLoggedInAction = GenericAction<
   UserActionType.SET_LOGGED_IN,
   UserState['loggedIn']
 >;
-export type SetLoadingAction = ActionWithPayload<
+export type SetLoadingAction = GenericAction<
   UserActionType.SET_LOADING,
   UserState['loading']
 >;
-export type SetViewInfoAction = ActionWithPayload<
+export type SetViewInfoAction = GenericAction<
   UserActionType.SET_VIEW_INFO,
   UserState['viewInfo']
 >;
-export type SetUserAction = ActionWithPayload<UserActionType.SET_USER, Partial<User>>;
+export type SetUserAction = GenericAction<UserActionType.SET_USER, Partial<User>>;
 export type UserAction =
   | ResetStateAction
   | SetLoggedInAction

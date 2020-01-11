@@ -38,7 +38,7 @@ export const tripTypeDefs = gql`
   input UpdateTripItineraryInput {
     id: Int
     trip_id: Int
-    name: Int
+    name: String
     description: String
     location: [Float]
     start_time: Date

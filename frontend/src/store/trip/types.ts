@@ -1,5 +1,5 @@
 import { Reducer, Action, ActionCreator } from 'redux';
-import { ActionWithPayload, GenericActionCreator } from '../../types/store';
+import { GenericAction, GenericActionCreator } from '../../types/store';
 import { Trip, TripItinerary } from '../../types/trip';
 
 // State
@@ -12,8 +12,10 @@ export interface TripCreator {
   location?: Trip['location'];
 }
 
-export interface ActiveTrip extends Trip {
+export interface ActiveTrip {
+  id: Trip['id'];
   activeMarker?: string;
+  itineraries?: Trip['itineraries'];
 }
 
 export interface TripState {
@@ -42,36 +44,45 @@ export enum TripActionType {
   UPDATE_TRIP_ITINERARY = 'UPDATE_TRIP_ITINERARY'
 }
 
+// Action payload args
+interface UpdateTripPayload extends Partial<Trip> {
+  id: Trip['id'];
+}
+interface UpdateTripItineraryPayload extends Partial<TripItinerary> {
+  index: number;
+}
+
 // Actions
 export type ResetStateAction = Action<TripActionType.RESET_STATE>;
-export type SetLoadingTripsAction = ActionWithPayload<
+export type SetLoadingTripsAction = GenericAction<
   TripActionType.SET_LOADING_TRIPS,
   TripState['loadingTrips']
 >;
-export type SetTripsAction = ActionWithPayload<TripActionType.SET_TRIPS, Trip[]>;
-export type SetTripCreatorAction = ActionWithPayload<
+export type SetTripsAction = GenericAction<TripActionType.SET_TRIPS, Trip[]>;
+export type SetTripCreatorAction = GenericAction<
   TripActionType.SET_TRIP_CREATOR,
   TripState['tripCreator']
 >;
-export type AddTripAction = ActionWithPayload<TripActionType.ADD_TRIP, Trip>;
-export type UpdateTripAction = ActionWithPayload<TripActionType.UPDATE_TRIP, Trip>;
-export type SetActiveTripAction = ActionWithPayload<
+export type AddTripAction = GenericAction<TripActionType.ADD_TRIP, Trip>;
+export type UpdateTripAction = GenericAction<
+  TripActionType.UPDATE_TRIP,
+  UpdateTripPayload
+>;
+export type SetActiveTripAction = GenericAction<
   TripActionType.SET_ACTIVE_TRIP,
   Trip['id'] | undefined
 >;
-export type SetActiveTripItinerariesAction = ActionWithPayload<
+export type SetActiveTripItinerariesAction = GenericAction<
   TripActionType.SET_ACTIVE_TRIP_ITINERARIES,
   TripItinerary[]
 >;
-export type SetActiveMarkerAction = ActionWithPayload<
+export type SetActiveMarkerAction = GenericAction<
   TripActionType.SET_ACTIVE_MARKER,
   ActiveTrip['activeMarker'] | undefined
 >;
-export type UpdateTripItineraryAction = ActionWithPayload<
+export type UpdateTripItineraryAction = GenericAction<
   TripActionType.UPDATE_TRIP_ITINERARY,
-  TripItinerary & {
-    index: number;
-  }
+  UpdateTripItineraryPayload
 >;
 export type TripAction =
   | ResetStateAction

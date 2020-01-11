@@ -1,9 +1,13 @@
-import { Action } from 'redux';
+import { AnyAction } from 'redux';
 
-export interface ActionWithPayload<TType extends string, TPayload = any> extends Action<TType> {
+export interface GenericAction<TType extends string, TPayload = undefined>
+  extends AnyAction {
+  type: TType;
   payload: TPayload;
 }
 
-export type GenericActionCreator<TAction extends ActionWithPayload<string, any>> = (
-  payload: TAction['payload']
-) => TAction;
+export type GenericActionCreator<
+  TAction extends GenericAction<string, TAction['payload']>
+> = Extract<TAction['payload'], undefined> extends never
+  ? (payload: TAction['payload']) => TAction
+  : (payload?: TAction['payload']) => TAction;

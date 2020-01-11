@@ -9,6 +9,7 @@ import { setOpenDrawer } from '../../store/general/actions';
 import { setViewInfo } from '../../store/user/actions';
 import UserContent from '../UserContent/UserContent';
 import TripContent from '../TripContent/TripContent';
+import { useActiveTrip } from '../../utils/hooks/useActiveTrip';
 
 export interface SideDrawerProps extends DrawerProps {
   onClose: () => void;
@@ -18,7 +19,7 @@ const DrawerContentContainer = styled.div(
   ({ theme }) => css`
     width: 100vw;
     ${theme.breakpoints.up('sm')} {
-      width: 400px;
+      width: 450px;
     }
     padding: 1rem;
     > button {
@@ -51,7 +52,7 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ open, onClose, children }) => (
 const SideDrawerContainer: React.FC = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: AppState) => state.user);
-  const activeTrip = useSelector(({ trip }: AppState) => trip.activeTrip);
+  const activeTrip = useActiveTrip();
   const open = useSelector(({ general }: AppState) => general.openDrawer);
 
   const openTripDrawer = open && !user.viewInfo;

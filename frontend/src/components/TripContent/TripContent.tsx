@@ -37,10 +37,10 @@ const TripNameInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
   const [updateNameError, setUpdateNameError] = useState(false);
 
   const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
-    onCompleted: data => {
+    onCompleted: () => {
       setEditingName(false);
       setUpdateNameError(false);
-      dispatch(updateTrip({ ...data.updateTrip, name }));
+      dispatch(updateTrip({ id: trip.id, name }));
       setUpdateNameText(SUCCESSFUL_UPDATE_MESSAGE);
     },
     onError: error => {
@@ -51,15 +51,18 @@ const TripNameInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
 
   const handleNameChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
     setEditingName(true);
-    if (target.value.length >= 4) {
-      setName(target.value);
-    }
+    setName(target.value);
   };
 
   const handleSubmitName = () => {
     setUpdateNameError(false);
     setUpdateNameText('');
-    updateTripQuery({ variables: { input: { id: trip.id, name } } });
+    if (name.length >= 4) {
+      updateTripQuery({ variables: { input: { id: trip.id, name } } });
+    } else {
+      setUpdateNameError(true);
+      setUpdateNameText('Trip name must be at least 4 characters');
+    }
   };
 
   const handleCancelName = () => {
