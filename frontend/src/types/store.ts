@@ -7,7 +7,6 @@ export interface GenericAction<TType extends string, TPayload = undefined>
 }
 
 export type GenericActionCreator<
-  TAction extends GenericAction<string, TAction['payload']>
-> = Extract<TAction['payload'], undefined> extends never
-  ? (payload: TAction['payload']) => TAction
-  : (payload?: TAction['payload']) => TAction;
+  TAction extends GenericAction<string, TPayload>,
+  TPayload = TAction['payload']
+> = (...payload: undefined extends TPayload ? [TPayload?] : [TPayload]) => TAction;
