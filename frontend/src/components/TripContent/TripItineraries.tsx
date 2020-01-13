@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { DispatchProp } from 'react-redux';
+import styled from 'styled-components';
 import TripItineraryPanel from './TripItineraryPanel';
 import { ActiveTrip } from '../../store/trip/types';
 import { setActiveTripItineraries } from '../../store/trip/actions';
@@ -21,6 +24,15 @@ export const GET_ITINERARY = gql`
         end_time
       }
     }
+  }
+`;
+
+const ItineraryHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  div {
+    background-color: ;
   }
 `;
 
@@ -55,7 +67,13 @@ const TripItineraries: React.FC<TripItinerariesProps> = ({ dispatch, tripId }) =
   );
   return (
     <div>
-      <h3>Itinerary</h3>
+      <ItineraryHeader>
+        <h2>Itinerary</h2>
+        <Fab color='primary' variant='extended'>
+          <span>Add &nbsp;</span>
+          <AddIcon />
+        </Fab>
+      </ItineraryHeader>
       {tripItinerary}
     </div>
   );

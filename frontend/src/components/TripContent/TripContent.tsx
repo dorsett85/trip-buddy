@@ -2,10 +2,17 @@ import React, { useState } from 'react';
 import { DispatchProp } from 'react-redux';
 import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
+import Fab from '@material-ui/core/Fab';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Popper from '@material-ui/core/Popper';
+import Card from '@material-ui/core/Card';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import { DateTimePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import styled from 'styled-components';
 import { Trip, tripStatus } from '../../types/trip';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import {
@@ -26,9 +33,75 @@ export const UPDATE_TRIP = gql`
   }
 `;
 
+export const DELETE_TRIP = gql`
+  mutation DeleteTrip($id: String!) {
+    updateTrip(id: $id)
+  }
+`;
+
 export interface TripContentProps extends DispatchProp {
   trip: Trip;
 }
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const ElevatedPopper = styled(Popper)`
+  z-index: 10000;
+`;
+
+const TripHeader: React.FC<TripContentProps> = ({ dispatch, trip }) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [deleteResponseText, setDeleteResponseText] = useState('');
+  const [deleteTripMutation, { loading }] = useMutation(DELETE_TRIP, {
+    onCompleted: () => {
+      console.log('delete');
+    },
+    onError: error => {
+      setDeleteResponseText(getFirstError(error));
+    }
+  });
+
+  const handleToggleDeletePopper = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(anchorEl ? null : e.currentTarget);
+  };
+
+  const handleConfirmDeleteClick = () => {
+    deleteTripMutation({ variables: { id: trip.id } });
+  };
+
+  const popperId = anchorEl ? 'delete-popper' : undefined;
+
+  return (
+    <Header>
+      <h2>Trip Details</h2>
+      <Fab
+        color='secondary'
+        variant='extended'
+        onClick={handleToggleDeletePopper}
+        aria-describedby={popperId}
+      >
+        <span>Delete &nbsp;</span>
+        <DeleteIcon />
+      </Fab>
+      <ElevatedPopper id={popperId} open={!!anchorEl} anchorEl={anchorEl}>
+        <Card>
+          <ButtonGroup size='small' fullWidth>
+            <Button color='secondary' onClick={handleConfirmDeleteClick}>
+              Confirm Delete
+            </Button>
+            <Button color='primary' onClick={handleToggleDeletePopper}>
+              Cancel
+            </Button>
+          </ButtonGroup>
+        </Card>
+      </ElevatedPopper>
+    </Header>
+  );
+};
 
 const TripNameInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
   const [name, setName] = useState(trip.name);
@@ -230,7 +303,7 @@ const TripStatusSelect: React.FC<TripContentProps> = ({ dispatch, trip }) => {
 const TripContent: React.FC<TripContentProps> = ({ dispatch, trip }) => {
   return (
     <div>
-      <h2>Trip Details</h2>
+      <TripHeader dispatch={dispatch} trip={trip} />
       <TripNameInput dispatch={dispatch} trip={trip} />
       <TripStartDateSelect dispatch={dispatch} trip={trip} />
       <TripDescriptionInput dispatch={dispatch} trip={trip} />
