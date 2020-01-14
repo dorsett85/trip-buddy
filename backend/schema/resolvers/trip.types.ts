@@ -8,7 +8,6 @@ import { TripItineraryRecord } from '../../models/TripItinerary.types';
 export type CreateTripInput = InputResolverArg<
   Pick<TripRecord, 'name' | 'description' | 'location' | 'start_date'>
 >;
-
 export type FindTripInput = InputResolverArg<TripSchema>;
 export type UpdateTripInput = InputResolverArg<Omit<TripSchema, 'created_date'>>;
 
@@ -28,6 +27,7 @@ export interface TripResolvers extends IResolvers {
   Mutation: {
     createTrip: AuthFieldResolver<any, CreateTripInput, Promise<TripSchema>>;
     updateTrip: AuthFieldResolver<any, UpdateTripInput, Promise<TripSchema>>;
+    deleteTrip: AuthFieldResolver<any, Pick<TripRecord['id']>, Promise<TripRecord['id']>>;
     updateTripItinerary: AuthFieldResolver<
       any,
       UpdateTripItineraryInput,

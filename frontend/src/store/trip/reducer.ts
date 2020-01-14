@@ -52,6 +52,13 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
     return { ...state, trips };
   }
 
+  if (action.type === 'DELETE_TRIP') {
+    const id = action.payload;
+    const trips = { ...state.trips };
+    delete trips[id];
+    return { ...state, trips };
+  }
+
   if (action.type === 'SET_ACTIVE_TRIP') {
     const { payload: id } = action;
     const activeTrip: TripState['activeTrip'] = id !== undefined ? { id } : undefined;

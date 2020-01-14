@@ -75,6 +75,10 @@ export default class TripService {
     return this.TripModel.updateOne(updateTripInput, andWhereArgs, orWhereArgs);
   }
 
+  public deleteOne(tripId: TripRecord['id']): Promise<TripRecord | undefined> {
+    return this.TripModel.deleteOne(tripId);
+  }
+
   public findTripItinerary(
     andWhereArgs: Partial<TripItineraryRecord> = {},
     orWhereArgs: Partial<TripItineraryRecord> = {}

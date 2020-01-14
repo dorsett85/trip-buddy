@@ -45,6 +45,13 @@ const Mutation: TripResolvers['Mutation'] = {
     }
     return trip;
   },
+  deleteTrip: async (_, { id }, { TripService }) => {
+    const trip = await TripService.deleteOne(id);
+    if (!trip) {
+      throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
+    }
+    return trip.id;
+  },
   updateTripItinerary: async (_, args, { TripService }) => {
     const {
       input: { id, ...input }

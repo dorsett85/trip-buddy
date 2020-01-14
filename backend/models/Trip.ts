@@ -39,7 +39,7 @@ export default class TripModel extends BaseModel {
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord[]> {
     const select = addSelect(this.tableName);
-    
+
     // Make sure to prefix the whereArgs with the table name so "id" is not ambiguous
     // in the query
     const where = addWhere({
@@ -65,5 +65,9 @@ export default class TripModel extends BaseModel {
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord | undefined> {
     return this.baseUpdateOne(updateArgs, andWhereArgs, orWhereArgs);
+  }
+
+  public static deleteOne(tripId: TripRecord['id']): Promise<TripRecord | undefined> {
+    return this.baseDeleteOne(tripId);
   }
 }

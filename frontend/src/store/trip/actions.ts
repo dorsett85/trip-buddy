@@ -9,7 +9,8 @@ import {
   AddTrip,
   UpdateTrip,
   SetActiveTripItineraries,
-  UpdateTripItinerary
+  UpdateTripItinerary,
+  DeleteTrip
 } from './types';
 
 export const resetTripState: ResetTripState = () => ({
@@ -38,6 +39,11 @@ export const addTrip: AddTrip = payload => ({
 
 export const updateTrip: UpdateTrip = payload => ({
   type: TripActionType.UPDATE_TRIP,
+  payload
+});
+
+export const deleteTrip: DeleteTrip = payload => ({
+  type: TripActionType.DELETE_TRIP,
   payload
 });
 

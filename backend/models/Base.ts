@@ -57,4 +57,17 @@ export default class BaseModel {
     }: { rows: T[] } = await db.query({ text, values });
     return row;
   }
+
+  public static async baseDeleteOne<T>(id: number): Promise<T> {
+    const remove = `DELETE FROM ${this.tableName}`;
+    const where = addWhere({ andWhereArgs: { id }, orWhereArgs: {} });
+
+    const text = `${remove} ${where.text} RETURNING *;`;
+    const { values } = where;
+
+    const {
+      rows: [row]
+    }: { rows: T[] } = await db.query({ text, values });
+    return row;
+  }
 }

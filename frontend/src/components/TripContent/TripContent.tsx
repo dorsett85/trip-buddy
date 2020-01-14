@@ -19,9 +19,10 @@ import {
   UPDATING_MESSAGE,
   SUCCESSFUL_UPDATE_MESSAGE
 } from '../../utils/constants/messages';
-import { updateTrip } from '../../store/trip/actions';
+import { updateTrip, deleteTrip } from '../../store/trip/actions';
 import { getFirstError } from '../../utils/apolloErrors';
 import TripItineraries from './TripItineraries';
+import { setOpenDrawer } from '../../store/general/actions';
 
 export const UPDATE_TRIP = gql`
   mutation UpdateTrip($input: UpdateTripInput) {
@@ -34,8 +35,8 @@ export const UPDATE_TRIP = gql`
 `;
 
 export const DELETE_TRIP = gql`
-  mutation DeleteTrip($id: String!) {
-    updateTrip(id: $id)
+  mutation DeleteTrip($id: Int!) {
+    deleteTrip(id: $id)
   }
 `;
 
@@ -57,8 +58,9 @@ const TripHeader: React.FC<TripContentProps> = ({ dispatch, trip }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [deleteResponseText, setDeleteResponseText] = useState('');
   const [deleteTripMutation, { loading }] = useMutation(DELETE_TRIP, {
-    onCompleted: () => {
-      console.log('delete');
+    onCompleted: data => {
+      dispatch(setOpenDrawer(false));
+      dispatch(deleteTrip(data.deleteTrip));
     },
     onError: error => {
       setDeleteResponseText(getFirstError(error));
