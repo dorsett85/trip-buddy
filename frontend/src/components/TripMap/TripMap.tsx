@@ -6,6 +6,7 @@ import { useTripMap, useTrips } from './hooks';
 import TripCreatorModal from '../TripCreatorModal/TripCreatorModal';
 import TripCreatorSnackbar from '../TripCreatorSnackbar/TripCreatorSnackbar';
 import ActiveTripSnackbar from '../ActiveTripSnackbar/ActiveTripSnackbar';
+import DeleteTripSnackbar from '../DeleteTripSnackbar/DeleteTripSnackbar';
 
 interface TripMapProps {
   loggedIn: boolean;
@@ -57,6 +58,7 @@ const TripMap: React.FC<TripMapProps> = ({ loggedIn }) => {
       <TripCreatorModal />
       <TripCreatorSnackbar />
       <ActiveTripSnackbar />
+      <DeleteTripSnackbar />
     </>
   );
 };
