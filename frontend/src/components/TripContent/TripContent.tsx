@@ -45,7 +45,8 @@ export interface TripContentProps extends DispatchProp {
   trip: Trip;
 }
 
-const Header = styled.div(({ theme }) => css`
+const Header = styled.div(
+  ({ theme }) => css`
   div:nth-of-type(1) {
     display: flex;
     justify-content: space-between;
@@ -55,7 +56,8 @@ const Header = styled.div(({ theme }) => css`
     margin-top: ${theme.spacing('xs')}
     color: red;
   }
-`);
+`
+);
 
 const ElevatedPopper = styled(Popper)`
   z-index: 10000;
@@ -245,6 +247,26 @@ const TripDescriptionInput: React.FC<TripContentProps> = ({ dispatch, trip }) =>
   );
 };
 
+const TripLocationInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
+  const [location, setLocation] = useState(trip.location.toLocaleString());
+
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocation(e.target.value);
+  };
+
+  return (
+    <TextField
+      value={location}
+      onChange={handleOnChange}
+      label='Start location'
+      placeholder='Enter a location or drop a pin...'
+      name='startLocation'
+      margin='normal'
+      fullWidth
+    />
+  );
+};
+
 const TripStartDateSelect: React.FC<TripContentProps> = ({ dispatch, trip }) => {
   const [updateStartDateText, setUpdateStartDateText] = useState('');
   const [updateStartDateError, setUpdateStartDateError] = useState(false);
@@ -328,6 +350,7 @@ const TripContent: React.FC<TripContentProps> = ({ dispatch, trip }) => {
       <TripHeader dispatch={dispatch} trip={trip} />
       <TripNameInput dispatch={dispatch} trip={trip} />
       <TripStartDateSelect dispatch={dispatch} trip={trip} />
+      <TripLocationInput dispatch={dispatch} trip={trip} />
       <TripDescriptionInput dispatch={dispatch} trip={trip} />
       <TripStatusSelect dispatch={dispatch} trip={trip} />
       <TripItineraries dispatch={dispatch} tripId={trip.id} />
