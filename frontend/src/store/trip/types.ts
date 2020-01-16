@@ -10,11 +10,14 @@ export interface TripCreator {
   // eslint-disable-next-line camelcase
   start_date?: string;
   location?: Trip['location'];
+  // eslint-disable-next-line camelcase
+  location_address?: Trip['location_address'];
 }
 
 export interface ActiveTrip {
   id: Trip['id'];
   activeMarker?: string;
+  updatingLocation?: boolean;
   itineraries?: Trip['itineraries'];
 }
 
@@ -41,7 +44,6 @@ export enum TripActionType {
   DELETE_TRIP = 'DELETE_TRIP',
   SET_ACTIVE_TRIP = 'SET_ACTIVE_TRIP',
   SET_ACTIVE_TRIP_ITINERARIES = 'SET_ACTIVE_TRIP_ITINERARIES',
-  SET_ACTIVE_MARKER = 'SET_ACTIVE_MARKER',
   UPDATE_TRIP_ITINERARY = 'UPDATE_TRIP_ITINERARY'
 }
 
@@ -72,15 +74,11 @@ export type UpdateTripAction = GenericAction<
 export type DeleteTripAction = GenericAction<TripActionType.DELETE_TRIP, Trip['id']>;
 export type SetActiveTripAction = GenericAction<
   TripActionType.SET_ACTIVE_TRIP,
-  Trip['id'] | undefined
+  ActiveTrip | undefined
 >;
 export type SetActiveTripItinerariesAction = GenericAction<
   TripActionType.SET_ACTIVE_TRIP_ITINERARIES,
   TripItinerary[]
->;
-export type SetActiveMarkerAction = GenericAction<
-  TripActionType.SET_ACTIVE_MARKER,
-  ActiveTrip['activeMarker'] | undefined
 >;
 export type UpdateTripItineraryAction = GenericAction<
   TripActionType.UPDATE_TRIP_ITINERARY,
@@ -96,7 +94,6 @@ export type TripAction =
   | DeleteTripAction
   | SetActiveTripAction
   | SetActiveTripItinerariesAction
-  | SetActiveMarkerAction
   | UpdateTripItineraryAction;
 
 // Action creators
@@ -111,5 +108,4 @@ export type SetActiveTrip = GenericActionCreator<SetActiveTripAction>;
 export type SetActiveTripItineraries = GenericActionCreator<
   SetActiveTripItinerariesAction
 >;
-export type SetActiveMarker = GenericActionCreator<SetActiveMarkerAction>;
 export type UpdateTripItinerary = GenericActionCreator<UpdateTripItineraryAction>;

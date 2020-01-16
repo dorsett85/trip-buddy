@@ -19,7 +19,7 @@ import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
 import { LinearProgress } from '@material-ui/core';
 import { AppState } from '../../store';
-import { setTripCreator, addTrip, setActiveTrip, setActiveMarker } from '../../store/trip/actions';
+import { setTripCreator, addTrip, setActiveTrip } from '../../store/trip/actions';
 import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { Feature } from '../../types/apiResponses';
@@ -35,6 +35,7 @@ export const CREATE_TRIP = gql`
       name
       description
       location
+      location_address
       start_date
       status
       created_date
@@ -55,22 +56,26 @@ const TripCreatorModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const tripCreator = useSelector(({ trip }: AppState) => trip.tripCreator);
 
+  const [location, setLocation] = useState('');
   const [locationOptions, setLocationOptions] = useState<Feature[]>();
   const [locationsLoading, setLocationsLoading] = useState(false);
-  const [location, setLocation] = useState('');
   const [noOptionsText, setNoOptionsText] = useState('Enter at least four characters...');
   const [errors, setErrors] = useState<JSX.Element>();
 
   // Final form submit graphlql mutation
-  const [createTripQuery, { loading }] = useMutation(CREATE_TRIP, {
+  const [createTripMutation, { loading }] = useMutation(CREATE_TRIP, {
     onCompleted: (data: { createTrip: Trip }) => {
       dispatch(addTrip(data.createTrip));
       dispatch(setTripCreator());
-      dispatch(setActiveTrip(data.createTrip.id));
 
       // Set trip specific redux state so the created trip will
       // automatically have an active marker and fly to its location
-      dispatch(setActiveMarker(data.createTrip.id.toString()));
+      dispatch(
+        setActiveTrip({
+          id: data.createTrip.id,
+          activeMarker: data.createTrip.id.toString()
+        })
+      );
       dispatch(setFlyTo(data.createTrip.location));
     },
     onError: error => {
@@ -86,7 +91,9 @@ const TripCreatorModal: React.FC = () => {
   };
 
   // When returning from dropping a pin for the location, perform a
-  // reverse geocoding to update the locationOptions
+  // reverse geocoding to update the location.  We already updated
+  // lng/lat during the pin drop but we also need to set the location address
+  // here as well
   useEffect(() => {
     if (!locationOptions && tripCreator && tripCreator.location) {
       const [lng, lat] = tripCreator.location;
@@ -163,8 +170,8 @@ const TripCreatorModal: React.FC = () => {
       if (!tripCreator.start_date) {
         errorList.push('Missing start date');
       }
-      if (!tripCreator.location) {
-        errorList.push('Missing start location');
+      if (!tripCreator.location || !location) {
+        errorList.push('Missing start location, select an item from the dropdown');
       }
 
       // Populate the form with any errors, otherwise create the new trip
@@ -189,10 +196,11 @@ const TripCreatorModal: React.FC = () => {
             name: tripCreator.name,
             description: tripCreator.description,
             location: tripCreator.location,
+            location_address: location,
             start_date: tripCreator.start_date
           }
         };
-        createTripQuery({ variables });
+        createTripMutation({ variables });
       }
     };
 
@@ -241,7 +249,6 @@ const TripCreatorModal: React.FC = () => {
                 {...rest}
                 label='Start location'
                 placeholder='Enter a location or drop a pin...'
-                name='startLocation'
                 onInput={handleLocationChange}
                 inputProps={{
                   ...rest.inputProps,

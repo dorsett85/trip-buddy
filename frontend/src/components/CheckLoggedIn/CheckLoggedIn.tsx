@@ -27,6 +27,7 @@ export const GET_LOGGED_IN_DATA = gql`
         description
         start_date
         location
+        location_address
         status
         created_date
       }

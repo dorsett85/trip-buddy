@@ -10,6 +10,7 @@ import TripItineraryPanel from './TripItineraryPanel';
 import { ActiveTrip } from '../../store/trip/types';
 import { setActiveTripItineraries } from '../../store/trip/actions';
 import { useActiveTripItineraries } from '../../utils/hooks/useActiveTripItineraries';
+import { AppAction } from '../../store/types';
 
 export const GET_ITINERARY = gql`
   query GetItinerary($input: FindTripInput) {
@@ -20,6 +21,7 @@ export const GET_ITINERARY = gql`
         name
         description
         location
+        location_address
         start_time
         end_time
       }
@@ -31,12 +33,9 @@ const ItineraryHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  div {
-    background-color: ;
-  }
 `;
 
-interface TripItinerariesProps extends DispatchProp {
+interface TripItinerariesProps extends DispatchProp<AppAction> {
   tripId: ActiveTrip['id'];
 }
 

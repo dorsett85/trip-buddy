@@ -14,6 +14,7 @@ export interface Trip {
   name: string;
   description?: string;
   location: LngLatArray;
+  location_address: string;
   start_date: string;
   status: typeof tripStatus[number];
   created_date: string;

@@ -4,7 +4,7 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import styled from 'styled-components';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import { useSelector } from 'react-redux';
-import { setActiveTrip, setActiveMarker } from '../../store/trip/actions';
+import { setActiveTrip } from '../../store/trip/actions';
 import { AppState } from '../../store';
 import { setOpenDrawer } from '../../store/general/actions';
 import { Trip, TripItinerary } from '../../types/trip';
@@ -61,9 +61,8 @@ const TripMarker: React.FC<TripMarkerProps> = ({
   const handleClick = () => {
     if (!isActive) {
       const activeTripId = isTrip(markerData) ? markerData.id : markerData.trip_id;
-      dispatch(setActiveTrip(activeTripId));
+      dispatch(setActiveTrip({ id: activeTripId, activeMarker: markerId }));
     }
-    dispatch(setActiveMarker(markerId));
     dispatch(setOpenDrawer(true));
   };
 

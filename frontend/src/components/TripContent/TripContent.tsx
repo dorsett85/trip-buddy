@@ -9,6 +9,10 @@ import Popper from '@material-ui/core/Popper';
 import Card from '@material-ui/core/Card';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Button from '@material-ui/core/Button';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
+import PinDropIcon from '@material-ui/icons/PinDrop';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import { DateTimePicker } from '@material-ui/pickers';
@@ -23,7 +27,11 @@ import {
 import { updateTrip, deleteTrip } from '../../store/trip/actions';
 import { getFirstError } from '../../utils/apolloErrors';
 import TripItineraries from './TripItineraries';
-import { setOpenDrawer } from '../../store/general/actions';
+import { setOpenDrawer, setFlyTo } from '../../store/general/actions';
+import { Feature } from '../../types/apiResponses';
+import { AppAction } from '../../store/types';
+import { MapboxService } from '../../api/mapbox/MapBoxService';
+import { debounce } from '../../utils/debouce';
 
 export const UPDATE_TRIP = gql`
   mutation UpdateTrip($input: UpdateTripInput) {
@@ -31,6 +39,8 @@ export const UPDATE_TRIP = gql`
       name
       status
       start_date
+      location
+      location_address
     }
   }
 `;
@@ -41,7 +51,7 @@ export const DELETE_TRIP = gql`
   }
 `;
 
-export interface TripContentProps extends DispatchProp {
+export interface TripContentProps extends DispatchProp<AppAction> {
   trip: Trip;
 }
 
@@ -247,22 +257,114 @@ const TripDescriptionInput: React.FC<TripContentProps> = ({ dispatch, trip }) =>
   );
 };
 
-const TripLocationInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
-  const [location, setLocation] = useState(trip.location.toLocaleString());
+const DEFAUL_NO_OPTIONS_TEXT = 'Enter at least four characters...';
+const DEFAULT_UPDATE_LOCATION_TEXT = 'Click an option from the dropdown list to update';
 
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocation(e.target.value);
+const TripLocationInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
+  const [location, setLocation] = useState(trip.location_address);
+  const [locationOptions, setLocationOptions] = useState<Feature[]>();
+  const [locationsLoading, setLocationsLoading] = useState(false);
+  const [noOptionsText, setNoOptionsText] = useState(DEFAUL_NO_OPTIONS_TEXT);
+  const [updateLocationText, setUpdateLocationText] = useState(
+    DEFAULT_UPDATE_LOCATION_TEXT
+  );
+  const [updateLocationError, setUpdateLocationError] = useState(false);
+
+  const [updateLocationMutation, { loading }] = useMutation(UPDATE_TRIP, {
+    onCompleted: data => {
+      setUpdateLocationError(false);
+      setUpdateLocationText(SUCCESSFUL_UPDATE_MESSAGE);
+      dispatch(
+        updateTrip({
+          id: trip.id,
+          location: data.updateTrip.location,
+          location_address: data.updateTrip.location_address
+        })
+      );
+      dispatch(setFlyTo(data.updateTrip.location));
+    },
+    onError: error => {
+      setUpdateLocationError(true);
+      setUpdateLocationText(getFirstError(error));
+    }
+  });
+
+  const handleOnLocationChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+    setUpdateLocationError(false);
+    setUpdateLocationText(DEFAULT_UPDATE_LOCATION_TEXT);
+    setLocation(target.value);
+    // Wait for the input to be a least 4 characters before search
+    if (target.value.length <= 3) {
+      setNoOptionsText(DEFAUL_NO_OPTIONS_TEXT);
+      setLocationOptions(undefined);
+    } else if (target.value.length > 3) {
+      setNoOptionsText('No options');
+      setLocationsLoading(true);
+      debounce(() => {
+        MapboxService.getGeocodeFeatureCollection(target.value, locations => {
+          setLocationOptions(locations.features);
+          setLocationsLoading(false);
+        });
+      }, 1000);
+    }
+  };
+
+  const handleLocationSelect = ({ target }: React.ChangeEvent<any>) => {
+    const optionIdx = target.getAttribute('data-option-index');
+    if (locationOptions && optionIdx) {
+      const { center } = locationOptions[optionIdx];
+      const newLocation = locationOptions[optionIdx].place_name;
+      setLocation(newLocation);
+      updateLocationMutation({
+        variables: {
+          input: { id: trip.id, location: center, location_address: newLocation }
+        }
+      });
+    } else {
+      setLocation('');
+    }
+  };
+
+  const handleDropLocationPinClick = () => {
+    // dispatch(setOpenDrawer(false));
   };
 
   return (
-    <TextField
-      value={location}
-      onChange={handleOnChange}
-      label='Start location'
-      placeholder='Enter a location or drop a pin...'
-      name='startLocation'
-      margin='normal'
-      fullWidth
+    <Autocomplete
+      options={locationOptions}
+      loading={locationsLoading}
+      onChange={handleLocationSelect}
+      noOptionsText={noOptionsText}
+      getOptionLabel={(option: Feature) => option.place_name}
+      renderInput={({ InputProps, InputLabelProps, ...rest }) => (
+        <TextField
+          {...rest}
+          label='Start location'
+          placeholder='Enter a location or drop a pin...'
+          helperText={loading ? UPDATING_MESSAGE : updateLocationText}
+          error={updateLocationError}
+          onInput={handleOnLocationChange}
+          inputProps={{
+            ...rest.inputProps,
+            value: location
+          }}
+          // eslint-disable-next-line react/jsx-no-duplicate-props
+          InputProps={{
+            ...InputProps,
+            endAdornment: (
+              <InputAdornment title='Drop pin' position='end'>
+                <IconButton onClick={handleDropLocationPinClick}>
+                  <PinDropIcon />
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+          InputLabelProps={{ ...InputLabelProps, shrink: true }}
+          variant='outlined'
+          margin='normal'
+          fullWidth
+        />
+      )}
     />
   );
 };

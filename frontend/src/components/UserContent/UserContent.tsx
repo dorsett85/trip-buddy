@@ -11,6 +11,7 @@ import { User } from '../../types/user';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { getFirstError } from '../../utils/apolloErrors';
 import { SUCCESSFUL_UPDATE_MESSAGE, UPDATING_MESSAGE } from '../../utils/constants/messages';
+import { AppAction } from '../../store/types';
 
 export const UPDATE_USER = gql`
   mutation UpdateUser($input: UpdateUserInput) {
@@ -21,11 +22,11 @@ export const UPDATE_USER = gql`
   }
 `;
 
-export interface UserContentProps extends DispatchProp {
+export interface UserContentProps extends DispatchProp<AppAction> {
   user?: UserState;
 }
 
-export interface UserInfoProps extends DispatchProp {
+export interface UserInfoProps extends DispatchProp<AppAction> {
   user: User;
 }
 

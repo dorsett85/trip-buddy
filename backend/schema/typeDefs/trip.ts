@@ -13,6 +13,7 @@ export const tripTypeDefs = gql`
     name: String!
     description: String
     location: [Float]!
+    location_address: String!
     start_date: Date!
   }
 
@@ -21,6 +22,7 @@ export const tripTypeDefs = gql`
     name: String
     description: String
     location: [Float]
+    location_address: String
     start_date: Date
     status: TripStatus
     created_date: Date
@@ -31,6 +33,7 @@ export const tripTypeDefs = gql`
     name: String
     description: String
     location: [Float]
+    location_address: String
     start_date: Date
     status: TripStatus
   }
@@ -41,6 +44,7 @@ export const tripTypeDefs = gql`
     name: String
     description: String
     location: [Float]
+    location_address: String
     start_time: Date
     end_time: Date
   }
@@ -50,6 +54,7 @@ export const tripTypeDefs = gql`
     name: String
     description: String
     location: [Float]
+    location_address: String
     start_date: Date
     status: TripStatus
     created_date: Date
@@ -62,6 +67,7 @@ export const tripTypeDefs = gql`
     name: String
     description: String
     location: [Float]
+    location_address: String
     start_time: Date
     end_time: Date
     created_date: Date

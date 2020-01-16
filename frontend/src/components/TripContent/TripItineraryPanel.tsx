@@ -20,6 +20,7 @@ import {
 import { getFirstError } from '../../utils/apolloErrors';
 import { updateTripItinerary } from '../../store/trip/actions';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
+import { AppAction } from '../../store/types';
 
 export const UPDATE_ITINERARY = gql`
   mutation UpdateTripItinerary($input: UpdateTripItineraryInput) {
@@ -33,7 +34,7 @@ export const UPDATE_ITINERARY = gql`
   }
 `;
 
-interface TripItineraryPanelProps extends DispatchProp {
+interface TripItineraryPanelProps extends DispatchProp<AppAction> {
   /**
    * Itinerary of the active trip
    */
