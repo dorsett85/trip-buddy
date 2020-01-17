@@ -1,6 +1,13 @@
 /* eslint-disable camelcase */
 import { LngLatArray } from './shared';
 
+export interface FeatureContext {
+  id: string;
+  short_code: string;
+  wikidata?: string;
+  text: string;
+}
+
 export interface Feature {
   id: string;
   type: string;
@@ -18,15 +25,10 @@ export interface Feature {
     coordinates: LngLatArray;
     type: string;
   };
-  context: {
-    id: string;
-    short_code: string;
-    wikidata?: string;
-    text: string;
-  }[];
+  context: FeatureContext[];
 }
 
-export interface FeatureCollectionResponse {
+export interface FeatureCollection {
   type: string;
   query: string[];
   features: Feature[];

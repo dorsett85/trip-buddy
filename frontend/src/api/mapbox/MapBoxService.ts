@@ -1,7 +1,5 @@
 import { AjaxApi } from '../AjaxApi';
-import { FeatureCollectionResponse } from '../../types/apiResponses';
-
-type FeatureCollectionCallback = (response: FeatureCollectionResponse) => any;
+import { FeatureCollection } from '../../types/apiResponses';
 
 export class MapboxService extends AjaxApi {
   public static BASE_URL = 'https://api.mapbox.com';
@@ -14,9 +12,10 @@ export class MapboxService extends AjaxApi {
     return `${this.GEOCODING_URL}/${input}.json?${this.TOKEN}`;
   }
 
-  public static async getGeocodeFeatureCollection(input: string, callback: FeatureCollectionCallback) {
+  public static async getGeocodeFeatureCollection(
+    input: string
+  ): Promise<FeatureCollection> {
     const url = this.makeGeoCodeUrl(input);
-    const featureCollection: FeatureCollectionResponse = await this.json(url);
-    return callback(featureCollection);
+    return this.json<FeatureCollection>(url);
   }
 }

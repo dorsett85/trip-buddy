@@ -16,8 +16,8 @@ export interface TripCreator {
 
 export interface ActiveTrip {
   id: Trip['id'];
-  activeMarker?: string;
-  updatingLocation?: boolean;
+  activeMarker: string;
+  updatingLocation: boolean;
   itineraries?: Trip['itineraries'];
 }
 
@@ -74,7 +74,7 @@ export type UpdateTripAction = GenericAction<
 export type DeleteTripAction = GenericAction<TripActionType.DELETE_TRIP, Trip['id']>;
 export type SetActiveTripAction = GenericAction<
   TripActionType.SET_ACTIVE_TRIP,
-  ActiveTrip | undefined
+  Partial<ActiveTrip> | undefined
 >;
 export type SetActiveTripItinerariesAction = GenericAction<
   TripActionType.SET_ACTIVE_TRIP_ITINERARIES,

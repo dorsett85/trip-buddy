@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -56,7 +56,6 @@ const TripCreatorModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const tripCreator = useSelector(({ trip }: AppState) => trip.tripCreator);
 
-  const [location, setLocation] = useState('');
   const [locationOptions, setLocationOptions] = useState<Feature[]>();
   const [locationsLoading, setLocationsLoading] = useState(false);
   const [noOptionsText, setNoOptionsText] = useState('Enter at least four characters...');
@@ -86,24 +85,8 @@ const TripCreatorModal: React.FC = () => {
   const handleOnClose = () => {
     dispatch(setTripCreator());
     setLocationOptions(undefined);
-    setLocation('');
     setErrors(undefined);
   };
-
-  // When returning from dropping a pin for the location, perform a
-  // reverse geocoding to update the location.  We already updated
-  // lng/lat during the pin drop but we also need to set the location address
-  // here as well
-  useEffect(() => {
-    if (!locationOptions && tripCreator && tripCreator.location) {
-      const [lng, lat] = tripCreator.location;
-      MapboxService.getGeocodeFeatureCollection(`${lng},${lat}`, locations => {
-        const { features } = locations;
-        const locationText = features.length ? features[0].place_name : `${lng}, ${lat}`;
-        setLocation(locationText);
-      });
-    }
-  }, [tripCreator, locationOptions]);
 
   // Here we only add add the modal form when creating a trip
   let openModal = false;
@@ -125,8 +108,11 @@ const TripCreatorModal: React.FC = () => {
       }
     };
 
-    const handleLocationChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-      setLocation(target.value);
+    const handleLocationChange = ({ target }: any) => {
+      dispatch(setTripCreator({ location_address: target.value }));
+      if (tripCreator.location) {
+        dispatch(setTripCreator({ location: undefined }));
+      }
       // Wait for the input to be a least 4 characters before search
       if (target.value.length <= 3) {
         setNoOptionsText('Enter at least four characters...');
@@ -135,10 +121,12 @@ const TripCreatorModal: React.FC = () => {
         setNoOptionsText('No options');
         setLocationsLoading(true);
         debounce(() => {
-          MapboxService.getGeocodeFeatureCollection(target.value, locations => {
-            setLocationOptions(locations.features);
-            setLocationsLoading(false);
-          });
+          MapboxService.getGeocodeFeatureCollection(target.value).then(
+            featureCollection => {
+              setLocationOptions(featureCollection.features);
+              setLocationsLoading(false);
+            }
+          );
         }, 1000);
       }
     };
@@ -147,11 +135,14 @@ const TripCreatorModal: React.FC = () => {
       const optionIdx = target.getAttribute('data-option-index');
       if (locationOptions && optionIdx) {
         const { center } = locationOptions[optionIdx];
-        setLocation(locationOptions[optionIdx].place_name);
-        dispatch(setTripCreator({ location: center }));
+        dispatch(
+          setTripCreator({
+            location: center,
+            location_address: locationOptions[optionIdx].place_name
+          })
+        );
       } else {
-        setLocation('');
-        dispatch(setTripCreator({ location: undefined }));
+        dispatch(setTripCreator({ location: undefined, location_address: undefined }));
       }
     };
 
@@ -170,7 +161,7 @@ const TripCreatorModal: React.FC = () => {
       if (!tripCreator.start_date) {
         errorList.push('Missing start date');
       }
-      if (!tripCreator.location || !location) {
+      if (!tripCreator.location || !tripCreator.location_address) {
         errorList.push('Missing start location, select an item from the dropdown');
       }
 
@@ -195,9 +186,9 @@ const TripCreatorModal: React.FC = () => {
           input: {
             name: tripCreator.name,
             description: tripCreator.description,
+            start_date: tripCreator.start_date,
             location: tripCreator.location,
-            location_address: location,
-            start_date: tripCreator.start_date
+            location_address: tripCreator.location_address
           }
         };
         createTripMutation({ variables });
@@ -249,10 +240,10 @@ const TripCreatorModal: React.FC = () => {
                 {...rest}
                 label='Start location'
                 placeholder='Enter a location or drop a pin...'
-                onInput={handleLocationChange}
                 inputProps={{
                   ...rest.inputProps,
-                  value: location
+                  onInput: handleLocationChange,
+                  value: tripCreator.location_address || ''
                 }}
                 // eslint-disable-next-line react/jsx-no-duplicate-props
                 InputProps={{

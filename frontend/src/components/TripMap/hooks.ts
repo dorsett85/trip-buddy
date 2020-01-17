@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ViewState, PointerEvent, ViewportProps, FlyToInterpolator } from 'react-map-gl';
 import { useSelector } from 'react-redux';
 import { AppState } from '../../store';
-import { setTripCreator, setActiveTrip } from '../../store/trip/actions';
+import { setTripCreator, setActiveTrip, updateTrip } from '../../store/trip/actions';
 import { getTripMarkers } from './mapHelpers';
 import { LngLatArray } from '../../types/shared';
 import { useActiveTrip } from '../../utils/hooks/useActiveTrip';
@@ -10,6 +10,8 @@ import { useActiveTripItineraries } from '../../utils/hooks/useActiveTripItinera
 import { TripState } from '../../store/trip/types';
 import { Trip } from '../../types/trip';
 import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
+import { MapboxService } from '../../api/mapbox/MapBoxService';
+import { setOpenDrawer } from '../../store/general/actions';
 
 const initialViewport: Partial<ViewportProps> = {
   latitude: 37.785164,
@@ -46,14 +48,40 @@ export const useTripMap = () => {
   };
 
   const handleClick = (e: PointerEvent) => {
-    // Set the lngLat during the create trip process
+    // Set the location during the create trip process
     if (creatingTrip) {
-      dispatch(
-        setTripCreator({
-          openModal: true,
-          location: e.lngLat
-        })
-      );
+      const lngLatString = e.lngLat.toString();
+      MapboxService.getGeocodeFeatureCollection(lngLatString).then(featureCollection => {
+        const { features } = featureCollection;
+        const locationText = features.length ? features[0].place_name : lngLatString;
+        dispatch(
+          setTripCreator({
+            openModal: true,
+            location: e.lngLat,
+            location_address: locationText
+          })
+        );
+      });
+      return;
+    }
+
+    // Set the new location and location address for the active trip
+    if (activeTrip && activeTrip.updatingLocation) {
+      const lngLatString = e.lngLat.toString();
+      MapboxService.getGeocodeFeatureCollection(lngLatString).then(featureCollection => {
+        const { features } = featureCollection;
+        const locationText = features.length ? features[0].place_name : lngLatString;
+        dispatch(
+          updateTrip({
+            id: activeTrip.id,
+            location: e.lngLat,
+            location_address: locationText
+          })
+        );
+        dispatch(setOpenDrawer(true));
+        dispatch(setActiveTrip({ updatingLocation: false }));
+      });
+      return;
     }
 
     // Any click on the map should cancel the active trip

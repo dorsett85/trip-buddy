@@ -17,17 +17,14 @@ const TripCreatorSnackbar = () => {
     dispatch(setTripCreator({ openModal: true }));
   };
 
+  const action = (
+    <IconButton onClick={handleClose} key='close' aria-label='close' color='inherit'>
+      <CloseIcon />
+    </IconButton>
+  );
+
   return (
-    <Snackbar
-      open={open}
-      message='Select a location for your trip'
-      action={
-        // eslint-disable-next-line react/jsx-wrap-multilines
-        <IconButton onClick={handleClose} key='close' aria-label='close' color='inherit'>
-          <CloseIcon />
-        </IconButton>
-      }
-    />
+    <Snackbar open={open} message='Select a location for your trip' action={action} />
   );
 };
 

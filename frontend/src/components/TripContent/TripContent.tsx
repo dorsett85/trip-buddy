@@ -24,7 +24,7 @@ import {
   UPDATING_MESSAGE,
   SUCCESSFUL_UPDATE_MESSAGE
 } from '../../utils/constants/messages';
-import { updateTrip, deleteTrip } from '../../store/trip/actions';
+import { updateTrip, deleteTrip, setActiveTrip } from '../../store/trip/actions';
 import { getFirstError } from '../../utils/apolloErrors';
 import TripItineraries from './TripItineraries';
 import { setOpenDrawer, setFlyTo } from '../../store/general/actions';
@@ -301,7 +301,7 @@ const TripLocationInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
       setNoOptionsText('No options');
       setLocationsLoading(true);
       debounce(() => {
-        MapboxService.getGeocodeFeatureCollection(target.value, locations => {
+        MapboxService.getGeocodeFeatureCollection(target.value).then(locations => {
           setLocationOptions(locations.features);
           setLocationsLoading(false);
         });
@@ -326,7 +326,8 @@ const TripLocationInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
   };
 
   const handleDropLocationPinClick = () => {
-    // dispatch(setOpenDrawer(false));
+    dispatch(setOpenDrawer(false));
+    dispatch(setActiveTrip({ updatingLocation: true }));
   };
 
   return (
