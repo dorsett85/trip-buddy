@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import TripItineraryPanel from './TripItineraryPanel';
 import { ActiveTripInfo } from '../../store/trip/types';
 import { setActiveTripInfoItineraries } from '../../store/trip/actions';
-import { useActiveTripItineraries } from '../../utils/hooks/useActiveTripItineraries';
+import { useActiveTripItineraries } from '../../utils/hooks/useTrip';
 import { AppAction } from '../../store/types';
 
 export const GET_ITINERARY = gql`

@@ -9,7 +9,7 @@ import { setOpenDrawer } from '../../store/general/actions';
 import { setViewInfo } from '../../store/user/actions';
 import UserContent from '../UserContent/UserContent';
 import TripContent from '../TripContent/TripContent';
-import { useActiveTrip } from '../../utils/hooks/useActiveTrip';
+import { useActiveTrip } from '../../utils/hooks/useTrip';
 import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 
 export interface SideDrawerProps extends DrawerProps {

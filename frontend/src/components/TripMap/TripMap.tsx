@@ -2,7 +2,7 @@ import React from 'react';
 import MapGl, { NavigationControl } from 'react-map-gl';
 import { Slide } from '@material-ui/core';
 import styled, { css } from 'styled-components';
-import { useTripMap, useTrips } from './hooks';
+import { useMap, useMapTrips } from './hooks';
 import TripCreatorModal from '../TripCreatorModal/TripCreatorModal';
 import TripCreatorSnackbar from '../TripCreatorSnackbar/TripCreatorSnackbar';
 import ActiveTripSnackbar from '../ActiveTripSnackbar/ActiveTripSnackbar';
@@ -32,8 +32,8 @@ const MapContainer = styled.div<MapContainerProps>(
 );
 
 const TripMap: React.FC<TripMapProps> = ({ loggedIn }) => {
-  const { viewport, updateViewport, handleClick } = useTripMap();
-  const { tripMarkers, updatingLocation } = useTrips();
+  const { viewport, updateViewport, handleClick } = useMap();
+  const { tripMarkers, updatingLocation } = useMapTrips();
 
   return (
     <>

@@ -4,7 +4,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { AppState } from '../../store';
-import { useActiveTrip } from '../../utils/hooks/useActiveTrip';
+import { useActiveTrip } from '../../utils/hooks/useTrip';
 import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 import { setOpenDrawer } from '../../store/general/actions';
 import { setActiveTripInfo } from '../../store/trip/actions';

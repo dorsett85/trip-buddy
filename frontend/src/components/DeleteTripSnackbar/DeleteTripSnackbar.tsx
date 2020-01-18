@@ -4,13 +4,11 @@ import Snackbar from '@material-ui/core/Snackbar';
 import { AppState } from '../../store';
 import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 import { setActiveTripInfo } from '../../store/trip/actions';
-import { useActiveTrip } from '../../utils/hooks/useActiveTrip';
+import { useActiveTrip, useActiveTripId } from '../../utils/hooks/useTrip';
 
 const DeleteTripSnackbar: React.FC = () => {
   const dispatch = useAppDispatch();
-  const deletedTripId = useSelector(
-    ({ trip }: AppState) => trip.activeTripInfo && trip.activeTripInfo.id
-  );
+  const deletedTripId = useActiveTripId();
   const activeTrip = useActiveTrip();
   const openDrawer = useSelector((state: AppState) => state.general.openDrawer);
 
