@@ -2,7 +2,11 @@ import React, { memo } from 'react';
 import Button, { ButtonProps } from '@material-ui/core/Button';
 import { useSelector } from 'react-redux';
 import { AppState } from '../../store';
-import { setTripCreator, setActiveTripInfo } from '../../store/trip/actions';
+import {
+  setTripCreator,
+  setActiveTripInfo,
+  setTripItineraries
+} from '../../store/trip/actions';
 import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 
 const CreateTripButton: React.FC<ButtonProps> = props => {
@@ -14,6 +18,7 @@ const CreateTripButton: React.FC<ButtonProps> = props => {
     const newTrip = !tripCreator ? { openModal: true } : undefined;
     if (activeTrip) {
       dispatch(setActiveTripInfo());
+      dispatch(setTripItineraries());
     }
     dispatch(setTripCreator(newTrip));
   };

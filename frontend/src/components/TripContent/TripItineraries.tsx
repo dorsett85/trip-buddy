@@ -54,9 +54,9 @@ const TripItineraries: React.FC<TripItinerariesProps> = ({ dispatch, tripId }) =
   const tripItinerary = loading ? (
     <LinearProgress />
   ) : (
-    Object.entries(itineraries).map(([key, itinerary], index) => (
+    Object.values(itineraries).map((itinerary, index) => (
       <TripItineraryPanel
-        key={key}
+        key={itinerary.id}
         dispatch={dispatch}
         itinerary={itinerary}
         index={index}

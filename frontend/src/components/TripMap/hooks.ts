@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react';
 import { ViewState, PointerEvent, ViewportProps, FlyToInterpolator } from 'react-map-gl';
 import { useSelector } from 'react-redux';
 import { AppState } from '../../store';
-import { setTripCreator, setActiveTripInfo } from '../../store/trip/actions';
+import {
+  setTripCreator,
+  setActiveTripInfo,
+  setTripItineraries
+} from '../../store/trip/actions';
 import { getTripMarkers } from './mapHelpers';
 import { LngLatArray } from '../../types/shared';
 import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
@@ -83,6 +87,7 @@ export const useMap = () => {
     // Any click on the map should cancel the active trip
     if (activeTripInfo && e.target.classList.contains('overlays')) {
       dispatch(setActiveTripInfo());
+      dispatch(setTripItineraries());
     }
   };
 
