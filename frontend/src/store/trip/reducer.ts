@@ -3,6 +3,7 @@ import { TripState, TripReducer } from './types';
 const initialState: TripState = {
   loadingTrips: false,
   trips: {},
+  itineraries: {},
   tripCreator: undefined,
   activeTripInfo: undefined
 };
@@ -67,27 +68,24 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
     return { ...state, activeTripInfo };
   }
 
-  if (action.type === 'SET_ACTIVE_TRIP_INFO_ITINERARIES') {
-    const activeTripInfo: TripState['activeTripInfo'] = {
-      ...state.activeTripInfo!,
-      itineraries: action.payload
-    };
-    return { ...state, activeTripInfo };
+  if (action.type === 'SET_TRIP_ITINERARIES') {
+    const itineraries: TripState['itineraries'] = {};
+    if (action.payload) {
+      action.payload.forEach(itinerary => {
+        const { id } = itinerary;
+        itineraries[id] = itinerary;
+      });
+    }
+    return { ...state, itineraries };
   }
 
   if (action.type === 'UPDATE_TRIP_ITINERARY') {
-    const { index, ...rest } = action.payload;
-    const itineraries = [...state.activeTripInfo!.itineraries];
-    itineraries[index] = {
-      ...itineraries[index],
-      ...rest
+    const { id, ...rest } = action.payload;
+    const itineraries: TripState['itineraries'] = {
+      ...state.itineraries,
+      [id]: { ...state.itineraries[id], ...rest }
     };
-    const activeTripInfo: TripState['activeTripInfo'] = {
-      ...state.activeTripInfo!,
-      itineraries
-    };
-
-    return { ...state, activeTripInfo };
+    return { ...state, itineraries };
   }
 
   return state;

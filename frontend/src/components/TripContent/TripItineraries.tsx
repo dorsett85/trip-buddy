@@ -8,8 +8,8 @@ import { DispatchProp } from 'react-redux';
 import styled from 'styled-components';
 import TripItineraryPanel from './TripItineraryPanel';
 import { ActiveTripInfo } from '../../store/trip/types';
-import { setActiveTripInfoItineraries } from '../../store/trip/actions';
-import { useActiveTripItineraries } from '../../utils/hooks/useTrip';
+import { setTripItineraries } from '../../store/trip/actions';
+import { useTripItineraries } from '../../utils/hooks/useTrip';
 import { AppAction } from '../../store/types';
 
 export const GET_ITINERARY = gql`
@@ -40,27 +40,26 @@ interface TripItinerariesProps extends DispatchProp<AppAction> {
 }
 
 const TripItineraries: React.FC<TripItinerariesProps> = ({ dispatch, tripId }) => {
-  const itineraries = useActiveTripItineraries();
+  const itineraries = useTripItineraries();
   const { data, loading } = useQuery(GET_ITINERARY, {
     variables: { input: { id: tripId } }
   });
 
   useEffect(() => {
     if (data) {
-      dispatch(setActiveTripInfoItineraries(data.trip.itineraries));
+      dispatch(setTripItineraries(data.trip.itineraries));
     }
   }, [dispatch, data]);
 
   const tripItinerary = loading ? (
     <LinearProgress />
   ) : (
-    itineraries &&
-    itineraries.map((itinerary, idx) => (
+    Object.entries(itineraries).map(([key, itinerary], index) => (
       <TripItineraryPanel
-        key={itinerary.id}
+        key={key}
         dispatch={dispatch}
         itinerary={itinerary}
-        index={idx}
+        index={index}
       />
     ))
   );

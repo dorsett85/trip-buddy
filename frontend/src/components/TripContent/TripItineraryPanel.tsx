@@ -35,6 +35,8 @@ import { AppState } from '../../store';
 export const UPDATE_ITINERARY = gql`
   mutation UpdateTripItinerary($input: UpdateTripItineraryInput) {
     updateTripItinerary(input: $input) {
+      id
+      trip_id
       name
       description
       location
@@ -51,13 +53,14 @@ interface TripItineraryPanelProps extends DispatchProp<AppAction> {
    */
   itinerary: TripItinerary;
   /**
-   * Index of the trip itinerary, used for easy updating
-   * of the active trip itinerary
+   * Index of the active trip itineraries, used for display
    */
   index: number;
 }
 
-interface IntineraryNameInputProps extends TripItineraryPanelProps {
+type ItineraryInputProps = Omit<TripItineraryPanelProps, 'index'>;
+
+interface IntineraryNameInputProps extends ItineraryInputProps {
   /**
    * Event handler for when the input is submitted or cancelled
    */
@@ -93,7 +96,6 @@ const ItineraryContent = styled.div`
 const ItineraryNameInput: React.FC<IntineraryNameInputProps> = ({
   dispatch,
   itinerary,
-  index,
   onSubmitOrCancel
 }) => {
   const [name, setName] = useState(itinerary.name);
@@ -103,7 +105,7 @@ const ItineraryNameInput: React.FC<IntineraryNameInputProps> = ({
   const [updateTripItineraryQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
     onCompleted: data => {
       onSubmitOrCancel();
-      dispatch(updateTripItinerary({ ...data.updateTripItinerary, index }));
+      dispatch(updateTripItinerary(data.updateTripItinerary));
     },
     onError: error => {
       setUpdateNameError(true);
@@ -148,10 +150,9 @@ const ItineraryNameInput: React.FC<IntineraryNameInputProps> = ({
   );
 };
 
-const ItineraryStartDateSelect: React.FC<TripItineraryPanelProps> = ({
+const ItineraryStartDateSelect: React.FC<ItineraryInputProps> = ({
   dispatch,
-  itinerary,
-  index
+  itinerary
 }) => {
   const [updateStartDateText, setUpdateStartDateText] = useState('');
   const [updateStartDateError, setUpdateStartDateError] = useState(false);
@@ -159,12 +160,7 @@ const ItineraryStartDateSelect: React.FC<TripItineraryPanelProps> = ({
   const [updateTripItineraryQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
     onCompleted: data => {
       setUpdateStartDateError(false);
-      dispatch(
-        updateTripItinerary({
-          ...data.updateTripItinerary,
-          index
-        })
-      );
+      dispatch(updateTripItinerary(data.updateTripItinerary));
       setUpdateStartDateText(SUCCESSFUL_UPDATE_MESSAGE);
     },
     onError: error => {
@@ -197,10 +193,9 @@ const ItineraryStartDateSelect: React.FC<TripItineraryPanelProps> = ({
 const DEFAUL_NO_OPTIONS_TEXT = 'Enter at least four characters...';
 const DEFAULT_UPDATE_LOCATION_TEXT = 'Click an option from the dropdown list to update';
 
-const ItineraryLocationInput: React.FC<TripItineraryPanelProps> = ({
+const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
   dispatch,
-  itinerary,
-  index
+  itinerary
 }) => {
   const [location, setLocation] = useState(itinerary.location_address);
   const [locationOptions, setLocationOptions] = useState<Feature[]>();
@@ -219,13 +214,7 @@ const ItineraryLocationInput: React.FC<TripItineraryPanelProps> = ({
     onCompleted: data => {
       setUpdateLocationError(false);
       setUpdateLocationText(SUCCESSFUL_UPDATE_MESSAGE);
-      dispatch(
-        updateTripItinerary({
-          location: data.updateTripItinerary.location,
-          location_address: data.updateTripItinerary.location_address,
-          index
-        })
-      );
+      dispatch(updateTripItinerary(data.updateTripItinerary));
 
       // Clean up the active trip state and fly to the new location
       dispatch(
@@ -310,7 +299,7 @@ const ItineraryLocationInput: React.FC<TripItineraryPanelProps> = ({
   const handleDropLocationPinClick = () => {
     dispatch(setActiveTripInfo({ activeMarker: `${itinerary.trip_id}-${itinerary.id}` }));
     dispatch(setOpenDrawer(false));
-    dispatch(setActiveTripInfo({ updatingItineraryLocation: index }));
+    dispatch(setActiveTripInfo({ updatingItineraryLocation: true }));
   };
 
   return (
@@ -353,10 +342,9 @@ const ItineraryLocationInput: React.FC<TripItineraryPanelProps> = ({
   );
 };
 
-const ItineraryDescriptionInput: React.FC<TripItineraryPanelProps> = ({
+const ItineraryDescriptionInput: React.FC<ItineraryInputProps> = ({
   dispatch,
-  itinerary,
-  index
+  itinerary
 }) => {
   const [description, setDescription] = useState(itinerary.description);
   const [editingDescription, setEditingDescription] = useState(false);
@@ -367,7 +355,7 @@ const ItineraryDescriptionInput: React.FC<TripItineraryPanelProps> = ({
     onCompleted: data => {
       setEditingDescription(false);
       setUpdateDescriptionError(false);
-      dispatch(updateTripItinerary({ ...data.updateTripItinerary, index }));
+      dispatch(updateTripItinerary(data.updateTripItinerary));
       setUpdateDescriptionText(SUCCESSFUL_UPDATE_MESSAGE);
     },
     onError: error => {
@@ -447,17 +435,12 @@ const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({
         <ItineraryNameInput
           dispatch={dispatch}
           itinerary={itinerary}
-          index={index}
           onSubmitOrCancel={handleEditNameOnChange}
         />
       )}
-      <ItineraryStartDateSelect dispatch={dispatch} itinerary={itinerary} index={index} />
-      <ItineraryLocationInput dispatch={dispatch} itinerary={itinerary} index={index} />
-      <ItineraryDescriptionInput
-        dispatch={dispatch}
-        itinerary={itinerary}
-        index={index}
-      />
+      <ItineraryStartDateSelect dispatch={dispatch} itinerary={itinerary} />
+      <ItineraryLocationInput dispatch={dispatch} itinerary={itinerary} />
+      <ItineraryDescriptionInput dispatch={dispatch} itinerary={itinerary} />
     </ItineraryContent>
   );
 

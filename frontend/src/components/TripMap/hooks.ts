@@ -5,15 +5,12 @@ import { AppState } from '../../store';
 import { setTripCreator, setActiveTripInfo } from '../../store/trip/actions';
 import { getTripMarkers } from './mapHelpers';
 import { LngLatArray } from '../../types/shared';
-import { TripState } from '../../store/trip/types';
-import { Trip } from '../../types/trip';
 import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { setOpenDrawer } from '../../store/general/actions';
 import {
-  useActiveTripItineraries,
+  useTripItineraries,
   useTrips,
-  useActiveTrip,
   useActiveTripInfo
 } from '../../utils/hooks/useTrip';
 
@@ -106,32 +103,22 @@ export const useMap = () => {
 export const useMapTrips = () => {
   const trips = useTrips();
   const creatingTrip = useSelector(({ trip }: AppState) => !!trip.tripCreator);
-  const activeTrip = useActiveTrip();
-  const itineraries = useActiveTripItineraries();
+  const itineraries = useTripItineraries();
   const updatingLocation = useSelector(
     ({ trip }: AppState) =>
       !!trip.activeTripInfo &&
       (trip.activeTripInfo.updatingLocation ||
-        trip.activeTripInfo.updatingItineraryLocation !== undefined ||
+        trip.activeTripInfo.updatingItineraryLocation ||
         creatingTrip)
   );
   const [tripMarkers, setTripMarkers] = useState<JSX.Element[]>([]);
 
-  // If there's an active trip, only show that itinerary on the map,
-  // otherwise show all the trips without itinerary
+  // Update the markers when the trips or itineraries change.  If there are
+  // keys in the itineraries it means there is an activeTrip
   useEffect(() => {
-    let dataForMarkers: Trip | TripState['trips'];
-    if (activeTrip) {
-      dataForMarkers = {
-        ...activeTrip,
-        itineraries
-      };
-    } else {
-      dataForMarkers = trips;
-    }
-    const markers = getTripMarkers(dataForMarkers);
+    const markers = getTripMarkers(trips, itineraries);
     setTripMarkers(markers);
-  }, [trips, activeTrip, itineraries]);
+  }, [trips, itineraries]);
 
   return {
     tripMarkers,

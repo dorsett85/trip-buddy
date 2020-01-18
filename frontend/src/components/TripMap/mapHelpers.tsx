@@ -1,57 +1,48 @@
 import React, { FunctionComponentElement } from 'react';
 import TripMarker, { TripMarkerProps } from './TripMarker';
 import { TripState } from '../../store/trip/types';
-import { Trip } from '../../types/trip';
-import { isTrip } from '../../utils/isTrip';
-import TripMarkerPopup, { TripItineraryWithIndex } from './TripMarkerPopup';
+import TripMarkerPopup, { TripItineraryWithPosition } from './TripMarkerPopup';
 
 /**
  * Get array of trip markers
  */
-export const getTripMarkers = (tripData: TripState['trips'] | Trip) => {
+export const getTripMarkers = (
+  trips: TripState['trips'],
+  itineraries: TripState['itineraries']
+) => {
   const markers: FunctionComponentElement<TripMarkerProps>[] = [];
 
-  // If the tripData is a Trip (e.g., activeTrip) also check if we need to
-  // add itineraries
-  if (isTrip(tripData)) {
+  // Add the trip markers
+  Object.values(trips).forEach(trip => {
     markers.push(
       <TripMarker
-        key={tripData.id}
-        markerData={tripData}
-        popup={<TripMarkerPopup popupData={tripData} />}
+        key={trip.id}
+        markerData={trip}
+        popup={<TripMarkerPopup popupData={trip} />}
       />
     );
-    if (tripData.itineraries) {
-      tripData.itineraries.forEach((itinerary, idx) => {
-        // Only show itinerary markers that are at different locations than
-        // the trip marker
-        const [tripLng, tripLat] = tripData.location;
-        const [itinLng, itinLat] = itinerary.location;
-        if (tripLng !== itinLng || tripLat !== itinLat) {
-          const itineryaryWithIdx: TripItineraryWithIndex = {
-            idx: idx + 1,
-            ...itinerary
-          };
-          markers.push(
-            <TripMarker
-              key={`${tripData.id}-${itinerary.id}`}
-              markerData={itinerary}
-              popup={<TripMarkerPopup popupData={itineryaryWithIdx} />}
-            />
-          );
-        }
-      });
-    }
-  } else {
-    Object.values(tripData).forEach(trip => {
+  });
+
+  // Add the trip itinerary markers
+  Object.values(itineraries).forEach((itinerary, index) => {
+    // Only show itinerary markers that are at different locations than
+    // the trip marker
+    const [tripLng, tripLat] = trips[itinerary.trip_id].location;
+    const [itinLng, itinLat] = itinerary.location;
+    if (tripLng !== itinLng || tripLat !== itinLat) {
+      const itineryaryWithPosition: TripItineraryWithPosition = {
+        position: index + 1,
+        ...itinerary
+      };
       markers.push(
         <TripMarker
-          key={trip.id}
-          markerData={trip}
-          popup={<TripMarkerPopup popupData={trip} />}
+          key={`${itinerary.trip_id}-${itinerary.id}`}
+          markerData={itinerary}
+          popup={<TripMarkerPopup popupData={itineryaryWithPosition} />}
         />
       );
-    });
-  }
+    }
+  });
+
   return markers;
 };

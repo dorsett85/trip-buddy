@@ -17,7 +17,5 @@ export const useActiveTrip = () => {
 export const useActiveTripInfo = () =>
   useSelector(({ trip }: AppState) => trip.activeTripInfo);
 
-export const useActiveTripItineraries = () =>
-  useSelector(
-    ({ trip }: AppState) => trip.activeTripInfo && trip.activeTripInfo.itineraries
-  );
+export const useTripItineraries = () =>
+  useSelector(({ trip }: AppState) => trip.itineraries);

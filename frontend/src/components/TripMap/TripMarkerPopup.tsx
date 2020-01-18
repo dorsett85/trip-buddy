@@ -4,18 +4,18 @@ import styled from 'styled-components';
 import { TripItinerary, Trip } from '../../types/trip';
 import { isTrip } from '../../utils/isTrip';
 
-export interface TripItineraryWithIndex extends TripItinerary {
+export interface TripItineraryWithPosition extends TripItinerary {
   /**
-   * To display the itinerary order in the popup
+   * To display the itinerary position order in the popup
    */
-  idx: number;
+  position: number;
 }
 
 export interface TripMarkerPopupProps {
   /**
    * Data for popup
    */
-  popupData: Trip | TripItineraryWithIndex;
+  popupData: Trip | TripItineraryWithPosition;
 }
 
 const BEM_MARKER_POPUP = 'markerPopup';
@@ -51,7 +51,7 @@ const TripMarkerPopup: React.FC<TripMarkerPopupProps> = ({ popupData }) => {
             <div>
               <span>Itinerary </span>
               <span>#</span>
-              <span>{popupData.idx}</span>
+              <span>{popupData.position}</span>
             </div>
             <div className={`${BEM_MARKER_POPUP}-itineraryName`}>{popupData.name}</div>
           </>
