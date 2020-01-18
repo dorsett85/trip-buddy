@@ -4,7 +4,7 @@ const initialState: TripState = {
   loadingTrips: false,
   trips: {},
   tripCreator: undefined,
-  activeTrip: undefined
+  activeTripInfo: undefined
 };
 
 export const tripReducer: TripReducer = (state = initialState, action): TripState => {
@@ -59,35 +59,35 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
     return { ...state, trips };
   }
 
-  if (action.type === 'SET_ACTIVE_TRIP') {
-    const activeTrip: TripState['activeTrip'] = action.payload && {
-      ...state.activeTrip!,
+  if (action.type === 'SET_ACTIVE_TRIP_INFO') {
+    const activeTripInfo: TripState['activeTripInfo'] = action.payload && {
+      ...state.activeTripInfo!,
       ...action.payload
     };
-    return { ...state, activeTrip };
+    return { ...state, activeTripInfo };
   }
 
-  if (action.type === 'SET_ACTIVE_TRIP_ITINERARIES') {
-    const activeTrip: TripState['activeTrip'] = {
-      ...state.activeTrip!,
+  if (action.type === 'SET_ACTIVE_TRIP_INFO_ITINERARIES') {
+    const activeTripInfo: TripState['activeTripInfo'] = {
+      ...state.activeTripInfo!,
       itineraries: action.payload
     };
-    return { ...state, activeTrip };
+    return { ...state, activeTripInfo };
   }
 
   if (action.type === 'UPDATE_TRIP_ITINERARY') {
     const { index, ...rest } = action.payload;
-    const itineraries = [...state.activeTrip!.itineraries];
+    const itineraries = [...state.activeTripInfo!.itineraries];
     itineraries[index] = {
       ...itineraries[index],
       ...rest
-    }
-    const activeTrip = {
-      ...state.activeTrip!,
+    };
+    const activeTripInfo: TripState['activeTripInfo'] = {
+      ...state.activeTripInfo!,
       itineraries
     };
 
-    return { ...state, activeTrip };
+    return { ...state, activeTripInfo };
   }
 
   return state;

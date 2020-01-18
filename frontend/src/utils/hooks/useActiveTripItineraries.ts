@@ -2,10 +2,9 @@ import { useSelector } from 'react-redux';
 import { AppState } from '../../store';
 
 /**
- * Convenience hook for accessing the active trip itineraries
+ * Convenience hook for accessing the active trip info itineraries
  */
 export const useActiveTripItineraries = () =>
   useSelector(
-    (state: AppState) =>
-      state.trip.activeTrip && state.trip.activeTrip.itineraries
+    ({ trip }: AppState) => trip.activeTripInfo && trip.activeTripInfo.itineraries
   );

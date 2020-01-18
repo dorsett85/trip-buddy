@@ -19,7 +19,7 @@ import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
 import { LinearProgress } from '@material-ui/core';
 import { AppState } from '../../store';
-import { setTripCreator, addTrip, setActiveTrip } from '../../store/trip/actions';
+import { setTripCreator, addTrip, setActiveTripInfo } from '../../store/trip/actions';
 import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { Feature } from '../../types/apiResponses';
@@ -70,7 +70,7 @@ const TripCreatorModal: React.FC = () => {
       // Set trip specific redux state so the created trip will
       // automatically have an active marker and fly to its location
       dispatch(
-        setActiveTrip({
+        setActiveTripInfo({
           id: data.createTrip.id,
           activeMarker: data.createTrip.id.toString()
         })

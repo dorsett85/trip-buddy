@@ -7,8 +7,8 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import { DispatchProp } from 'react-redux';
 import styled from 'styled-components';
 import TripItineraryPanel from './TripItineraryPanel';
-import { ActiveTrip } from '../../store/trip/types';
-import { setActiveTripItineraries } from '../../store/trip/actions';
+import { ActiveTripInfo } from '../../store/trip/types';
+import { setActiveTripInfoItineraries } from '../../store/trip/actions';
 import { useActiveTripItineraries } from '../../utils/hooks/useActiveTripItineraries';
 import { AppAction } from '../../store/types';
 
@@ -36,7 +36,7 @@ const ItineraryHeader = styled.div`
 `;
 
 interface TripItinerariesProps extends DispatchProp<AppAction> {
-  tripId: ActiveTrip['id'];
+  tripId: ActiveTripInfo['id'];
 }
 
 const TripItineraries: React.FC<TripItinerariesProps> = ({ dispatch, tripId }) => {
@@ -47,7 +47,7 @@ const TripItineraries: React.FC<TripItinerariesProps> = ({ dispatch, tripId }) =
 
   useEffect(() => {
     if (data) {
-      dispatch(setActiveTripItineraries(data.trip.itineraries));
+      dispatch(setActiveTripInfoItineraries(data.trip.itineraries));
     }
   }, [dispatch, data]);
 

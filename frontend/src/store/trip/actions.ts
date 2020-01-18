@@ -3,11 +3,11 @@ import {
   SetTrips,
   SetTripCreator,
   SetLoadingTrips,
-  SetActiveTrip,
+  SetActiveTripInfo,
   ResetTripState,
   AddTrip,
   UpdateTrip,
-  SetActiveTripItineraries,
+  SetActiveTripInfoItineraries,
   UpdateTripItinerary,
   DeleteTrip
 } from './types';
@@ -46,13 +46,13 @@ export const deleteTrip: DeleteTrip = payload => ({
   payload
 });
 
-export const setActiveTrip: SetActiveTrip = payload => ({
-  type: TripActionType.SET_ACTIVE_TRIP,
+export const setActiveTripInfo: SetActiveTripInfo = payload => ({
+  type: TripActionType.SET_ACTIVE_TRIP_INFO,
   payload
 });
 
-export const setActiveTripItineraries: SetActiveTripItineraries = payload => ({
-  type: TripActionType.SET_ACTIVE_TRIP_ITINERARIES,
+export const setActiveTripInfoItineraries: SetActiveTripInfoItineraries = payload => ({
+  type: TripActionType.SET_ACTIVE_TRIP_INFO_ITINERARIES,
   payload
 });
 

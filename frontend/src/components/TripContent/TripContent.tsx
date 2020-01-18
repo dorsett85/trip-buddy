@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { DispatchProp } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { DispatchProp, useSelector } from 'react-redux';
 import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
 import Fab from '@material-ui/core/Fab';
@@ -24,7 +24,7 @@ import {
   UPDATING_MESSAGE,
   SUCCESSFUL_UPDATE_MESSAGE
 } from '../../utils/constants/messages';
-import { updateTrip, deleteTrip, setActiveTrip } from '../../store/trip/actions';
+import { updateTrip, deleteTrip, setActiveTripInfo } from '../../store/trip/actions';
 import { getFirstError } from '../../utils/apolloErrors';
 import TripItineraries from './TripItineraries';
 import { setOpenDrawer, setFlyTo } from '../../store/general/actions';
@@ -32,6 +32,7 @@ import { Feature } from '../../types/apiResponses';
 import { AppAction } from '../../store/types';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { debounce } from '../../utils/debouce';
+import { AppState } from '../../store';
 
 export const UPDATE_TRIP = gql`
   mutation UpdateTrip($input: UpdateTripInput) {
@@ -197,66 +198,6 @@ const TripNameInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
   );
 };
 
-const TripDescriptionInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
-  const [description, setDescription] = useState(trip.description);
-  const [editingDescription, setEditingDescription] = useState(false);
-  const [updateDescriptionText, setUpdateDescriptionText] = useState('');
-  const [updateDescriptionError, setUpdateDescriptionError] = useState(false);
-
-  const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
-    onCompleted: () => {
-      setEditingDescription(false);
-      setUpdateDescriptionError(false);
-      dispatch(updateTrip({ ...trip, description }));
-      setUpdateDescriptionText(SUCCESSFUL_UPDATE_MESSAGE);
-    },
-    onError: error => {
-      setUpdateDescriptionError(true);
-      setUpdateDescriptionText(getFirstError(error));
-    }
-  });
-
-  const handleDescriptionChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-    setEditingDescription(true);
-    setDescription(target.value);
-  };
-
-  const handleSubmitDescription = () => {
-    setUpdateDescriptionError(false);
-    setUpdateDescriptionText('');
-    updateTripQuery({ variables: { input: { id: trip.id, description } } });
-  };
-
-  const handleCancelDescription = () => {
-    if (description !== trip.description) {
-      setDescription(trip.description);
-    }
-    setEditingDescription(false);
-    setUpdateDescriptionError(false);
-    setUpdateDescriptionText('');
-  };
-
-  return (
-    <EditableTextField
-      label='Description'
-      value={description || ''}
-      type='textarea'
-      multiline
-      rows={2}
-      rowsMax={10}
-      variant='filled'
-      editing={editingDescription}
-      onChange={handleDescriptionChange}
-      onSubmitEdit={handleSubmitDescription}
-      onCancelEdit={handleCancelDescription}
-      helperText={loading ? UPDATING_MESSAGE : updateDescriptionText}
-      error={updateDescriptionError}
-      fullWidth
-      margin='normal'
-    />
-  );
-};
-
 const DEFAUL_NO_OPTIONS_TEXT = 'Enter at least four characters...';
 const DEFAULT_UPDATE_LOCATION_TEXT = 'Click an option from the dropdown list to update';
 
@@ -267,6 +208,10 @@ const TripLocationInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
   const [noOptionsText, setNoOptionsText] = useState(DEFAUL_NO_OPTIONS_TEXT);
   const [updateLocationText, setUpdateLocationText] = useState(
     DEFAULT_UPDATE_LOCATION_TEXT
+  );
+  const newLocation = useSelector(
+    (state: AppState) =>
+      state.trip.activeTripInfo && state.trip.activeTripInfo.newLocation
   );
   const [updateLocationError, setUpdateLocationError] = useState(false);
 
@@ -281,6 +226,9 @@ const TripLocationInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
           location_address: data.updateTrip.location_address
         })
       );
+
+      // Clean up the active trip state and fly to the new location
+      dispatch(setActiveTripInfo({ newLocation: undefined, updatingLocation: false }));
       dispatch(setFlyTo(data.updateTrip.location));
     },
     onError: error => {
@@ -288,6 +236,28 @@ const TripLocationInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
       setUpdateLocationText(getFirstError(error));
     }
   });
+
+  // Listener for updating the trip location. This will fire after a location
+  // is selected on the map and the newLocation lng/lat is set
+  useEffect(() => {
+    if (newLocation) {
+      const lngLatString = newLocation.toString();
+      MapboxService.getGeocodeFeatureCollection(lngLatString).then(featureCollection => {
+        const { features } = featureCollection;
+        const locationText = features.length ? features[0].place_name : lngLatString;
+        setLocation(locationText);
+        updateLocationMutation({
+          variables: {
+            input: {
+              id: trip.id,
+              location: newLocation,
+              location_address: locationText
+            }
+          }
+        });
+      });
+    }
+  }, [dispatch, newLocation, trip.id, updateLocationMutation]);
 
   const handleOnLocationChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
     setUpdateLocationError(false);
@@ -313,11 +283,11 @@ const TripLocationInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
     const optionIdx = target.getAttribute('data-option-index');
     if (locationOptions && optionIdx) {
       const { center } = locationOptions[optionIdx];
-      const newLocation = locationOptions[optionIdx].place_name;
-      setLocation(newLocation);
+      const selectedLocation = locationOptions[optionIdx].place_name;
+      setLocation(selectedLocation);
       updateLocationMutation({
         variables: {
-          input: { id: trip.id, location: center, location_address: newLocation }
+          input: { id: trip.id, location: center, location_address: selectedLocation }
         }
       });
     } else {
@@ -327,7 +297,7 @@ const TripLocationInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
 
   const handleDropLocationPinClick = () => {
     dispatch(setOpenDrawer(false));
-    dispatch(setActiveTrip({ updatingLocation: true }));
+    dispatch(setActiveTripInfo({ activeMarker: `${trip.id}`, updatingLocation: true }));
   };
 
   return (
@@ -403,6 +373,66 @@ const TripStartDateSelect: React.FC<TripContentProps> = ({ dispatch, trip }) => 
       value={trip.start_date || null}
       margin='normal'
       fullWidth
+    />
+  );
+};
+
+const TripDescriptionInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
+  const [description, setDescription] = useState(trip.description);
+  const [editingDescription, setEditingDescription] = useState(false);
+  const [updateDescriptionText, setUpdateDescriptionText] = useState('');
+  const [updateDescriptionError, setUpdateDescriptionError] = useState(false);
+
+  const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
+    onCompleted: () => {
+      setEditingDescription(false);
+      setUpdateDescriptionError(false);
+      dispatch(updateTrip({ ...trip, description }));
+      setUpdateDescriptionText(SUCCESSFUL_UPDATE_MESSAGE);
+    },
+    onError: error => {
+      setUpdateDescriptionError(true);
+      setUpdateDescriptionText(getFirstError(error));
+    }
+  });
+
+  const handleDescriptionChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingDescription(true);
+    setDescription(target.value);
+  };
+
+  const handleSubmitDescription = () => {
+    setUpdateDescriptionError(false);
+    setUpdateDescriptionText('');
+    updateTripQuery({ variables: { input: { id: trip.id, description } } });
+  };
+
+  const handleCancelDescription = () => {
+    if (description !== trip.description) {
+      setDescription(trip.description);
+    }
+    setEditingDescription(false);
+    setUpdateDescriptionError(false);
+    setUpdateDescriptionText('');
+  };
+
+  return (
+    <EditableTextField
+      label='Description'
+      value={description || ''}
+      type='textarea'
+      multiline
+      rows={2}
+      rowsMax={10}
+      variant='filled'
+      editing={editingDescription}
+      onChange={handleDescriptionChange}
+      onSubmitEdit={handleSubmitDescription}
+      onCancelEdit={handleCancelDescription}
+      helperText={loading ? UPDATING_MESSAGE : updateDescriptionText}
+      error={updateDescriptionError}
+      fullWidth
+      margin='normal'
     />
   );
 };

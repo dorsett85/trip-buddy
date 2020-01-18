@@ -6,6 +6,5 @@ import { AppState } from '../../store';
  */
 export const useActiveTrip = () =>
   useSelector(
-    (state: AppState) =>
-      state.trip.activeTrip && state.trip.trips[state.trip.activeTrip.id]
+    ({ trip }: AppState) => trip.activeTripInfo && trip.trips[trip.activeTripInfo.id]
   );

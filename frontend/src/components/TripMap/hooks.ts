@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ViewState, PointerEvent, ViewportProps, FlyToInterpolator } from 'react-map-gl';
 import { useSelector } from 'react-redux';
 import { AppState } from '../../store';
-import { setTripCreator, setActiveTrip, updateTrip } from '../../store/trip/actions';
+import { setTripCreator, setActiveTripInfo } from '../../store/trip/actions';
 import { getTripMarkers } from './mapHelpers';
 import { LngLatArray } from '../../types/shared';
 import { useActiveTrip } from '../../utils/hooks/useActiveTrip';
@@ -40,8 +40,8 @@ export const useTripMap = () => {
   const dispatch = useAppDispatch();
   const [viewport, setViewport] = useState(initialViewport);
   const creatingTrip = useSelector(({ trip }: AppState) => !!trip.tripCreator);
-  const activeTrip = useSelector((state: AppState) => state.trip.activeTrip);
-  const flyTo = useSelector((state: AppState) => state.general.flyTo);
+  const activeTrip = useSelector(({ trip }: AppState) => trip.activeTripInfo);
+  const flyTo = useSelector(({ general }: AppState) => general.flyTo);
 
   const updateViewport = (newViewport: ViewState) => {
     setViewport(newViewport);
@@ -65,28 +65,23 @@ export const useTripMap = () => {
       return;
     }
 
-    // Set the new location and location address for the active trip
+    // Set the new location that will be picked up in the trip panel
     if (activeTrip && activeTrip.updatingLocation) {
-      const lngLatString = e.lngLat.toString();
-      MapboxService.getGeocodeFeatureCollection(lngLatString).then(featureCollection => {
-        const { features } = featureCollection;
-        const locationText = features.length ? features[0].place_name : lngLatString;
-        dispatch(
-          updateTrip({
-            id: activeTrip.id,
-            location: e.lngLat,
-            location_address: locationText
-          })
-        );
-        dispatch(setOpenDrawer(true));
-        dispatch(setActiveTrip({ updatingLocation: false }));
-      });
+      dispatch(setActiveTripInfo({ newLocation: e.lngLat }));
+      dispatch(setOpenDrawer(true));
+      return;
+    }
+
+    // Set the new itinerary location that will be picked up in the itinerary panel
+    if (activeTrip && activeTrip.updatingItineraryLocation !== undefined) {
+      dispatch(setActiveTripInfo({ newItineraryLocation: e.lngLat }));
+      dispatch(setOpenDrawer(true));
       return;
     }
 
     // Any click on the map should cancel the active trip
     if (activeTrip && e.target.classList.contains('overlays')) {
-      dispatch(setActiveTrip());
+      dispatch(setActiveTripInfo());
     }
   };
 
@@ -105,10 +100,17 @@ export const useTripMap = () => {
 };
 
 export const useTrips = () => {
-  const trips = useSelector((state: AppState) => state.trip.trips);
-  const creatingTrip = useSelector((state: AppState) => !!state.trip.tripCreator);
+  const trips = useSelector(({ trip }: AppState) => trip.trips);
+  const creatingTrip = useSelector(({ trip }: AppState) => !!trip.tripCreator);
   const activeTrip = useActiveTrip();
   const itineraries = useActiveTripItineraries();
+  const updatingLocation = useSelector(
+    ({ trip }: AppState) =>
+      !!trip.activeTripInfo &&
+      (trip.activeTripInfo.updatingLocation ||
+        trip.activeTripInfo.updatingItineraryLocation !== undefined ||
+        !!creatingTrip)
+  );
   const [tripMarkers, setTripMarkers] = useState<JSX.Element[]>([]);
 
   // If there's an active trip, only show that itinerary on the map,
@@ -128,7 +130,7 @@ export const useTrips = () => {
   }, [trips, activeTrip, itineraries]);
 
   return {
-    creatingTrip,
-    tripMarkers
+    tripMarkers,
+    updatingLocation
   };
 };

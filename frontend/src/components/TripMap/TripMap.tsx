@@ -1,7 +1,7 @@
 import React from 'react';
 import MapGl, { NavigationControl } from 'react-map-gl';
 import { Slide } from '@material-ui/core';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useTripMap, useTrips } from './hooks';
 import TripCreatorModal from '../TripCreatorModal/TripCreatorModal';
 import TripCreatorSnackbar from '../TripCreatorSnackbar/TripCreatorSnackbar';
@@ -13,29 +13,31 @@ interface TripMapProps {
 }
 
 interface MapContainerProps {
-  creatingTrip: boolean;
+  updatingLocation: boolean;
 }
 
-const MapContainer = styled.div<MapContainerProps>`
-  height: 100vh;
-  > div > div {
-    cursor: ${({ creatingTrip }) => (creatingTrip ? 'pointer' : 'inherit')};
-  }
-  .mapNavControl {
-    position: absolute;
-    top: 64px;
-    left: 0;
-    padding: 10px;
-  }
-`;
+const MapContainer = styled.div<MapContainerProps>(
+  ({ updatingLocation }) => css`
+    height: 100vh;
+    > div > div {
+      cursor: ${updatingLocation ? 'pointer' : 'inherit'};
+    }
+    .mapNavControl {
+      position: absolute;
+      top: 64px;
+      left: 0;
+      padding: 10px;
+    }
+  `
+);
 
 const TripMap: React.FC<TripMapProps> = ({ loggedIn }) => {
   const { viewport, updateViewport, handleClick } = useTripMap();
-  const { creatingTrip, tripMarkers } = useTrips();
+  const { tripMarkers, updatingLocation } = useTrips();
 
   return (
     <>
-      <MapContainer creatingTrip={creatingTrip}>
+      <MapContainer updatingLocation={updatingLocation}>
         <MapGl
           {...viewport}
           onViewportChange={updateViewport}

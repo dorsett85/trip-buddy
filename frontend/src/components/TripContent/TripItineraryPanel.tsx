@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -6,9 +6,14 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Button from '@material-ui/core/Button';
 import LightBlue from '@material-ui/core/colors/lightBlue';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
+import PinDropIcon from '@material-ui/icons/PinDrop';
+import TextField from '@material-ui/core/TextField';
 import styled from 'styled-components';
 import { DateTimePicker } from '@material-ui/pickers';
-import { DispatchProp } from 'react-redux';
+import { DispatchProp, useSelector } from 'react-redux';
 import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
@@ -18,9 +23,14 @@ import {
   SUCCESSFUL_UPDATE_MESSAGE
 } from '../../utils/constants/messages';
 import { getFirstError } from '../../utils/apolloErrors';
-import { updateTripItinerary } from '../../store/trip/actions';
+import { updateTripItinerary, setActiveTripInfo } from '../../store/trip/actions';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { AppAction } from '../../store/types';
+import { setFlyTo, setOpenDrawer } from '../../store/general/actions';
+import { Feature } from '../../types/apiResponses';
+import { debounce } from '../../utils/debouce';
+import { MapboxService } from '../../api/mapbox/MapBoxService';
+import { AppState } from '../../store';
 
 export const UPDATE_ITINERARY = gql`
   mutation UpdateTripItinerary($input: UpdateTripItineraryInput) {
@@ -28,6 +38,7 @@ export const UPDATE_ITINERARY = gql`
       name
       description
       location
+      location_address
       start_time
       end_time
     }
@@ -183,6 +194,165 @@ const ItineraryStartDateSelect: React.FC<TripItineraryPanelProps> = ({
   );
 };
 
+const DEFAUL_NO_OPTIONS_TEXT = 'Enter at least four characters...';
+const DEFAULT_UPDATE_LOCATION_TEXT = 'Click an option from the dropdown list to update';
+
+const ItineraryLocationInput: React.FC<TripItineraryPanelProps> = ({
+  dispatch,
+  itinerary,
+  index
+}) => {
+  const [location, setLocation] = useState(itinerary.location_address);
+  const [locationOptions, setLocationOptions] = useState<Feature[]>();
+  const [locationsLoading, setLocationsLoading] = useState(false);
+  const [noOptionsText, setNoOptionsText] = useState(DEFAUL_NO_OPTIONS_TEXT);
+  const [updateLocationText, setUpdateLocationText] = useState(
+    DEFAULT_UPDATE_LOCATION_TEXT
+  );
+  const newLocation = useSelector(
+    ({ trip }: AppState) =>
+      trip.activeTripInfo && trip.activeTripInfo.newItineraryLocation
+  );
+  const [updateLocationError, setUpdateLocationError] = useState(false);
+
+  const [updateLocationMutation, { loading }] = useMutation(UPDATE_ITINERARY, {
+    onCompleted: data => {
+      setUpdateLocationError(false);
+      setUpdateLocationText(SUCCESSFUL_UPDATE_MESSAGE);
+      dispatch(
+        updateTripItinerary({
+          location: data.updateTripItinerary.location,
+          location_address: data.updateTripItinerary.location_address,
+          index
+        })
+      );
+
+      // Clean up the active trip state and fly to the new location
+      dispatch(
+        setActiveTripInfo({
+          newItineraryLocation: undefined,
+          updatingItineraryLocation: undefined
+        })
+      );
+      dispatch(setFlyTo(data.updateTripItinerary.location));
+    },
+    onError: error => {
+      setUpdateLocationError(true);
+      setUpdateLocationText(getFirstError(error));
+    }
+  });
+
+  // Listener for updating the itinerary location. This will fire after a location
+  // is selected on the map and the newLocation lng/lat is set
+  useEffect(() => {
+    if (newLocation) {
+      const lngLatString = newLocation.toString();
+      MapboxService.getGeocodeFeatureCollection(lngLatString).then(featureCollection => {
+        const { features } = featureCollection;
+        const locationText = features.length ? features[0].place_name : lngLatString;
+        setLocation(locationText);
+        updateLocationMutation({
+          variables: {
+            input: {
+              id: itinerary.id,
+              location: newLocation,
+              location_address: locationText
+            }
+          }
+        });
+      });
+    }
+  }, [dispatch, itinerary.id, newLocation, updateLocationMutation]);
+
+  const handleOnLocationChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+    setUpdateLocationError(false);
+    setUpdateLocationText(DEFAULT_UPDATE_LOCATION_TEXT);
+    setLocation(target.value);
+    // Wait for the input to be a least 4 characters before search
+    if (target.value.length <= 3) {
+      setNoOptionsText(DEFAUL_NO_OPTIONS_TEXT);
+      setLocationOptions(undefined);
+    } else if (target.value.length > 3) {
+      setNoOptionsText('No options');
+      setLocationsLoading(true);
+      debounce(() => {
+        MapboxService.getGeocodeFeatureCollection(target.value).then(locations => {
+          setLocationOptions(locations.features);
+          setLocationsLoading(false);
+        });
+      }, 1000);
+    }
+  };
+
+  const handleLocationSelect = ({ target }: React.ChangeEvent<any>) => {
+    const optionIdx = target.getAttribute('data-option-index');
+    if (locationOptions && optionIdx) {
+      const { center } = locationOptions[optionIdx];
+      const selectedLocation = locationOptions[optionIdx].place_name;
+      setLocation(selectedLocation);
+      dispatch(
+        setActiveTripInfo({ activeMarker: `${itinerary.trip_id}-${itinerary.id}` })
+      );
+      updateLocationMutation({
+        variables: {
+          input: {
+            id: itinerary.id,
+            location: center,
+            location_address: selectedLocation
+          }
+        }
+      });
+    } else {
+      setLocation('');
+    }
+  };
+
+  const handleDropLocationPinClick = () => {
+    dispatch(setActiveTripInfo({ activeMarker: `${itinerary.trip_id}-${itinerary.id}` }));
+    dispatch(setOpenDrawer(false));
+    dispatch(setActiveTripInfo({ updatingItineraryLocation: index }));
+  };
+
+  return (
+    <Autocomplete
+      options={locationOptions}
+      loading={locationsLoading}
+      onChange={handleLocationSelect}
+      noOptionsText={noOptionsText}
+      getOptionLabel={(option: Feature) => option.place_name}
+      renderInput={({ InputProps, InputLabelProps, ...rest }) => (
+        <TextField
+          {...rest}
+          label='Start location'
+          placeholder='Enter a location or drop a pin...'
+          helperText={loading ? UPDATING_MESSAGE : updateLocationText}
+          error={updateLocationError}
+          onInput={handleOnLocationChange}
+          inputProps={{
+            ...rest.inputProps,
+            value: location
+          }}
+          // eslint-disable-next-line react/jsx-no-duplicate-props
+          InputProps={{
+            ...InputProps,
+            endAdornment: (
+              <InputAdornment title='Drop pin' position='end'>
+                <IconButton onClick={handleDropLocationPinClick}>
+                  <PinDropIcon />
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+          InputLabelProps={{ ...InputLabelProps, shrink: true }}
+          variant='outlined'
+          margin='normal'
+          fullWidth
+        />
+      )}
+    />
+  );
+};
+
 const ItineraryDescriptionInput: React.FC<TripItineraryPanelProps> = ({
   dispatch,
   itinerary,
@@ -282,6 +452,7 @@ const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({
         />
       )}
       <ItineraryStartDateSelect dispatch={dispatch} itinerary={itinerary} index={index} />
+      <ItineraryLocationInput dispatch={dispatch} itinerary={itinerary} index={index} />
       <ItineraryDescriptionInput
         dispatch={dispatch}
         itinerary={itinerary}

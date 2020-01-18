@@ -7,13 +7,17 @@ import { AppState } from '../../store';
 import { useActiveTrip } from '../../utils/hooks/useActiveTrip';
 import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 import { setOpenDrawer } from '../../store/general/actions';
-import { setActiveTrip } from '../../store/trip/actions';
+import { setActiveTripInfo } from '../../store/trip/actions';
 
 const ActiveTripSnackbar = () => {
   const dispatch = useAppDispatch();
   const activeTrip = useActiveTrip();
   const updatingLocation = useSelector(
-    (state: AppState) => !!state.trip.activeTrip && state.trip.activeTrip.updatingLocation
+    ({ trip }: AppState) => !!trip.activeTripInfo && trip.activeTripInfo.updatingLocation
+  );
+  const updatingItineraryLocation = useSelector(
+    ({ trip }: AppState) =>
+      !!trip.activeTripInfo && trip.activeTripInfo.updatingItineraryLocation !== undefined
   );
   const openDrawer = useSelector((state: AppState) => state.general.openDrawer);
 
@@ -23,11 +27,13 @@ const ActiveTripSnackbar = () => {
   }
 
   const handleClose = () => {
-    dispatch(setActiveTrip({ updatingLocation: false }));
     dispatch(setOpenDrawer(true));
+    dispatch(
+      setActiveTripInfo({ updatingLocation: false, updatingItineraryLocation: undefined })
+    );
   };
 
-  const action = updatingLocation && (
+  const action = (updatingLocation || updatingItineraryLocation) && (
     <IconButton onClick={handleClose} key='close' aria-label='close' color='inherit'>
       <CloseIcon />
     </IconButton>
@@ -35,6 +41,8 @@ const ActiveTripSnackbar = () => {
 
   const message = updatingLocation
     ? 'Select a location for your trip'
+    : updatingItineraryLocation
+    ? 'Select a location for your itinerary'
     : `"${activeTrip.name}" trip is active, click the marker to view details or click the map to close...`;
 
   return <Snackbar open={!openDrawer} message={message} action={action} />;

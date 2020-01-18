@@ -1,6 +1,7 @@
 import { Reducer, Action, ActionCreator } from 'redux';
 import { GenericAction, GenericActionCreator } from '../../types/store';
 import { Trip, TripItinerary } from '../../types/trip';
+import { LngLatArray } from '../../types/shared';
 
 // State
 export interface TripCreator {
@@ -14,10 +15,16 @@ export interface TripCreator {
   location_address?: Trip['location_address'];
 }
 
-export interface ActiveTrip {
+export interface ActiveTripInfo {
   id: Trip['id'];
   activeMarker: string;
   updatingLocation: boolean;
+  newLocation: LngLatArray | undefined;
+  /**
+   * This is the index of the itinerary object to be updated
+   */
+  updatingItineraryLocation: number | undefined;
+  newItineraryLocation: LngLatArray | undefined;
   itineraries?: Trip['itineraries'];
 }
 
@@ -27,7 +34,7 @@ export interface TripState {
     [key in Trip['id']]: Trip;
   };
   tripCreator?: TripCreator;
-  activeTrip?: ActiveTrip;
+  activeTripInfo?: ActiveTripInfo;
 }
 
 // Reducer
@@ -42,8 +49,8 @@ export enum TripActionType {
   ADD_TRIP = 'ADD_TRIP',
   UPDATE_TRIP = 'UPDATE_TRIP',
   DELETE_TRIP = 'DELETE_TRIP',
-  SET_ACTIVE_TRIP = 'SET_ACTIVE_TRIP',
-  SET_ACTIVE_TRIP_ITINERARIES = 'SET_ACTIVE_TRIP_ITINERARIES',
+  SET_ACTIVE_TRIP_INFO = 'SET_ACTIVE_TRIP_INFO',
+  SET_ACTIVE_TRIP_INFO_ITINERARIES = 'SET_ACTIVE_TRIP_INFO_ITINERARIES',
   UPDATE_TRIP_ITINERARY = 'UPDATE_TRIP_ITINERARY'
 }
 
@@ -72,12 +79,12 @@ export type UpdateTripAction = GenericAction<
   UpdateTripPayload
 >;
 export type DeleteTripAction = GenericAction<TripActionType.DELETE_TRIP, Trip['id']>;
-export type SetActiveTripAction = GenericAction<
-  TripActionType.SET_ACTIVE_TRIP,
-  Partial<ActiveTrip> | undefined
+export type SetActiveTripInfoAction = GenericAction<
+  TripActionType.SET_ACTIVE_TRIP_INFO,
+  Partial<ActiveTripInfo> | undefined
 >;
-export type SetActiveTripItinerariesAction = GenericAction<
-  TripActionType.SET_ACTIVE_TRIP_ITINERARIES,
+export type SetActiveTripInfoItinerariesAction = GenericAction<
+  TripActionType.SET_ACTIVE_TRIP_INFO_ITINERARIES,
   TripItinerary[]
 >;
 export type UpdateTripItineraryAction = GenericAction<
@@ -92,8 +99,8 @@ export type TripAction =
   | AddTripAction
   | UpdateTripAction
   | DeleteTripAction
-  | SetActiveTripAction
-  | SetActiveTripItinerariesAction
+  | SetActiveTripInfoAction
+  | SetActiveTripInfoItinerariesAction
   | UpdateTripItineraryAction;
 
 // Action creators
@@ -104,8 +111,8 @@ export type SetTripCreator = GenericActionCreator<SetTripCreatorAction>;
 export type AddTrip = GenericActionCreator<AddTripAction>;
 export type UpdateTrip = GenericActionCreator<UpdateTripAction>;
 export type DeleteTrip = GenericActionCreator<DeleteTripAction>;
-export type SetActiveTrip = GenericActionCreator<SetActiveTripAction>;
-export type SetActiveTripItineraries = GenericActionCreator<
-  SetActiveTripItinerariesAction
+export type SetActiveTripInfo = GenericActionCreator<SetActiveTripInfoAction>;
+export type SetActiveTripInfoItineraries = GenericActionCreator<
+  SetActiveTripInfoItinerariesAction
 >;
 export type UpdateTripItinerary = GenericActionCreator<UpdateTripItineraryAction>;
