@@ -11,7 +11,7 @@ import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 
 const CreateTripButton: React.FC<ButtonProps> = props => {
   const dispatch = useAppDispatch();
-  const tripCreator = useSelector(({ trip }: AppState) => trip.tripCreator);
+  const tripCreator = useSelector(({ trip }: AppState) => trip.creator);
   const activeTrip = useSelector(({ trip }: AppState) => trip.activeTripInfo);
 
   const handleClick = () => {

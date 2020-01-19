@@ -11,6 +11,7 @@ import UserContent from '../UserContent/UserContent';
 import TripContent from '../TripContent/TripContent';
 import { useActiveTrip } from '../../utils/hooks/useTrip';
 import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
+import { setTripItineraryCreator } from '../../store/trip/actions';
 
 export interface SideDrawerProps extends DrawerProps {
   onClose: () => void;
@@ -54,6 +55,7 @@ const SideDrawerContainer: React.FC = () => {
   const dispatch = useAppDispatch();
   const user = useSelector((state: AppState) => state.user);
   const activeTrip = useActiveTrip();
+  const creatingItinerary = useSelector(({ trip }: AppState) => !!trip.itineraryCreator);
   const open = useSelector(({ general }: AppState) => general.openDrawer);
 
   const openTripDrawer = open && !user.viewInfo;
@@ -62,7 +64,12 @@ const SideDrawerContainer: React.FC = () => {
   const handleClose = () => {
     dispatch(setOpenDrawer(false));
 
-    // Unset the user info viewing state anytime the drawer closes
+    // Unset the creating itinerary state
+    if (creatingItinerary) {
+      dispatch(setTripItineraryCreator());
+    }
+
+    // Unset the user info viewing state
     if (user.viewInfo) {
       dispatch(setViewInfo(false));
     }

@@ -10,7 +10,7 @@ import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 const TripCreatorSnackbar = () => {
   const dispatch = useAppDispatch();
   const open = useSelector(
-    ({ trip }: AppState) => !!trip.tripCreator && !trip.tripCreator.openModal
+    ({ trip }: AppState) => !!trip.creator && !trip.creator.openModal
   );
 
   const handleClose = () => {

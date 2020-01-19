@@ -7,6 +7,7 @@ export interface TripItineraryRecord {
   name: string;
   description: string;
   location: LngLatArray;
+  location_address: string;
   start_time: string;
   end_time: string,
   created_date: Date;

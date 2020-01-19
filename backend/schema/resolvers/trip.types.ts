@@ -12,6 +12,9 @@ export type FindTripInput = InputResolverArg<TripSchema>;
 export type UpdateTripInput = InputResolverArg<Omit<TripSchema, 'created_date'>>;
 
 export type TripItineraryInput = InputResolverArg<TripItinerarySchema>;
+export type CreateTripItineraryInput = InputResolverArg<
+  Omit<TripItineraryRecord, 'id' | 'end_time' | 'created_date'>
+>;
 export type UpdateTripItineraryInput = InputResolverArg<
   Omit<TripItinerarySchema, 'created_date'>
 >;
@@ -28,10 +31,20 @@ export interface TripResolvers extends IResolvers {
     createTrip: AuthFieldResolver<any, CreateTripInput, Promise<TripSchema>>;
     updateTrip: AuthFieldResolver<any, UpdateTripInput, Promise<TripSchema>>;
     deleteTrip: AuthFieldResolver<any, Pick<TripRecord['id']>, Promise<TripRecord['id']>>;
+    createTripItinerary: AuthFieldResolver<
+      any,
+      CreateTripItineraryInput,
+      Promise<TripItinerarySchema>
+    >;
     updateTripItinerary: AuthFieldResolver<
       any,
       UpdateTripItineraryInput,
       Promise<TripItinerarySchema>
+    >;
+    deleteTripItinerary: AuthFieldResolver<
+      any,
+      Pick<TripItineraryRecord['id']>,
+      Promise<TripItineraryRecord['id']>
     >;
   };
 }

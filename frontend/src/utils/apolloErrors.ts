@@ -3,7 +3,7 @@ import { INTERNAL_SERVER_ERROR_MESSAGE } from './constants/errors';
 
 /**
  * Get all graphqlQLErrors
- * 
+ *
  * Loop through the graphqlQlErrors property and return an array of error messages,
  * otherwise return an array of length 1 containing an internal server error message
  */
@@ -21,4 +21,6 @@ export const getErrors = ({ graphQLErrors }: ApolloError): string[] => {
  * This should ONLY be used for single query graphql requests because they
  * will only contain a single graphQLError.
  */
-export const getFirstError = (error: ApolloError): string => getErrors(error)[0];
+export const getFirstError = (error: ApolloError | Error): string => {
+  return error instanceof ApolloError ? getErrors(error)[0] : error.message;
+};

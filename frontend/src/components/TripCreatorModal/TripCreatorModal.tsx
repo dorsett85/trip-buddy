@@ -3,21 +3,19 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
-import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import { DateTimePicker } from '@material-ui/pickers';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import IconButton from '@material-ui/core/IconButton';
 import PinDropIcon from '@material-ui/icons/PinDrop';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import Button from '@material-ui/core/Button';
-import Red from '@material-ui/core/colors/red';
+import red from '@material-ui/core/colors/red';
 import { useSelector } from 'react-redux';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import styled from 'styled-components';
-import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
-import { LinearProgress } from '@material-ui/core';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import { AppState } from '../../store';
 import { setTripCreator, addTrip, setActiveTripInfo } from '../../store/trip/actions';
 import { debounce } from '../../utils/debouce';
@@ -27,21 +25,7 @@ import { getFirstError } from '../../utils/apolloErrors';
 import { setFlyTo } from '../../store/general/actions';
 import { Trip } from '../../types/trip';
 import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
-
-export const CREATE_TRIP = gql`
-  mutation createTrip($input: CreateTripInput) {
-    createTrip(input: $input) {
-      id
-      name
-      description
-      location
-      location_address
-      start_date
-      status
-      created_date
-    }
-  }
-`;
+import { CREATE_TRIP } from '../ApolloProvider/gql/trip';
 
 const FormStyled = styled.form`
   min-width: 450px;
@@ -49,12 +33,12 @@ const FormStyled = styled.form`
 
 const ErrorStyled = styled.div`
   font-weight: bold;
-  color: ${Red[500]};
+  color: ${red[500]};
 `;
 
 const TripCreatorModal: React.FC = () => {
   const dispatch = useAppDispatch();
-  const tripCreator = useSelector(({ trip }: AppState) => trip.tripCreator);
+  const tripCreator = useSelector(({ trip }: AppState) => trip.creator);
 
   const [locationOptions, setLocationOptions] = useState<Feature[]>();
   const [locationsLoading, setLocationsLoading] = useState(false);
@@ -108,7 +92,7 @@ const TripCreatorModal: React.FC = () => {
       }
     };
 
-    const handleLocationChange = ({ target }: any) => {
+    const handleLocationChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
       dispatch(setTripCreator({ location_address: target.value }));
       if (tripCreator.location) {
         dispatch(setTripCreator({ location: undefined }));
@@ -217,18 +201,14 @@ const TripCreatorModal: React.FC = () => {
             margin='normal'
             fullWidth
           />
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <DateTimePicker
-                label='Start Date'
-                onChange={handleStartDateChange}
-                value={tripCreator.start_date || null}
-                inputVariant='outlined'
-                margin='normal'
-                fullWidth
-              />
-            </Grid>
-          </Grid>
+          <DateTimePicker
+            label='Start Date'
+            onChange={handleStartDateChange}
+            value={tripCreator.start_date || null}
+            inputVariant='outlined'
+            margin='normal'
+            fullWidth
+          />
           <Autocomplete
             options={locationOptions}
             loading={locationsLoading}

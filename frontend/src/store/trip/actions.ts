@@ -9,7 +9,10 @@ import {
   UpdateTrip,
   SetTripItineraries,
   UpdateTripItinerary,
-  DeleteTrip
+  DeleteTrip,
+  SetTripItineraryCreator,
+  AddTripItinerary,
+  DeleteTripItinerary
 } from './types';
 
 export const resetTripState: ResetTripState = () => ({
@@ -27,7 +30,7 @@ export const setTrips: SetTrips = payload => ({
 });
 
 export const setTripCreator: SetTripCreator = payload => ({
-  type: TripActionType.SET_TRIP_CREATOR,
+  type: TripActionType.SET_CREATOR,
   payload
 });
 
@@ -52,11 +55,26 @@ export const setActiveTripInfo: SetActiveTripInfo = payload => ({
 });
 
 export const setTripItineraries: SetTripItineraries = payload => ({
-  type: TripActionType.SET_TRIP_ITINERARIES,
+  type: TripActionType.SET_ITINERARIES,
+  payload
+});
+
+export const setTripItineraryCreator: SetTripItineraryCreator = payload => ({
+  type: TripActionType.SET_ITINERARY_CREATOR,
+  payload
+});
+
+export const addTripItinerary: AddTripItinerary = payload => ({
+  type: TripActionType.ADD_ITINERARY,
   payload
 });
 
 export const updateTripItinerary: UpdateTripItinerary = payload => ({
-  type: TripActionType.UPDATE_TRIP_ITINERARY,
+  type: TripActionType.UPDATE_ITINERARY,
+  payload
+});
+
+export const deleteTripItinerary: DeleteTripItinerary = payload => ({
+  type: TripActionType.DELETE_ITINERARY,
   payload
 });

@@ -7,8 +7,8 @@ import { UserRecord } from '../models/User.types';
 import {
   CreateTripInput,
   UpdateTripInput,
-  TripSchema,
-  UpdateTripItineraryInput
+  UpdateTripItineraryInput,
+  CreateTripItineraryInput
 } from '../schema/resolvers/trip.types';
 import TripItineraryModel from '../models/TripItinerary';
 import { TripItineraryRecord } from '../models/TripItinerary.types';
@@ -29,7 +29,7 @@ export default class TripService {
   public async createOne(
     createTripInput: CreateTripInput['input'],
     userId: UserRecord['id']
-  ): Promise<TripSchema> {
+  ): Promise<TripRecord> {
     // Create the new trip and add a record to the users_trips pivot table
     const trip = await this.TripModel.createOne(createTripInput);
     await this.UserTripModel.createOne({ user_id: userId, trip_id: trip.id });
@@ -86,6 +86,12 @@ export default class TripService {
     return this.TripItineraryModel.findMany(andWhereArgs, orWhereArgs);
   }
 
+  public createTripItinerary(
+    createTripItineraryInput: CreateTripItineraryInput['input']
+  ): Promise<TripItineraryRecord> {
+    return this.TripItineraryModel.createOne(createTripItineraryInput);
+  }
+
   public updateTripItinerary(
     updateTripItineraryInput: UpdateTripItineraryInput['input'],
     andWhereArgs: Partial<TripItineraryRecord> = {},
@@ -96,5 +102,9 @@ export default class TripService {
       andWhereArgs,
       orWhereArgs
     );
+  }
+
+  public deleteTripItinerary(id: TripItineraryRecord['id']): Promise<TripItineraryRecord | undefined> {
+    return this.TripItineraryModel.deleteOne(id);
   }
 }

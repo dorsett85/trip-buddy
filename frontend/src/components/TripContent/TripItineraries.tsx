@@ -1,33 +1,18 @@
 import React, { useEffect } from 'react';
-import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { DispatchProp } from 'react-redux';
+import { DispatchProp, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import TripItineraryPanel from './TripItineraryPanel';
 import { ActiveTripInfo } from '../../store/trip/types';
-import { setTripItineraries } from '../../store/trip/actions';
+import { setTripItineraries, setTripItineraryCreator } from '../../store/trip/actions';
 import { useTripItineraries } from '../../utils/hooks/useTrip';
 import { AppAction } from '../../store/types';
-
-export const GET_ITINERARY = gql`
-  query GetItinerary($input: FindTripInput) {
-    trip(input: $input) {
-      itineraries {
-        id
-        trip_id
-        name
-        description
-        location
-        location_address
-        start_time
-        end_time
-      }
-    }
-  }
-`;
+import TripItineraryCreate from './TripItineraryCreate';
+import { AppState } from '../../store';
+import { GET_ITINERARIES } from '../ApolloProvider/gql/trip';
 
 const ItineraryHeader = styled.div`
   display: flex;
@@ -41,8 +26,10 @@ interface TripItinerariesProps extends DispatchProp<AppAction> {
 
 const TripItineraries: React.FC<TripItinerariesProps> = ({ dispatch, tripId }) => {
   const itineraries = useTripItineraries();
-  const { data, loading } = useQuery(GET_ITINERARY, {
-    variables: { input: { id: tripId } }
+  const itineraryCreator = useSelector(({ trip }: AppState) => trip.itineraryCreator);
+  const { data, loading } = useQuery(GET_ITINERARIES, {
+    variables: { input: { id: tripId } },
+    fetchPolicy: 'no-cache'
   });
 
   useEffect(() => {
@@ -50,6 +37,24 @@ const TripItineraries: React.FC<TripItinerariesProps> = ({ dispatch, tripId }) =
       dispatch(setTripItineraries(data.trip.itineraries));
     }
   }, [dispatch, data]);
+
+  const handleAddToggle = () => {
+    dispatch(setTripItineraryCreator({}));
+  };
+
+  const addButton = !itineraryCreator && (
+    <Fab onClick={handleAddToggle} color='primary' variant='extended'>
+      <span>Add &nbsp;</span>
+      <AddIcon />
+    </Fab>
+  );
+
+  const createItinerary = itineraryCreator && (
+    <TripItineraryCreate
+      itinerary={{ trip_id: tripId, ...itineraryCreator }}
+      dispatch={dispatch}
+    />
+  );
 
   const tripItinerary = loading ? (
     <LinearProgress />
@@ -63,15 +68,14 @@ const TripItineraries: React.FC<TripItinerariesProps> = ({ dispatch, tripId }) =
       />
     ))
   );
+
   return (
     <div>
       <ItineraryHeader>
         <h2>Itinerary</h2>
-        <Fab color='primary' variant='extended'>
-          <span>Add &nbsp;</span>
-          <AddIcon />
-        </Fab>
+        {addButton}
       </ItineraryHeader>
+      {createItinerary}
       {tripItinerary}
     </div>
   );

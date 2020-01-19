@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { DispatchProp, useSelector } from 'react-redux';
-import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
 import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -33,24 +32,7 @@ import { AppAction } from '../../store/types';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { debounce } from '../../utils/debouce';
 import { AppState } from '../../store';
-
-export const UPDATE_TRIP = gql`
-  mutation UpdateTrip($input: UpdateTripInput) {
-    updateTrip(input: $input) {
-      name
-      status
-      start_date
-      location
-      location_address
-    }
-  }
-`;
-
-export const DELETE_TRIP = gql`
-  mutation DeleteTrip($id: Int!) {
-    deleteTrip(id: $id)
-  }
-`;
+import { DELETE_TRIP, UPDATE_TRIP } from '../ApolloProvider/gql/trip';
 
 export interface TripContentProps extends DispatchProp<AppAction> {
   trip: Trip;
@@ -192,6 +174,66 @@ const TripNameInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
       onCancelEdit={handleCancelName}
       helperText={loading ? UPDATING_MESSAGE : updateNameText}
       error={updateNameError}
+      fullWidth
+      margin='normal'
+    />
+  );
+};
+
+const TripDescriptionInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
+  const [description, setDescription] = useState(trip.description);
+  const [editingDescription, setEditingDescription] = useState(false);
+  const [updateDescriptionText, setUpdateDescriptionText] = useState('');
+  const [updateDescriptionError, setUpdateDescriptionError] = useState(false);
+
+  const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
+    onCompleted: () => {
+      setEditingDescription(false);
+      setUpdateDescriptionError(false);
+      dispatch(updateTrip({ ...trip, description }));
+      setUpdateDescriptionText(SUCCESSFUL_UPDATE_MESSAGE);
+    },
+    onError: error => {
+      setUpdateDescriptionError(true);
+      setUpdateDescriptionText(getFirstError(error));
+    }
+  });
+
+  const handleDescriptionChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingDescription(true);
+    setDescription(target.value);
+  };
+
+  const handleSubmitDescription = () => {
+    setUpdateDescriptionError(false);
+    setUpdateDescriptionText('');
+    updateTripQuery({ variables: { input: { id: trip.id, description } } });
+  };
+
+  const handleCancelDescription = () => {
+    if (description !== trip.description) {
+      setDescription(trip.description);
+    }
+    setEditingDescription(false);
+    setUpdateDescriptionError(false);
+    setUpdateDescriptionText('');
+  };
+
+  return (
+    <EditableTextField
+      label='Description'
+      value={description || ''}
+      type='textarea'
+      multiline
+      rows={2}
+      rowsMax={10}
+      variant='filled'
+      editing={editingDescription}
+      onChange={handleDescriptionChange}
+      onSubmitEdit={handleSubmitDescription}
+      onCancelEdit={handleCancelDescription}
+      helperText={loading ? UPDATING_MESSAGE : updateDescriptionText}
+      error={updateDescriptionError}
       fullWidth
       margin='normal'
     />
@@ -377,66 +419,6 @@ const TripStartDateSelect: React.FC<TripContentProps> = ({ dispatch, trip }) => 
   );
 };
 
-const TripDescriptionInput: React.FC<TripContentProps> = ({ dispatch, trip }) => {
-  const [description, setDescription] = useState(trip.description);
-  const [editingDescription, setEditingDescription] = useState(false);
-  const [updateDescriptionText, setUpdateDescriptionText] = useState('');
-  const [updateDescriptionError, setUpdateDescriptionError] = useState(false);
-
-  const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
-    onCompleted: () => {
-      setEditingDescription(false);
-      setUpdateDescriptionError(false);
-      dispatch(updateTrip({ ...trip, description }));
-      setUpdateDescriptionText(SUCCESSFUL_UPDATE_MESSAGE);
-    },
-    onError: error => {
-      setUpdateDescriptionError(true);
-      setUpdateDescriptionText(getFirstError(error));
-    }
-  });
-
-  const handleDescriptionChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-    setEditingDescription(true);
-    setDescription(target.value);
-  };
-
-  const handleSubmitDescription = () => {
-    setUpdateDescriptionError(false);
-    setUpdateDescriptionText('');
-    updateTripQuery({ variables: { input: { id: trip.id, description } } });
-  };
-
-  const handleCancelDescription = () => {
-    if (description !== trip.description) {
-      setDescription(trip.description);
-    }
-    setEditingDescription(false);
-    setUpdateDescriptionError(false);
-    setUpdateDescriptionText('');
-  };
-
-  return (
-    <EditableTextField
-      label='Description'
-      value={description || ''}
-      type='textarea'
-      multiline
-      rows={2}
-      rowsMax={10}
-      variant='filled'
-      editing={editingDescription}
-      onChange={handleDescriptionChange}
-      onSubmitEdit={handleSubmitDescription}
-      onCancelEdit={handleCancelDescription}
-      helperText={loading ? UPDATING_MESSAGE : updateDescriptionText}
-      error={updateDescriptionError}
-      fullWidth
-      margin='normal'
-    />
-  );
-};
-
 const TripStatusSelect: React.FC<TripContentProps> = ({ dispatch, trip }) => {
   const [updateStatusText, setUpdateStatusText] = useState('');
   const [updateStatusError, setUpdateStatusError] = useState(false);
@@ -482,9 +464,9 @@ const TripContent: React.FC<TripContentProps> = ({ dispatch, trip }) => {
     <div>
       <TripHeader dispatch={dispatch} trip={trip} />
       <TripNameInput dispatch={dispatch} trip={trip} />
+      <TripDescriptionInput dispatch={dispatch} trip={trip} />
       <TripStartDateSelect dispatch={dispatch} trip={trip} />
       <TripLocationInput dispatch={dispatch} trip={trip} />
-      <TripDescriptionInput dispatch={dispatch} trip={trip} />
       <TripStatusSelect dispatch={dispatch} trip={trip} />
       <TripItineraries dispatch={dispatch} tripId={trip.id} />
     </div>

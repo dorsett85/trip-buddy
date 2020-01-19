@@ -4,7 +4,8 @@ const initialState: TripState = {
   loadingTrips: false,
   trips: {},
   itineraries: {},
-  tripCreator: undefined,
+  creator: undefined,
+  itineraryCreator: undefined,
   activeTripInfo: undefined
 };
 
@@ -26,12 +27,12 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
     return { ...state, trips };
   }
 
-  if (action.type === 'SET_TRIP_CREATOR') {
-    const tripCreator: TripState['tripCreator'] = action.payload && {
-      ...state.tripCreator,
+  if (action.type === 'SET_CREATOR') {
+    const creator: TripState['creator'] = action.payload && {
+      ...state.creator,
       ...action.payload
     };
-    return { ...state, tripCreator };
+    return { ...state, creator };
   }
 
   if (action.type === 'ADD_TRIP') {
@@ -68,7 +69,7 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
     return { ...state, activeTripInfo };
   }
 
-  if (action.type === 'SET_TRIP_ITINERARIES') {
+  if (action.type === 'SET_ITINERARIES') {
     const itineraries: TripState['itineraries'] = {};
     if (action.payload) {
       action.payload.forEach(itinerary => {
@@ -79,12 +80,37 @@ export const tripReducer: TripReducer = (state = initialState, action): TripStat
     return { ...state, itineraries };
   }
 
-  if (action.type === 'UPDATE_TRIP_ITINERARY') {
+  if (action.type === 'SET_ITINERARY_CREATOR') {
+    const itineraryCreator = action.payload && {
+      ...state.itineraryCreator,
+      ...action.payload
+    };
+
+    return { ...state, itineraryCreator };
+  }
+
+  if (action.type === 'ADD_ITINERARY') {
+    const { id } = action.payload;
+    const itineraries: TripState['itineraries'] = {
+      ...state.itineraries,
+      [id]: action.payload
+    };
+    return { ...state, itineraries };
+  }
+
+  if (action.type === 'UPDATE_ITINERARY') {
     const { id, ...rest } = action.payload;
     const itineraries: TripState['itineraries'] = {
       ...state.itineraries,
       [id]: { ...state.itineraries[id], ...rest }
     };
+    return { ...state, itineraries };
+  }
+
+  if (action.type === 'DELETE_ITINERARY') {
+    const id = action.payload;
+    const itineraries = { ...state.itineraries };
+    delete itineraries[id];
     return { ...state, itineraries };
   }
 

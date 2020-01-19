@@ -1,6 +1,9 @@
 import { UserInputError } from 'apollo-server-express';
 import { TripResolvers } from './trip.types';
-import { INTERNAL_SERVER_ERROR_MESSAGE, NOT_FOUND_MESSAGE } from '../../utils/constants/errors';
+import {
+  INTERNAL_SERVER_ERROR_MESSAGE,
+  NOT_FOUND_MESSAGE
+} from '../../utils/constants/errors';
 
 const Trip: TripResolvers['Trip'] = {
   itineraries: async ({ id }, __, { TripService }) => {
@@ -15,9 +18,9 @@ const Query: TripResolvers['Query'] = {
       user.role === 'admin'
         ? await TripService.findOne(input)
         : await TripService.findOneByUserId(user.id, input);
-      if (!trip) {
-        throw new UserInputError(NOT_FOUND_MESSAGE);
-      }
+    if (!trip) {
+      throw new UserInputError(NOT_FOUND_MESSAGE);
+    }
     return trip;
   },
   trips: async (_, { input }, { user, TripService }) => {
@@ -52,15 +55,27 @@ const Mutation: TripResolvers['Mutation'] = {
     }
     return trip.id;
   },
-  updateTripItinerary: async (_, args, { TripService }) => {
-    const {
-      input: { id, ...input }
-    } = args;
-    const itinerary = await TripService.updateTripItinerary(input, { id });
+  createTripItinerary: async (_, { input }, { TripService }) => {
+    const itinerary = await TripService.createTripItinerary(input);
     if (!itinerary) {
       throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
     }
     return itinerary;
+  },
+  updateTripItinerary: async (_, { input }, { TripService }) => {
+    const { id, ...rest } = input;
+    const itinerary = await TripService.updateTripItinerary(rest, { id });
+    if (!itinerary) {
+      throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
+    }
+    return itinerary;
+  },
+  deleteTripItinerary: async (_, { id }, { TripService }) => {
+    const itinerary = await TripService.deleteTripItinerary(id);
+    if (!itinerary) {
+      throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
+    }
+    return itinerary.id;
   }
 };
 

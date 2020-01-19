@@ -15,9 +15,11 @@ const ActiveTripSnackbar = () => {
   const updatingLocation = useSelector(
     ({ trip }: AppState) => !!trip.activeTripInfo && trip.activeTripInfo.updatingLocation
   );
+  const creatingItinerary = ({ trip }: AppState) => !!trip.itineraryCreator;
   const updatingItineraryLocation = useSelector(
     ({ trip }: AppState) =>
-      !!trip.activeTripInfo && trip.activeTripInfo.updatingItineraryLocation !== undefined
+      !!trip.activeTripInfo &&
+      trip.activeTripInfo.updatingItineraryLocationId !== undefined
   );
   const openDrawer = useSelector((state: AppState) => state.general.openDrawer);
 
@@ -29,11 +31,11 @@ const ActiveTripSnackbar = () => {
   const handleClose = () => {
     dispatch(setOpenDrawer(true));
     dispatch(
-      setActiveTripInfo({ updatingLocation: false, updatingItineraryLocation: undefined })
+      setActiveTripInfo({ updatingLocation: false, updatingItineraryLocationId: undefined })
     );
   };
 
-  const action = (updatingLocation || updatingItineraryLocation) && (
+  const action = (updatingLocation || creatingItinerary || updatingItineraryLocation) && (
     <IconButton onClick={handleClose} key='close' aria-label='close' color='inherit'>
       <CloseIcon />
     </IconButton>
@@ -41,7 +43,7 @@ const ActiveTripSnackbar = () => {
 
   const message = updatingLocation
     ? 'Select a location for your trip'
-    : updatingItineraryLocation
+    : creatingItinerary || updatingItineraryLocation
     ? 'Select a location for your itinerary'
     : `"${activeTrip.name}" trip is active, click the marker to view details or click the map to close...`;
 

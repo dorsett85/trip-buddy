@@ -5,7 +5,7 @@ import { KeyValue } from '../types';
 export default class BaseModel {
   public static tableName: string;
 
-  public static async baseCreateOne<T>(record: KeyValue): Promise<T> {
+  protected static async baseCreateOne<T>(record: KeyValue): Promise<T> {
     const query = addInsert(this.tableName, record);
     const {
       rows: [row]
@@ -14,7 +14,7 @@ export default class BaseModel {
     return row;
   }
 
-  public static async baseFindOne<T>(
+  protected static async baseFindOne<T>(
     andWhereArgs: KeyValue = {},
     orWhereArgs: KeyValue = {}
   ): Promise<T> {
@@ -22,7 +22,7 @@ export default class BaseModel {
     return row;
   }
 
-  public static async baseFindMany<T>(
+  protected static async baseFindMany<T>(
     andWhereArgs: KeyValue = {},
     orWhereArgs: KeyValue = {}
   ): Promise<T[]> {
@@ -35,7 +35,7 @@ export default class BaseModel {
     return rows;
   }
 
-  public static async baseUpdateOne<T>(
+  protected static async baseUpdateOne<T>(
     updateArgs: KeyValue = {},
     andWhereArgs: KeyValue = {},
     orWhereArgs: KeyValue = {}
@@ -58,7 +58,7 @@ export default class BaseModel {
     return row;
   }
 
-  public static async baseDeleteOne<T>(id: number): Promise<T> {
+  protected static async baseDeleteOne<T>(id: number): Promise<T> {
     const remove = `DELETE FROM ${this.tableName}`;
     const where = addWhere({ andWhereArgs: { id }, orWhereArgs: {} });
 

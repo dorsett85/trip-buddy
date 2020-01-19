@@ -38,4 +38,10 @@ export default class TripItineraryModel extends BaseModel {
   ): Promise<TripItineraryRecord | undefined> {
     return this.baseUpdateOne(updateArgs, andWhereArgs, orWhereArgs);
   }
+
+  public static deleteOne(
+    id: TripRecord['id']
+  ): Promise<TripItineraryRecord | undefined> {
+    return this.baseDeleteOne(id);
+  }
 }

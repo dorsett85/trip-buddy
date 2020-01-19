@@ -15,12 +15,24 @@ export interface TripCreator {
   location_address?: Trip['location_address'];
 }
 
+export interface TripItineraryCreator {
+  // eslint-disable-next-line camelcase
+  trip_id?: Trip['id'];
+  name?: TripItinerary['name'];
+  description?: TripItinerary['description'];
+  // eslint-disable-next-line camelcase
+  start_time?: TripItinerary['start_time'];
+  location?: TripItinerary['location'];
+  // eslint-disable-next-line camelcase
+  location_address?: TripItinerary['location_address'];
+}
+
 export interface ActiveTripInfo {
   id: Trip['id'];
   activeMarker: string;
   updatingLocation: boolean;
   newLocation: LngLatArray | undefined;
-  updatingItineraryLocation: boolean;
+  updatingItineraryLocationId: TripItinerary['id'] | undefined;
   newItineraryLocation: LngLatArray | undefined;
 }
 
@@ -29,10 +41,11 @@ export interface TripState {
   trips: {
     [key in Trip['id']]: Trip;
   };
+  creator?: TripCreator;
   itineraries: {
     [key in TripItinerary['id']]: TripItinerary;
   };
-  tripCreator?: TripCreator;
+  itineraryCreator?: TripItineraryCreator;
   activeTripInfo?: ActiveTripInfo;
 }
 
@@ -44,13 +57,16 @@ export enum TripActionType {
   RESET_STATE = 'RESET_STATE',
   SET_LOADING_TRIPS = 'SET_LOADING_TRIPS',
   SET_TRIPS = 'SET_TRIPS',
-  SET_TRIP_CREATOR = 'SET_TRIP_CREATOR',
+  SET_CREATOR = 'SET_CREATOR',
   ADD_TRIP = 'ADD_TRIP',
   UPDATE_TRIP = 'UPDATE_TRIP',
   DELETE_TRIP = 'DELETE_TRIP',
   SET_ACTIVE_TRIP_INFO = 'SET_ACTIVE_TRIP_INFO',
-  SET_TRIP_ITINERARIES = 'SET_TRIP_ITINERARIES',
-  UPDATE_TRIP_ITINERARY = 'UPDATE_TRIP_ITINERARY'
+  SET_ITINERARIES = 'SET_ITINERARIES',
+  SET_ITINERARY_CREATOR = 'SET_ITINERARY_CREATOR',
+  ADD_ITINERARY = 'ADD_ITINERARY',
+  UPDATE_ITINERARY = 'UPDATE_ITINERARY',
+  DELETE_ITINERARY = 'DELETE_ITINERARY'
 }
 
 // Action payload args
@@ -62,15 +78,15 @@ interface UpdateTripItineraryPayload extends Partial<TripItinerary> {
 }
 
 // Actions
-export type ResetStateAction = Action<TripActionType.RESET_STATE>;
+export type ResetTripStateAction = Action<TripActionType.RESET_STATE>;
 export type SetLoadingTripsAction = GenericAction<
   TripActionType.SET_LOADING_TRIPS,
   TripState['loadingTrips']
 >;
 export type SetTripsAction = GenericAction<TripActionType.SET_TRIPS, Trip[]>;
 export type SetTripCreatorAction = GenericAction<
-  TripActionType.SET_TRIP_CREATOR,
-  TripState['tripCreator']
+  TripActionType.SET_CREATOR,
+  TripState['creator']
 >;
 export type AddTripAction = GenericAction<TripActionType.ADD_TRIP, Trip>;
 export type UpdateTripAction = GenericAction<
@@ -82,16 +98,28 @@ export type SetActiveTripInfoAction = GenericAction<
   TripActionType.SET_ACTIVE_TRIP_INFO,
   Partial<ActiveTripInfo> | undefined
 >;
+export type SetTripItineraryCreatorAction = GenericAction<
+  TripActionType.SET_ITINERARY_CREATOR,
+  TripState['itineraryCreator']
+>;
 export type SetTripItinerariesAction = GenericAction<
-  TripActionType.SET_TRIP_ITINERARIES,
+  TripActionType.SET_ITINERARIES,
   TripItinerary[] | undefined
 >;
+export type AddTripItineraryAction = GenericAction<
+  TripActionType.ADD_ITINERARY,
+  TripItinerary
+>;
 export type UpdateTripItineraryAction = GenericAction<
-  TripActionType.UPDATE_TRIP_ITINERARY,
+  TripActionType.UPDATE_ITINERARY,
   UpdateTripItineraryPayload
 >;
+export type DeleteTripItineraryAction = GenericAction<
+  TripActionType.DELETE_ITINERARY,
+  TripItinerary['id']
+>;
 export type TripAction =
-  | ResetStateAction
+  | ResetTripStateAction
   | SetLoadingTripsAction
   | SetTripsAction
   | SetTripCreatorAction
@@ -100,10 +128,13 @@ export type TripAction =
   | DeleteTripAction
   | SetActiveTripInfoAction
   | SetTripItinerariesAction
-  | UpdateTripItineraryAction;
+  | SetTripItineraryCreatorAction
+  | AddTripItineraryAction
+  | UpdateTripItineraryAction
+  | DeleteTripItineraryAction;
 
 // Action creators
-export type ResetTripState = ActionCreator<ResetStateAction>;
+export type ResetTripState = ActionCreator<ResetTripStateAction>;
 export type SetLoadingTrips = GenericActionCreator<SetLoadingTripsAction>;
 export type SetTrips = GenericActionCreator<SetTripsAction>;
 export type SetTripCreator = GenericActionCreator<SetTripCreatorAction>;
@@ -112,4 +143,7 @@ export type UpdateTrip = GenericActionCreator<UpdateTripAction>;
 export type DeleteTrip = GenericActionCreator<DeleteTripAction>;
 export type SetActiveTripInfo = GenericActionCreator<SetActiveTripInfoAction>;
 export type SetTripItineraries = GenericActionCreator<SetTripItinerariesAction>;
+export type SetTripItineraryCreator = GenericActionCreator<SetTripItineraryCreatorAction>;
+export type AddTripItinerary = GenericActionCreator<AddTripItineraryAction>;
 export type UpdateTripItinerary = GenericActionCreator<UpdateTripItineraryAction>;
+export type DeleteTripItinerary = GenericActionCreator<DeleteTripItineraryAction>;
