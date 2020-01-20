@@ -1,16 +1,14 @@
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
-import { memo } from 'react';
 import { SizedType, themeSizes } from '../../styles/theme';
 
 /**
  * Number of columns in our grid
  */
+export const colWidths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
+export type ColWidth = typeof colWidths[number];
 const GRID_SIZE = 12 as const;
 
-/**
- * All possible column width values
- */
-type ColWidth = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+export type OffsetWidth = Exclude<ColWidth, 12> | 0;
 
 interface ColProps {
   /**
@@ -26,7 +24,7 @@ interface ColProps {
    * left, but entering { xs: 0, md: 3} would give you zero offset columns on
    * extra small screens and 3 offset columns on medium screens).
    */
-  offset?: Partial<SizedType<ColWidth>> | ColWidth;
+  offset?: Partial<SizedType<OffsetWidth>> | OffsetWidth;
 }
 
 /**
@@ -35,7 +33,7 @@ interface ColProps {
  * Helper function that takes a column width and returns a number as a percentage
  * of the entire grid
  */
-const calcWidthPct = (width: ColWidth): number => (+width / GRID_SIZE) * 100;
+const calcWidthPct = (width: ColWidth | OffsetWidth): number => (+width / GRID_SIZE) * 100;
 
 /**
  * Meat and potatoes of our grid system.  In order to work properly with multiple
@@ -101,4 +99,4 @@ const Col = styled.div<ColProps>(({ theme, width, offset }) => {
   `;
 });
 
-export default memo(Col);
+export default Col;

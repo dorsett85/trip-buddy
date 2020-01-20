@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import { memo } from 'react';
 import { ThemeSizeArg } from '../../styles/theme';
 
 export interface RowProps {
@@ -15,7 +14,7 @@ export interface RowProps {
  * Row component use in conjunction with child Col components.  Wrapping
  * multiple Col components in a Row component will properly display the
  * columns in our 12 column grid.
- * 
+ *
  * ** NOTE ** The default gutter argument will create negative margins so that
  * the columns line up properly on the left and right.  To correct the possible
  * screen overflow in this situation, the Row must be wrapped in a component that
@@ -23,9 +22,9 @@ export interface RowProps {
  * gutter is 'md', which equates to 1rem, so the parent has to have spacing greater
  * than that, or if gutter is set to 'xl', the parent must have spacing greater than
  * or equal to that).
- * 
+ *
  * A row with gutter={0} property will not have negative margins.
- * 
+ *
  * @see Container
  * @see Col
  * @example
@@ -36,7 +35,7 @@ export interface RowProps {
  *     <Col>Hello</Col>
  *   </Row>
  * );
- * 
+ *
  * // Row with gutters (must be wrapped in a component with positive spacing to avoid
  * // screen overflow).  Notice that the Container component has padding='md' to
  * // account for the gutter='md' of the Row component.
@@ -60,9 +59,10 @@ const Row = styled.div<RowProps>(
           padding-left: ${theme.spacing(gutter)};
           padding-right: ${theme.spacing(gutter)};
           padding-bottom: ${theme.spacing(gutter)};
+          box-sizing: border-box;
         }
       `}
   `
 );
 
-export default memo(Row);
+export default Row;

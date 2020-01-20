@@ -1,13 +1,8 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { ThemeProvider } from 'styled-components';
-import { theme } from '../../../styles/theme';
-import { Container, Row, Col } from '..';
-
-const renderWithTheme = (component: React.Component) =>
-  render(component, {
-    wrapper: ({ children }) => <ThemeProvider theme={theme}>{children}</ThemeProvider>
-  });
+import { renderWithTheme } from '../../utils/renderWithTheme';
+import Container from './Container';
+import Row from './Row';
+import Col from './Col';
 
 test('Container component render and query', () => {
   const TEXT = 'Hello';

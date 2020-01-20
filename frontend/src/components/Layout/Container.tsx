@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import { memo } from 'react';
 import { ThemeSizeArg, SizedType } from '../../styles/theme';
 
 export interface ContainerProps {
@@ -15,22 +14,22 @@ export interface ContainerProps {
 }
 
 /**
- * Container component used mostly to wrap (at any level of the component tree) the
- * Row component.  Since the Row component can have negative margins for proper content
- * alignment, the padding on the container balances out this negative margin.
- * 
- * ** NOTE ** The padding must be greater than or equal to the padding used in the Row
- * component, otherwise there will be horizontal screen overflow.
- * 
+ * Container component that will horizontally center itself with default padding.
+ *
+ * ** NOTE ** Also needed When wrapping a Row component, which have negative margins
+ * by default.  The padding must be greater than or equal to the negative margins used
+ * in the Row component, otherwise there will be horizontal screen overflow.
+ *
  * The fluid argument will disregard the set max-width breakpoints and always take up
  * 100% of the parent width.
- * 
+ *
  * @see Row
  * @example
+ * // The Container padding param must be greater than or equal to the Row gutter param
  * const Example = () => (
  *   <Container padding='md'>
- *     <Row>
- *     
+ *     <Row gutter='md'>
+ *       <Col>Hello</Col>
  *     </Row>
  *   </Container>
  * );
@@ -41,22 +40,25 @@ const Container = styled.div<ContainerProps>(({ theme, fluid, padding = 'md' }) 
     !fluid &&
     Object.keys(breakpoints.values).map(key => {
       const sizeKey = key as keyof SizedType;
-      // Get the breakpoint value and decrease the amount to add some extra horizontal margins
-      const breakpointMaxWidth = breakpoints.values[sizeKey] * 0.9;
+      const breakpointMaxWidth = breakpoints.values[sizeKey];
+
+      // For smallest screen return null as we don't have to set the max width
+      if (!breakpointMaxWidth) {
+        return null;
+      }
 
       return css`
         ${breakpoints.up(sizeKey)} {
-          max-width: ${breakpointMaxWidth ? `${breakpointMaxWidth}px` : '100%'};
+          max-width: ${breakpointMaxWidth}px;
         }
       `;
     });
 
   return css`
-    width: 100%;
     margin: 0 auto;
     padding: 0 ${spacing(padding)};
     ${breakpointStyles}
   `;
 });
 
-export default memo(Container);
+export default Container;
