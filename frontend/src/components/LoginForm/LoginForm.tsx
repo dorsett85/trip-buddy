@@ -10,7 +10,7 @@ import { setLoggedIn } from '../../store/user/actions';
 import { LoginFormInputs } from './LoginForm.types';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setLocalToken } from '../../utils/localToken';
-import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 
 export const LOGIN_USER = gql`
   mutation LoginUser($username: String!, $password: String!) {

@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import TripItineraryPanel from './TripItineraryPanel';
 import { ActiveTripInfo } from '../../store/trip/types';
 import { setTripItineraries, setTripItineraryCreator } from '../../store/trip/actions';
-import { useTripItineraries } from '../../utils/hooks/useTrip';
+import { useTripItineraries } from '../../store/hooks/useTrip';
 import { AppAction } from '../../store/types';
 import TripItineraryCreate from './TripItineraryCreate';
 import { AppState } from '../../store';

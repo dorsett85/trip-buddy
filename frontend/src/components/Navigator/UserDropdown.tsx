@@ -17,7 +17,7 @@ import { resetUserState } from '../../store/user/actions';
 import { resetTripState } from '../../store/trip/actions';
 import { AppState } from '../../store';
 import { removeLocalToken } from '../../utils/localToken';
-import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 
 const useStyles = makeStyles((theme: Theme) => ({
   userPopover: {

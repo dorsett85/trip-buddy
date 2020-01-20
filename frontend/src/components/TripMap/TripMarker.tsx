@@ -10,7 +10,7 @@ import { setDrawer } from '../../store/general/actions';
 import { Trip, TripItinerary } from '../../types/trip';
 import { isTrip } from '../../utils/isTrip';
 import { TripMarkerPopupProps } from './TripMarkerPopup';
-import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 
 export interface TripMarkerProps {
   /**

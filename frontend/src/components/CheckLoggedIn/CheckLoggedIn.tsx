@@ -8,7 +8,7 @@ import { getLocalToken } from '../../utils/localToken';
 import { setLoadingTrips, setTrips } from '../../store/trip/actions';
 import TripMapLazy from '../TripMap/TripMapLazy';
 import SideDrawerLazy from '../SideDrawer/SideDrawerLazy';
-import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { useLoggedInQuery } from '../ApolloProvider/hooks/queries';
 
 const CheckLoggedIn: React.FC = () => {

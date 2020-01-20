@@ -10,7 +10,7 @@ import {
 } from '../../store/trip/actions';
 import { getTripMarkers } from './mapHelpers';
 import { LngLatArray } from '../../types/shared';
-import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { setDrawer } from '../../store/general/actions';
 import {
@@ -18,7 +18,7 @@ import {
   useTrips,
   useActiveTripInfo,
   useActiveTrip
-} from '../../utils/hooks/useTrip';
+} from '../../store/hooks/useTrip';
 
 const initialViewport: Partial<ViewportProps> = {
   latitude: 37.785164,

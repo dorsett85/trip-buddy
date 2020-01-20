@@ -7,7 +7,7 @@ import {
   setActiveTripInfo,
   setTripItineraries
 } from '../../store/trip/actions';
-import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 
 const CreateTripButton: React.FC<ButtonProps> = props => {
   const dispatch = useAppDispatch();

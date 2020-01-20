@@ -2,9 +2,9 @@ import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
 import Snackbar from '@material-ui/core/Snackbar';
 import { AppState } from '../../store';
-import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { setActiveTripInfo, setTripItineraries } from '../../store/trip/actions';
-import { useActiveTrip, useActiveTripId } from '../../utils/hooks/useTrip';
+import { useActiveTrip, useActiveTripId } from '../../store/hooks/useTrip';
 
 const DeleteTripSnackbar: React.FC = () => {
   const dispatch = useAppDispatch();

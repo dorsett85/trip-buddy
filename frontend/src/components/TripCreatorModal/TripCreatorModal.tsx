@@ -24,7 +24,7 @@ import { Feature } from '../../types/apiResponses';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setFlyTo } from '../../store/general/actions';
 import { Trip } from '../../types/trip';
-import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { CREATE_TRIP } from '../ApolloProvider/gql/trip';
 
 const FormStyled = styled.form`

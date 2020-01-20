@@ -8,7 +8,7 @@ import { AppState } from '../../store';
 import { setDrawer } from '../../store/general/actions';
 import UserContent from '../UserContent/UserContent';
 import TripContent from '../TripContent/TripContent';
-import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { setTripItineraryCreator } from '../../store/trip/actions';
 
 export interface SideDrawerProps extends DrawerProps {

@@ -5,7 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { AppState } from '../../store';
 import { setTripCreator } from '../../store/trip/actions';
-import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 
 const TripCreatorSnackbar = () => {
   const dispatch = useAppDispatch();

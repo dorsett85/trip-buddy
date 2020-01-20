@@ -10,7 +10,7 @@ import { setLoggedIn } from '../../store/user/actions';
 import { RegisterFormInputs } from './RegisterForm.types';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setLocalToken } from '../../utils/localToken';
-import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 
 export const REGISTER_USER = gql`
   mutation RegisterUser($email: String!, $password: String!) {
