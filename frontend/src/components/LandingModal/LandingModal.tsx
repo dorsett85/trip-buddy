@@ -4,11 +4,12 @@ import { useTheme } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Typography from '@material-ui/core/Typography';
-import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import Slide from '@material-ui/core/Slide';
 import { TransitionProps } from '@material-ui/core/transitions';
-import TabBar from '../generic/TabBar/TabBar';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import styled from 'styled-components';
 import LoginForm from '../LoginForm/LoginForm';
 import RegisterForm from '../RegisterForm/RegisterForm';
 import { ShowProps } from '../../types/componentProps';
@@ -16,6 +17,14 @@ import { ShowProps } from '../../types/componentProps';
 interface LandingFormProps {
   formType: string;
 }
+
+const ToggleButtonStyled = styled(ToggleButton)``;
+const ToggleButtonGroupStyled = styled(ToggleButtonGroup)`
+  width: 100%;
+  ${ToggleButtonStyled} {
+    width: 50%;
+  }
+`;
 
 const LandingForm: React.FC<LandingFormProps> = ({ formType }) =>
   formType === 'login' ? <LoginForm /> : <RegisterForm />;
@@ -44,16 +53,11 @@ const LandingModal: React.FC<ShowProps> = ({ show }) => {
             Plan your perfect trip!
           </Typography>
         </Box>
-        <TabBar
-          tabsProps={{
-            value: tabValue,
-            onChange: handleChange
-          }}
-        >
-          <Tab label='Login' value='login' />
-          <Tab label='Register' value='register' />
-        </TabBar>
-        <Box pt={3} p={1}>
+        <ToggleButtonGroupStyled exclusive value={tabValue} onChange={handleChange}>
+          <ToggleButtonStyled value='login'>Login</ToggleButtonStyled>
+          <ToggleButtonStyled value='register'>Register</ToggleButtonStyled>
+        </ToggleButtonGroupStyled>
+        <Box pt={2} pb={1}>
           <LandingForm formType={tabValue} />
         </Box>
       </DialogContent>
