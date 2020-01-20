@@ -6,7 +6,7 @@ const initialState: UserState = {
   data: undefined
 };
 
-export const userReducer: UserReducer = (state = initialState, action) => {
+export const userReducer: UserReducer = (state = initialState, action): UserState => {
   if (action.type === 'RESET_STATE') {
     return initialState;
   }

@@ -8,7 +8,7 @@ const initialState: GeneralState = {
   flyTo: undefined
 };
 
-export const generalReducer: GeneralReducer = (state = initialState, action) => {
+export const generalReducer: GeneralReducer = (state = initialState, action): GeneralState => {
   if (action.type === 'RESET_STATE') {
     return initialState;
   }
