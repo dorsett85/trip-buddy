@@ -4,19 +4,13 @@ import { tripReducer } from './trip/reducer';
 import { AppState, AppAction, AppReducers } from './types';
 import { generalReducer } from './general/reducer';
 
-// const appReducers: AppReducers = {
-//   general: generalReducer,
-//   user: userReducer,
-//   trip: tripReducer
-// };
-
-const rootReducer = combineReducers<AppState>({
+const appReducers: AppReducers = {
   general: generalReducer,
   user: userReducer,
   trip: tripReducer
-});
+};
 
-export type AppState = ReturnType<typeof rootReducer>;
+const rootReducer = combineReducers(appReducers);
 
 function configureStore(): Store<AppState, AppAction> {
   const store = createStore(rootReducer);
