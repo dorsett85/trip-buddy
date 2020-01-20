@@ -1,16 +1,15 @@
 import React, { memo } from 'react';
-import { useSelector } from 'react-redux';
 import Snackbar from '@material-ui/core/Snackbar';
-import { AppState } from '../../store';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { setActiveTripInfo, setTripItineraries } from '../../store/trip/actions';
 import { useActiveTrip, useActiveTripId } from '../../store/hooks/useTrip';
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 const DeleteTripSnackbar: React.FC = () => {
   const dispatch = useAppDispatch();
   const deletedTripId = useActiveTripId();
   const activeTrip = useActiveTrip();
-  const openDrawer = useSelector((state: AppState) => !!state.general.drawer);
+  const openDrawer = useAppSelector(({ general }) => general.drawer.open);
 
   const handleClose = () => {
     dispatch(setActiveTripInfo());

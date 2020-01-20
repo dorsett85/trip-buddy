@@ -11,12 +11,10 @@ import PinDropIcon from '@material-ui/icons/PinDrop';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Button from '@material-ui/core/Button';
 import red from '@material-ui/core/colors/red';
-import { useSelector } from 'react-redux';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import styled from 'styled-components';
 import { useMutation } from '@apollo/react-hooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { AppState } from '../../store';
 import { setTripCreator, addTrip, setActiveTripInfo } from '../../store/trip/actions';
 import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
@@ -26,6 +24,7 @@ import { setFlyTo } from '../../store/general/actions';
 import { Trip } from '../../types/trip';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { CREATE_TRIP } from '../ApolloProvider/gql/trip';
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 const FormStyled = styled.form`
   min-width: 450px;
@@ -38,7 +37,7 @@ const ErrorStyled = styled.div`
 
 const TripCreatorModal: React.FC = () => {
   const dispatch = useAppDispatch();
-  const tripCreator = useSelector(({ trip }: AppState) => trip.creator);
+  const tripCreator = useAppSelector(({ trip }) => trip.creator);
 
   const [locationOptions, setLocationOptions] = useState<Feature[]>();
   const [locationsLoading, setLocationsLoading] = useState(false);

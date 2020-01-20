@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { ViewState, PointerEvent, ViewportProps, FlyToInterpolator } from 'react-map-gl';
-import { useSelector } from 'react-redux';
-import { AppState } from '../../store';
 import {
   setTripCreator,
   setActiveTripInfo,
@@ -19,6 +17,7 @@ import {
   useActiveTripInfo,
   useActiveTrip
 } from '../../store/hooks/useTrip';
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 const initialViewport: Partial<ViewportProps> = {
   latitude: 37.785164,
@@ -46,10 +45,10 @@ const flyToViewport = (lngLat: LngLatArray) => (
 export const useMap = () => {
   const dispatch = useAppDispatch();
   const [viewport, setViewport] = useState(initialViewport);
-  const creatingTrip = useSelector(({ trip }: AppState) => !!trip.creator);
-  const creatingItinerary = useSelector(({ trip }: AppState) => !!trip.itineraryCreator);
+  const creatingTrip = useAppSelector(({ trip }) => !!trip.creator);
+  const creatingItinerary = useAppSelector(({ trip }) => !!trip.itineraryCreator);
   const activeTripInfo = useActiveTripInfo();
-  const flyTo = useSelector(({ general }: AppState) => general.flyTo);
+  const flyTo = useAppSelector(({ general }) => general.flyTo);
 
   const updateViewport = (newViewport: ViewState) => {
     setViewport(newViewport);
@@ -127,12 +126,12 @@ export const useMap = () => {
 
 export const useMapTrips = () => {
   const trips = useTrips();
-  const creatingTrip = useSelector(({ trip }: AppState) => !!trip.creator);
-  const creatingItinerary = useSelector(({ trip }: AppState) => !!trip.itineraryCreator);
+  const creatingTrip = useAppSelector(({ trip }) => !!trip.creator);
+  const creatingItinerary = useAppSelector(({ trip }) => !!trip.itineraryCreator);
   const activeTrip = useActiveTrip();
   const itineraries = useTripItineraries();
-  const updatingLocation = useSelector(
-    ({ trip }: AppState) =>
+  const updatingLocation = useAppSelector(
+    ({ trip }) =>
       creatingTrip ||
       (!!trip.activeTripInfo &&
         (trip.activeTripInfo.updatingLocation ||

@@ -3,14 +3,13 @@ import { Marker } from 'react-map-gl';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import styled from 'styled-components';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
-import { useSelector } from 'react-redux';
 import { setActiveTripInfo } from '../../store/trip/actions';
-import { AppState } from '../../store';
 import { setDrawer } from '../../store/general/actions';
 import { Trip, TripItinerary } from '../../types/trip';
 import { isTrip } from '../../utils/isTrip';
 import { TripMarkerPopupProps } from './TripMarkerPopup';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 export interface TripMarkerProps {
   /**
@@ -43,8 +42,8 @@ const TripMarker: React.FC<TripMarkerProps> = ({
   Icon = LocationOnIcon
 }) => {
   const dispatch = useAppDispatch();
-  const activeMarker = useSelector(
-    ({ trip }: AppState) => trip.activeTripInfo && trip.activeTripInfo.activeMarker
+  const activeMarker = useAppSelector(
+    ({ trip }) => trip.activeTripInfo && trip.activeTripInfo.activeMarker
   );
   const [showHoverPopup, setShowHoverPopup] = useState(false);
 

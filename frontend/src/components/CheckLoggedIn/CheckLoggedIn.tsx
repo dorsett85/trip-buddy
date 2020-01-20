@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import LandingModal from '../LandingModal/LandingModal';
 import Navigator from '../Navigator/Navigator';
-import { AppState } from '../../store';
 import { setLoadingUser, setUser, setLoggedIn } from '../../store/user/actions';
 import { getLocalToken } from '../../utils/localToken';
 import { setLoadingTrips, setTrips } from '../../store/trip/actions';
@@ -10,10 +8,11 @@ import TripMapLazy from '../TripMap/TripMapLazy';
 import SideDrawerLazy from '../SideDrawer/SideDrawerLazy';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { useLoggedInQuery } from '../ApolloProvider/hooks/queries';
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 const CheckLoggedIn: React.FC = () => {
   const dispatch = useAppDispatch();
-  const loggedIn = useSelector(({ user }: AppState) => user.loggedIn);
+  const loggedIn = useAppSelector(({ user }) => user.loggedIn);
   const [getLoggedInData, { loading, data }] = useLoggedInQuery();
 
   // Check login and run dispatch actions

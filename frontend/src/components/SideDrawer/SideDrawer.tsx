@@ -2,14 +2,13 @@ import React from 'react';
 import Drawer, { DrawerProps } from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
-import { useSelector } from 'react-redux';
 import styled, { css } from 'styled-components';
-import { AppState } from '../../store';
 import { setDrawer } from '../../store/general/actions';
 import UserContent from '../UserContent/UserContent';
 import TripContent from '../TripContent/TripContent';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { setTripItineraryCreator } from '../../store/trip/actions';
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 export interface SideDrawerProps extends DrawerProps {
   onClose: () => void;
@@ -53,9 +52,9 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ open, onClose, children }) => (
 
 const SideDrawerContainer: React.FC = () => {
   const dispatch = useAppDispatch();
-  const user = useSelector((state: AppState) => state.user);
-  const creatingItinerary = useSelector(({ trip }: AppState) => !!trip.itineraryCreator);
-  const drawer = useSelector(({ general }: AppState) => general.drawer);
+  const user = useAppSelector(state => state.user);
+  const creatingItinerary = useAppSelector(({ trip }) => !!trip.itineraryCreator);
+  const drawer = useAppSelector(({ general }) => general.drawer);
 
   const handleClose = () => {
     dispatch(setDrawer({ open: false }));

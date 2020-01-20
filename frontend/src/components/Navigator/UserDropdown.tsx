@@ -8,16 +8,15 @@ import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { useSelector } from 'react-redux';
 import { useApolloClient } from '@apollo/react-hooks';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import { setDrawer, resetGeneralState } from '../../store/general/actions';
 import { resetUserState } from '../../store/user/actions';
 import { resetTripState } from '../../store/trip/actions';
-import { AppState } from '../../store';
 import { removeLocalToken } from '../../utils/localToken';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 const useStyles = makeStyles((theme: Theme) => ({
   userPopover: {
@@ -36,7 +35,7 @@ const CircularProgressStyled = styled(CircularProgress)`
 const UserDropdown: React.FC = () => {
   const dispatch = useAppDispatch();
   const client = useApolloClient();
-  const user = useSelector((state: AppState) => state.user);
+  const user = useAppSelector(state => state.user);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null as HTMLElement | null);
 

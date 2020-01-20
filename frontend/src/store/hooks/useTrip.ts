@@ -1,12 +1,11 @@
-import { useSelector } from 'react-redux';
-import { AppState } from '..';
+import { useAppSelector } from './useAppSelector';
 
 // Convenience hooks for accessing state on the trip store
 
-export const useTrips = () => useSelector(({ trip }: AppState) => trip.trips);
+export const useTrips = () => useAppSelector(({ trip }) => trip.trips);
 
 export const useActiveTripId = () =>
-  useSelector(({ trip }: AppState) => trip.activeTripInfo && trip.activeTripInfo.id);
+  useAppSelector(({ trip }) => trip.activeTripInfo && trip.activeTripInfo.id);
 
 export const useActiveTrip = () => {
   const trips = useTrips();
@@ -14,8 +13,6 @@ export const useActiveTrip = () => {
   return activeTripId ? trips[activeTripId] : undefined;
 };
 
-export const useActiveTripInfo = () =>
-  useSelector(({ trip }: AppState) => trip.activeTripInfo);
+export const useActiveTripInfo = () => useAppSelector(({ trip }) => trip.activeTripInfo);
 
-export const useTripItineraries = () =>
-  useSelector(({ trip }: AppState) => trip.itineraries);
+export const useTripItineraries = () => useAppSelector(({ trip }) => trip.itineraries);

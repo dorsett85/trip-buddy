@@ -1,18 +1,17 @@
 import React, { memo } from 'react';
 import Button, { ButtonProps } from '@material-ui/core/Button';
-import { useSelector } from 'react-redux';
-import { AppState } from '../../store';
 import {
   setTripCreator,
   setActiveTripInfo,
   setTripItineraries
 } from '../../store/trip/actions';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 const CreateTripButton: React.FC<ButtonProps> = props => {
   const dispatch = useAppDispatch();
-  const tripCreator = useSelector(({ trip }: AppState) => trip.creator);
-  const activeTrip = useSelector(({ trip }: AppState) => trip.activeTripInfo);
+  const tripCreator = useAppSelector(({ trip }) => trip.creator);
+  const activeTrip = useAppSelector(({ trip }) => trip.activeTripInfo);
 
   const handleClick = () => {
     const newTrip = !tripCreator ? { openModal: true } : undefined;

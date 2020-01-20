@@ -17,7 +17,7 @@ import PinDropIcon from '@material-ui/icons/PinDrop';
 import TextField from '@material-ui/core/TextField';
 import styled from 'styled-components';
 import { DateTimePicker } from '@material-ui/pickers';
-import { DispatchProp, useSelector } from 'react-redux';
+import { DispatchProp } from 'react-redux';
 import { useMutation } from '@apollo/react-hooks';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { TripItinerary } from '../../types/trip';
@@ -37,8 +37,8 @@ import { setFlyTo, setDrawer } from '../../store/general/actions';
 import { Feature } from '../../types/apiResponses';
 import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
-import { AppState } from '../../store';
 import { UPDATE_ITINERARY, DELETE_ITINERARY } from '../ApolloProvider/gql/trip';
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 interface TripItineraryPanelProps extends DispatchProp<AppAction> {
   /**
@@ -327,9 +327,8 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
   dispatch,
   itinerary
 }) => {
-  const updatingItineraryLocationId = useSelector(
-    ({ trip }: AppState) =>
-      trip.activeTripInfo && trip.activeTripInfo.updatingItineraryLocationId
+  const updatingItineraryLocationId = useAppSelector(
+    ({ trip }) => trip.activeTripInfo && trip.activeTripInfo.updatingItineraryLocationId
   );
   const [location, setLocation] = useState(itinerary.location_address);
   const [locationOptions, setLocationOptions] = useState<Feature[]>();
@@ -338,9 +337,8 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
   const [updateLocationText, setUpdateLocationText] = useState(
     DEFAULT_UPDATE_LOCATION_TEXT
   );
-  const newLocation = useSelector(
-    ({ trip }: AppState) =>
-      trip.activeTripInfo && trip.activeTripInfo.newItineraryLocation
+  const newLocation = useAppSelector(
+    ({ trip }) => trip.activeTripInfo && trip.activeTripInfo.newItineraryLocation
   );
   const [updateLocationError, setUpdateLocationError] = useState(false);
 

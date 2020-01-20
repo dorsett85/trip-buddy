@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DispatchProp, useSelector } from 'react-redux';
+import { DispatchProp } from 'react-redux';
 import { useMutation } from '@apollo/react-hooks';
 import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -31,8 +31,8 @@ import { Feature } from '../../types/apiResponses';
 import { AppAction } from '../../store/types';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { debounce } from '../../utils/debouce';
-import { AppState } from '../../store';
 import { DELETE_TRIP, UPDATE_TRIP } from '../ApolloProvider/gql/trip';
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 export interface TripDetailProps extends DispatchProp<AppAction> {
   trip: Trip;
@@ -251,8 +251,8 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   const [updateLocationText, setUpdateLocationText] = useState(
     DEFAULT_UPDATE_LOCATION_TEXT
   );
-  const newLocation = useSelector(
-    (state: AppState) =>
+  const newLocation = useAppSelector(
+    state =>
       state.trip.activeTripInfo && state.trip.activeTripInfo.newLocation
   );
   const [updateLocationError, setUpdateLocationError] = useState(false);

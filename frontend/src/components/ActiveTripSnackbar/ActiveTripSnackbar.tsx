@@ -1,27 +1,26 @@
 import React, { memo } from 'react';
-import { useSelector } from 'react-redux';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import { AppState } from '../../store';
 import { useActiveTrip } from '../../store/hooks/useTrip';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { setDrawer } from '../../store/general/actions';
 import { setActiveTripInfo } from '../../store/trip/actions';
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 const ActiveTripSnackbar = () => {
   const dispatch = useAppDispatch();
   const activeTrip = useActiveTrip();
-  const updatingLocation = useSelector(
-    ({ trip }: AppState) => !!trip.activeTripInfo && trip.activeTripInfo.updatingLocation
+  const updatingLocation = useAppSelector(
+    ({ trip }) => !!trip.activeTripInfo && trip.activeTripInfo.updatingLocation
   );
-  const creatingItinerary = ({ trip }: AppState) => !!trip.itineraryCreator;
-  const updatingItineraryLocation = useSelector(
-    ({ trip }: AppState) =>
+  const creatingItinerary = useAppSelector(({ trip }) => !!trip.itineraryCreator);
+  const updatingItineraryLocation = useAppSelector(
+    ({ trip }) =>
       !!trip.activeTripInfo &&
       trip.activeTripInfo.updatingItineraryLocationId !== undefined
   );
-  const openDrawer = useSelector((state: AppState) => !!state.general.drawer);
+  const openDrawer = useAppSelector(({ general }) => general.drawer.open);
 
   // Never show the snackbar if there's no activeTrip
   if (!activeTrip) {
@@ -31,7 +30,10 @@ const ActiveTripSnackbar = () => {
   const handleClose = () => {
     dispatch(setDrawer({ open: true }));
     dispatch(
-      setActiveTripInfo({ updatingLocation: false, updatingItineraryLocationId: undefined })
+      setActiveTripInfo({
+        updatingLocation: false,
+        updatingItineraryLocationId: undefined
+      })
     );
   };
 
