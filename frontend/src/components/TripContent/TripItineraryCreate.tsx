@@ -25,7 +25,7 @@ import {
   setActiveTripInfo
 } from '../../store/trip/actions';
 import { Feature } from '../../types/apiResponses';
-import { setFlyTo, setOpenDrawer } from '../../store/general/actions';
+import { setFlyTo, setDrawer } from '../../store/general/actions';
 import { getFirstError } from '../../utils/apolloErrors';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { debounce } from '../../utils/debouce';
@@ -162,7 +162,7 @@ const ItineraryLocationInput: React.FC<TripItineraryCreateProps> = ({
   };
 
   const handleDropLocationPinClick = () => {
-    dispatch(setOpenDrawer(false));
+    dispatch(setDrawer({ open: false }));
   };
 
   return (

@@ -1,13 +1,22 @@
 import { Reducer, Action, ActionCreator } from 'redux';
 import { User } from '../../types/user';
-import { GenericAction, GenericActionCreator } from '../../types/store';
+import { GenericAction, GenericActionCreator } from '../utils.types';
 
 // State
-export type UserInfoType = 'profile' | 'account';
-export interface UserState extends Partial<User> {
-  loggedIn: boolean;
+export interface UserState {
+  /**
+   * If the user data is being requested
+   */
   loading: boolean;
-  viewInfo: UserInfoType | false;
+  /**
+   * If the user is logged in (i.e., the local jwt token is saved
+   * in local storage)
+   */
+  loggedIn: boolean;
+  /**
+   * Record of the logged in user
+   */
+  data: User | undefined;
 }
 
 // Reducer
@@ -16,37 +25,30 @@ export type UserReducer = Reducer<UserState, UserAction>;
 // Action types
 export enum UserActionType {
   RESET_STATE = 'RESET_STATE',
-  SET_LOGGED_IN = 'SET_LOGGED_IN',
   SET_LOADING = 'SET_LOADING',
-  SET_VIEW_INFO = 'SET_VIEW_INFO',
+  SET_LOGGED_IN = 'SET_LOGGED_IN',
   SET_USER = 'SET_USER'
 }
 
 // Actions
-export type ResetStateAction = Action<UserActionType.RESET_STATE>;
-export type SetLoggedInAction = GenericAction<
-  UserActionType.SET_LOGGED_IN,
-  UserState['loggedIn']
->;
+export type ResetUserStateAction = Action<UserActionType.RESET_STATE>;
 export type SetLoadingAction = GenericAction<
   UserActionType.SET_LOADING,
   UserState['loading']
 >;
-export type SetViewInfoAction = GenericAction<
-  UserActionType.SET_VIEW_INFO,
-  UserState['viewInfo']
+export type SetLoggedInAction = GenericAction<
+  UserActionType.SET_LOGGED_IN,
+  UserState['loggedIn']
 >;
 export type SetUserAction = GenericAction<UserActionType.SET_USER, Partial<User>>;
 export type UserAction =
-  | ResetStateAction
-  | SetLoggedInAction
+  | ResetUserStateAction
   | SetLoadingAction
-  | SetViewInfoAction
+  | SetLoggedInAction
   | SetUserAction;
 
 // Action creators
-export type ResetUserState = ActionCreator<ResetStateAction>;
-export type SetLoggedIn = GenericActionCreator<SetLoggedInAction>;
+export type ResetUserState = ActionCreator<ResetUserStateAction>;
 export type SetLoading = GenericActionCreator<SetLoadingAction>;
-export type SetViewInfo = GenericActionCreator<SetViewInfoAction>;
+export type SetLoggedIn = GenericActionCreator<SetLoggedInAction>;
 export type SetUser = GenericActionCreator<SetUserAction>;

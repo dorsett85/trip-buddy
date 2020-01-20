@@ -9,7 +9,7 @@ const initialState: TripState = {
   activeTripInfo: undefined
 };
 
-export const tripReducer: TripReducer = (state = initialState, action): TripState => {
+export const tripReducer: TripReducer = (state = initialState, action) => {
   if (action.type === 'RESET_STATE') {
     return initialState;
   }

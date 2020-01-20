@@ -1,12 +1,11 @@
-import { SetOpenDrawer, GeneralActionType, SetFlyTo, ResetGeneralState } from './types';
+import { GeneralActionType, SetFlyTo, ResetGeneralState, SetDrawer } from './types';
 
 export const resetGeneralState: ResetGeneralState = () => ({
   type: GeneralActionType.RESET_STATE
 });
 
-
-export const setOpenDrawer: SetOpenDrawer = payload => ({
-  type: GeneralActionType.SET_OPEN_DRAWER,
+export const setDrawer: SetDrawer = payload => ({
+  type: GeneralActionType.SET_DRAWER,
   payload
 });
 

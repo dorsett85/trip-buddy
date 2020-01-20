@@ -1,17 +1,24 @@
 import { GeneralState, GeneralReducer } from './types';
 
 const initialState: GeneralState = {
-  openDrawer: false,
+  drawer: {
+    open: false,
+    content: undefined
+  },
   flyTo: undefined
 };
 
-export const generalReducer: GeneralReducer = (state = initialState, action): GeneralState => {
+export const generalReducer: GeneralReducer = (state = initialState, action) => {
   if (action.type === 'RESET_STATE') {
     return initialState;
   }
-  
-  if (action.type === 'SET_OPEN_DRAWER') {
-    return { ...state, openDrawer: action.payload };
+
+  if (action.type === 'SET_DRAWER') {
+    const drawer = {
+      ...state.drawer,
+      ...action.payload
+    };
+    return { ...state, drawer };
   }
 
   if (action.type === 'SET_FLY_TO') {

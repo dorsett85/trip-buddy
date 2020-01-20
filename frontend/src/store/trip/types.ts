@@ -1,5 +1,5 @@
 import { Reducer, Action, ActionCreator } from 'redux';
-import { GenericAction, GenericActionCreator } from '../../types/store';
+import { GenericAction, GenericActionCreator } from '../utils.types';
 import { Trip, TripItinerary } from '../../types/trip';
 import { LngLatArray } from '../../types/shared';
 

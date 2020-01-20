@@ -12,8 +12,8 @@ import { useSelector } from 'react-redux';
 import { useApolloClient } from '@apollo/react-hooks';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import styled from 'styled-components';
-import { setOpenDrawer, resetGeneralState } from '../../store/general/actions';
-import { setViewInfo, resetUserState } from '../../store/user/actions';
+import { setDrawer, resetGeneralState } from '../../store/general/actions';
+import { resetUserState } from '../../store/user/actions';
 import { resetTripState } from '../../store/trip/actions';
 import { AppState } from '../../store';
 import { removeLocalToken } from '../../utils/localToken';
@@ -48,14 +48,8 @@ const UserDropdown: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const handleProfileClick = () => {
-    dispatch(setViewInfo('profile'));
-    dispatch(setOpenDrawer(true));
-  };
-
   const handleAccountClick = () => {
-    dispatch(setViewInfo('account'));
-    dispatch(setOpenDrawer(true));
+    dispatch(setDrawer({ open: true, content: 'user' }));
   };
 
   const handleLogoutClick = () => {
@@ -69,7 +63,7 @@ const UserDropdown: React.FC = () => {
 
   return (
     <>
-      <IconButton edge='end' onClick={handleMenu} color='inherit'>
+      <IconButton edge='end' onClick={handleMenu} color='inherit' disabled={user.loading}>
         {user.loading && <CircularProgressStyled color='inherit' />}
         <AccountCircle />
       </IconButton>
@@ -90,21 +84,22 @@ const UserDropdown: React.FC = () => {
         onClose={handlePopoverClose}
         disableRestoreFocus
       >
-        <Typography variant='h6' gutterBottom>
-          {user.username}
-        </Typography>
-        <Divider />
-        <List>
-          <ListItem button onClick={handlePopoverClose}>
-            <ListItemText onClick={handleProfileClick} primary='Profile' />
-          </ListItem>
-          <ListItem button onClick={handlePopoverClose}>
-            <ListItemText onClick={handleAccountClick} primary='My Account' />
-          </ListItem>
-          <ListItem button onClick={handleLogoutClick}>
-            <ListItemText primary='Logout' />
-          </ListItem>
-        </List>
+        {user.data && (
+          <div>
+            <Typography variant='h6' gutterBottom>
+              {user.data.username}
+            </Typography>
+            <Divider />
+            <List>
+              <ListItem button onClick={handlePopoverClose}>
+                <ListItemText onClick={handleAccountClick} primary='My Account' />
+              </ListItem>
+              <ListItem button onClick={handleLogoutClick}>
+                <ListItemText primary='Logout' />
+              </ListItem>
+            </List>
+          </div>
+        )}
       </Popover>
     </>
   );

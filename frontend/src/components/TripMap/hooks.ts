@@ -12,7 +12,7 @@ import { getTripMarkers } from './mapHelpers';
 import { LngLatArray } from '../../types/shared';
 import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
-import { setOpenDrawer } from '../../store/general/actions';
+import { setDrawer } from '../../store/general/actions';
 import {
   useTripItineraries,
   useTrips,
@@ -85,7 +85,7 @@ export const useMap = () => {
             location_address: locationText
           })
         );
-        dispatch(setOpenDrawer(true));
+        dispatch(setDrawer({ open: true }));
       });
       return;
     }
@@ -93,14 +93,14 @@ export const useMap = () => {
     // Set the new location that will be picked up in the trip panel
     if (activeTripInfo && activeTripInfo.updatingLocation) {
       dispatch(setActiveTripInfo({ newLocation: e.lngLat }));
-      dispatch(setOpenDrawer(true));
+      dispatch(setDrawer({ open: true }));
       return;
     }
 
     // Set the new itinerary location that will be picked up in the itinerary panel
     if (activeTripInfo && activeTripInfo.updatingItineraryLocationId !== undefined) {
       dispatch(setActiveTripInfo({ newItineraryLocation: e.lngLat }));
-      dispatch(setOpenDrawer(true));
+      dispatch(setDrawer({ open: true }));
       return;
     }
 

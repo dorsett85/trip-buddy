@@ -10,7 +10,7 @@ const DeleteTripSnackbar: React.FC = () => {
   const dispatch = useAppDispatch();
   const deletedTripId = useActiveTripId();
   const activeTrip = useActiveTrip();
-  const openDrawer = useSelector((state: AppState) => state.general.openDrawer);
+  const openDrawer = useSelector((state: AppState) => !!state.general.drawer);
 
   const handleClose = () => {
     dispatch(setActiveTripInfo());

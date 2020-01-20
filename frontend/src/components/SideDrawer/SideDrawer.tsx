@@ -5,17 +5,17 @@ import CloseIcon from '@material-ui/icons/Close';
 import { useSelector } from 'react-redux';
 import styled, { css } from 'styled-components';
 import { AppState } from '../../store';
-import { setOpenDrawer } from '../../store/general/actions';
-import { setViewInfo } from '../../store/user/actions';
+import { setDrawer } from '../../store/general/actions';
 import UserContent from '../UserContent/UserContent';
 import TripContent from '../TripContent/TripContent';
-import { useActiveTrip } from '../../utils/hooks/useTrip';
 import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
 import { setTripItineraryCreator } from '../../store/trip/actions';
 
 export interface SideDrawerProps extends DrawerProps {
   onClose: () => void;
 }
+
+const DrawerContent = styled.div``;
 
 const DrawerContentContainer = styled.div(
   ({ theme }) => css`
@@ -27,7 +27,7 @@ const DrawerContentContainer = styled.div(
     > button {
       margin-bottom: 0.5rem;
     }
-    .drawerContentContainer-content {
+    ${DrawerContent} {
       padding-top: 0.5rem;
     }
   `
@@ -46,7 +46,7 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ open, onClose, children }) => (
         <CloseIcon />
       </Button>
       <hr />
-      <div className='drawerContentContainer-content'>{children}</div>
+      <DrawerContent>{children}</DrawerContent>
     </DrawerContentContainer>
   </Drawer>
 );
@@ -54,36 +54,29 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ open, onClose, children }) => (
 const SideDrawerContainer: React.FC = () => {
   const dispatch = useAppDispatch();
   const user = useSelector((state: AppState) => state.user);
-  const activeTrip = useActiveTrip();
   const creatingItinerary = useSelector(({ trip }: AppState) => !!trip.itineraryCreator);
-  const open = useSelector(({ general }: AppState) => general.openDrawer);
-
-  const openTripDrawer = open && !user.viewInfo;
-  const openUserDrawer = open && !!user.viewInfo;
+  const drawer = useSelector(({ general }: AppState) => general.drawer);
 
   const handleClose = () => {
-    dispatch(setOpenDrawer(false));
+    dispatch(setDrawer({ open: false }));
 
     // Unset the creating itinerary state
     if (creatingItinerary) {
       dispatch(setTripItineraryCreator());
     }
-
-    // Unset the user info viewing state
-    if (user.viewInfo) {
-      dispatch(setViewInfo(false));
-    }
   };
 
+  const content =
+    drawer.content === 'trip' ? (
+      <TripContent dispatch={dispatch} />
+    ) : drawer.content === 'user' && user.data ? (
+      <UserContent dispatch={dispatch} user={user.data} />
+    ) : null;
+
   return (
-    <>
-      <SideDrawer open={openTripDrawer} onClose={handleClose}>
-        {activeTrip && <TripContent dispatch={dispatch} trip={activeTrip} />}
-      </SideDrawer>
-      <SideDrawer open={openUserDrawer} onClose={handleClose}>
-        <UserContent dispatch={dispatch} user={user} />
-      </SideDrawer>
-    </>
+    <SideDrawer open={drawer.open} onClose={handleClose}>
+      {content}
+    </SideDrawer>
   );
 };
 

@@ -6,7 +6,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { AppState } from '../../store';
 import { useActiveTrip } from '../../utils/hooks/useTrip';
 import { useAppDispatch } from '../../utils/hooks/useAppDispatch';
-import { setOpenDrawer } from '../../store/general/actions';
+import { setDrawer } from '../../store/general/actions';
 import { setActiveTripInfo } from '../../store/trip/actions';
 
 const ActiveTripSnackbar = () => {
@@ -21,7 +21,7 @@ const ActiveTripSnackbar = () => {
       !!trip.activeTripInfo &&
       trip.activeTripInfo.updatingItineraryLocationId !== undefined
   );
-  const openDrawer = useSelector((state: AppState) => state.general.openDrawer);
+  const openDrawer = useSelector((state: AppState) => !!state.general.drawer);
 
   // Never show the snackbar if there's no activeTrip
   if (!activeTrip) {
@@ -29,7 +29,7 @@ const ActiveTripSnackbar = () => {
   }
 
   const handleClose = () => {
-    dispatch(setOpenDrawer(true));
+    dispatch(setDrawer({ open: true }));
     dispatch(
       setActiveTripInfo({ updatingLocation: false, updatingItineraryLocationId: undefined })
     );

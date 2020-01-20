@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import Tab from '@material-ui/core/Tab';
 import styled from 'styled-components';
 import { DispatchProp } from 'react-redux';
 import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
-import TabBar from '../generic/TabBar/TabBar';
-import { UserState } from '../../store/user/types';
-import { setViewInfo, setUser } from '../../store/user/actions';
+import { setUser } from '../../store/user/actions';
 import { User } from '../../types/user';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { getFirstError } from '../../utils/apolloErrors';
-import { SUCCESSFUL_UPDATE_MESSAGE, UPDATING_MESSAGE } from '../../utils/constants/messages';
+import {
+  SUCCESSFUL_UPDATE_MESSAGE,
+  UPDATING_MESSAGE
+} from '../../utils/constants/messages';
 import { AppAction } from '../../store/types';
 
 export const UPDATE_USER = gql`
@@ -23,7 +23,7 @@ export const UPDATE_USER = gql`
 `;
 
 export interface UserContentProps extends DispatchProp<AppAction> {
-  user?: UserState;
+  user: User;
 }
 
 export interface UserInfoProps extends DispatchProp<AppAction> {
@@ -34,7 +34,7 @@ const UserInfo = styled.div`
   padding-top: 1rem;
 `;
 
-const UserProfile: React.FC<UserInfoProps> = ({ dispatch, user }) => {
+const UserNameInput: React.FC<UserInfoProps> = ({ dispatch, user }) => {
   const [username, setUsername] = useState(user.username);
   const [editingUsername, setEditingUsername] = useState(false);
   const [updateUsernameText, setUpdateUsernameText] = useState('');
@@ -77,24 +77,22 @@ const UserProfile: React.FC<UserInfoProps> = ({ dispatch, user }) => {
   };
 
   return (
-    <>
-      <h2>Edit profile info:</h2>
-      <EditableTextField
-        label='Username'
-        value={username}
-        editing={editingUsername}
-        onChange={handleUsernameChange}
-        onSubmitEdit={handleSubmitUsername}
-        onCancelEdit={handleCancelUsername}
-        helperText={loading ? UPDATING_MESSAGE : updateUsernameText}
-        error={updateUsernameError}
-        fullWidth
-      />
-    </>
+    <EditableTextField
+      label='Username'
+      value={username}
+      editing={editingUsername}
+      onChange={handleUsernameChange}
+      onSubmitEdit={handleSubmitUsername}
+      onCancelEdit={handleCancelUsername}
+      helperText={loading ? UPDATING_MESSAGE : updateUsernameText}
+      error={updateUsernameError}
+      fullWidth
+      margin='normal'
+    />
   );
 };
 
-const UserAccount: React.FC<UserInfoProps> = ({ dispatch, user }) => {
+const UserEmailInput: React.FC<UserInfoProps> = ({ dispatch, user }) => {
   const [email, setEmail] = useState(user.email);
   const [editingEmail, setEditingEmail] = useState(false);
   const [updateEmailText, setUpdateEmailText] = useState('');
@@ -137,50 +135,28 @@ const UserAccount: React.FC<UserInfoProps> = ({ dispatch, user }) => {
   };
 
   return (
-    <>
-      <h2>Edit Account info:</h2>
-      <EditableTextField
-        label='Email'
-        value={email}
-        editing={editingEmail}
-        onChange={handleEmailChange}
-        onSubmitEdit={handleSubmitEmail}
-        onCancelEdit={handleCancelEmail}
-        helperText={loading ? UPDATING_MESSAGE : updateEmailText}
-        error={updateEmailError}
-        fullWidth
-      />
-    </>
+    <EditableTextField
+      label='Email'
+      value={email}
+      editing={editingEmail}
+      onChange={handleEmailChange}
+      onSubmitEdit={handleSubmitEmail}
+      onCancelEdit={handleCancelEmail}
+      helperText={loading ? UPDATING_MESSAGE : updateEmailText}
+      error={updateEmailError}
+      fullWidth
+      margin='normal'
+    />
   );
 };
 
 const UserContent: React.FC<UserContentProps> = ({ dispatch, user }) => {
-  const handleTabClick = (e: React.ChangeEvent<{}>, value: any) => {
-    dispatch(setViewInfo(value));
-  };
-
-  // Check to display profile or account tab
-  const content =
-    user &&
-    (user.viewInfo === 'profile' ? (
-      <UserProfile dispatch={dispatch} user={user as User} />
-    ) : (
-      <UserAccount dispatch={dispatch} user={user as User} />
-    ));
-
   return (
-    <>
-      <TabBar
-        tabsProps={{
-          value: user && user.viewInfo,
-          onChange: handleTabClick
-        }}
-      >
-        <Tab label='Profile' value='profile' />
-        <Tab label='Account' value='account' />
-      </TabBar>
-      <UserInfo>{content}</UserInfo>
-    </>
+    <UserInfo>
+      <h2>Account Details</h2>
+      <UserNameInput dispatch={dispatch} user={user} />
+      <UserEmailInput dispatch={dispatch} user={user} />
+    </UserInfo>
   );
 };
 

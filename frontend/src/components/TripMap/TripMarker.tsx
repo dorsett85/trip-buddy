@@ -6,7 +6,7 @@ import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import { useSelector } from 'react-redux';
 import { setActiveTripInfo } from '../../store/trip/actions';
 import { AppState } from '../../store';
-import { setOpenDrawer } from '../../store/general/actions';
+import { setDrawer } from '../../store/general/actions';
 import { Trip, TripItinerary } from '../../types/trip';
 import { isTrip } from '../../utils/isTrip';
 import { TripMarkerPopupProps } from './TripMarkerPopup';
@@ -63,7 +63,7 @@ const TripMarker: React.FC<TripMarkerProps> = ({
       const activeTripId = isTrip(markerData) ? markerData.id : markerData.trip_id;
       dispatch(setActiveTripInfo({ id: activeTripId, activeMarker: markerId }));
     }
-    dispatch(setOpenDrawer(true));
+    dispatch(setDrawer({ open: true, content: 'trip' }));
   };
 
   return (

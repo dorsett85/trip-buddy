@@ -33,7 +33,7 @@ import {
 } from '../../store/trip/actions';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { AppAction } from '../../store/types';
-import { setFlyTo, setOpenDrawer } from '../../store/general/actions';
+import { setFlyTo, setDrawer } from '../../store/general/actions';
 import { Feature } from '../../types/apiResponses';
 import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
@@ -437,9 +437,13 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
   };
 
   const handleDropLocationPinClick = () => {
-    dispatch(setActiveTripInfo({ activeMarker: `${itinerary.trip_id}-${itinerary.id}` }));
-    dispatch(setOpenDrawer(false));
-    dispatch(setActiveTripInfo({ updatingItineraryLocationId: itinerary.id }));
+    dispatch(
+      setActiveTripInfo({
+        activeMarker: `${itinerary.trip_id}-${itinerary.id}`,
+        updatingItineraryLocationId: itinerary.id
+      })
+    );
+    dispatch(setDrawer({ open: false }));
   };
 
   return (
