@@ -1,4 +1,6 @@
-import { TripState, TripReducer } from './types';
+/* eslint-disable no-param-reassign */
+import { createSlice } from '@reduxjs/toolkit';
+import { TripState, TripSliceCaseReducers } from './types';
 
 const initialState: TripState = {
   loadingTrips: false,
@@ -9,110 +11,91 @@ const initialState: TripState = {
   activeTripInfo: undefined
 };
 
-export const tripReducer: TripReducer = (state = initialState, action): TripState => {
-  if (action.type === 'RESET_STATE') {
-    return initialState;
-  }
-
-  if (action.type === 'SET_LOADING_TRIPS') {
-    return { ...state, loadingTrips: action.payload };
-  }
-
-  if (action.type === 'SET_TRIPS') {
+const reducers: TripSliceCaseReducers = {
+  resetTripState: () => initialState,
+  setLoadingTrips: (state, { payload }) => {
+    state.loadingTrips = payload;
+  },
+  setTrips: (state, { payload }) => {
     const trips: TripState['trips'] = {};
-    action.payload.forEach(trip => {
+    payload.forEach(trip => {
       const { id } = trip;
       trips[id] = trip;
     });
-    return { ...state, trips };
-  }
-
-  if (action.type === 'SET_CREATOR') {
-    const creator: TripState['creator'] = action.payload && {
+    state.trips = trips;
+  },
+  setTripCreator: (state, { payload }) => {
+    state.creator = payload && {
       ...state.creator,
-      ...action.payload
+      ...payload
     };
-    return { ...state, creator };
-  }
-
-  if (action.type === 'ADD_TRIP') {
-    const { id } = action.payload;
-    const trips: TripState['trips'] = {
-      ...state.trips,
-      [id]: action.payload
-    };
-    return { ...state, trips };
-  }
-
-  if (action.type === 'UPDATE_TRIP') {
-    const { id, ...rest } = action.payload;
-    const trips: TripState['trips'] = {
-      ...state.trips,
-      [id]: { ...state.trips[id], ...rest }
-    };
-
-    return { ...state, trips };
-  }
-
-  if (action.type === 'DELETE_TRIP') {
-    const id = action.payload;
-    const trips = { ...state.trips };
-    delete trips[id];
-    return { ...state, trips };
-  }
-
-  if (action.type === 'SET_ACTIVE_TRIP_INFO') {
-    const activeTripInfo: TripState['activeTripInfo'] = action.payload && {
+  },
+  addTrip: (state, { payload }) => {
+    const { id } = payload;
+    state.trips[id] = payload;
+  },
+  updateTrip: (state, { payload }) => {
+    const { id, ...rest } = payload;
+    state.trips[id] = { ...state.trips[id], ...rest };
+  },
+  deleteTrip: (state, { payload }) => {
+    delete state.trips[payload];
+  },
+  setActiveTripInfo: (state, { payload }) => {
+    state.activeTripInfo = payload && {
       ...state.activeTripInfo!,
-      ...action.payload
+      ...payload
     };
-    return { ...state, activeTripInfo };
-  }
-
-  if (action.type === 'SET_ITINERARIES') {
+  },
+  setTripItineraries: (state, { payload }) => {
     const itineraries: TripState['itineraries'] = {};
-    if (action.payload) {
-      action.payload.forEach(itinerary => {
+    if (payload) {
+      payload.forEach(itinerary => {
         const { id } = itinerary;
         itineraries[id] = itinerary;
       });
     }
-    return { ...state, itineraries };
-  }
-
-  if (action.type === 'SET_ITINERARY_CREATOR') {
-    const itineraryCreator = action.payload && {
+    state.itineraries = itineraries;
+  },
+  setTripItineraryCreator: (state, { payload }) => {
+    state.itineraryCreator = payload && {
       ...state.itineraryCreator,
-      ...action.payload
+      ...payload
     };
-
-    return { ...state, itineraryCreator };
+  },
+  addTripItinerary: (state, { payload }) => {
+    const { id } = payload;
+    state.itineraries[id] = payload;
+  },
+  updateTripItinerary: (state, { payload }) => {
+    const { id, ...rest } = payload;
+    state.itineraries[id] = { ...state.itineraries[id], ...rest };
+  },
+  deleteTripItinerary: (state, { payload }) => {
+    delete state.itineraries[payload];
   }
-
-  if (action.type === 'ADD_ITINERARY') {
-    const { id } = action.payload;
-    const itineraries: TripState['itineraries'] = {
-      ...state.itineraries,
-      [id]: action.payload
-    };
-    return { ...state, itineraries };
-  }
-
-  if (action.type === 'UPDATE_ITINERARY') {
-    const { id, ...rest } = action.payload;
-    const itineraries: TripState['itineraries'] = {
-      ...state.itineraries,
-      [id]: { ...state.itineraries[id], ...rest }
-    };
-    return { ...state, itineraries };
-  }
-
-  if (action.type === 'DELETE_ITINERARY') {
-    const id = action.payload;
-    const itineraries = { ...state.itineraries };
-    delete itineraries[id];
-    return { ...state, itineraries };
-  }
-
-  return state;
 };
+
+const tripSlice = createSlice({
+  name: 'trip',
+  initialState,
+  reducers
+});
+
+export const {
+  resetTripState,
+  setLoadingTrips,
+  setTrips,
+  setTripCreator,
+  addTrip,
+  updateTrip,
+  deleteTrip,
+  setActiveTripInfo,
+  setTripItineraries,
+  setTripItineraryCreator,
+  addTripItinerary,
+  updateTripItinerary,
+  deleteTripItinerary
+} = tripSlice.actions;
+
+export const tripReducer = tripSlice.reducer;

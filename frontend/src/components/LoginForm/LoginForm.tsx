@@ -6,7 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
-import { setLoggedIn } from '../../store/user/actions';
+import { setLoggedIn } from '../../store/user/reducer';
 import { LoginFormInputs } from './LoginForm.types';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setLocalToken } from '../../utils/localToken';

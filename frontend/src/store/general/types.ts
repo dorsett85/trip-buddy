@@ -1,5 +1,4 @@
-import { Reducer, ActionCreator, Action } from 'redux';
-import { GenericAction, GenericActionCreator } from '../utils.types';
+import { CaseReducer, PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
 import { LngLatArray } from '../../types/shared';
 
 // State
@@ -20,28 +19,13 @@ export interface GeneralState {
 }
 
 // Reducer
-export type GeneralReducer = Reducer<GeneralState, GeneralAction>;
+type GeneralCaseReducer<TPayload = void> = CaseReducer<
+  GeneralState,
+  PayloadAction<TPayload>
+>;
 
-// Action types
-export enum GeneralActionType {
-  RESET_STATE = 'RESET_STATE',
-  SET_DRAWER = 'SET_DRAWER',
-  SET_FLY_TO = 'SET_FLY_TO'
+export interface GeneralSliceCaseReducers extends SliceCaseReducers<GeneralState> {
+  resetGeneralState: GeneralCaseReducer;
+  setDrawer: GeneralCaseReducer<Partial<GeneralState['drawer']>>;
+  setFlyTo: GeneralCaseReducer<GeneralState['flyTo']>;
 }
-
-// Actions
-export type ResetGeneralStateAction = Action<GeneralActionType.RESET_STATE>;
-export type SetDrawerAction = GenericAction<
-  GeneralActionType.SET_DRAWER,
-  Partial<GeneralState['drawer']>
->;
-export type SetFlyToAction = GenericAction<
-  GeneralActionType.SET_FLY_TO,
-  GeneralState['flyTo']
->;
-export type GeneralAction = ResetGeneralStateAction | SetDrawerAction | SetFlyToAction;
-
-// Action creators
-export type ResetGeneralState = ActionCreator<ResetGeneralStateAction>;
-export type SetDrawer = GenericActionCreator<SetDrawerAction>;
-export type SetFlyTo = GenericActionCreator<SetFlyToAction>;

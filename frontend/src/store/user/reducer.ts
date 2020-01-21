@@ -1,4 +1,6 @@
-import { UserState, UserReducer } from './types';
+/* eslint-disable no-param-reassign */
+import { createSlice } from '@reduxjs/toolkit';
+import { UserState, UserSliceCaseReducers } from './types';
 
 const initialState: UserState = {
   loading: false,
@@ -6,26 +8,28 @@ const initialState: UserState = {
   data: undefined
 };
 
-export const userReducer: UserReducer = (state = initialState, action): UserState => {
-  if (action.type === 'RESET_STATE') {
-    return initialState;
-  }
-
-  if (action.type === 'SET_LOADING') {
-    return { ...state, loading: action.payload };
-  }
-
-  if (action.type === 'SET_LOGGED_IN') {
-    return { ...state, loggedIn: action.payload, loading: false };
-  }
-
-  if (action.type === 'SET_USER') {
-    const data = action.payload && {
+const reducers: UserSliceCaseReducers = {
+  resetUserState: () => initialState,
+  setLoadingUser: (state, { payload }) => {
+    state.loading = payload;
+  },
+  setLoggedIn: (state, { payload }) => {
+    state.loggedIn = payload;
+  },
+  setUser: (state, { payload }) => {
+    state.data = payload && {
       ...state.data!,
-      ...action.payload
+      ...payload
     };
-    return { ...state, data };
   }
-
-  return state;
 };
+
+const userSlice = createSlice({
+  name: 'user',
+  initialState,
+  reducers
+});
+
+export const { resetUserState, setLoadingUser, setLoggedIn, setUser } = userSlice.actions;
+
+export const userReducer = userSlice.reducer;

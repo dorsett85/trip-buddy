@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import { setActiveTripInfo, setTripItineraries } from '../../store/trip/actions';
+import { setActiveTripInfo, setTripItineraries } from '../../store/trip/reducer';
 import { useActiveTrip, useActiveTripId } from '../../store/hooks/useTrip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 

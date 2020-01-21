@@ -4,7 +4,7 @@ import {
   setTripCreator,
   setActiveTripInfo,
   setTripItineraries
-} from '../../store/trip/actions';
+} from '../../store/trip/reducer';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 

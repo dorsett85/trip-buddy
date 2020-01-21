@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { DispatchProp } from 'react-redux';
 import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
-import { setUser } from '../../store/user/actions';
+import { setUser } from '../../store/user/reducer';
 import { User } from '../../types/user';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { getFirstError } from '../../utils/apolloErrors';
@@ -11,7 +11,6 @@ import {
   SUCCESSFUL_UPDATE_MESSAGE,
   UPDATING_MESSAGE
 } from '../../utils/constants/messages';
-import { AppAction } from '../../store/types';
 
 export const UPDATE_USER = gql`
   mutation UpdateUser($input: UpdateUserInput) {
@@ -22,11 +21,7 @@ export const UPDATE_USER = gql`
   }
 `;
 
-export interface UserContentProps extends DispatchProp<AppAction> {
-  user: User;
-}
-
-export interface UserInfoProps extends DispatchProp<AppAction> {
+export interface UserContentProps extends DispatchProp {
   user: User;
 }
 
@@ -34,7 +29,7 @@ const UserInfo = styled.div`
   padding-top: 1rem;
 `;
 
-const UserNameInput: React.FC<UserInfoProps> = ({ dispatch, user }) => {
+const UserNameInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
   const [username, setUsername] = useState(user.username);
   const [editingUsername, setEditingUsername] = useState(false);
   const [updateUsernameText, setUpdateUsernameText] = useState('');
@@ -92,7 +87,7 @@ const UserNameInput: React.FC<UserInfoProps> = ({ dispatch, user }) => {
   );
 };
 
-const UserEmailInput: React.FC<UserInfoProps> = ({ dispatch, user }) => {
+const UserEmailInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
   const [email, setEmail] = useState(user.email);
   const [editingEmail, setEditingEmail] = useState(false);
   const [updateEmailText, setUpdateEmailText] = useState('');

@@ -1,10 +1,9 @@
 import React from 'react';
 import { DispatchProp } from 'react-redux';
-import { AppAction } from '../../store/types';
 import TripDetail from './TripDetail';
 import { useActiveTrip } from '../../store/hooks/useTrip';
 
-const TripContent: React.FC<DispatchProp<AppAction>> = ({ dispatch }) => {
+const TripContent: React.FC<DispatchProp> = ({ dispatch }) => {
   const activeTrip = useActiveTrip();
 
   if (!activeTrip) {

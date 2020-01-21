@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { DispatchProp } from 'react-redux';
 import { useMutation } from '@apollo/react-hooks';
 import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -17,24 +16,24 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { DateTimePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import styled, { css } from 'styled-components';
+import { DispatchProp } from 'react-redux';
 import { Trip, tripStatus } from '../../types/trip';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import {
   UPDATING_MESSAGE,
   SUCCESSFUL_UPDATE_MESSAGE
 } from '../../utils/constants/messages';
-import { updateTrip, deleteTrip, setActiveTripInfo } from '../../store/trip/actions';
+import { updateTrip, deleteTrip, setActiveTripInfo } from '../../store/trip/reducer';
 import { getFirstError } from '../../utils/apolloErrors';
 import TripItineraries from './TripItineraries';
-import { setDrawer, setFlyTo } from '../../store/general/actions';
+import { setDrawer, setFlyTo } from '../../store/general/reducer';
 import { Feature } from '../../types/apiResponses';
-import { AppAction } from '../../store/types';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { debounce } from '../../utils/debouce';
 import { DELETE_TRIP, UPDATE_TRIP } from '../ApolloProvider/gql/trip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 
-export interface TripDetailProps extends DispatchProp<AppAction> {
+export interface TripDetailProps extends DispatchProp {
   trip: Trip;
 }
 

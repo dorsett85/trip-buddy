@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import LandingModal from '../LandingModal/LandingModal';
 import Navigator from '../Navigator/Navigator';
-import { setLoadingUser, setUser, setLoggedIn } from '../../store/user/actions';
+import { setLoadingUser, setUser, setLoggedIn } from '../../store/user/reducer';
 import { getLocalToken } from '../../utils/localToken';
-import { setLoadingTrips, setTrips } from '../../store/trip/actions';
+import { setLoadingTrips, setTrips } from '../../store/trip/reducer';
 import TripMapLazy from '../TripMap/TripMapLazy';
 import SideDrawerLazy from '../SideDrawer/SideDrawerLazy';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';

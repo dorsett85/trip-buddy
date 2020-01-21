@@ -18,20 +18,19 @@ import { DispatchProp } from 'react-redux';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { useMutation } from '@apollo/react-hooks';
 import { TripItineraryCreator } from '../../store/trip/types';
-import { AppAction } from '../../store/types';
 import {
   setTripItineraryCreator,
   addTripItinerary,
   setActiveTripInfo
-} from '../../store/trip/actions';
+} from '../../store/trip/reducer';
 import { Feature } from '../../types/apiResponses';
-import { setFlyTo, setDrawer } from '../../store/general/actions';
+import { setFlyTo, setDrawer } from '../../store/general/reducer';
 import { getFirstError } from '../../utils/apolloErrors';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { debounce } from '../../utils/debouce';
 import { CREATE_ITINERARY } from '../ApolloProvider/gql/trip';
 
-interface TripItineraryCreateProps extends DispatchProp<AppAction> {
+interface TripItineraryCreateProps extends DispatchProp {
   itinerary: TripItineraryCreator;
 }
 

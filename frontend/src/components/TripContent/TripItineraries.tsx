@@ -7,9 +7,8 @@ import { DispatchProp } from 'react-redux';
 import styled from 'styled-components';
 import TripItineraryPanel from './TripItineraryPanel';
 import { ActiveTripInfo } from '../../store/trip/types';
-import { setTripItineraries, setTripItineraryCreator } from '../../store/trip/actions';
+import { setTripItineraries, setTripItineraryCreator } from '../../store/trip/reducer';
 import { useTripItineraries } from '../../store/hooks/useTrip';
-import { AppAction } from '../../store/types';
 import TripItineraryCreate from './TripItineraryCreate';
 import { GET_ITINERARIES } from '../ApolloProvider/gql/trip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
@@ -20,7 +19,7 @@ const ItineraryHeader = styled.div`
   align-items: center;
 `;
 
-interface TripItinerariesProps extends DispatchProp<AppAction> {
+interface TripItinerariesProps extends DispatchProp {
   tripId: ActiveTripInfo['id'];
 }
 

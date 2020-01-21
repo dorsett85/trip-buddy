@@ -1,6 +1,5 @@
-import { Reducer, Action, ActionCreator } from 'redux';
+import { CaseReducer, SliceCaseReducers, PayloadAction } from '@reduxjs/toolkit';
 import { User } from '../../types/user';
-import { GenericAction, GenericActionCreator } from '../utils.types';
 
 // State
 export interface UserState {
@@ -20,35 +19,11 @@ export interface UserState {
 }
 
 // Reducer
-export type UserReducer = Reducer<UserState, UserAction>;
+type UserCaseReducer<TPayload = void> = CaseReducer<UserState, PayloadAction<TPayload>>;
 
-// Action types
-export enum UserActionType {
-  RESET_STATE = 'RESET_STATE',
-  SET_LOADING = 'SET_LOADING',
-  SET_LOGGED_IN = 'SET_LOGGED_IN',
-  SET_USER = 'SET_USER'
+export interface UserSliceCaseReducers extends SliceCaseReducers<UserState> {
+  resetUserState: UserCaseReducer;
+  setLoadingUser: UserCaseReducer<UserState['loading']>;
+  setLoggedIn: UserCaseReducer<UserState['loggedIn']>;
+  setUser: UserCaseReducer<Partial<User>>;
 }
-
-// Actions
-export type ResetUserStateAction = Action<UserActionType.RESET_STATE>;
-export type SetLoadingAction = GenericAction<
-  UserActionType.SET_LOADING,
-  UserState['loading']
->;
-export type SetLoggedInAction = GenericAction<
-  UserActionType.SET_LOGGED_IN,
-  UserState['loggedIn']
->;
-export type SetUserAction = GenericAction<UserActionType.SET_USER, Partial<User>>;
-export type UserAction =
-  | ResetUserStateAction
-  | SetLoadingAction
-  | SetLoggedInAction
-  | SetUserAction;
-
-// Action creators
-export type ResetUserState = ActionCreator<ResetUserStateAction>;
-export type SetLoading = GenericActionCreator<SetLoadingAction>;
-export type SetLoggedIn = GenericActionCreator<SetLoggedInAction>;
-export type SetUser = GenericActionCreator<SetUserAction>;

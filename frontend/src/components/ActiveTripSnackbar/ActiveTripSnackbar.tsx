@@ -4,8 +4,8 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { useActiveTrip } from '../../store/hooks/useTrip';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import { setDrawer } from '../../store/general/actions';
-import { setActiveTripInfo } from '../../store/trip/actions';
+import { setDrawer } from '../../store/general/reducer';
+import { setActiveTripInfo } from '../../store/trip/reducer';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 const ActiveTripSnackbar = () => {

@@ -1,4 +1,6 @@
-import { GeneralState, GeneralReducer } from './types';
+/* eslint-disable no-param-reassign */
+import { createSlice } from '@reduxjs/toolkit';
+import { GeneralState, GeneralSliceCaseReducers } from './types';
 
 const initialState: GeneralState = {
   drawer: {
@@ -8,22 +10,29 @@ const initialState: GeneralState = {
   flyTo: undefined
 };
 
-export const generalReducer: GeneralReducer = (state = initialState, action): GeneralState => {
-  if (action.type === 'RESET_STATE') {
-    return initialState;
-  }
-
-  if (action.type === 'SET_DRAWER') {
-    const drawer = {
+const reducers: GeneralSliceCaseReducers = {
+  resetGeneralState: () => initialState,
+  setDrawer: (state, action) => {
+    state.drawer = {
       ...state.drawer,
       ...action.payload
-    };
-    return { ...state, drawer };
+    }
+  },
+  setFlyTo: (state, action) => {
+    state.flyTo = action.payload;
   }
+}
 
-  if (action.type === 'SET_FLY_TO') {
-    return { ...state, flyTo: action.payload };
-  }
+const generalSlice = createSlice({
+  name: 'general',
+  initialState,
+  reducers
+});
 
-  return state;
-};
+export const {
+  resetGeneralState,
+  setDrawer,
+  setFlyTo
+} = generalSlice.actions;
+
+export const generalReducer = generalSlice.reducer;

@@ -5,12 +5,12 @@ import {
   setActiveTripInfo,
   setTripItineraries,
   setTripItineraryCreator
-} from '../../store/trip/actions';
+} from '../../store/trip/reducer';
 import { getTripMarkers } from './mapHelpers';
 import { LngLatArray } from '../../types/shared';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
-import { setDrawer } from '../../store/general/actions';
+import { setDrawer } from '../../store/general/reducer';
 import {
   useTripItineraries,
   useTrips,

@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import { setTripCreator } from '../../store/trip/actions';
+import { setTripCreator } from '../../store/trip/reducer';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 

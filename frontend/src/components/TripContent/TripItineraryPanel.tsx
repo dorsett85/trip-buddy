@@ -30,17 +30,16 @@ import {
   updateTripItinerary,
   setActiveTripInfo,
   deleteTripItinerary
-} from '../../store/trip/actions';
+} from '../../store/trip/reducer';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
-import { AppAction } from '../../store/types';
-import { setFlyTo, setDrawer } from '../../store/general/actions';
+import { setFlyTo, setDrawer } from '../../store/general/reducer';
 import { Feature } from '../../types/apiResponses';
 import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { UPDATE_ITINERARY, DELETE_ITINERARY } from '../ApolloProvider/gql/trip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 
-interface TripItineraryPanelProps extends DispatchProp<AppAction> {
+interface TripItineraryPanelProps extends DispatchProp {
   /**
    * Itinerary of the active trip
    */

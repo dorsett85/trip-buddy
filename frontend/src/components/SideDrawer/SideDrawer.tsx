@@ -3,11 +3,11 @@ import Drawer, { DrawerProps } from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import styled, { css } from 'styled-components';
-import { setDrawer } from '../../store/general/actions';
+import { setDrawer } from '../../store/general/reducer';
 import UserContent from '../UserContent/UserContent';
 import TripContent from '../TripContent/TripContent';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import { setTripItineraryCreator } from '../../store/trip/actions';
+import { setTripItineraryCreator } from '../../store/trip/reducer';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 export interface SideDrawerProps extends DrawerProps {
