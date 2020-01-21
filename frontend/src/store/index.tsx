@@ -1,7 +1,8 @@
-import { createStore, combineReducers, Store } from 'redux';
+import { combineReducers } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { userReducer } from './user/reducer';
 import { tripReducer } from './trip/reducer';
-import { AppState, AppAction, AppReducers } from './types';
+import { AppState, AppReducers } from './types';
 import { generalReducer } from './general/reducer';
 
 const appReducers: AppReducers = {
@@ -10,11 +11,10 @@ const appReducers: AppReducers = {
   trip: tripReducer
 };
 
-const rootReducer = combineReducers(appReducers);
+const rootReducer = combineReducers<AppState>(appReducers);
 
-function configureStore(): Store<AppState, AppAction> {
-  const store = createStore(rootReducer);
-  return store;
-}
+const store = configureStore({
+  reducer: rootReducer
+})
 
-export default configureStore();
+export default store;
