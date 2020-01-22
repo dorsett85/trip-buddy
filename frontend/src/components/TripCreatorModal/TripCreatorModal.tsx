@@ -24,10 +24,6 @@ import { CREATE_TRIP } from '../ApolloProvider/gql/trip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
 
-const FormStyled = styled.form`
-  min-width: 450px;
-`;
-
 const ErrorStyled = styled.div`
   font-weight: bold;
   color: ${red[500]};
@@ -177,7 +173,7 @@ const TripCreatorModal: React.FC = () => {
     };
 
     modalForm = (
-      <FormStyled onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <DialogContent dividers>
           <TextField
             label='Trip Name'
@@ -246,12 +242,12 @@ const TripCreatorModal: React.FC = () => {
             Create Trip
           </Button>
         </DialogActions>
-      </FormStyled>
+      </form>
     );
   }
 
   return (
-    <Dialog open={openModal} onClose={handleOnClose}>
+    <Dialog open={openModal} onClose={handleOnClose} fullWidth maxWidth='xs'>
       {modalForm && <DialogTitle>Create Your Trip</DialogTitle>}
       {modalForm}
     </Dialog>

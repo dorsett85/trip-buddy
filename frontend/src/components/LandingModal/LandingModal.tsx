@@ -43,7 +43,7 @@ const LandingModal: React.FC<ShowProps> = ({ show }) => {
   };
 
   return (
-    <Dialog open={show} TransitionComponent={Transition} fullScreen={fullScreen}>
+    <Dialog open={show} TransitionComponent={Transition} fullScreen={fullScreen} fullWidth maxWidth='xs'>
       <DialogContent>
         <Box pb={2}>
           <Typography variant='h4' align='center'>

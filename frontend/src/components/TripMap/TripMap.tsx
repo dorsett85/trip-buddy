@@ -31,8 +31,6 @@ const MapContainer = styled.div<MapContainerProps>(
   `
 );
 
-console.log(process.env.REACT_APP_MAPBOX_API_TOKEN)
-
 const TripMap: React.FC<TripMapProps> = ({ loggedIn }) => {
   const { viewport, updateViewport, handleClick } = useMap();
   const { tripMarkers, updatingLocation } = useMapTrips();
