@@ -11,9 +11,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import lightBlue from '@material-ui/core/colors/lightBlue';
 import red from '@material-ui/core/colors/red';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import PinDropIcon from '@material-ui/icons/PinDrop';
 import TextField from '@material-ui/core/TextField';
 import styled from 'styled-components';
 import { DateTimePicker } from '@material-ui/pickers';
@@ -38,6 +35,7 @@ import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { UPDATE_ITINERARY, DELETE_ITINERARY } from '../ApolloProvider/gql/trip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
+import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
 
 interface TripItineraryPanelProps extends DispatchProp {
   /**
@@ -433,7 +431,7 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
     }
   };
 
-  const handleDropLocationPinClick = () => {
+  const handleChooseLocation = () => {
     dispatch(
       setActiveTripInfo({
         activeMarker: `${itinerary.trip_id}-${itinerary.id}`,
@@ -465,13 +463,8 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
           // eslint-disable-next-line react/jsx-no-duplicate-props
           InputProps={{
             ...InputProps,
-            endAdornment: (
-              <InputAdornment title='Drop pin' position='end'>
-                <IconButton onClick={handleDropLocationPinClick}>
-                  <PinDropIcon />
-                </IconButton>
-              </InputAdornment>
-            )
+            style: { paddingRight: 0 },
+            endAdornment: <LocationInputAdornment onClick={handleChooseLocation} />
           }}
           InputLabelProps={{ ...InputLabelProps, shrink: true }}
           variant='outlined'

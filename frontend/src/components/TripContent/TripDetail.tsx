@@ -8,9 +8,6 @@ import Card from '@material-ui/core/Card';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Button from '@material-ui/core/Button';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import PinDropIcon from '@material-ui/icons/PinDrop';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import { DateTimePicker } from '@material-ui/pickers';
@@ -32,6 +29,7 @@ import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { debounce } from '../../utils/debouce';
 import { DELETE_TRIP, UPDATE_TRIP } from '../ApolloProvider/gql/trip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
+import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
 
 export interface TripDetailProps extends DispatchProp {
   trip: Trip;
@@ -336,7 +334,7 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
     }
   };
 
-  const handleDropLocationPinClick = () => {
+  const handleChooseLocation = () => {
     dispatch(setDrawer({ open: false }));
     dispatch(setActiveTripInfo({ activeMarker: `${trip.id}`, updatingLocation: true }));
   };
@@ -363,13 +361,8 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
           // eslint-disable-next-line react/jsx-no-duplicate-props
           InputProps={{
             ...InputProps,
-            endAdornment: (
-              <InputAdornment title='Drop pin' position='end'>
-                <IconButton onClick={handleDropLocationPinClick}>
-                  <PinDropIcon />
-                </IconButton>
-              </InputAdornment>
-            )
+            style: { paddingRight: 0 },
+            endAdornment: <LocationInputAdornment onClick={handleChooseLocation} />
           }}
           InputLabelProps={{ ...InputLabelProps, shrink: true }}
           variant='outlined'

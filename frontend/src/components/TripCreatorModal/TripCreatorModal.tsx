@@ -6,9 +6,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
 import { DateTimePicker } from '@material-ui/pickers';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import IconButton from '@material-ui/core/IconButton';
-import PinDropIcon from '@material-ui/icons/PinDrop';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import Button from '@material-ui/core/Button';
 import red from '@material-ui/core/colors/red';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
@@ -25,6 +22,7 @@ import { Trip } from '../../types/trip';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { CREATE_TRIP } from '../ApolloProvider/gql/trip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
+import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
 
 const FormStyled = styled.form`
   min-width: 450px;
@@ -129,7 +127,7 @@ const TripCreatorModal: React.FC = () => {
       }
     };
 
-    const handleDropLocationPin = () => {
+    const handleChooseLocation = () => {
       setLocationOptions(undefined);
       dispatch(setTripCreator({ openModal: false }));
     };
@@ -227,13 +225,8 @@ const TripCreatorModal: React.FC = () => {
                 // eslint-disable-next-line react/jsx-no-duplicate-props
                 InputProps={{
                   ...InputProps,
-                  endAdornment: (
-                    <InputAdornment title='Drop pin' position='end'>
-                      <IconButton onClick={handleDropLocationPin}>
-                        <PinDropIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  )
+                  style: { paddingRight: 0 },
+                  endAdornment: <LocationInputAdornment onClick={handleChooseLocation} />
                 }}
                 InputLabelProps={{ ...InputLabelProps, shrink: true }}
                 variant='outlined'
