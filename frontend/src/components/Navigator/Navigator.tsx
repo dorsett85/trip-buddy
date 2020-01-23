@@ -1,44 +1,36 @@
 import React, { memo } from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Slide from '@material-ui/core/Slide';
-import MapIcon from '@material-ui/icons/Map';
-import { makeStyles } from '@material-ui/core/styles';
+import styled, { css } from 'styled-components';
 import { ShowProps } from '../../types/componentProps';
 import UserDropdown from './UserDropdown';
-import CreateTrip from './CreateTripButton';
+import CreateTripButton from './CreateTripButton';
+import ViewTripsButton from './ViewTripsButton';
 
-const useStyles = makeStyles(theme => ({
-  createTrip: {
-    marginRight: theme.spacing(2),
-    color: theme.palette.common.white
-  },
-  menuIcon: {
-    marginRight: theme.spacing(2)
-  },
-  title: {
-    flexGrow: 1
-  }
-}));
+const AppBar = styled.header(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    position: fixed;
+    padding: 0 ${theme.spacing('md')};
+    width: 100%;
+    background-color: ${theme.colors.primary};
+    color: ${theme.colors.white};
+    z-index: 1;
+  `
+);
+
+const TitleText = styled.h2`
+  flex-grow: 1;
+`;
 
 const Navigator: React.FC<ShowProps> = ({ show }) => {
-  const classes = useStyles();
-
   return (
     <Slide in={show} direction='down'>
-      <AppBar position='fixed'>
-        <Toolbar>
-          <Typography variant='h6' className={classes.title}>
-            Trip Buddy
-          </Typography>
-          <CreateTrip color='inherit' />
-          <IconButton color='inherit'>
-            <MapIcon />
-          </IconButton>
-          {show && <UserDropdown />}
-        </Toolbar>
+      <AppBar>
+        <TitleText>Trip Buddy</TitleText>
+        <CreateTripButton color='inherit' />
+        <ViewTripsButton />
+        {show && <UserDropdown />}
       </AppBar>
     </Slide>
   );

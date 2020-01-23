@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import Fab from '@material-ui/core/Fab';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Popper from '@material-ui/core/Popper';
@@ -16,10 +17,7 @@ import styled, { css } from 'styled-components';
 import { DispatchProp } from 'react-redux';
 import { Trip, tripStatus } from '../../types/trip';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
-import {
-  UPDATING_MESSAGE,
-  SUCCESSFUL_UPDATE_MESSAGE
-} from '../../utils/constants/messages';
+import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import { updateTrip, deleteTrip, setActiveTripInfo } from '../../store/trip/reducer';
 import { getFirstError } from '../../utils/apolloErrors';
 import TripItineraries from './TripItineraries';
@@ -30,14 +28,35 @@ import { debounce } from '../../utils/debouce';
 import { DELETE_TRIP, UPDATE_TRIP } from '../ApolloProvider/gql/trip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
+import SuccessText from '../AppText/SuccessText';
+import ErrorText from '../AppText/ErrorText';
 
 export interface TripDetailProps extends DispatchProp {
   trip: Trip;
 }
 
+const ButtonStyled = styled(Button)(
+  ({ theme }) => css`
+    color: ${theme.colors.primary};
+  `
+);
+
+const BackToTripsButton: React.FC<Omit<TripDetailProps, 'trip'>> = ({ dispatch }) => {
+  const handleClick = () => {
+    dispatch(setActiveTripInfo());
+  };
+
+  return (
+    <ButtonStyled onClick={handleClick} variant='text' size='small' color='primary'>
+      <ArrowBackIcon />
+      &nbsp; View all trips
+    </ButtonStyled>
+  );
+};
+
 const Header = styled.div(
   ({ theme }) => css`
-  div:nth-of-type(1) {
+  > div:nth-of-type(1) {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -59,14 +78,14 @@ const CircularProgressStyled = styled(CircularProgress)`
 
 const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [deleteResponseText, setDeleteResponseText] = useState('');
+  const [deleteResponseText, setDeleteResponseText] = useState();
   const [deleteTripMutation, { loading }] = useMutation(DELETE_TRIP, {
     onCompleted: data => {
       dispatch(setDrawer({ open: false }));
       dispatch(deleteTrip(data.deleteTrip));
     },
     onError: error => {
-      setDeleteResponseText(getFirstError(error));
+      setDeleteResponseText(<ErrorText text={getFirstError(error)} />);
     }
   });
 
@@ -120,19 +139,18 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
 const TripNameInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   const [name, setName] = useState(trip.name);
   const [editingName, setEditingName] = useState(false);
-  const [updateNameText, setUpdateNameText] = useState('');
-  const [updateNameError, setUpdateNameError] = useState(false);
+  const [updateNameText, setUpdateNameText] = useState<JSX.Element>();
+  const [updateNameError, setUpdateNameError] = useState<JSX.Element>();
 
   const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
     onCompleted: () => {
       setEditingName(false);
-      setUpdateNameError(false);
       dispatch(updateTrip({ id: trip.id, name }));
-      setUpdateNameText(SUCCESSFUL_UPDATE_MESSAGE);
+      setUpdateNameError(undefined);
+      setUpdateNameText(<SuccessText />);
     },
     onError: error => {
-      setUpdateNameError(true);
-      setUpdateNameText(getFirstError(error));
+      setUpdateNameError(<ErrorText text={getFirstError(error)} />);
     }
   });
 
@@ -142,13 +160,12 @@ const TripNameInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   };
 
   const handleSubmitName = () => {
-    setUpdateNameError(false);
-    setUpdateNameText('');
+    setUpdateNameError(undefined);
+    setUpdateNameText(undefined);
     if (name.length >= 4) {
       updateTripQuery({ variables: { input: { id: trip.id, name } } });
     } else {
-      setUpdateNameError(true);
-      setUpdateNameText('Trip name must be at least 4 characters');
+      setUpdateNameError(<ErrorText text='Trip name must be at least 4 characters' />);
     }
   };
 
@@ -157,9 +174,12 @@ const TripNameInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
       setName(trip.name);
     }
     setEditingName(false);
-    setUpdateNameError(false);
-    setUpdateNameText('');
+    setUpdateNameError(undefined);
+    setUpdateNameText(undefined);
   };
+
+  const helperText =
+    updateNameError || updateNameText || (loading && UPDATING_MESSAGE) || '';
 
   return (
     <EditableTextField
@@ -169,8 +189,8 @@ const TripNameInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
       onChange={handleNameChange}
       onSubmitEdit={handleSubmitName}
       onCancelEdit={handleCancelName}
-      helperText={loading ? UPDATING_MESSAGE : updateNameText}
-      error={updateNameError}
+      helperText={helperText}
+      error={!!updateNameError}
       fullWidth
       margin='normal'
     />
@@ -180,19 +200,18 @@ const TripNameInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
 const TripDescriptionInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   const [description, setDescription] = useState(trip.description);
   const [editingDescription, setEditingDescription] = useState(false);
-  const [updateDescriptionText, setUpdateDescriptionText] = useState('');
-  const [updateDescriptionError, setUpdateDescriptionError] = useState(false);
+  const [updateDescriptionText, setUpdateDescriptionText] = useState<JSX.Element>();
+  const [updateDescriptionError, setUpdateDescriptionError] = useState<JSX.Element>();
 
   const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
     onCompleted: () => {
       setEditingDescription(false);
-      setUpdateDescriptionError(false);
       dispatch(updateTrip({ ...trip, description }));
-      setUpdateDescriptionText(SUCCESSFUL_UPDATE_MESSAGE);
+      setUpdateDescriptionError(undefined);
+      setUpdateDescriptionText(<SuccessText />);
     },
     onError: error => {
-      setUpdateDescriptionError(true);
-      setUpdateDescriptionText(getFirstError(error));
+      setUpdateDescriptionError(<ErrorText text={getFirstError(error)} />);
     }
   });
 
@@ -202,8 +221,8 @@ const TripDescriptionInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => 
   };
 
   const handleSubmitDescription = () => {
-    setUpdateDescriptionError(false);
-    setUpdateDescriptionText('');
+    setUpdateDescriptionError(undefined);
+    setUpdateDescriptionText(undefined);
     updateTripQuery({ variables: { input: { id: trip.id, description } } });
   };
 
@@ -212,9 +231,15 @@ const TripDescriptionInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => 
       setDescription(trip.description);
     }
     setEditingDescription(false);
-    setUpdateDescriptionError(false);
-    setUpdateDescriptionText('');
+    setUpdateDescriptionError(undefined);
+    setUpdateDescriptionText(undefined);
   };
+
+  const helperText =
+    updateDescriptionError ||
+    updateDescriptionText ||
+    (loading && UPDATING_MESSAGE) ||
+    '';
 
   return (
     <EditableTextField
@@ -229,10 +254,49 @@ const TripDescriptionInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => 
       onChange={handleDescriptionChange}
       onSubmitEdit={handleSubmitDescription}
       onCancelEdit={handleCancelDescription}
-      helperText={loading ? UPDATING_MESSAGE : updateDescriptionText}
-      error={updateDescriptionError}
+      helperText={helperText}
+      error={!!updateDescriptionError}
       fullWidth
       margin='normal'
+    />
+  );
+};
+
+const TripStartDateSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
+  const [updateStartDateText, setUpdateStartDateText] = useState<JSX.Element>();
+  const [updateStartDateError, setUpdateStartDateError] = useState<JSX.Element>();
+
+  const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
+    onCompleted: data => {
+      dispatch(updateTrip({ ...trip, start_date: data.updateTrip.start_date }));
+      setUpdateStartDateError(undefined);
+      setUpdateStartDateText(<SuccessText />);
+    },
+    onError: error => {
+      setUpdateStartDateError(<ErrorText text={getFirstError(error)} />);
+    }
+  });
+
+  const handleStartDateChange = (date: MaterialUiPickersDate) => {
+    if (date) {
+      updateTripQuery({
+        variables: { input: { id: trip.id, start_date: date.toISOString() } }
+      });
+    }
+  };
+
+  const helperText =
+    updateStartDateError || updateStartDateText || (loading && UPDATING_MESSAGE) || '';
+
+  return (
+    <DateTimePicker
+      label='Start Date'
+      onChange={handleStartDateChange}
+      helperText={helperText}
+      error={!!updateStartDateError}
+      value={trip.start_date || null}
+      margin='normal'
+      fullWidth
     />
   );
 };
@@ -241,23 +305,20 @@ const DEFAUL_NO_OPTIONS_TEXT = 'Enter at least four characters...';
 const DEFAULT_UPDATE_LOCATION_TEXT = 'Click an option from the dropdown list to update';
 
 const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
+  const newLocation = useAppSelector(
+    state => state.trip.activeTripInfo && state.trip.activeTripInfo.newLocation
+  );
   const [location, setLocation] = useState(trip.location_address);
   const [locationOptions, setLocationOptions] = useState<Feature[]>();
   const [locationsLoading, setLocationsLoading] = useState(false);
   const [noOptionsText, setNoOptionsText] = useState(DEFAUL_NO_OPTIONS_TEXT);
-  const [updateLocationText, setUpdateLocationText] = useState(
+  const [updateLocationText, setUpdateLocationText] = useState<JSX.Element | string>(
     DEFAULT_UPDATE_LOCATION_TEXT
   );
-  const newLocation = useAppSelector(
-    state =>
-      state.trip.activeTripInfo && state.trip.activeTripInfo.newLocation
-  );
-  const [updateLocationError, setUpdateLocationError] = useState(false);
+  const [updateLocationError, setUpdateLocationError] = useState<JSX.Element>();
 
   const [updateLocationMutation, { loading }] = useMutation(UPDATE_TRIP, {
     onCompleted: data => {
-      setUpdateLocationError(false);
-      setUpdateLocationText(SUCCESSFUL_UPDATE_MESSAGE);
       dispatch(
         updateTrip({
           id: trip.id,
@@ -265,14 +326,15 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
           location_address: data.updateTrip.location_address
         })
       );
+      setUpdateLocationError(undefined);
+      setUpdateLocationText(<SuccessText />);
 
       // Clean up the active trip state and fly to the new location
       dispatch(setActiveTripInfo({ newLocation: undefined, updatingLocation: false }));
       dispatch(setFlyTo(data.updateTrip.location));
     },
     onError: error => {
-      setUpdateLocationError(true);
-      setUpdateLocationText(getFirstError(error));
+      setUpdateLocationError(<ErrorText text={getFirstError(error)} />);
     }
   });
 
@@ -299,7 +361,7 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   }, [dispatch, newLocation, trip.id, updateLocationMutation]);
 
   const handleOnLocationChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-    setUpdateLocationError(false);
+    setUpdateLocationError(undefined);
     setUpdateLocationText(DEFAULT_UPDATE_LOCATION_TEXT);
     setLocation(target.value);
     // Wait for the input to be a least 4 characters before search
@@ -339,6 +401,12 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
     dispatch(setActiveTripInfo({ activeMarker: `${trip.id}`, updatingLocation: true }));
   };
 
+  const helperText =
+    updateLocationError ||
+    updateLocationText ||
+    (loading && UPDATING_MESSAGE) ||
+    'DEFAULT_UPDATE_LOCATION_TEXT';
+
   return (
     <Autocomplete
       options={locationOptions}
@@ -351,8 +419,8 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
           {...rest}
           label='Start location'
           placeholder='Enter a location or drop a pin...'
-          helperText={loading ? UPDATING_MESSAGE : updateLocationText}
-          error={updateLocationError}
+          helperText={helperText}
+          error={!!updateLocationError}
           onInput={handleOnLocationChange}
           inputProps={{
             ...rest.inputProps,
@@ -374,56 +442,18 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   );
 };
 
-const TripStartDateSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
-  const [updateStartDateText, setUpdateStartDateText] = useState('');
-  const [updateStartDateError, setUpdateStartDateError] = useState(false);
-
-  const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
-    onCompleted: data => {
-      setUpdateStartDateError(false);
-      dispatch(updateTrip({ ...trip, start_date: data.updateTrip.start_date }));
-      setUpdateStartDateText(SUCCESSFUL_UPDATE_MESSAGE);
-    },
-    onError: error => {
-      setUpdateStartDateError(true);
-      setUpdateStartDateText(getFirstError(error));
-    }
-  });
-
-  const handleStartDateChange = (date: MaterialUiPickersDate) => {
-    if (date) {
-      updateTripQuery({
-        variables: { input: { id: trip.id, start_date: date.toISOString() } }
-      });
-    }
-  };
-
-  return (
-    <DateTimePicker
-      label='Start Date'
-      onChange={handleStartDateChange}
-      helperText={loading ? UPDATING_MESSAGE : updateStartDateText}
-      error={updateStartDateError}
-      value={trip.start_date || null}
-      margin='normal'
-      fullWidth
-    />
-  );
-};
-
 const TripStatusSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
-  const [updateStatusText, setUpdateStatusText] = useState('');
-  const [updateStatusError, setUpdateStatusError] = useState(false);
+  const [updateStatusText, setUpdateStatusText] = useState<JSX.Element>();
+  const [updateStatusError, setUpdateStatusError] = useState<JSX.Element>();
 
   const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
     onCompleted: data => {
-      setUpdateStatusError(false);
       dispatch(updateTrip({ ...trip, status: data.updateTrip.status }));
-      setUpdateStatusText(SUCCESSFUL_UPDATE_MESSAGE);
+      setUpdateStatusError(undefined);
+      setUpdateStatusText(<SuccessText />);
     },
     onError: error => {
-      setUpdateStatusError(true);
-      setUpdateStatusText(getFirstError(error));
+      setUpdateStatusError(<ErrorText text={getFirstError(error)} />);
     }
   });
 
@@ -431,14 +461,17 @@ const TripStatusSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
     updateTripQuery({ variables: { input: { id: trip.id, status: target.value } } });
   };
 
+  const helperText =
+    updateStatusError || updateStatusText || (loading && UPDATING_MESSAGE) || '';
+
   return (
     <TextField
       select
       label='Status'
       value={trip.status}
       onChange={handleStatusChange}
-      helperText={loading ? UPDATING_MESSAGE : updateStatusText}
-      error={updateStatusError}
+      helperText={helperText}
+      error={!!updateStatusError}
       fullWidth
       margin='normal'
     >
@@ -454,6 +487,7 @@ const TripStatusSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
 const TripDetail: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   return (
     <div>
+      <BackToTripsButton dispatch={dispatch} />
       <TripHeader dispatch={dispatch} trip={trip} />
       <TripNameInput dispatch={dispatch} trip={trip} />
       <TripDescriptionInput dispatch={dispatch} trip={trip} />

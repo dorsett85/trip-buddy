@@ -184,6 +184,7 @@ const ItineraryLocationInput: React.FC<TripItineraryCreateProps> = ({
           // eslint-disable-next-line react/jsx-no-duplicate-props
           InputProps={{
             ...InputProps,
+            style: { paddingRight: 0 },
             endAdornment: (
               <InputAdornment title='Drop pin' position='end'>
                 <IconButton onClick={handleDropLocationPinClick}>

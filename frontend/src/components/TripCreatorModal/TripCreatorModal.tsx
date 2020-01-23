@@ -1,4 +1,6 @@
 import React, { memo, useState } from 'react';
+import useTheme from '@material-ui/core/styles/useTheme';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -32,6 +34,8 @@ const ErrorStyled = styled.div`
 const TripCreatorModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const tripCreator = useAppSelector(({ trip }) => trip.creator);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));
 
   const [locationOptions, setLocationOptions] = useState<Feature[]>();
   const [locationsLoading, setLocationsLoading] = useState(false);
@@ -247,7 +251,13 @@ const TripCreatorModal: React.FC = () => {
   }
 
   return (
-    <Dialog open={openModal} onClose={handleOnClose} fullWidth maxWidth='xs'>
+    <Dialog
+      open={openModal}
+      onClose={handleOnClose}
+      fullScreen={fullScreen}
+      fullWidth
+      maxWidth='xs'
+    >
       {modalForm && <DialogTitle>Create Your Trip</DialogTitle>}
       {modalForm}
     </Dialog>

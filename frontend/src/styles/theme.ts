@@ -36,11 +36,13 @@ export class ThemeStyles implements DefaultTheme {
   };
 
   readonly colors = {
-    primary: 'red',
-    secondary: 'blue',
+    primary: '#2196f3',
+    secondary: '#f44336',
+    green: '#4caf50',
+    red: '#f44336',
     white: '#ffffff',
     black: '#000000'
-  };
+  } as const;
 
   private _spacing: SizedType = {
     xs: 0.33,

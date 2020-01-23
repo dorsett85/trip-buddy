@@ -1,15 +1,18 @@
 import React from 'react';
 import { DispatchProp } from 'react-redux';
 import TripDetail from './TripDetail';
-import { useActiveTrip } from '../../store/hooks/useTrip';
+import { useActiveTrip, useTrips } from '../../store/hooks/useTrip';
+import TripList from './TripList';
 
 const TripContent: React.FC<DispatchProp> = ({ dispatch }) => {
+  const trips = useTrips();
   const activeTrip = useActiveTrip();
 
-  if (!activeTrip) {
-    return null;
-  }
-  return <TripDetail dispatch={dispatch} trip={activeTrip} />;
+  return activeTrip ? (
+    <TripDetail dispatch={dispatch} trip={activeTrip} />
+  ) : (
+    <TripList dispatch={dispatch} trips={trips} />
+  );
 };
 
 export default TripContent;

@@ -18,10 +18,7 @@ import { DispatchProp } from 'react-redux';
 import { useMutation } from '@apollo/react-hooks';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { TripItinerary } from '../../types/trip';
-import {
-  UPDATING_MESSAGE,
-  SUCCESSFUL_UPDATE_MESSAGE
-} from '../../utils/constants/messages';
+import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import { getFirstError } from '../../utils/apolloErrors';
 import {
   updateTripItinerary,
@@ -36,6 +33,8 @@ import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { UPDATE_ITINERARY, DELETE_ITINERARY } from '../ApolloProvider/gql/trip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
+import ErrorText from '../AppText/ErrorText';
+import SuccessText from '../AppText/SuccessText';
 
 interface TripItineraryPanelProps extends DispatchProp {
   /**
@@ -163,17 +162,15 @@ const ItineraryNameInput: React.FC<IntineraryNameInputProps> = ({
   onSubmitOrCancel
 }) => {
   const [name, setName] = useState(itinerary.name);
-  const [updateNameText, setUpdateNameText] = useState('');
-  const [updateNameError, setUpdateNameError] = useState(false);
+  const [updateNameError, setUpdateNameError] = useState<JSX.Element>();
 
   const [updateTripItineraryQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
     onCompleted: data => {
-      onSubmitOrCancel();
       dispatch(updateTripItinerary(data.updateTripItinerary));
+      onSubmitOrCancel();
     },
     onError: error => {
-      setUpdateNameError(true);
-      setUpdateNameText(getFirstError(error));
+      setUpdateNameError(<ErrorText text={getFirstError(error)} />);
     }
   });
 
@@ -183,11 +180,9 @@ const ItineraryNameInput: React.FC<IntineraryNameInputProps> = ({
 
   const handleSubmitName = () => {
     if (name.length >= 4) {
-      onSubmitOrCancel();
       updateTripItineraryQuery({ variables: { input: { id: itinerary.id, name } } });
     } else {
-      setUpdateNameError(true);
-      setUpdateNameText('Trip name must be at least 4 characters');
+      setUpdateNameError(<ErrorText text='Trip name must be at least 4 characters' />);
     }
   };
 
@@ -198,6 +193,8 @@ const ItineraryNameInput: React.FC<IntineraryNameInputProps> = ({
     onSubmitOrCancel();
   };
 
+  const helperText = updateNameError || (loading && UPDATING_MESSAGE) || '';
+
   return (
     <EditableTextField
       label='Name'
@@ -206,8 +203,8 @@ const ItineraryNameInput: React.FC<IntineraryNameInputProps> = ({
       onChange={handleNameChange}
       onSubmitEdit={handleSubmitName}
       onCancelEdit={handleCancelName}
-      helperText={loading ? UPDATING_MESSAGE : updateNameText}
-      error={updateNameError}
+      helperText={helperText}
+      error={!!updateNameError}
       fullWidth
       margin='normal'
     />
@@ -220,19 +217,18 @@ const ItineraryDescriptionInput: React.FC<ItineraryInputProps> = ({
 }) => {
   const [description, setDescription] = useState(itinerary.description);
   const [editingDescription, setEditingDescription] = useState(false);
-  const [updateDescriptionText, setUpdateDescriptionText] = useState('');
-  const [updateDescriptionError, setUpdateDescriptionError] = useState(false);
+  const [updateDescriptionText, setUpdateDescriptionText] = useState<JSX.Element>();
+  const [updateDescriptionError, setUpdateDescriptionError] = useState<JSX.Element>();
 
   const [updateTripQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
     onCompleted: data => {
-      setEditingDescription(false);
-      setUpdateDescriptionError(false);
       dispatch(updateTripItinerary(data.updateTripItinerary));
-      setUpdateDescriptionText(SUCCESSFUL_UPDATE_MESSAGE);
+      setEditingDescription(false);
+      setUpdateDescriptionError(undefined);
+      setUpdateDescriptionText(<SuccessText />);
     },
     onError: error => {
-      setUpdateDescriptionError(true);
-      setUpdateDescriptionText(getFirstError(error));
+      setUpdateDescriptionError(<ErrorText text={getFirstError(error)} />);
     }
   });
 
@@ -242,8 +238,8 @@ const ItineraryDescriptionInput: React.FC<ItineraryInputProps> = ({
   };
 
   const handleSubmitDescription = () => {
-    setUpdateDescriptionError(false);
-    setUpdateDescriptionText('');
+    setUpdateDescriptionError(undefined);
+    setUpdateDescriptionText(undefined);
     updateTripQuery({ variables: { input: { id: itinerary.id, description } } });
   };
 
@@ -252,9 +248,15 @@ const ItineraryDescriptionInput: React.FC<ItineraryInputProps> = ({
       setDescription(itinerary.description);
     }
     setEditingDescription(false);
-    setUpdateDescriptionError(false);
-    setUpdateDescriptionText('');
+    setUpdateDescriptionError(undefined);
+    setUpdateDescriptionText(undefined);
   };
+
+  const helperText =
+    updateDescriptionError ||
+    updateDescriptionText ||
+    (loading && UPDATING_MESSAGE) ||
+    '';
 
   return (
     <EditableTextField
@@ -269,8 +271,8 @@ const ItineraryDescriptionInput: React.FC<ItineraryInputProps> = ({
       onChange={handleDescriptionChange}
       onSubmitEdit={handleSubmitDescription}
       onCancelEdit={handleCancelDescription}
-      helperText={loading ? UPDATING_MESSAGE : updateDescriptionText}
-      error={updateDescriptionError}
+      helperText={helperText}
+      error={!!updateDescriptionError}
       fullWidth
       margin='normal'
     />
@@ -281,18 +283,17 @@ const ItineraryStartDateSelect: React.FC<ItineraryInputProps> = ({
   dispatch,
   itinerary
 }) => {
-  const [updateStartDateText, setUpdateStartDateText] = useState('');
-  const [updateStartDateError, setUpdateStartDateError] = useState(false);
+  const [updateStartDateText, setUpdateStartDateText] = useState<JSX.Element>();
+  const [updateStartDateError, setUpdateStartDateError] = useState<JSX.Element>();
 
   const [updateTripItineraryQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
     onCompleted: data => {
-      setUpdateStartDateError(false);
       dispatch(updateTripItinerary(data.updateTripItinerary));
-      setUpdateStartDateText(SUCCESSFUL_UPDATE_MESSAGE);
+      setUpdateStartDateError(undefined);
+      setUpdateStartDateText(<SuccessText />);
     },
     onError: error => {
-      setUpdateStartDateError(true);
-      setUpdateStartDateText(getFirstError(error));
+      setUpdateStartDateError(<ErrorText text={getFirstError(error)} />);
     }
   });
 
@@ -304,12 +305,15 @@ const ItineraryStartDateSelect: React.FC<ItineraryInputProps> = ({
     }
   };
 
+  const helperText =
+    updateStartDateError || updateStartDateText || (loading && UPDATING_MESSAGE) || '';
+
   return (
     <DateTimePicker
       label='Start Time'
       onChange={handleStartDateChange}
-      helperText={loading ? UPDATING_MESSAGE : updateStartDateText}
-      error={updateStartDateError}
+      helperText={helperText}
+      error={!!updateStartDateError}
       value={itinerary.start_time || null}
       margin='normal'
       fullWidth
@@ -327,23 +331,23 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
   const updatingItineraryLocationId = useAppSelector(
     ({ trip }) => trip.activeTripInfo && trip.activeTripInfo.updatingItineraryLocationId
   );
+  const newLocation = useAppSelector(
+    ({ trip }) => trip.activeTripInfo && trip.activeTripInfo.newItineraryLocation
+  );
   const [location, setLocation] = useState(itinerary.location_address);
   const [locationOptions, setLocationOptions] = useState<Feature[]>();
   const [locationsLoading, setLocationsLoading] = useState(false);
   const [noOptionsText, setNoOptionsText] = useState(DEFAUL_NO_OPTIONS_TEXT);
-  const [updateLocationText, setUpdateLocationText] = useState(
+  const [updateLocationText, setUpdateLocationText] = useState<JSX.Element | string>(
     DEFAULT_UPDATE_LOCATION_TEXT
   );
-  const newLocation = useAppSelector(
-    ({ trip }) => trip.activeTripInfo && trip.activeTripInfo.newItineraryLocation
-  );
-  const [updateLocationError, setUpdateLocationError] = useState(false);
+  const [updateLocationError, setUpdateLocationError] = useState<JSX.Element>();
 
   const [updateLocationMutation, { loading }] = useMutation(UPDATE_ITINERARY, {
     onCompleted: data => {
-      setUpdateLocationError(false);
-      setUpdateLocationText(SUCCESSFUL_UPDATE_MESSAGE);
       dispatch(updateTripItinerary(data.updateTripItinerary));
+      setUpdateLocationError(undefined);
+      setUpdateLocationText(<SuccessText />);
 
       // Clean up the active trip state and fly to the new location
       dispatch(
@@ -355,8 +359,7 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
       dispatch(setFlyTo(data.updateTripItinerary.location));
     },
     onError: error => {
-      setUpdateLocationError(true);
-      setUpdateLocationText(getFirstError(error));
+      setUpdateLocationError(<ErrorText text={getFirstError(error)} />);
     }
   });
 
@@ -389,7 +392,7 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
   ]);
 
   const handleOnLocationChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-    setUpdateLocationError(false);
+    setUpdateLocationError(undefined);
     setUpdateLocationText(DEFAULT_UPDATE_LOCATION_TEXT);
     setLocation(target.value);
     // Wait for the input to be a least 4 characters before search
@@ -441,6 +444,12 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
     dispatch(setDrawer({ open: false }));
   };
 
+  const helperText =
+    updateLocationError ||
+    updateLocationText ||
+    (loading && UPDATING_MESSAGE) ||
+    'DEFAULT_UPDATE_LOCATION_TEXT';
+
   return (
     <Autocomplete
       options={locationOptions}
@@ -453,8 +462,8 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
           {...rest}
           label='Start location'
           placeholder='Enter a location or drop a pin...'
-          helperText={loading ? UPDATING_MESSAGE : updateLocationText}
-          error={updateLocationError}
+          helperText={helperText}
+          error={!!updateLocationError}
           onInput={handleOnLocationChange}
           inputProps={{
             ...rest.inputProps,
