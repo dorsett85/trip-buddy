@@ -10,7 +10,7 @@ import {
 import { getTripMarkers } from './mapHelpers';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
-import { setDrawer } from '../../store/general/reducer';
+import { setDrawer, setFlyTo } from '../../store/general/reducer';
 import {
   useTripItineraries,
   useTrips,
@@ -51,6 +51,11 @@ export const useMap = () => {
   const flyTo = useAppSelector(({ general }) => general.flyTo);
 
   const updateViewport = (newViewport: ViewState) => {
+    //  Reset the fly to store in case the user tries to fly back to the same
+    // trip/itinerary after the viewport changes
+    if (flyTo) {
+      dispatch(setFlyTo(undefined));
+    }
     setViewport(newViewport);
   };
 
