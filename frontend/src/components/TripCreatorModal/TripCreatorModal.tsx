@@ -14,13 +14,13 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import styled from 'styled-components';
 import { useMutation } from '@apollo/react-hooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import { TripRecord } from 'common/lib/types/trip';
 import { setTripCreator, addTrip, setActiveTripInfo } from '../../store/trip/reducer';
 import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { Feature } from '../../types/apiResponses';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setFlyTo } from '../../store/general/reducer';
-import { Trip } from '../../types/trip';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { CREATE_TRIP } from '../ApolloProvider/gql/trip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
@@ -44,7 +44,7 @@ const TripCreatorModal: React.FC = () => {
 
   // Final form submit graphlql mutation
   const [createTripMutation, { loading }] = useMutation(CREATE_TRIP, {
-    onCompleted: (data: { createTrip: Trip }) => {
+    onCompleted: (data: { createTrip: TripRecord }) => {
       dispatch(addTrip(data.createTrip));
       dispatch(setTripCreator());
 

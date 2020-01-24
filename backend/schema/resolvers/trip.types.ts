@@ -2,8 +2,8 @@
 import { IResolvers } from 'apollo-server-express';
 // eslint-disable-next-line import/no-cycle
 import { InputResolverArg, AuthFieldResolver } from '../../types/resolvers';
-import { TripRecord } from '../../models/Trip.types';
-import { TripItineraryRecord } from '../../models/TripItinerary.types';
+import { TripRecord } from 'common/lib/types/trip';
+import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 
 export type CreateTripInput = InputResolverArg<
   Pick<TripRecord, 'name' | 'description' | 'location' | 'start_date'>

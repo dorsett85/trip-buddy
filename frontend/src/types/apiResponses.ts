@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { LngLatArray } from './shared';
+import { LngLatArray } from 'common/lib/types/utils';
 
 export interface FeatureContext {
   id: string;

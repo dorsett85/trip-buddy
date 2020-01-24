@@ -15,7 +15,7 @@ import { DateTimePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import styled, { css } from 'styled-components';
 import { DispatchProp } from 'react-redux';
-import { Trip, tripStatus } from '../../types/trip';
+import { TripRecord, tripStatus } from 'common/lib/types/trip';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import { updateTrip, deleteTrip, setActiveTripInfo } from '../../store/trip/reducer';
@@ -32,7 +32,7 @@ import SuccessText from '../AppText/SuccessText';
 import ErrorText from '../AppText/ErrorText';
 
 export interface TripDetailProps extends DispatchProp {
-  trip: Trip;
+  trip: TripRecord;
 }
 
 const ButtonStyled = styled(Button)(

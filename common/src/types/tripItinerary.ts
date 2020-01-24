@@ -1,4 +1,4 @@
-import { LngLatArray } from "../types";
+import { LngLatArray } from "./utils";
 
 /* eslint-disable camelcase */
 export interface TripItineraryRecord {

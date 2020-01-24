@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ViewState, PointerEvent, ViewportProps, FlyToInterpolator } from 'react-map-gl';
+import { LngLatArray } from 'common/lib/types/utils';
 import {
   setTripCreator,
   setActiveTripInfo,
@@ -7,7 +8,6 @@ import {
   setTripItineraryCreator
 } from '../../store/trip/reducer';
 import { getTripMarkers } from './mapHelpers';
-import { LngLatArray } from '../../types/shared';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { setDrawer } from '../../store/general/reducer';

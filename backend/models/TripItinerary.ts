@@ -1,6 +1,6 @@
-import { TripItineraryRecord } from './TripItinerary.types';
+import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 import BaseModel from './Base';
-import { TripRecord } from './Trip.types';
+import { TripRecord } from 'common/lib/types/trip';
 
 export default class TripItineraryModel extends BaseModel {
   public static tableName = 'trip_itineraries';

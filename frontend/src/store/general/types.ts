@@ -1,5 +1,5 @@
 import { CaseReducer, PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
-import { LngLatArray } from '../../types/shared';
+import { LngLatArray } from 'common/lib/types/utils';
 
 // State
 export interface DrawerType {

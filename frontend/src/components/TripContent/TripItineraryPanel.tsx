@@ -17,7 +17,7 @@ import { DateTimePicker } from '@material-ui/pickers';
 import { DispatchProp } from 'react-redux';
 import { useMutation } from '@apollo/react-hooks';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-import { TripItinerary } from '../../types/trip';
+import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import { getFirstError } from '../../utils/apolloErrors';
 import {
@@ -40,7 +40,7 @@ interface TripItineraryPanelProps extends DispatchProp {
   /**
    * Itinerary of the active trip
    */
-  itinerary: TripItinerary;
+  itinerary: TripItineraryRecord;
   /**
    * Index of the active trip itineraries, used for display
    */

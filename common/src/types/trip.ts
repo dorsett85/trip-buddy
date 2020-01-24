@@ -1,6 +1,5 @@
-import { LngLatArray } from "../types";
+import { LngLatArray } from './utils';
 
-/* eslint-disable camelcase */
 export const tripStatus = [
   'pending',
   'confirmed',
@@ -9,13 +8,14 @@ export const tripStatus = [
   'cancelled'
 ] as const;
 
+/* eslint-disable camelcase */
 export interface TripRecord {
   id: number;
   name: string;
   description: string;
-  location: LngLatArray,
+  location: LngLatArray;
   location_address: string;
-  start_date: string,
+  start_date: string;
   status: typeof tripStatus[number];
   created_date: string;
 }
