@@ -2,7 +2,7 @@ import TripModel from '../models/Trip';
 import UserTripModel from '../models/UserTrip';
 import { TripServiceDeps } from './Trip.types';
 import { TripRecord } from 'common/lib/types/trip';
-import { UserRecord } from '../models/User.types';
+import { UserRecord } from 'common/lib/types/user';
 // eslint-disable-next-line import/no-cycle
 import {
   CreateTripInput,

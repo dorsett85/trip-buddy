@@ -4,7 +4,7 @@ import { DispatchProp } from 'react-redux';
 import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
 import { setUser } from '../../store/user/reducer';
-import { User } from '../../types/user';
+import { UserRecord } from 'common/lib/types/user';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { getFirstError } from '../../utils/apolloErrors';
 import {
@@ -22,7 +22,7 @@ export const UPDATE_USER = gql`
 `;
 
 export interface UserContentProps extends DispatchProp {
-  user: User;
+  user: UserRecord;
 }
 
 const UserInfo = styled.div`

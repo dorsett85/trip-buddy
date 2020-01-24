@@ -1,5 +1,5 @@
 import { CaseReducer, SliceCaseReducers, PayloadAction } from '@reduxjs/toolkit';
-import { User } from '../../types/user';
+import { UserRecord } from 'common/lib/types/user';
 
 // State
 export interface UserState {
@@ -15,7 +15,7 @@ export interface UserState {
   /**
    * Record of the logged in user
    */
-  data: User | undefined;
+  data: UserRecord | undefined;
 }
 
 // Reducer
@@ -25,5 +25,5 @@ export interface UserSliceCaseReducers extends SliceCaseReducers<UserState> {
   resetUserState: UserCaseReducer;
   setLoadingUser: UserCaseReducer<UserState['loading']>;
   setLoggedIn: UserCaseReducer<UserState['loggedIn']>;
-  setUser: UserCaseReducer<Partial<User>>;
+  setUser: UserCaseReducer<Partial<UserRecord>>;
 }

@@ -1,4 +1,4 @@
-import { UserTripRecord } from './UserTrip.types';
+import { UserTripRecord } from 'common/lib/types/userTrip';
 import BaseModel from './Base';
 
 export default class UserTripModel extends BaseModel {

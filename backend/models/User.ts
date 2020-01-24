@@ -1,4 +1,4 @@
-import { UserRecord } from './User.types';
+import { UserRecord } from 'common/lib/types/user';
 import BaseModel from './Base';
 
 export default class UserModel extends BaseModel {
