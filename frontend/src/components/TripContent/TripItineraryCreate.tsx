@@ -3,17 +3,15 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import green from '@material-ui/core/colors/green';
 import TextField from '@material-ui/core/TextField';
 import { DateTimePicker } from '@material-ui/pickers';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import IconButton from '@material-ui/core/IconButton';
 import PinDropIcon from '@material-ui/icons/PinDrop';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import red from '@material-ui/core/colors/red';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { DispatchProp } from 'react-redux';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { useMutation } from '@apollo/react-hooks';
@@ -36,21 +34,25 @@ interface TripItineraryCreateProps extends DispatchProp {
 
 const CardHeaderStyled = styled(CardHeader)``;
 
-const CardStyled = styled(Card)`
-  margin-bottom: 2rem;
-  ${CardHeaderStyled} {
-    background-color: ${green[400]};
-    span {
-      color: white;
-      font-weight: bold;
+const CardStyled = styled(Card)(
+  ({ theme }) => css`
+    margin-bottom: 2rem;
+    ${CardHeaderStyled} {
+      background-color: ${theme.colors.green};
+      span {
+        color: white;
+        font-weight: bold;
+      }
     }
-  }
-`;
+  `
+);
 
-const ErrorStyled = styled.div`
-  font-weight: bold;
-  color: ${red[500]};
-`;
+const ErrorStyled = styled.div(
+  ({ theme }) => css`
+    font-weight: bold;
+    color: ${theme.colors.red};
+  `
+);
 
 const ItineraryNameInput: React.FC<TripItineraryCreateProps> = ({
   itinerary,

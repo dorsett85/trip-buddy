@@ -8,11 +8,9 @@ import Button from '@material-ui/core/Button';
 import Popper from '@material-ui/core/Popper';
 import Card from '@material-ui/core/Card';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import lightBlue from '@material-ui/core/colors/lightBlue';
-import red from '@material-ui/core/colors/red';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { DateTimePicker } from '@material-ui/pickers';
 import { DispatchProp } from 'react-redux';
 import { useMutation } from '@apollo/react-hooks';
@@ -64,23 +62,24 @@ const BEM_ITINERARY_PANEL = 'itineraryPanel';
 const BEM_ITINERARY_PANEL_SUMMARY = `${BEM_ITINERARY_PANEL}-summary`;
 const BEM_ITINERARY_PANEL_CONTENT = `${BEM_ITINERARY_PANEL}-content`;
 
-const ExpansionPanelStyled = styled(ExpansionPanel)`
-  & .${BEM_ITINERARY_PANEL_SUMMARY}, & .${BEM_ITINERARY_PANEL_CONTENT} {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  & .${BEM_ITINERARY_PANEL_SUMMARY} {
-    background-color: ${lightBlue[400]};
-    span {
-      color: white;
-      font-size: 1rem;
-      font-weight: bold;
+const ExpansionPanelStyled = styled(ExpansionPanel)(
+  ({ theme }) => css`
+    & .${BEM_ITINERARY_PANEL_SUMMARY}, & .${BEM_ITINERARY_PANEL_CONTENT} {
+      padding: 0 ${theme.spacing()};
     }
-  }
-  & .${BEM_ITINERARY_PANEL_CONTENT} {
-    padding-bottom: 1rem;
-  }
-`;
+    & .${BEM_ITINERARY_PANEL_SUMMARY} {
+      background-color: ${theme.colors.primary};
+      span {
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+    }
+    & .${BEM_ITINERARY_PANEL_CONTENT} {
+      padding-bottom: ${theme.spacing()};
+    }
+  `
+);
 
 const ItineraryContent = styled.div`
   width: 100%;
@@ -90,10 +89,12 @@ const ElevatedPopper = styled(Popper)`
   z-index: 10000;
 `;
 
-const ErrorResponse = styled.div`
-  margin-top: 0.5rem;
-  color: ${red[500]};
-`;
+const ErrorResponse = styled.div(
+  ({ theme }) => css`
+    margin-top: 0.5rem;
+    color: ${theme.colors.red};
+  `
+);
 
 const ItineraryButtonGroup: React.FC<ItineraryButtonGroupProps> = ({
   dispatch,

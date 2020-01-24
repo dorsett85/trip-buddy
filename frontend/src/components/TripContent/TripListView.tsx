@@ -6,11 +6,11 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@material-ui/icons/Map';
 import styled, { css } from 'styled-components';
 import { TripRecord } from 'common/lib/types/trip';
-import { setTripCreator, deleteTrip, setActiveTripInfo } from '../../store/trip/reducer';
-import { setDrawer } from '../../store/general/reducer';
+import { setTripCreator, setActiveTripInfo } from '../../store/trip/reducer';
+import { setDrawer, setFlyTo } from '../../store/general/reducer';
 import { TripState } from '../../store/trip/types';
 
 export interface TripListProps extends DispatchProp {
@@ -22,7 +22,13 @@ const Header = styled.div(
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: ${theme.spacing('md')};
+    margin-bottom: ${theme.spacing()};
+  `
+);
+
+const FlyToButton = styled(IconButton)(
+  ({ theme }) => css`
+    color: ${theme.colors.primary};
   `
 );
 
@@ -38,8 +44,10 @@ const TripListView: React.FC<TripListProps> = ({ dispatch, trips }) => {
     dispatch(setActiveTripInfo({ id, activeMarker: `${id}` }));
   };
 
-  const handleDeleteClick = (id: TripRecord['id']) => () => {
-    dispatch(deleteTrip(id));
+  const handleFlyToClick = (id: TripRecord['id']) => () => {
+    dispatch(setDrawer({ open: false }));
+    dispatch(setFlyTo(trips[id].location));
+    dispatch(setActiveTripInfo({ id, activeMarker: `${id}` }));
   };
 
   const tripList = (
@@ -58,13 +66,13 @@ const TripListView: React.FC<TripListProps> = ({ dispatch, trips }) => {
             ).toLocaleDateString()} - ${trip.status.toLocaleUpperCase()}`}
           />
           <ListItemSecondaryAction>
-            <IconButton
-              onClick={handleDeleteClick(trip.id)}
-              color='secondary'
-              aria-label='delete trip'
+            <FlyToButton
+              onClick={handleFlyToClick(trip.id)}
+              color='inherit'
+              aria-label='Go to map location'
             >
               <DeleteIcon />
-            </IconButton>
+            </FlyToButton>
           </ListItemSecondaryAction>
         </ListItem>
       ))}
