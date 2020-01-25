@@ -6,7 +6,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Map';
+import GpsFixedIcon from '@material-ui/icons/GpsFixed';
 import styled, { css } from 'styled-components';
 import { TripRecord } from 'common/lib/types/trip';
 import { setTripCreator, setActiveTripInfo } from '../../store/trip/reducer';
@@ -69,9 +69,10 @@ const TripListView: React.FC<TripListProps> = ({ dispatch, trips }) => {
             <FlyToButton
               onClick={handleFlyToClick(trip.id)}
               color='inherit'
+              title='Go to map location'
               aria-label='Go to map location'
             >
-              <DeleteIcon />
+              <GpsFixedIcon />
             </FlyToButton>
           </ListItemSecondaryAction>
         </ListItem>

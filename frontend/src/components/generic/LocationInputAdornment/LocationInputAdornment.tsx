@@ -1,6 +1,6 @@
 import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
-import PinDropIcon from '@material-ui/icons/PinDrop';
+import EditLocationIcon from '@material-ui/icons/EditLocation';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
 export interface LocationInputAdornmentProps {
@@ -11,7 +11,7 @@ const LocationInputAdornment: React.FC<LocationInputAdornmentProps> = ({ onClick
   return (
     <InputAdornment title='Choose location on map' position='start'>
       <IconButton aria-label='Choose location on map' onClick={onClick}>
-        <PinDropIcon />
+        <EditLocationIcon />
       </IconButton>
     </InputAdornment>
   );

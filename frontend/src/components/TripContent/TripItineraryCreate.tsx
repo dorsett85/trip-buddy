@@ -6,9 +6,6 @@ import CardActions from '@material-ui/core/CardActions';
 import TextField from '@material-ui/core/TextField';
 import { DateTimePicker } from '@material-ui/pickers';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import IconButton from '@material-ui/core/IconButton';
-import PinDropIcon from '@material-ui/icons/PinDrop';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
 import styled, { css } from 'styled-components';
@@ -27,6 +24,7 @@ import { getFirstError } from '../../utils/apolloErrors';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { debounce } from '../../utils/debouce';
 import { CREATE_ITINERARY } from '../ApolloProvider/gql/trip';
+import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
 
 interface TripItineraryCreateProps extends DispatchProp {
   itinerary: TripItineraryCreator;
@@ -187,13 +185,7 @@ const ItineraryLocationInput: React.FC<TripItineraryCreateProps> = ({
           InputProps={{
             ...InputProps,
             style: { paddingRight: 0 },
-            endAdornment: (
-              <InputAdornment title='Drop pin' position='end'>
-                <IconButton onClick={handleDropLocationPinClick}>
-                  <PinDropIcon />
-                </IconButton>
-              </InputAdornment>
-            )
+            endAdornment: <LocationInputAdornment onClick={handleDropLocationPinClick} />
           }}
           InputLabelProps={{ ...InputLabelProps, shrink: true }}
           variant='outlined'
