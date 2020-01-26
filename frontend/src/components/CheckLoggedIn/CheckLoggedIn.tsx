@@ -34,7 +34,7 @@ const CheckLoggedIn: React.FC = () => {
   }, [dispatch, loading]);
 
   // Dispatch actions after data is loaded
-  if (data) {
+  if (data && loggedIn) {
     const {
       user: { trips, ...user }
     } = data;
