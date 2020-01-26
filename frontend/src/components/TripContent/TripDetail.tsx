@@ -18,7 +18,7 @@ import { DispatchProp } from 'react-redux';
 import { TripRecord, tripStatus } from 'common/lib/types/trip';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { UPDATING_MESSAGE } from '../../utils/constants/messages';
-import { updateTrip, deleteTrip, setActiveTripInfo } from '../../store/trip/reducer';
+import { updateTrip, deleteTrip, setActiveTripInfo, setTripItineraries } from '../../store/trip/reducer';
 import { getFirstError } from '../../utils/apolloErrors';
 import TripItineraries from './TripItineraries';
 import { setDrawer, setFlyTo } from '../../store/general/reducer';
@@ -44,6 +44,7 @@ const ButtonStyled = styled(Button)(
 const BackToTripsButton: React.FC<Omit<TripDetailProps, 'trip'>> = ({ dispatch }) => {
   const handleClick = () => {
     dispatch(setActiveTripInfo());
+    dispatch(setTripItineraries());
   };
 
   return (

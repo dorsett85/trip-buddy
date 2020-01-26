@@ -258,7 +258,7 @@ const TripCreatorModal: React.FC = () => {
       fullWidth
       maxWidth='xs'
     >
-      {modalForm && <DialogTitle>Create Your Trip</DialogTitle>}
+      <DialogTitle>Create Your Trip</DialogTitle>
       {modalForm}
     </Dialog>
   );

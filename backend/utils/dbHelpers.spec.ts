@@ -13,14 +13,14 @@ describe('dbHelpers module', () => {
       columns.push('id');
       select = addSelect(table, columns);
 
-      expect(select.text).toBe(`SELECT id FROM ${table}`);
+      expect(select.text).toBe(`SELECT ${table}.id FROM ${table}`);
     });
 
     it('should have select text with multiple columns', () => {
       const columns: string[] = ['id', 'username'];
       const { text } = addSelect(table, columns);
 
-      expect(text).toBe(`SELECT id, username FROM ${table}`);
+      expect(text).toBe(`SELECT ${table}.id, ${table}.username FROM ${table}`);
     });
   });
 

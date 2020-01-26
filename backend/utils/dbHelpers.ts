@@ -19,7 +19,8 @@ export const addSelect = (
   table: string,
   columns: string[] = []
 ): Pick<QueryConfig, 'text'> => {
-  const columnText = columns.length ? columns.join(', ') : `${table}.*`;
+  const columnWithTableName: string[] = columns.map(column => `${table}.${column}`);
+  const columnText = columns.length ? columnWithTableName.join(', ') : `${table}.*`;
   const text = `SELECT ${columnText} FROM ${table}`;
 
   return { text };

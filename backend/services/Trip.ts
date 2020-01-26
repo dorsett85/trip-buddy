@@ -1,8 +1,9 @@
+import { UserRecord } from 'common/lib/types/user';
+import { TripRecord } from 'common/lib/types/trip';
+import { TripItineraryRecord } from 'common/src/types/tripItinerary';
 import TripModel from '../models/Trip';
 import UserTripModel from '../models/UserTrip';
 import { TripServiceDeps } from './Trip.types';
-import { TripRecord } from 'common/lib/types/trip';
-import { UserRecord } from 'common/lib/types/user';
 // eslint-disable-next-line import/no-cycle
 import {
   CreateTripInput,
@@ -11,7 +12,6 @@ import {
   CreateTripItineraryInput
 } from '../schema/resolvers/trip.types';
 import TripItineraryModel from '../models/TripItinerary';
-import { TripItineraryRecord } from 'common/src/types/tripItinerary';
 
 export default class TripService {
   private TripModel: typeof TripModel;
