@@ -10,6 +10,30 @@ interface WhereArgs {
 }
 
 /**
+ * Add table name prefix
+ *
+ * Given an object of properties that contain key (column name) / value (column values) pairs,
+ * return a new object that has keys prefixed with a table name
+ */
+export function prefixTableName(table: string, columns: string[]): string[];
+export function prefixTableName(table: string, args: KeyValue): KeyValue;
+export function prefixTableName(table: string, args: KeyValue | string[]) {
+  // Prefix for array argument
+  if (Array.isArray(args)) {
+    return args.map(column => `${table}.${column}`);
+  }
+
+  // Prefix for objects argument
+  const keysWithTablePrefix: KeyValue = {};
+  return Object.keys(args).reduce((acc, key) => {
+    const obj = { ...acc };
+    obj[`${table}.${key}`] = args[key];
+    return obj;
+  }, keysWithTablePrefix);
+}
+
+
+/**
  * Add select clause text
  *
  * Given a table name and an array of column names, create an insert clause
@@ -19,7 +43,7 @@ export const addSelect = (
   table: string,
   columns: string[] = []
 ): Pick<QueryConfig, 'text'> => {
-  const columnWithTableName: string[] = columns.map(column => `${table}.${column}`);
+  const columnWithTableName = prefixTableName(table, columns);
   const columnText = columns.length ? columnWithTableName.join(', ') : `${table}.*`;
   const text = `SELECT ${columnText} FROM ${table}`;
 
@@ -137,18 +161,3 @@ export const addWhere = (
     values
   };
 };
-
-/**
- * Add table name prefix
- *
- * Given an object of properties that contain key (column name) / value (column values) pairs,
- * return a new object that has keys prefixed with a table name
- */
-export const prefixTableName = (table: string, args: KeyValue): KeyValue => {
-  const keysWithTablePrefix: KeyValue = {};
-  return Object.keys(args).reduce((acc, key) => {
-    const obj = { ...acc };
-    obj[`${table}.${key}`] = args[key];
-    return obj;
-  }, keysWithTablePrefix);
-}

@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { UserRecord } from 'common/lib/types/user';
 import UserModel from '../models/User';
 import { UserServiceDeps } from './User.types';
 import { expressServer } from '../config/config';
-import { UserRecord } from 'common/lib/types/user';
 // eslint-disable-next-line import/no-cycle
 import { LoginArgs, RegisterArgs, UpdateUserInput } from '../schema/resolvers/user.types';
 import {
