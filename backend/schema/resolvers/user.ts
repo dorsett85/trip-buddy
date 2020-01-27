@@ -8,8 +8,8 @@ import {
 } from '../../utils/constants/errors';
 
 const User: UserResolvers['User'] = {
-  trips: async (_, __, { tripService }) => {
-    const userTrips = await tripService.findMany();
+  trips: async ({ id }, __, { tripService }) => {
+    const userTrips = await tripService.findMany(id);
     return userTrips;
   }
 };

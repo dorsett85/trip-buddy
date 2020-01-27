@@ -48,13 +48,32 @@ export default class TripService {
   }
 
   public findMany(
-    andWhereArgs: Partial<TripRecord> = {},
-    orWhereArgs: Partial<TripRecord> = {}
+    userId: UserRecord['id'],
+    andWhereArgs?: Partial<TripRecord>,
+    orWhereArgs?: Partial<TripRecord>
+  ): Promise<TripRecord[]>;
+
+  // eslint-disable-next-line no-dupe-class-members
+  public findMany(
+    andWhereArgs: Partial<TripRecord>,
+    orWhereArgs?: Partial<TripRecord>
+  ): Promise<TripRecord[]>;
+
+  // eslint-disable-next-line no-dupe-class-members
+  public findMany(
+    arg1: Partial<TripRecord> | UserRecord['id'],
+    arg2: Partial<TripRecord> = {},
+    arg3: Partial<TripRecord> = {}
   ): Promise<TripRecord[]> {
     const { id, role } = this.user;
+
+    if (typeof arg1 === 'number') {
+      return this.TripModel.findManyByUserId(id, arg2, arg3);
+    }
+
     return role === 'admin'
-      ? this.TripModel.findMany(andWhereArgs, orWhereArgs)
-      : this.TripModel.findManyByUserId(id, andWhereArgs, orWhereArgs);
+      ? this.TripModel.findMany(arg1, arg2)
+      : this.TripModel.findManyByUserId(id, arg1, arg2);
   }
 
   public updateOne(
