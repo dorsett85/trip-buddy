@@ -14,25 +14,25 @@ import {
 import TripItineraryModel from '../models/TripItinerary';
 
 export default class TripService {
+  private user: UserRecord;
+
   private TripModel: typeof TripModel;
 
   private TripItineraryModel: typeof TripItineraryModel;
 
   private UserTripModel: typeof UserTripModel;
 
-  constructor(dependencies: TripServiceDeps = {}) {
-    this.TripModel = dependencies.TripModel || TripModel;
-    this.TripItineraryModel = dependencies.TripItineraryModel || TripItineraryModel;
-    this.UserTripModel = dependencies.UserTripModel || UserTripModel;
+  constructor(dependencies: TripServiceDeps) {
+    this.user = dependencies.user;
+    this.TripModel = dependencies.TripModel;
+    this.TripItineraryModel = dependencies.TripItineraryModel;
+    this.UserTripModel = dependencies.UserTripModel;
   }
 
-  public async createOne(
-    createTripInput: CreateTripInput['input'],
-    userId: UserRecord['id']
-  ): Promise<TripRecord> {
+  public async createOne(createTripInput: CreateTripInput['input']): Promise<TripRecord> {
     // Create the new trip and add a record to the users_trips pivot table
     const trip = await this.TripModel.createOne(createTripInput);
-    await this.UserTripModel.createOne({ user_id: userId, trip_id: trip.id });
+    await this.UserTripModel.createOne({ user_id: this.user.id, trip_id: trip.id });
 
     return trip;
   }
@@ -41,30 +41,20 @@ export default class TripService {
     andWhereArgs: Partial<TripRecord> = {},
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord | undefined> {
-    return this.TripModel.findOne(andWhereArgs, orWhereArgs);
+    const { id, role } = this.user;
+    return role === 'admin'
+      ? this.TripModel.findOne(andWhereArgs, orWhereArgs)
+      : this.TripModel.findOneByUserId(id, andWhereArgs, orWhereArgs);
   }
 
   public findMany(
     andWhereArgs: Partial<TripRecord> = {},
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord[]> {
-    return this.TripModel.findMany(andWhereArgs, orWhereArgs);
-  }
-
-  public findOneByUserId(
-    userId: UserRecord['id'],
-    andWhereArgs: Partial<TripRecord> = {},
-    orWhereArgs: Partial<TripRecord> = {}
-  ): Promise<TripRecord | undefined> {
-    return this.TripModel.findOneByUserId(userId, andWhereArgs, orWhereArgs);
-  }
-
-  public findManyByUserId(
-    userId: UserRecord['id'],
-    andWhereArgs: Partial<TripRecord> = {},
-    orWhereArgs: Partial<TripRecord> = {}
-  ): Promise<TripRecord[]> {
-    return this.TripModel.findManyByUserId(userId, andWhereArgs, orWhereArgs);
+    const { id, role } = this.user;
+    return role === 'admin'
+      ? this.TripModel.findMany(andWhereArgs, orWhereArgs)
+      : this.TripModel.findManyByUserId(id, andWhereArgs, orWhereArgs);
   }
 
   public updateOne(
@@ -104,7 +94,9 @@ export default class TripService {
     );
   }
 
-  public deleteTripItinerary(id: TripItineraryRecord['id']): Promise<TripItineraryRecord | undefined> {
+  public deleteTripItinerary(
+    id: TripItineraryRecord['id']
+  ): Promise<TripItineraryRecord | undefined> {
     return this.TripItineraryModel.deleteOne(id);
   }
 }

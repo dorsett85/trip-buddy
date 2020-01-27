@@ -8,15 +8,15 @@ import {
 } from '../../utils/constants/errors';
 
 const User: UserResolvers['User'] = {
-  trips: async ({ id }, __, { TripService }) => {
-    const userTrips = await TripService.findManyByUserId(id, {});
+  trips: async (_, __, { tripService }) => {
+    const userTrips = await tripService.findMany();
     return userTrips;
   }
 };
 
 const Query: UserResolvers['Query'] = {
-  user: async (_, __, { user, UserService }) => {
-    const foundUser = await UserService.findOne({ id: user.id });
+  user: async (_, __, { user, userService }) => {
+    const foundUser = await userService.findOne({ id: user.id });
     if (!foundUser) {
       throw new UserInputError(USER_NOT_FOUND_MESSAGE);
     }
@@ -25,8 +25,8 @@ const Query: UserResolvers['Query'] = {
 };
 
 const Mutation: UserResolvers['Mutation'] = {
-  loginUser: async (_, args, { UserService }) => {
-    const token = await UserService.login(args);
+  loginUser: async (_, args, { accessService }) => {
+    const token = await accessService.login(args);
 
     if (token === USER_NOT_FOUND_MESSAGE) {
       throw new UserInputError(USER_NOT_FOUND_MESSAGE);
@@ -38,8 +38,8 @@ const Mutation: UserResolvers['Mutation'] = {
 
     return token;
   },
-  registerUser: async (_, args, { UserService }) => {
-    const token = await UserService.register(args);
+  registerUser: async (_, args, { accessService }) => {
+    const token = await accessService.register(args);
 
     if (token === USER_ALREADY_EXISTS_MESSAGE) {
       throw new UserInputError(USER_ALREADY_EXISTS_MESSAGE);
@@ -47,8 +47,8 @@ const Mutation: UserResolvers['Mutation'] = {
 
     return token;
   },
-  updateUser: async (_, { input }, { user, UserService }) => {
-    const updatedUser = await UserService.updateOne(input, { id: user.id });
+  updateUser: async (_, { input }, { user, userService }) => {
+    const updatedUser = await userService.updateOne(input, { id: user.id });
     if (!updatedUser) {
       throw new UserInputError(NOT_FOUND_MESSAGE);
     }

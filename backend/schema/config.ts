@@ -1,5 +1,6 @@
 import { ApolloServerExpressConfig } from 'apollo-server-express';
 import { GraphQLError } from 'graphql';
+import AccessService from '../services/Access';
 import UserService from '../services/User';
 import TripService from '../services/Trip';
 import {
@@ -18,10 +19,14 @@ import {
 } from '../utils/constants/errors';
 import { env } from '../config/config';
 import { IsAuthDirective } from './directives/IsAuthDirective';
+import UserModel from '../models/User';
+import TripModel from '../models/Trip';
+import UserTripModel from '../models/UserTrip';
+import TripItineraryModel from '../models/TripItinerary';
 
 /*
  * Define the ApolloServerExpressConfig here, which includes the
- * schema (make up of typeDefs and resolvers), and the context
+ * schema (make up of typeDefs and resolvers), directives, and the context
  */
 
 const typeDefs = [
@@ -35,7 +40,19 @@ const resolvers = shallowMerge([userResolvers, tripResolvers, dateResolvers]);
 const schemaDirectives = {
   isAuth: IsAuthDirective
 };
-const context = getContext({ UserService, TripService });
+const context = getContext({
+  services: {
+    AccessService,
+    UserService,
+    TripService
+  },
+  models: {
+    UserModel,
+    UserTripModel,
+    TripModel,
+    TripItineraryModel
+  }
+});
 
 const formatError = (err: GraphQLError): GraphQLError => {
   const formattedErr = err;

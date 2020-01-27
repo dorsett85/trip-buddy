@@ -1,6 +1,6 @@
-import db from '../db/db';
 import { TripRecord } from 'common/lib/types/trip';
 import { UserRecord } from 'common/lib/types/user';
+import db from '../db/db';
 import BaseModel from './Base';
 import { addSelect, addWhere, prefixTableName } from '../utils/dbHelpers';
 

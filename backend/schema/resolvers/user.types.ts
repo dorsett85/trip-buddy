@@ -1,12 +1,12 @@
 /* eslint-disable import/no-cycle */
 import { IResolvers } from 'apollo-server-express';
+import { UserRecord } from 'common/lib/types/user';
 import {
   InputResolverArg,
   FieldResolver,
   AuthFieldResolver
 } from '../../types/resolvers';
 import { TripSchema } from './trip.types';
-import { UserRecord } from '../../models/User.types';
 
 export interface LoginArgs {
   username: string;

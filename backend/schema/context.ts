@@ -2,23 +2,42 @@ import { ExpressContext } from 'apollo-server-express/dist/ApolloServer';
 import { ContextDeps, ContextObj } from './context.types';
 import { getToken } from '../utils/getToken';
 
-export const getContext = (dependencies: ContextDeps) => async ({
+export const getContext = ({ services, models }: ContextDeps) => async ({
   req
 }: ExpressContext): Promise<ContextObj | ContextObj<true>> => {
-  // Verify user
+  // Verify user and get their latest data
   const token = getToken(req.headers.authorization);
-  let user = token ? dependencies.UserService.verify(token) : null;
+  const { AccessService } = services;
+  const { UserModel } = models;
+  const accessService = new AccessService({ UserModel });
+  const user = token ? await accessService.getActiveUser(token) : null;
+
+  // If there's no user, then don't provide additional services!
+  if (!user) {
+    return {
+      user,
+      accessService,
+      userService: null,
+      tripService: null
+    };
+  }
 
   // Instantiate user and trip services
-  const UserService = new dependencies.UserService();
-  const TripService = new dependencies.TripService();
+  const { UserService, TripService } = services;
+  const { UserTripModel, TripModel, TripItineraryModel } = models;
 
-  // Get the user record for the context if verified
-  user = user && ((await UserService.findOne({ id: user.id })) || null);
+  const userService = new UserService({ user, UserModel });
+  const tripService = new TripService({
+    user,
+    UserTripModel,
+    TripModel,
+    TripItineraryModel
+  });
 
   return {
     user,
-    UserService,
-    TripService
+    accessService,
+    userService,
+    tripService
   };
 };
