@@ -1,51 +1,42 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { DispatchProp } from 'react-redux';
-import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
-import { setUser } from '../../store/user/reducer';
 import { UserRecord } from 'common/lib/types/user';
+import { setUser } from '../../store/user/reducer';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { getFirstError } from '../../utils/apolloErrors';
-import {
-  SUCCESSFUL_UPDATE_MESSAGE,
-  UPDATING_MESSAGE
-} from '../../utils/constants/messages';
-
-export const UPDATE_USER = gql`
-  mutation UpdateUser($input: UpdateUserInput) {
-    updateUser(input: $input) {
-      username
-      email
-    }
-  }
-`;
+import { UPDATING_MESSAGE } from '../../utils/constants/messages';
+import SuccessText from '../AppText/SuccessText';
+import ErrorText from '../AppText/ErrorText';
+import { UPDATE_USER } from '../ApolloProvider/gql/user';
 
 export interface UserContentProps extends DispatchProp {
   user: UserRecord;
 }
 
-const UserInfo = styled.div`
-  padding-top: 1rem;
-`;
+const UserInfo = styled.div(
+  ({ theme }) => css`
+    padding-top: ${theme.spacing()};
+  `
+);
 
 const UserNameInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
   const [username, setUsername] = useState(user.username);
   const [editingUsername, setEditingUsername] = useState(false);
-  const [updateUsernameText, setUpdateUsernameText] = useState('');
-  const [updateUsernameError, setUpdateUsernameError] = useState(false);
+  const [updateUsernameText, setUpdateUsernameText] = useState<JSX.Element>();
+  const [updateUsernameError, setUpdateUsernameError] = useState<JSX.Element>();
 
   // Define update user mutation and handlers
   const [updateUser, { loading }] = useMutation(UPDATE_USER, {
     onCompleted: () => {
       setEditingUsername(false);
-      setUpdateUsernameError(false);
       dispatch(setUser({ username }));
-      setUpdateUsernameText(SUCCESSFUL_UPDATE_MESSAGE);
+      setUpdateUsernameError(undefined);
+      setUpdateUsernameText(<SuccessText />);
     },
     onError: error => {
-      setUpdateUsernameError(true);
-      setUpdateUsernameText(getFirstError(error));
+      setUpdateUsernameText(<ErrorText text={getFirstError(error)} />);
     }
   });
 
@@ -57,8 +48,8 @@ const UserNameInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
   };
 
   const handleSubmitUsername = () => {
-    setUpdateUsernameError(false);
-    setUpdateUsernameText('');
+    setUpdateUsernameError(undefined);
+    setUpdateUsernameText(undefined);
     updateUser({ variables: { input: { username } } });
   };
 
@@ -67,9 +58,12 @@ const UserNameInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
       setUsername(user.username);
     }
     setEditingUsername(false);
-    setUpdateUsernameError(false);
-    setUpdateUsernameText('');
+    setUpdateUsernameError(undefined);
+    setUpdateUsernameText(undefined);
   };
+
+  const helperText =
+    updateUsernameError || updateUsernameText || (loading && UPDATING_MESSAGE) || '';
 
   return (
     <EditableTextField
@@ -79,8 +73,8 @@ const UserNameInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
       onChange={handleUsernameChange}
       onSubmitEdit={handleSubmitUsername}
       onCancelEdit={handleCancelUsername}
-      helperText={loading ? UPDATING_MESSAGE : updateUsernameText}
-      error={updateUsernameError}
+      helperText={helperText}
+      error={!!updateUsernameError}
       fullWidth
       margin='normal'
     />
@@ -90,20 +84,19 @@ const UserNameInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
 const UserEmailInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
   const [email, setEmail] = useState(user.email);
   const [editingEmail, setEditingEmail] = useState(false);
-  const [updateEmailText, setUpdateEmailText] = useState('');
-  const [updateEmailError, setUpdateEmailError] = useState(false);
+  const [updateEmailText, setUpdateEmailText] = useState<JSX.Element>();
+  const [updateEmailError, setUpdateEmailError] = useState<JSX.Element>();
 
   // Define update user mutation and handlers
   const [updateUser, { loading }] = useMutation(UPDATE_USER, {
     onCompleted: () => {
       setEditingEmail(false);
-      setUpdateEmailError(false);
       dispatch(setUser({ email }));
-      setUpdateEmailText(SUCCESSFUL_UPDATE_MESSAGE);
+      setUpdateEmailError(undefined);
+      setUpdateEmailText(<SuccessText />);
     },
     onError: error => {
-      setUpdateEmailError(true);
-      setUpdateEmailText(getFirstError(error));
+      setUpdateEmailText(<ErrorText text={getFirstError(error)} />);
     }
   });
 
@@ -115,8 +108,8 @@ const UserEmailInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
   };
 
   const handleSubmitEmail = () => {
-    setUpdateEmailError(false);
-    setUpdateEmailText('');
+    setUpdateEmailError(undefined);
+    setUpdateEmailText(undefined);
     updateUser({ variables: { input: { email } } });
   };
 
@@ -125,9 +118,12 @@ const UserEmailInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
       setEmail(user.email);
     }
     setEditingEmail(false);
-    setUpdateEmailError(false);
-    setUpdateEmailText('');
+    setUpdateEmailError(undefined);
+    setUpdateEmailText(undefined);
   };
+
+  const helperText =
+    updateEmailError || updateEmailText || (loading && UPDATING_MESSAGE) || '';
 
   return (
     <EditableTextField
@@ -137,8 +133,8 @@ const UserEmailInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
       onChange={handleEmailChange}
       onSubmitEdit={handleSubmitEmail}
       onCancelEdit={handleCancelEmail}
-      helperText={loading ? UPDATING_MESSAGE : updateEmailText}
-      error={updateEmailError}
+      helperText={helperText}
+      error={!!updateEmailError}
       fullWidth
       margin='normal'
     />

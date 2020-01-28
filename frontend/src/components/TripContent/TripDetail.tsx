@@ -63,8 +63,8 @@ const Header = styled.div(
     align-items: center;
   }
   div:nth-of-type(2) {
-    margin-top: ${theme.spacing('xs')}
-    color: red;
+    margin-top: ${theme.spacing('xs')};
+    color: ${theme.colors.red};
   }
 `
 );

@@ -14,18 +14,15 @@ export default class UserService {
     this.UserModel = dependencies.UserModel;
   }
 
-  public findOne(
-    andWhereArgs: Partial<UserRecord> = {},
-    orWhereArgs: Partial<UserRecord> = {}
-  ): Promise<UserRecord | undefined> {
-    return this.UserModel.findOne(andWhereArgs, orWhereArgs);
+  public findOne(): Promise<UserRecord | undefined> {
+    const { id } = this.user;
+    return this.UserModel.findOne({ id });
   }
 
   public updateOne(
-    updateUserInput: UpdateUserInput['input'],
-    andWhereArgs: Partial<UserRecord> = {},
-    orWhereArgs: Partial<UserRecord> = {}
+    updateUserInput: UpdateUserInput['input']
   ): Promise<UserRecord | undefined> {
-    return this.UserModel.updateOne(updateUserInput, andWhereArgs, orWhereArgs);
+    const { id } = this.user;
+    return this.UserModel.updateOne(updateUserInput, { id });
   }
 }

@@ -15,8 +15,8 @@ const User: UserResolvers['User'] = {
 };
 
 const Query: UserResolvers['Query'] = {
-  user: async (_, __, { user, userService }) => {
-    const foundUser = await userService.findOne({ id: user.id });
+  user: async (_, __, { userService }) => {
+    const foundUser = await userService.findOne();
     if (!foundUser) {
       throw new UserInputError(USER_NOT_FOUND_MESSAGE);
     }
@@ -47,8 +47,8 @@ const Mutation: UserResolvers['Mutation'] = {
 
     return token;
   },
-  updateUser: async (_, { input }, { user, userService }) => {
-    const updatedUser = await userService.updateOne(input, { id: user.id });
+  updateUser: async (_, { input }, { userService }) => {
+    const updatedUser = await userService.updateOne(input);
     if (!updatedUser) {
       throw new UserInputError(NOT_FOUND_MESSAGE);
     }
