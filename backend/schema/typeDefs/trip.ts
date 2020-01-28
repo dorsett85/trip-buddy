@@ -29,7 +29,7 @@ export const tripTypeDefs = gql`
   }
 
   input UpdateTripInput {
-    id: Int
+    id: Int!
     name: String
     description: String
     location: [Float]

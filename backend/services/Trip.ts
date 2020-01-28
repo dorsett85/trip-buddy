@@ -77,7 +77,7 @@ export default class TripService {
   }
 
   public updateOne(
-    updateTripInput: UpdateTripInput['input'],
+    updateTripInput: Omit<UpdateTripInput['input'], 'id'>,
     andWhereArgs: Partial<TripRecord> = {},
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord | undefined> {

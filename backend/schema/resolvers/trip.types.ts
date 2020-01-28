@@ -1,15 +1,15 @@
 /* eslint-disable camelcase */
 import { IResolvers } from 'apollo-server-express';
-// eslint-disable-next-line import/no-cycle
-import { InputResolverArg, AuthFieldResolver } from '../../types/resolvers';
 import { TripRecord } from 'common/lib/types/trip';
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
+// eslint-disable-next-line import/no-cycle
+import { InputResolverArg, AuthFieldResolver } from '../../types/resolvers';
 
 export type CreateTripInput = InputResolverArg<
   Pick<TripRecord, 'name' | 'description' | 'location' | 'start_date'>
 >;
 export type FindTripInput = InputResolverArg<TripSchema>;
-export type UpdateTripInput = InputResolverArg<Omit<TripSchema, 'created_date'>>;
+export type UpdateTripInput = InputResolverArg<Omit<TripSchemaWithId, 'created_date'>>;
 
 export type TripItineraryInput = InputResolverArg<TripItinerarySchema>;
 export type CreateTripItineraryInput = InputResolverArg<
@@ -50,4 +50,8 @@ export interface TripResolvers extends IResolvers {
 }
 
 export interface TripSchema extends Partial<TripRecord> {}
+export interface TripSchemaWithId extends TripSchema {
+  id: TripRecord['id'];
+}
+
 export interface TripItinerarySchema extends Partial<TripItineraryRecord> {}

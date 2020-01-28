@@ -31,11 +31,9 @@ const Mutation: TripResolvers['Mutation'] = {
     return trip;
   },
   // TODO Only allow updates to user's trips
-  updateTrip: async (_, args, { tripService }) => {
-    const {
-      input: { id, ...input }
-    } = args;
-    const trip = await tripService.updateOne(input, { id });
+  updateTrip: async (_, { input }, { tripService }) => {
+    const { id, ...rest } = input;
+    const trip = await tripService.updateOne(rest, { id });
     if (!trip) {
       throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
     }
