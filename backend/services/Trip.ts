@@ -81,7 +81,15 @@ export default class TripService {
     andWhereArgs: Partial<TripRecord> = {},
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord | undefined> {
-    return this.TripModel.updateOne(updateTripInput, andWhereArgs, orWhereArgs);
+    const { id, role } = this.user;
+
+    return role === 'admin'
+      ? this.TripModel.updateOne(updateTripInput, andWhereArgs, orWhereArgs)
+      : this.TripModel.updateOneByUserId(updateTripInput, {
+          userId: id,
+          andWhereArgs,
+          orWhereArgs
+        });
   }
 
   public deleteOne(tripId: TripRecord['id']): Promise<TripRecord | undefined> {

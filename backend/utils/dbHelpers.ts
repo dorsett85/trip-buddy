@@ -1,33 +1,35 @@
 import { QueryConfig } from 'pg';
 import { isEmptyObject } from './isEmptyObject';
-import { KeyValue } from '../types';
+import { KeyValue, WhereArgs } from '../types';
 
 type Operator = 'AND' | 'OR';
-
-interface WhereArgs {
-  andWhereArgs: KeyValue;
-  orWhereArgs: KeyValue;
-}
 
 /**
  * Add table name prefix
  *
- * Given an object of properties that contain key (column name) / value (column values) pairs,
- * return a new object that has keys prefixed with a table name
+ * Given an object of properties that contains key (column name) / value (column values)
+ * pairs, an array of strings (column names), or a string (column name), return a new
+ * object/array/string with prefixed table name.
  */
+export function prefixTableName(table: string, column: string): string;
 export function prefixTableName(table: string, columns: string[]): string[];
-export function prefixTableName(table: string, args: KeyValue): KeyValue;
-export function prefixTableName(table: string, args: KeyValue | string[]) {
+export function prefixTableName(table: string, arg: KeyValue): KeyValue;
+export function prefixTableName(table: string, arg: KeyValue | string[] | string) {
+  // Prefix for string argument
+  if (typeof arg === 'string') {
+    return `${table}.${arg}`;
+  }
+
   // Prefix for array argument
-  if (Array.isArray(args)) {
-    return args.map(column => `${table}.${column}`);
+  if (Array.isArray(arg)) {
+    return arg.map(column => `${table}.${column}`);
   }
 
   // Prefix for objects argument
   const keysWithTablePrefix: KeyValue = {};
-  return Object.keys(args).reduce((acc, key) => {
+  return Object.keys(arg).reduce((acc, key) => {
     const obj = { ...acc };
-    obj[`${table}.${key}`] = args[key];
+    obj[`${table}.${key}`] = arg[key];
     return obj;
   }, keysWithTablePrefix);
 }

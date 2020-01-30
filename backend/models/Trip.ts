@@ -3,6 +3,7 @@ import { UserRecord } from 'common/lib/types/user';
 import db from '../db/db';
 import BaseModel from './Base';
 import { addSelect, addWhere, prefixTableName } from '../utils/dbHelpers';
+import { WhereWithUserIdArgs, JoinUserIdArgs } from '../types';
 
 export default class TripModel extends BaseModel {
   public static tableName = 'trips';
@@ -49,7 +50,6 @@ export default class TripModel extends BaseModel {
     const text = `
       ${select.text}
         JOIN users_trips ut ON ut.trip_id = ${this.tableName}.id
-        JOIN users u ON u.id = ut.user_id
       ${where.text};
     `;
     const values = where.values!;
@@ -65,6 +65,17 @@ export default class TripModel extends BaseModel {
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord | undefined> {
     return this.baseUpdateOne(updateArgs, andWhereArgs, orWhereArgs);
+  }
+
+  public static updateOneByUserId(
+    updateArgs: Partial<TripRecord>,
+    args: WhereWithUserIdArgs<Partial<TripRecord>>
+  ): Promise<TripRecord | undefined> {
+    const joinUserIdArgs: JoinUserIdArgs<Partial<TripRecord>> = {
+      ...args,
+      joinStatement: `LEFT JOIN users_trips ut ON ut.trip_id = ${this.tableName}.id`
+    };
+    return this.baseUpdateOneByUserId(updateArgs, joinUserIdArgs);
   }
 
   public static deleteOne(tripId: TripRecord['id']): Promise<TripRecord | undefined> {
