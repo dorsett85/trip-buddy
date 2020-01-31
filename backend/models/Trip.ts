@@ -3,7 +3,7 @@ import { UserRecord } from 'common/lib/types/user';
 import db from '../db/db';
 import BaseModel from './Base';
 import { addSelect, addWhere, prefixTableName } from '../utils/dbHelpers';
-import { WhereWithUserIdArgs, JoinUserIdArgs } from '../types';
+import { WhereUserIdArgs, WhereJoinUserIdArgs, OmitId } from '../types';
 
 export default class TripModel extends BaseModel {
   public static tableName = 'trips';
@@ -60,7 +60,7 @@ export default class TripModel extends BaseModel {
   }
 
   public static updateOne(
-    updateArgs: Partial<TripRecord>,
+    updateArgs: OmitId<Partial<TripRecord>>,
     andWhereArgs: Partial<TripRecord> = {},
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord | undefined> {
@@ -68,17 +68,36 @@ export default class TripModel extends BaseModel {
   }
 
   public static updateOneByUserId(
-    updateArgs: Partial<TripRecord>,
-    args: WhereWithUserIdArgs<Partial<TripRecord>>
+    updateArgs: OmitId<Partial<TripRecord>>,
+    args: WhereUserIdArgs<Partial<TripRecord>>
   ): Promise<TripRecord | undefined> {
-    const joinUserIdArgs: JoinUserIdArgs<Partial<TripRecord>> = {
+    const whereJoinUserIdArgs: WhereJoinUserIdArgs<Partial<TripRecord>> = {
       ...args,
       joinStatement: `LEFT JOIN users_trips ut ON ut.trip_id = ${this.tableName}.id`
     };
-    return this.baseUpdateOneByUserId(updateArgs, joinUserIdArgs);
+    return this.baseUpdateOneByUserId(updateArgs, whereJoinUserIdArgs);
   }
 
-  public static deleteOne(tripId: TripRecord['id']): Promise<TripRecord | undefined> {
-    return this.baseDeleteOne(tripId);
+  public static deleteOne(tripId: TripRecord['id']): Promise<TripRecord | undefined>;
+
+  // eslint-disable-next-line no-dupe-class-members
+  public static deleteOne(
+    tripId: TripRecord['id'],
+    userId: UserRecord['id']
+  ): Promise<TripRecord | undefined>;
+
+  // eslint-disable-next-line no-dupe-class-members
+  public static deleteOne(
+    tripId: TripRecord['id'],
+    userId?: UserRecord['id']
+  ): Promise<TripRecord | undefined> {
+    if (!userId) {
+      return this.baseDeleteOne(tripId);
+    }
+
+    return this.baseDeleteOneByUserId(tripId, {
+      userId,
+      joinStatement: `LEFT JOIN users_trips ut ON ut.trip_id = ${this.tableName}.id`
+    });
   }
 }

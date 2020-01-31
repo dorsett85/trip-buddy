@@ -4,19 +4,21 @@ import { TripRecord } from 'common/lib/types/trip';
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 // eslint-disable-next-line import/no-cycle
 import { InputResolverArg, AuthFieldResolver } from '../../types/resolvers';
+import { OmitCreatedDate, OmitIdCreatedDate } from '../../types';
 
+// Trip inputs
 export type CreateTripInput = InputResolverArg<
   Pick<TripRecord, 'name' | 'description' | 'location' | 'start_date'>
 >;
 export type FindTripInput = InputResolverArg<TripSchema>;
-export type UpdateTripInput = InputResolverArg<Omit<TripSchemaWithId, 'created_date'>>;
+export type UpdateTripInput = InputResolverArg<OmitCreatedDate<TripSchemaWithId>>;
 
-export type TripItineraryInput = InputResolverArg<TripItinerarySchema>;
+// Trip itinerary inputs
 export type CreateTripItineraryInput = InputResolverArg<
-  Omit<TripItineraryRecord, 'id' | 'end_time' | 'created_date'>
+  Omit<OmitIdCreatedDate<TripItineraryRecord>, 'end_time'>
 >;
 export type UpdateTripItineraryInput = InputResolverArg<
-  Omit<TripItinerarySchema, 'created_date'>
+  OmitCreatedDate<TripItinerarySchemaWithId>
 >;
 
 export interface TripResolvers extends IResolvers {
@@ -30,7 +32,7 @@ export interface TripResolvers extends IResolvers {
   Mutation: {
     createTrip: AuthFieldResolver<any, CreateTripInput, Promise<TripSchema>>;
     updateTrip: AuthFieldResolver<any, UpdateTripInput, Promise<TripSchema>>;
-    deleteTrip: AuthFieldResolver<any, Pick<TripRecord['id']>, Promise<TripRecord['id']>>;
+    deleteTrip: AuthFieldResolver<any, Pick<TripRecord, 'id'>, Promise<TripRecord['id']>>;
     createTripItinerary: AuthFieldResolver<
       any,
       CreateTripItineraryInput,
@@ -43,7 +45,7 @@ export interface TripResolvers extends IResolvers {
     >;
     deleteTripItinerary: AuthFieldResolver<
       any,
-      Pick<TripItineraryRecord['id']>,
+      Pick<TripItineraryRecord, 'id'>,
       Promise<TripItineraryRecord['id']>
     >;
   };
@@ -55,3 +57,6 @@ export interface TripSchemaWithId extends TripSchema {
 }
 
 export interface TripItinerarySchema extends Partial<TripItineraryRecord> {}
+export interface TripItinerarySchemaWithId extends Partial<TripItineraryRecord> {
+  id: TripItineraryRecord['id'];
+}

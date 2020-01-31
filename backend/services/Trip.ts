@@ -12,6 +12,7 @@ import {
   CreateTripItineraryInput
 } from '../schema/resolvers/trip.types';
 import TripItineraryModel from '../models/TripItinerary';
+import { OmitId } from '../types';
 
 export default class TripService {
   private user: UserRecord;
@@ -77,7 +78,7 @@ export default class TripService {
   }
 
   public updateOne(
-    updateTripInput: Omit<UpdateTripInput['input'], 'id'>,
+    updateTripInput: OmitId<UpdateTripInput['input']>,
     andWhereArgs: Partial<TripRecord> = {},
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord | undefined> {
@@ -93,7 +94,10 @@ export default class TripService {
   }
 
   public deleteOne(tripId: TripRecord['id']): Promise<TripRecord | undefined> {
-    return this.TripModel.deleteOne(tripId);
+    const { id, role } = this.user;
+    return role === 'admin'
+      ? this.TripModel.deleteOne(tripId)
+      : this.TripModel.deleteOne(tripId, id);
   }
 
   public findTripItinerary(
@@ -110,7 +114,7 @@ export default class TripService {
   }
 
   public updateTripItinerary(
-    updateTripItineraryInput: UpdateTripItineraryInput['input'],
+    updateTripItineraryInput: OmitId<UpdateTripItineraryInput['input']>,
     andWhereArgs: Partial<TripItineraryRecord> = {},
     orWhereArgs: Partial<TripItineraryRecord> = {}
   ): Promise<TripItineraryRecord | undefined> {

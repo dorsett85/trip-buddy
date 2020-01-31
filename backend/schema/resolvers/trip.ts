@@ -30,7 +30,6 @@ const Mutation: TripResolvers['Mutation'] = {
     const trip = await tripService.createOne(input);
     return trip;
   },
-  // TODO Only allow updates to user's trips
   updateTrip: async (_, { input }, { tripService }) => {
     const { id, ...rest } = input;
     const trip = await tripService.updateOne(rest, { id });
