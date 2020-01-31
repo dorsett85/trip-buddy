@@ -1,4 +1,11 @@
-import { addInsert, addWhere, addSelect, addUpdate, prefixTableName } from './dbHelpers';
+import {
+  addInsert,
+  addWhere,
+  addSelect,
+  addUpdate,
+  prefixTableName,
+  WhereArgsWithOptionalUserId
+} from './dbHelpers';
 
 describe('dbHelpers module', () => {
   describe('addSelect function', () => {
@@ -87,7 +94,7 @@ describe('dbHelpers module', () => {
       const text = `${update.text} ${where.text};`;
       const values = [...update.values!, ...where.values!];
 
-      const sql = `UPDATE ${table} SET username = $1, email = $2 WHERE ${table}.id = $3;`
+      const sql = `UPDATE ${table} SET username = $1, email = $2 WHERE ${table}.id = $3;`;
       expect(text).toBe(sql);
       expect(values).toStrictEqual([username, email, id]);
     });
@@ -95,12 +102,12 @@ describe('dbHelpers module', () => {
 
   describe('addWhere function', () => {
     const table = 'users';
-    const whereArgs = {
+    const whereArgs: WhereArgsWithOptionalUserId = {
       andWhereArgs: {},
       orWhereArgs: {}
     };
 
-    it('should return an error when both properties are empty objects', () => {
+    it('should return an error when properties are empty objects and no userId', () => {
       const err = () => addWhere(table, whereArgs);
       expect(err).toThrow();
     });
@@ -155,10 +162,34 @@ describe('dbHelpers module', () => {
       whereArgs.orWhereArgs = { email };
 
       const { text, values } = addWhere(table, whereArgs);
-      expect(text).toBe(
-        `WHERE ${table}.id = $1 AND ${table}.username = $2 OR ${table}.email = $3`
-      );
+      const sql = `WHERE ${table}.id = $1 AND ${table}.username = $2 OR ${table}.email = $3`;
+      expect(text).toBe(sql);
       expect(values).toStrictEqual([id, username, email]);
+    });
+
+    it('should add user_id', () => {
+      const id = 1;
+      whereArgs.andWhereArgs = {};
+      whereArgs.orWhereArgs = {};
+      whereArgs.userId = id;
+
+      const { text, values } = addWhere(table, whereArgs);
+      expect(text).toBe(`WHERE user_id = $1`);
+      expect(values).toStrictEqual([id]);
+    });
+
+    it('should wrap other where arguments and add user_id with AND', () => {
+      const id = 1;
+      const username = 'clayton';
+      const email = 'claytonphillipsdorsett@gmail.com';
+      whereArgs.andWhereArgs = { username };
+      whereArgs.orWhereArgs = { email };
+      whereArgs.userId = id;
+
+      const { text, values } = addWhere(table, whereArgs);
+      const sql = `WHERE (${table}.username = $1 OR ${table}.email = $2) AND user_id = $3`;
+      expect(text).toBe(sql);
+      expect(values).toStrictEqual([username, email, id]);
     });
   });
 

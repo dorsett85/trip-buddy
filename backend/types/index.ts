@@ -40,8 +40,8 @@ export type OmitIdCreatedDate<T> = OmitId<T> & OmitCreatedDate<T>;
  * Used for object arguments for methods that need to create SQL statements
  * that filter by user_id
  */
-export interface UserIdArgs<T> {
-  userId: T['id'];
+export interface UserIdArgs {
+  userId: number;
 }
 
 /**
@@ -61,7 +61,7 @@ export interface JoinArgs {
 /**
  * userId and joinStatement property type
  */
-export type JoinUserIdArgs<T> = UserIdArgs<T> & JoinArgs;
+export type JoinUserIdArgs = UserIdArgs & JoinArgs;
 
 /**
  * An object containing properties that have key (column name) / value (column value)
@@ -76,9 +76,9 @@ export interface WhereArgs<T = KeyValue> {
 /**
  * Add a userId property to WhereArgs with a given type T
  */
-export type WhereUserIdArgs<T = KeyValue> = WhereArgs<T> & UserIdArgs<T>;
+export type WhereUserIdArgs<T = KeyValue> = WhereArgs<T> & UserIdArgs;
 
 /**
- * Include userId and joinStatement properties to go with WhereArgs.
+ * Include userId and joinStatement properties to go with WhereArgs
  */
-export type WhereJoinUserIdArgs<T = KeyValue> = UserIdArgs<T> & JoinArgs & WhereArgs<T>;
+export type WhereJoinUserIdArgs<T = KeyValue> = UserIdArgs & JoinArgs & WhereArgs<T>;

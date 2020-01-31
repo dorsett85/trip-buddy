@@ -1,8 +1,6 @@
 import { TripRecord } from 'common/lib/types/trip';
 import { UserRecord } from 'common/lib/types/user';
-import db from '../db/db';
 import BaseModel from './Base';
-import { addSelect, addWhere } from '../utils/dbHelpers';
 import { WhereUserIdArgs, WhereJoinUserIdArgs, OmitId } from '../types';
 
 export default class TripModel extends BaseModel {
@@ -39,18 +37,12 @@ export default class TripModel extends BaseModel {
     andWhereArgs: Partial<TripRecord> = {},
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord[]> {
-    const select = addSelect(this.tableName);
-    const where = addWhere(this.tableName, { andWhereArgs, orWhereArgs });
-    const text = `
-      ${select.text}
-        JOIN users_trips ut ON ut.trip_id = ${this.tableName}.id
-      ${where.text} AND user_id = ${userId};
-    `;
-    const values = where.values!;
-
-    const { rows }: { rows: TripRecord[] } = await db.query({ text, values });
-
-    return rows;
+    return this.baseFindManyByUserId({
+      userId,
+      joinStatement: `LEFT JOIN users_trips ut ON ut.trip_id = ${this.tableName}.id`,
+      andWhereArgs,
+      orWhereArgs
+    });
   }
 
   public static updateOne(

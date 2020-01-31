@@ -1,5 +1,12 @@
 import db from '../db/db';
-import { addInsert, addWhere, addSelect, addUpdate } from '../utils/dbHelpers';
+import {
+  addInsert,
+  addWhere,
+  addSelect,
+  addUpdate,
+  extractRow,
+  extractRows
+} from '../utils/dbHelpers';
 import {
   KeyValue,
   WhereJoinUserIdArgs,
@@ -12,11 +19,7 @@ export default class BaseModel {
 
   protected static async baseCreateOne<T>(record: KeyValue): Promise<T> {
     const query = addInsert(this.tableName, record);
-    const {
-      rows: [row]
-    }: { rows: T[] } = await db.query(query);
-
-    return row;
+    return extractRow(await db.query(query));
   }
 
   protected static async baseFindOne<T>(
@@ -36,8 +39,25 @@ export default class BaseModel {
     const text = `${select.text} ${where.text};`;
     const { values } = where;
 
-    const { rows }: { rows: T[] } = await db.query({ text, values });
-    return rows;
+    return extractRows(await db.query({ text, values }));
+  }
+
+  protected static async baseFindManyByUserId<T>(
+    args: WhereJoinUserIdArgs
+  ): Promise<T[]> {
+    const { joinStatement, ...restWhereArgs } = args;
+
+    const select = addSelect(this.tableName);
+    const where = addWhere(this.tableName, restWhereArgs);
+
+    const text = `
+      ${select.text}
+        ${joinStatement}
+      ${where.text}
+    `;
+    const { values } = where;
+
+    return extractRows(await db.query({ text, values }));
   }
 
   protected static async baseUpdateOne<T>(
@@ -65,10 +85,7 @@ export default class BaseModel {
     `;
     const values = [update.values!, where.values!].flat();
 
-    const {
-      rows: [row]
-    }: { rows: T[] } = await db.query({ text, values });
-    return row;
+    return extractRow(await db.query({ text, values }));
   }
 
   protected static async baseUpdateOneByUserId<T>(
@@ -100,16 +117,12 @@ export default class BaseModel {
         ${select.text}
           ${joinStatement}
         ${where.text} AND user_id = ${userId}
-        ORDER BY id LIMIT 1
       )
       RETURNING *;
     `;
     const values = [update.values!, where.values!].flat();
 
-    const {
-      rows: [row]
-    }: { rows: T[] } = await db.query({ text, values });
-    return row;
+    return extractRow(await db.query({ text, values }));
   }
 
   protected static async baseDeleteOne<T>(id: number): Promise<T> {
@@ -119,15 +132,12 @@ export default class BaseModel {
     const text = `${deleteTxt} ${where.text} RETURNING *;`;
     const { values } = where;
 
-    const {
-      rows: [row]
-    }: { rows: T[] } = await db.query({ text, values });
-    return row;
+    return extractRow(await db.query({ text, values }));
   }
 
   protected static async baseDeleteOneByUserId<T>(
     id: number,
-    joinUserIdArgs: JoinUserIdArgs<T>
+    joinUserIdArgs: JoinUserIdArgs
   ): Promise<T> {
     const { userId, joinStatement } = joinUserIdArgs;
 
@@ -148,15 +158,11 @@ export default class BaseModel {
         ${select.text}
           ${joinStatement}
         ${where.text} AND user_id = ${userId}
-        ORDER BY id LIMIT 1
       )
       RETURNING *;
     `;
     const { values } = where;
 
-    const {
-      rows: [row]
-    }: { rows: T[] } = await db.query({ text, values });
-    return row;
+    return extractRow(await db.query({ text, values }));
   }
 }

@@ -1,8 +1,12 @@
-import { QueryConfig } from 'pg';
+import { QueryConfig, QueryResult } from 'pg';
 import { isEmptyObject } from './isEmptyObject';
 import { KeyValue, WhereArgs } from '../types';
 
 type Operator = 'AND' | 'OR';
+
+export interface WhereArgsWithOptionalUserId extends WhereArgs {
+  userId?: number;
+}
 
 /**
  * Add table name prefix
@@ -125,18 +129,18 @@ export const addUpdate = (
  */
 export const addWhere = (
   table: string,
-  { andWhereArgs = {}, orWhereArgs = {} }: WhereArgs,
+  { andWhereArgs = {}, orWhereArgs = {}, userId }: WhereArgsWithOptionalUserId,
   paramVal = 1
 ): QueryConfig => {
   let whereText = '';
-  const values: string[] = [];
+  const values: any[] = [];
   let newParamVal = paramVal;
 
   // Check for empty arg objects
   const isAndEmpty = isEmptyObject(andWhereArgs);
   const isOrEmpty = isEmptyObject(orWhereArgs);
-  if (isAndEmpty && isOrEmpty) {
-    throw Error('andWhereArgs and orWhereArgs are both empty');
+  if (isAndEmpty && isOrEmpty && !userId) {
+    throw Error('No where arguments selected');
   }
 
   // Define function for adding to the query config variables
@@ -158,8 +162,35 @@ export const addWhere = (
     addtoQueryConfig(prefixTableName(table, orWhereArgs), 'OR');
   }
 
+  // Add user_id if it's defined.  When there's no other arguments,
+  // simply add it to the where text, otherwise wrap the where text
+  // and add the user_id with an AND operator so it doesn't get overridden
+  if (userId) {
+    if (!whereText) {
+      whereText = `user_id = $${newParamVal}`;
+    } else {
+      whereText = `(${whereText}) AND user_id = $${newParamVal}`;
+    }
+    values.push(userId);
+  }
+
   return {
-    text: whereText ? `WHERE ${whereText}` : '',
+    text: `WHERE ${whereText}`,
     values
   };
+};
+
+/**
+ * Extract rows from a QueryResult
+ */
+export const extractRows = <T>(result: QueryResult): T[] => {
+  const { rows }: { rows: T[] } = result;
+  return rows;
+};
+
+/**
+ * Return a row from a QueryResult
+ */
+export const extractRow = <T>(result: QueryResult): T => {
+  return extractRows<T>(result)[0];
 };
