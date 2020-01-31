@@ -83,23 +83,25 @@ describe('dbHelpers module', () => {
         andWhereArgs: { id },
         orWhereArgs: {}
       };
-      const where = addWhere(whereArgs, update.values!.length + 1);
+      const where = addWhere(table, whereArgs, update.values!.length + 1);
       const text = `${update.text} ${where.text};`;
       const values = [...update.values!, ...where.values!];
 
-      expect(text).toBe(`UPDATE ${table} SET username = $1, email = $2 WHERE id = $3;`);
+      const sql = `UPDATE ${table} SET username = $1, email = $2 WHERE ${table}.id = $3;`
+      expect(text).toBe(sql);
       expect(values).toStrictEqual([username, email, id]);
     });
   });
 
   describe('addWhere function', () => {
+    const table = 'users';
     const whereArgs = {
       andWhereArgs: {},
       orWhereArgs: {}
     };
 
     it('should return an error when both properties are empty objects', () => {
-      const err = () => addWhere(whereArgs);
+      const err = () => addWhere(table, whereArgs);
       expect(err).toThrow();
     });
 
@@ -108,8 +110,8 @@ describe('dbHelpers module', () => {
       whereArgs.andWhereArgs = { id };
       whereArgs.orWhereArgs = {};
 
-      const { text, values } = addWhere(whereArgs);
-      expect(text).toBe('WHERE id = $1');
+      const { text, values } = addWhere(table, whereArgs);
+      expect(text).toBe(`WHERE ${table}.id = $1`);
       expect(values).toStrictEqual([id]);
     });
 
@@ -118,8 +120,8 @@ describe('dbHelpers module', () => {
       whereArgs.andWhereArgs = { id };
       whereArgs.orWhereArgs = {};
 
-      const { text, values } = addWhere(whereArgs, 5);
-      expect(text).toBe('WHERE id = $5');
+      const { text, values } = addWhere(table, whereArgs, 5);
+      expect(text).toBe(`WHERE ${table}.id = $5`);
       expect(values).toStrictEqual([id]);
     });
 
@@ -129,8 +131,8 @@ describe('dbHelpers module', () => {
       whereArgs.andWhereArgs = { id, username };
       whereArgs.orWhereArgs = {};
 
-      const { text, values } = addWhere(whereArgs);
-      expect(text).toBe('WHERE id = $1 AND username = $2');
+      const { text, values } = addWhere(table, whereArgs);
+      expect(text).toBe(`WHERE ${table}.id = $1 AND ${table}.username = $2`);
       expect(values).toStrictEqual([id, username]);
     });
 
@@ -140,8 +142,8 @@ describe('dbHelpers module', () => {
       whereArgs.andWhereArgs = {};
       whereArgs.orWhereArgs = { id, username };
 
-      const { text, values } = addWhere(whereArgs);
-      expect(text).toBe('WHERE id = $1 OR username = $2');
+      const { text, values } = addWhere(table, whereArgs);
+      expect(text).toBe(`WHERE ${table}.id = $1 OR ${table}.username = $2`);
       expect(values).toStrictEqual([id, username]);
     });
 
@@ -152,8 +154,10 @@ describe('dbHelpers module', () => {
       whereArgs.andWhereArgs = { id, username };
       whereArgs.orWhereArgs = { email };
 
-      const { text, values } = addWhere(whereArgs);
-      expect(text).toBe('WHERE id = $1 AND username = $2 OR email = $3');
+      const { text, values } = addWhere(table, whereArgs);
+      expect(text).toBe(
+        `WHERE ${table}.id = $1 AND ${table}.username = $2 OR ${table}.email = $3`
+      );
       expect(values).toStrictEqual([id, username, email]);
     });
   });

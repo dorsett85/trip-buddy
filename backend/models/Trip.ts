@@ -2,7 +2,7 @@ import { TripRecord } from 'common/lib/types/trip';
 import { UserRecord } from 'common/lib/types/user';
 import db from '../db/db';
 import BaseModel from './Base';
-import { addSelect, addWhere, prefixTableName } from '../utils/dbHelpers';
+import { addSelect, addWhere } from '../utils/dbHelpers';
 import { WhereUserIdArgs, WhereJoinUserIdArgs, OmitId } from '../types';
 
 export default class TripModel extends BaseModel {
@@ -40,17 +40,11 @@ export default class TripModel extends BaseModel {
     orWhereArgs: Partial<TripRecord> = {}
   ): Promise<TripRecord[]> {
     const select = addSelect(this.tableName);
-
-    // Make sure to prefix the whereArgs with the table name so "id" is not ambiguous
-    // in the query
-    const where = addWhere({
-      andWhereArgs: { ...prefixTableName(this.tableName, andWhereArgs), user_id: userId },
-      orWhereArgs: prefixTableName(this.tableName, orWhereArgs)
-    });
+    const where = addWhere(this.tableName, { andWhereArgs, orWhereArgs });
     const text = `
       ${select.text}
         JOIN users_trips ut ON ut.trip_id = ${this.tableName}.id
-      ${where.text};
+      ${where.text} AND user_id = ${userId};
     `;
     const values = where.values!;
 

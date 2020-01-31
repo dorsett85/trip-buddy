@@ -1,11 +1,5 @@
 import db from '../db/db';
-import {
-  addInsert,
-  addWhere,
-  addSelect,
-  addUpdate,
-  prefixTableName
-} from '../utils/dbHelpers';
+import { addInsert, addWhere, addSelect, addUpdate } from '../utils/dbHelpers';
 import {
   KeyValue,
   WhereJoinUserIdArgs,
@@ -38,7 +32,7 @@ export default class BaseModel {
     orWhereArgs: KeyValue = {}
   ): Promise<T[]> {
     const select = addSelect(this.tableName);
-    const where = addWhere({ andWhereArgs, orWhereArgs });
+    const where = addWhere(this.tableName, { andWhereArgs, orWhereArgs });
     const text = `${select.text} ${where.text};`;
     const { values } = where;
 
@@ -58,7 +52,7 @@ export default class BaseModel {
 
     const update = addUpdate(this.tableName, updateArgs, paramVal);
     paramVal += update.values!.length;
-    const where = addWhere({ andWhereArgs, orWhereArgs }, paramVal);
+    const where = addWhere(this.tableName, { andWhereArgs, orWhereArgs }, paramVal);
 
     const text = `
       ${update.text}
@@ -91,15 +85,11 @@ export default class BaseModel {
     const update = addUpdate(this.tableName, updateArgs, paramVal);
     paramVal += update.values!.length;
 
-    // Make sure to prefix the whereArgs with the table name so "id" is not ambiguous
-    // between the different tables
     const where = addWhere(
+      this.tableName,
       {
-        andWhereArgs: {
-          ...prefixTableName(this.tableName, andWhereArgs),
-          user_id: userId
-        },
-        orWhereArgs: prefixTableName(this.tableName, orWhereArgs)
+        andWhereArgs,
+        orWhereArgs
       },
       paramVal
     );
@@ -109,7 +99,7 @@ export default class BaseModel {
       WHERE id = (
         ${select.text}
           ${joinStatement}
-        ${where.text}
+        ${where.text} AND user_id = ${userId}
         ORDER BY id LIMIT 1
       )
       RETURNING *;
@@ -124,7 +114,7 @@ export default class BaseModel {
 
   protected static async baseDeleteOne<T>(id: number): Promise<T> {
     const deleteTxt = `DELETE FROM ${this.tableName}`;
-    const where = addWhere({ andWhereArgs: { id }, orWhereArgs: {} });
+    const where = addWhere(this.tableName, { andWhereArgs: { id }, orWhereArgs: {} });
 
     const text = `${deleteTxt} ${where.text} RETURNING *;`;
     const { values } = where;
@@ -147,13 +137,8 @@ export default class BaseModel {
 
     const deleteTxt = `DELETE FROM ${this.tableName}`;
 
-    // Make sure to prefix the whereArgs with the table name so "id" is not ambiguous
-    // between the different tables
-    const where = addWhere({
-      andWhereArgs: {
-        ...prefixTableName(this.tableName, { id }),
-        user_id: userId
-      },
+    const where = addWhere(this.tableName, {
+      andWhereArgs: { id },
       orWhereArgs: {}
     });
 
@@ -162,7 +147,7 @@ export default class BaseModel {
       WHERE id = (
         ${select.text}
           ${joinStatement}
-        ${where.text}
+        ${where.text} AND user_id = ${userId}
         ORDER BY id LIMIT 1
       )
       RETURNING *;

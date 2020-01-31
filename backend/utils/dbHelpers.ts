@@ -34,7 +34,6 @@ export function prefixTableName(table: string, arg: KeyValue | string[] | string
   }, keysWithTablePrefix);
 }
 
-
 /**
  * Add select clause text
  *
@@ -125,6 +124,7 @@ export const addUpdate = (
  * create a where clause text string
  */
 export const addWhere = (
+  table: string,
   { andWhereArgs = {}, orWhereArgs = {} }: WhereArgs,
   paramVal = 1
 ): QueryConfig => {
@@ -151,11 +151,11 @@ export const addWhere = (
 
   // Add the AND and OR where clauses if they exist
   if (!isAndEmpty) {
-    addtoQueryConfig(andWhereArgs, 'AND');
+    addtoQueryConfig(prefixTableName(table, andWhereArgs), 'AND');
   }
   if (!isOrEmpty) {
     whereText += whereText.length ? ' OR ' : '';
-    addtoQueryConfig(orWhereArgs, 'OR');
+    addtoQueryConfig(prefixTableName(table, orWhereArgs), 'OR');
   }
 
   return {
