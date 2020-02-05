@@ -5,6 +5,3 @@
 
 # misc
 .env.json
-
-# IDE's
-.vscode/
