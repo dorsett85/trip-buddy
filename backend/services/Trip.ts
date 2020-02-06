@@ -15,7 +15,7 @@ import TripItineraryModel from '../models/TripItinerary';
 import { OmitId } from '../types';
 
 export default class TripService {
-  private user: UserRecord;
+  private readonly user: UserRecord;
 
   private TripModel: typeof TripModel;
 
