@@ -1,6 +1,15 @@
-import { Pool, QueryResult } from 'pg';
+import { Pool, QueryConfig, QueryResult } from 'pg';
 import { ComparisonOperator, LogicalOperator, prefixTableName } from './dbHelpers';
 import { KeyValue } from '../types';
+
+interface Clauses {
+  insert?: string;
+  select?: string;
+  update?: string;
+  delete?: string;
+  where?: string[];
+  returning?: string;
+}
 
 export default class QueryBuilder<T = any> {
   // Make it thenable to return an async QueryResult
@@ -20,9 +29,9 @@ export default class QueryBuilder<T = any> {
   private readonly pool: Pool;
 
   /**
-   * Map of SQL clauses that will be converted to a SQL query
+   * Obj of SQL clauses that will be converted to a SQL query
    */
-  private clauses = new Map<string, any>();
+  private clauses: Clauses = {};
 
   /**
    * Parameterized query running value.  Every time a parameterized
@@ -54,10 +63,16 @@ export default class QueryBuilder<T = any> {
     this.pool = pool;
   }
 
-  public get clausesMap(): Map<string, any> {
+  /**
+   * Getter for the clauses property
+   */
+  public get clausesMap(): Readonly<Clauses> {
     return this.clauses;
   }
 
+  /**
+   * Get the current paramVal and values properties in a single object
+   */
   public get parameterizedValues() {
     return {
       paramVal: this.paramVal,
@@ -80,19 +95,7 @@ export default class QueryBuilder<T = any> {
       this.values.push(value);
     });
 
-    const text = `
-      ${insertText}
-      ${valuesText}
-    `;
-
-    this.clauses.set('insert', text);
-    return this;
-  }
-
-  public returning(columns: string[] = []): this {
-    const columnsWithTableName = prefixTableName(this.table, columns);
-    const columnText = columns.length ? columnsWithTableName.join(', ') : '*';
-    this.clauses.set('returning', `RETURNING ${columnText}`);
+    this.clauses.insert = `${insertText}\n${valuesText}`;
     return this;
   }
 
@@ -101,10 +104,8 @@ export default class QueryBuilder<T = any> {
     const columnText = columns.length
       ? columnsWithTableName.join(', ')
       : `${this.table}.*`;
-    const text = `SELECT ${columnText}`;
 
-    this.clauses.set('select', text);
-    this.clauses.set('from', `FROM ${this.table}`);
+    this.clauses.select = `SELECT ${columnText}`;
     return this;
   }
 
@@ -117,13 +118,12 @@ export default class QueryBuilder<T = any> {
       this.values.push(value);
     });
 
-    this.clauses.set('update', updateText);
+    this.clauses.update = updateText;
     return this;
   }
 
   public delete(): this {
-    const deleteText = `DELETE FROM ${this.table}`;
-    this.clauses.set('delete', deleteText);
+    this.clauses.delete = `DELETE FROM ${this.table}`;
     return this;
   }
 
@@ -134,7 +134,7 @@ export default class QueryBuilder<T = any> {
   ): this {
     // Set the initial where array in the clauses map.  We'll keep adding
     // to this with items and additional where methods (e.g., orWhere, andWhere)
-    this.clauses.set('where', ['WHERE']);
+    this.clauses.where = this.clauses.where || [];
     let text = '';
     Object.entries(items).forEach(([key, value], idx, arr) => {
       text += `${key} ${comparisonOperator} $${this.paramVal}`;
@@ -142,25 +142,76 @@ export default class QueryBuilder<T = any> {
       this.paramVal += 1;
       this.values.push(value);
     });
-    
-    // Add the text chunk to the where clause array, but wrap it in parentheses
-    // so later where methods will be separated from this logic chunk
-    this.clauses.get('where').push(`(${text})`);
+
+    this.clauses.where.push(text);
     return this;
   }
 
-  public run() {
-    let query = '';
-    let idx = 0;
-    this.clauses.forEach(clause => {
-      query += `${clause}`;
-      idx += 1;
-      if (idx !== this.clauses.size) {
-        query += '\n';
-      }
-    });
+  public whereRaw(text: string, values: (string | number)[]): this {
+    this.clauses.where = this.clauses.where || [];
+    const paramText = text.replace()
 
-    return this.pool.query(query);
+    return this;
+  }
+
+  public returning(columns: string[] = []): this {
+    const columnsWithTableName = prefixTableName(this.table, columns);
+    const columnText = columns.length ? columnsWithTableName.join(', ') : '*';
+    this.clauses.returning = `RETURNING ${columnText}`;
+    return this;
+  }
+  
+  public static replaceArrayParams(text: string, values: (string | number)[]): string {
+    let newText;
+    let reg = /
+    values.forEach((value) => {
+      newText = 
+    })
+  }
+
+  /**
+   * Create from clause string
+   */
+  private fromString(): string {
+    return `FROM ${this.table}`;
+  }
+
+  /**
+   * Create where clause string
+   */
+  private whereString(): string {
+    return this.clauses.where ? `WHERE ${this.clauses.where.join(' ')}` : '';
+  }
+
+  public toQueryText(): string {
+    const { clauses } = this;
+    let sqlQuery = '';
+
+    // Check for truthy CRUD properties in the clauses object and add clause text accordingly
+    if (clauses.insert) {
+      sqlQuery += clauses.insert;
+    } else if (clauses.select) {
+      sqlQuery += `${clauses.select}\n${this.fromString()}`;
+    } else if (clauses.update) {
+      sqlQuery += clauses.update;
+    } else if (clauses.delete) {
+      sqlQuery += `${clauses.delete}\n${this.fromString()}`;
+    }
+
+    // Next up, add the where clause to the text
+    if (clauses.where) {
+      sqlQuery += `\n${this.whereString()}`;
+    }
+
+    // Last, for certain sql commands we'll want return rows (e.g., for update clauses)
+    if (clauses.insert || clauses.update || clauses.delete) {
+      sqlQuery += `\n${clauses.returning || 'RETURNING *'}`;
+    }
+    return `${sqlQuery};`;
+  }
+
+  public run() {
+    return this.pool.query(this.toQueryText(), this.values);
   }
 }
 
