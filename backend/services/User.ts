@@ -5,7 +5,7 @@ import { UserServiceDeps } from './User.types';
 import { UpdateUserInput } from '../schema/resolvers/user.types';
 
 export default class UserService {
-  private user: UserRecord;
+  private readonly user: UserRecord;
 
   private UserModel: typeof UserModel;
 
@@ -23,6 +23,7 @@ export default class UserService {
     updateUserInput: UpdateUserInput['input']
   ): Promise<UserRecord | undefined> {
     const { id } = this.user;
+    console.log('here')
     return this.UserModel.updateOne(updateUserInput, { id });
   }
 }

@@ -2,7 +2,8 @@ import { QueryConfig, QueryResult } from 'pg';
 import { isEmptyObject } from './isEmptyObject';
 import { KeyValue, WhereArgs } from '../types';
 
-type Operator = 'AND' | 'OR';
+export type LogicalOperator = 'AND' | 'OR';
+export type ComparisonOperator = '=' | '>' | '<' | '>=' | '<=' | '!=';
 
 export interface WhereArgsWithOptionalUserId extends WhereArgs {
   userId?: number;
@@ -144,7 +145,7 @@ export const addWhere = (
   }
 
   // Define function for adding to the query config variables
-  const addtoQueryConfig = (args: object, operator: Operator) => {
+  const addtoQueryConfig = (args: object, operator: LogicalOperator) => {
     Object.entries(args).forEach(([key, value], idx, arr) => {
       const addOperator = idx === arr.length - 1 ? '' : ` ${operator} `;
       whereText += `${key} = $${newParamVal}${addOperator}`;
