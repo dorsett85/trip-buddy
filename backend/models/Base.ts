@@ -1,6 +1,5 @@
 import db from '../db/db';
 import {
-  addInsert,
   addWhere,
   addSelect,
   addUpdate,
@@ -13,13 +12,17 @@ import {
   OmitIdCreatedDate,
   JoinUserIdArgs
 } from '../types';
+import {QB} from "../utils/QueryBuilder";
+import {Query} from "pg";
+
+const qb = QB(db);
 
 export default class BaseModel {
   public static tableName: string;
 
   protected static async baseCreateOne<T>(record: KeyValue): Promise<T> {
-    const query = addInsert(this.tableName, record);
-    return extractRow(await db.query(query));
+    const queryResult = await qb(this.tableName).insert(record);
+    return extractRow(queryResult);
   }
 
   protected static async baseFindOne<T>(

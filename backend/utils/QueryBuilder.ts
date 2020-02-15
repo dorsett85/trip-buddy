@@ -1,4 +1,4 @@
-import { Pool, QueryConfig, QueryResult } from 'pg';
+import { Pool, QueryResult } from 'pg';
 import { ComparisonOperator, LogicalOperator, prefixTableName } from './dbHelpers';
 import { KeyValue } from '../types';
 
@@ -55,12 +55,24 @@ export default class QueryBuilder<T = any> {
    */
   private values: (string | number)[] = [];
 
+  /**
+   * String that represents a SQL query
+   */
+  private rawText = '';
+
   constructor(pool: Pool, table: string) {
     this.then = <T = any>(resolve: any): Promise<QueryResult<T>> => {
       return this.run().then(resolve);
     };
     this.table = table;
     this.pool = pool;
+  }
+
+  /**
+   * Getter for the rawQuery property
+   */
+  public get rawQuery(): string {
+    return this.rawText;
   }
 
   /**
@@ -134,7 +146,7 @@ export default class QueryBuilder<T = any> {
   ): this {
     // Set the initial where array in the clauses map.  We'll keep adding
     // to this with items and additional where methods (e.g., orWhere, andWhere)
-    this.clauses.where = this.clauses.where || [];
+    this.clauses.where = this.clauses.where || ['WHERE'];
     let text = '';
     Object.entries(items).forEach(([key, value], idx, arr) => {
       text += `${key} ${comparisonOperator} $${this.paramVal}`;
@@ -147,26 +159,67 @@ export default class QueryBuilder<T = any> {
     return this;
   }
 
-  public whereRaw(text: string, values: (string | number)[]): this {
-    this.clauses.where = this.clauses.where || [];
-    const paramText = text.replace()
-
-    return this;
-  }
-
   public returning(columns: string[] = []): this {
     const columnsWithTableName = prefixTableName(this.table, columns);
     const columnText = columns.length ? columnsWithTableName.join(', ') : '*';
     this.clauses.returning = `RETURNING ${columnText}`;
     return this;
   }
-  
-  public static replaceArrayParams(text: string, values: (string | number)[]): string {
-    let newText;
-    let reg = /
-    values.forEach((value) => {
-      newText = 
-    })
+
+  public raw(text: string, values?: (string | number)[]): this {
+    this.rawText = !values ? text : this.updateTextParamsAndValues(text, values);
+    return this;
+  }
+
+  public whereRaw(text: string, values?: (string | number)[]): this {
+    this.clauses.where = this.clauses.where || ['WHERE'];
+    if (!values) {
+      this.clauses.where.push(text);
+    } else {
+      const replacedText = this.updateTextParamsAndValues(text, values);
+      this.clauses.where.push(replacedText);
+    }
+    return this;
+  }
+
+  private updateTextParamsAndValues(text: string, values: (string | number)[]): string {
+    const { replacedText, replacements } = this.replaceTextParams(text);
+    QueryBuilder.checkParamValuesEquality(text, replacements, values);
+    this.values.push(...values);
+    return replacedText;
+  }
+
+  private replaceTextParams(
+    text: string
+  ): { replacedText: string; replacements: number } {
+    let replacements = 0;
+    const replacedText = text.replace(/\?/g, () => {
+      const param = `$${this.paramVal}`;
+      this.paramVal += 1;
+      replacements += 1;
+      return param;
+    });
+    return {
+      replacedText,
+      replacements
+    };
+  }
+
+  /**
+   * Check that the number of params to replace matches the length of the values array
+   * (contains the replacement values).
+   */
+  private static checkParamValuesEquality(
+    text: string,
+    params: number,
+    values: (string | number)[]
+  ) {
+    if (params !== values.length) {
+      throw Error(`
+        Expected ${params} parameters, got ${values.length} [${values}].
+        Query: ${text}
+      `);
+    }
   }
 
   /**
@@ -180,10 +233,15 @@ export default class QueryBuilder<T = any> {
    * Create where clause string
    */
   private whereString(): string {
-    return this.clauses.where ? `WHERE ${this.clauses.where.join(' ')}` : '';
+    return this.clauses.where ? this.clauses.where.join(' ') : '';
   }
 
   public toQueryText(): string {
+    // Initial check for raw query
+    if (this.rawText) {
+      return this.rawText;
+    }
+
     const { clauses } = this;
     let sqlQuery = '';
 
@@ -210,7 +268,7 @@ export default class QueryBuilder<T = any> {
     return `${sqlQuery};`;
   }
 
-  public run() {
+  public run(): Promise<QueryResult<T>> {
     return this.pool.query(this.toQueryText(), this.values);
   }
 }
