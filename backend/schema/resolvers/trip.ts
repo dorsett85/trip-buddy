@@ -32,7 +32,7 @@ const Mutation: TripResolvers['Mutation'] = {
   },
   updateTrip: async (_, { input }, { tripService }) => {
     const { id, ...rest } = input;
-    const trip = await tripService.updateOne(rest, { id });
+    const trip = await tripService.updateOne(rest, { items: { id } });
     if (!trip) {
       throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
     }
@@ -54,7 +54,7 @@ const Mutation: TripResolvers['Mutation'] = {
   },
   updateTripItinerary: async (_, { input }, { tripService }) => {
     const { id, ...rest } = input;
-    const itinerary = await tripService.updateTripItinerary(rest, { id });
+    const itinerary = await tripService.updateTripItinerary(rest, { items: { id } });
     if (!itinerary) {
       throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
     }

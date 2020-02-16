@@ -1,25 +1,6 @@
 import { Pool, QueryResult } from 'pg';
-import { LngLatArray } from 'common/lib/types/utils';
-import { ComparisonOperator, LogicalOperator, prefixTableName } from './dbHelpers';
-import { KeyValue } from '../types';
-
-type WhereArgValue = string | number | boolean | LngLatArray;
-
-type WhereArgValueArray = WhereArgValue[];
-
-type WhereArgComparisonValue = [ComparisonOperator, WhereArgValue];
-
-export interface WhereArgGroup<T = any> {
-  items: {
-    [K in keyof T]: WhereArgValue | WhereArgComparisonValue;
-  };
-  wrap?: boolean;
-  prefixTableName?: string | false;
-  prefixOperator?: LogicalOperator;
-  logicalOperator?: LogicalOperator;
-}
-
-export type WhereArgs<T = any> = WhereArgGroup<T> | WhereArgGroup<T>[];
+import { prefixTableName } from './dbHelpers';
+import { RecordDict, RecordValueArray, WhereArgGroup, WhereArgs } from '../types';
 
 interface Clauses {
   insert?: string;
@@ -74,7 +55,7 @@ export default class QueryBuilder<T = any> {
    *
    * "INSERT INTO users (id, username) VALUES(1, 'clayton')"
    */
-  private values: WhereArgValue[] = [];
+  private values: RecordValueArray = [];
 
   /**
    * String that represents a SQL query
@@ -83,7 +64,9 @@ export default class QueryBuilder<T = any> {
 
   constructor(pool: Pool, table: string) {
     this.then = (resolve: any, reject: any): Promise<QueryResult<T>> => {
-      return this.run().then(resolve).catch(reject);
+      return this.run()
+        .then(resolve)
+        .catch(reject);
     };
     // this.catch = (reject: any): Promise<any> => Promise.reject(reject);
     this.table = table;
@@ -114,7 +97,7 @@ export default class QueryBuilder<T = any> {
     };
   }
 
-  public insert(items: KeyValue<string | number>): this {
+  public insert(items: RecordDict): this {
     let insertText = `INSERT INTO ${this.table} `;
     let valuesText = 'VALUES ';
 
@@ -139,12 +122,12 @@ export default class QueryBuilder<T = any> {
       ? columnsWithTableName.join(', ')
       : `${this.table}.*`;
 
-    this.clauses.select = `SELECT ${columnText}`;
+    this.clauses.select = `SELECT ${columnText}\n${this.fromString()}`;
     return this;
   }
 
-  public update(items: KeyValue<string | number>): this {
-    let updateText = `UPDATE ${this.table} SET `;
+  public update(items: RecordDict, from?: string): this {
+    let updateText = `UPDATE ${this.table}\nSET `;
     Object.entries(items).forEach(([key, value], idx, arr) => {
       const addCommaAndSpace = idx === arr.length - 1 ? '' : ', ';
       updateText += `${key} = $${this.paramVal}${addCommaAndSpace}`;
@@ -152,22 +135,29 @@ export default class QueryBuilder<T = any> {
       this.values.push(value);
     });
 
+    // Final check if there if an update join from clause
+    if (from) {
+      updateText += `\nFROM ${from}`;
+    }
+
     this.clauses.update = updateText;
     return this;
   }
 
-  public delete(): this {
-    this.clauses.delete = `DELETE`;
+  public delete(using?: string): this {
+    this.clauses.delete = `DELETE\n${this.fromString()}${
+      using ? `\nUSING ${using}` : ''
+    }`;
     return this;
   }
 
-  public where(text: string, values?: WhereArgValueArray): this;
+  public where(text: string, values?: RecordValueArray): this;
 
   // eslint-disable-next-line no-dupe-class-members
   public where(whereArgs: WhereArgs): this;
 
   // eslint-disable-next-line no-dupe-class-members
-  public where(args: string | WhereArgs, values?: WhereArgValueArray): this {
+  public where(args: string | WhereArgs, values?: RecordValueArray): this {
     // Set the initial where array in the clauses map.  We'll keep adding
     // to this with items and additional where methods (e.g., orWhere, andWhere)
     this.clauses.where = this.clauses.where || ['WHERE'];
@@ -229,17 +219,17 @@ export default class QueryBuilder<T = any> {
     return this;
   }
 
-  public raw(text: string, values?: WhereArgValueArray): this {
+  public raw(text: string, values?: RecordValueArray): this {
     this.rawText = !values ? text : this.updateTextParamsAndValues(text, values);
     return this;
   }
 
-  public joinRaw(text: string, values?: WhereArgValueArray): this {
+  public joinRaw(text: string, values?: RecordValueArray): this {
     this.clauses.join = !values ? text : this.updateTextParamsAndValues(text, values);
     return this;
   }
 
-  private updateTextParamsAndValues(text: string, values: WhereArgValueArray): string {
+  private updateTextParamsAndValues(text: string, values: RecordValueArray): string {
     const { replacedText, replacements } = this.replaceTextParams(text);
     QueryBuilder.checkParamValuesEquality(text, replacements, values);
     this.values.push(...values);
@@ -275,7 +265,7 @@ export default class QueryBuilder<T = any> {
   private static checkParamValuesEquality(
     text: string,
     params: number,
-    values: WhereArgValueArray
+    values: RecordValueArray
   ) {
     if (params !== values.length) {
       throw Error(`
@@ -312,14 +302,14 @@ export default class QueryBuilder<T = any> {
     if (clauses.insert) {
       sqlQuery += clauses.insert;
     } else if (clauses.select) {
-      sqlQuery += `${clauses.select}\n${this.fromString()}`;
+      sqlQuery += clauses.select;
       if (clauses.join) {
         sqlQuery += `\n  ${clauses.join}`;
       }
     } else if (clauses.update) {
       sqlQuery += clauses.update;
     } else if (clauses.delete) {
-      sqlQuery += `${clauses.delete}\n${this.fromString()}`;
+      sqlQuery += clauses.delete;
     }
 
     // Next up, add the where clause to the text

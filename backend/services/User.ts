@@ -23,7 +23,6 @@ export default class UserService {
     updateUserInput: UpdateUserInput['input']
   ): Promise<UserRecord | undefined> {
     const { id } = this.user;
-    console.log('here')
-    return this.UserModel.updateOne(updateUserInput, { id });
+    return this.UserModel.updateOne(updateUserInput, { items: { id } });
   }
 }

@@ -5,6 +5,8 @@
  * to define types in separate files in this directory
  */
 
+import { LngLatArray } from 'common/lib/types/utils';
+
 export interface KeyValue<T = any> {
   [key: string]: T;
 }
@@ -37,48 +39,84 @@ export type OmitCreatedDate<T> = Omit<T, 'created_date'>;
 export type OmitIdCreatedDate<T> = OmitId<T> & OmitCreatedDate<T>;
 
 /**
- * Used for object arguments for methods that need to create SQL statements
- * that filter by user_id
+ * All possible db value types
  */
-export interface UserIdArgs {
-  userId: number;
-}
+export type RecordValues = string | number | boolean | Date | LngLatArray | undefined;
 
 /**
- * Used for object arguments that need to join a table that contains a user_id column.
- * This makes sure users are unable to query/modify other users data.
+ * Object of db column key/value pairs
  */
-export interface JoinArgs {
+export type RecordDict<T = any> = {
+  [K in keyof T]: Extract<RecordValues, T[K]>;
+};
+
+/**
+ * Array of record value types
+ */
+export type RecordValueArray = RecordValues[];
+
+/**
+ * Currently supported logical operators for db operations
+ */
+export type LogicalOperator = 'AND' | 'OR';
+
+/**
+ * Currently supported comparison operators for db operations
+ */
+export type ComparisonOperator = '=' | '>' | '<' | '>=' | '<=' | '!=';
+
+/**
+ * Array with a first argument being a Comparison operator and second being a
+ * RecordValues type.  This is helpful for modifying the comparison operator
+ * between key/value pairs during db operations.
+ */
+type WhereArgComparisonValue = [ComparisonOperator, RecordValues];
+
+/**
+ * A group of where arguments for where clause operations
+ */
+export interface WhereArgGroup<T = any> {
   /**
-   * SQL statement to join a table (by column reference) that contains a user_id column.
-   * This then allows the SQL query to be filtered by the value in the user_id column.
-   * @example
-   * `LEFT JOIN users_trips ut ON ut.trip_id = ${this.tableName}.id`
+   * The key/value pairs or key/WhereArgComparisonValue object to make
+   * where statements with
    */
-  joinStatement: string;
+  items: {
+    [K in keyof T]: RecordValues | WhereArgComparisonValue;
+  };
+  /**
+   * Whether or not to wrap the items key/value statement(s) in parentheses
+   */
+  wrap?: boolean;
+  /**
+   * Whether or not to prefix the item keys with a table name.  This is useful when
+   * joining tables and you don't want the column names to be ambiguous.
+   */
+  prefixTableName?: string | false;
+  /**
+   * Type of logical operator to prefix before the key/value item statements. E.g.,
+   * put 'AND' in front of "id = 1 AND username = 'clayton'".
+   */
+  prefixOperator?: LogicalOperator;
+  /**
+   * The logical operator that seperates the key/value item statements. E.g., the
+   * 'OR' in "id = 1 OR username = 'clayton'"
+   */
+  logicalOperator?: LogicalOperator;
 }
 
-/**
- * userId and joinStatement property type
- */
-export type JoinUserIdArgs = UserIdArgs & JoinArgs;
+export type WhereArgs<T = any> = WhereArgGroup<T> | WhereArgGroup<T>[];
 
 /**
- * An object containing properties that have key (column name) / value (column value)
- * pairs.  The T argument will specify the type of keys that are allowed (usually a
- * record type, e.g., a parial TripRecord)
+ * Convenience type for including a user_id property that is useful for interfaces
+ * that require joining a table to get the user_id column
  */
-export interface WhereArgs<T = KeyValue> {
-  andWhereArgs: T;
-  orWhereArgs: T;
+export type WithUserId<T> = T & {
+  // eslint-disable-next-line camelcase
+  user_id: number;
+};
+
+export interface WhereArgsWithUserIdJoin<T = any> {
+  userIdTable: string;
+  userIdJoin: string;
+  whereArgs: WhereArgs<Partial<T>>;
 }
-
-/**
- * Add a userId property to WhereArgs with a given type T
- */
-export type WhereUserIdArgs<T = KeyValue> = WhereArgs<T> & UserIdArgs;
-
-/**
- * Include userId and joinStatement properties to go with WhereArgs
- */
-export type WhereJoinUserIdArgs<T = KeyValue> = UserIdArgs & JoinArgs & WhereArgs<T>;

@@ -11,12 +11,12 @@ describe('test QueryBuilder class', () => {
 
   it('should contain a select clause', () => {
     const instance = qb('users').select();
-    expect(instance.clausesMap.select).toBe('SELECT users.*');
+    expect(instance.clausesMap.select).toBe('SELECT users.*\nFROM users');
   });
 
   it('should have columns in select clause', () => {
     const instance = qb('users').select(['id', 'name']);
-    expect(instance.clausesMap.select).toBe('SELECT users.id, users.name');
+    expect(instance.clausesMap.select).toBe('SELECT users.id, users.name\nFROM users');
   });
 
   it('should contain an insert clause', () => {
@@ -39,7 +39,7 @@ describe('test QueryBuilder class', () => {
       username: 'clayton'
     };
     const instance = qb('users').update(items);
-    const sql = `UPDATE users SET id = $1, username = $2`;
+    const sql = `UPDATE users\nSET id = $1, username = $2`;
     expect(instance.clausesMap.update).toBe(sql);
     expect(instance.parameterizedValues).toStrictEqual({
       paramVal: 3,
@@ -47,9 +47,24 @@ describe('test QueryBuilder class', () => {
     });
   });
 
+  it('should contain an update clause with from clause', () => {
+    const items = {
+      id: 1,
+      username: 'clayton'
+    };
+    const instance = qb('users').update(items, 'users_trips ut');
+    const sql = `UPDATE users\nSET id = $1, username = $2\nFROM users_trips ut`;
+    expect(instance.clausesMap.update).toBe(sql);
+  });
+
   it('should contain a delete clause', () => {
     const instance = qb('users').delete();
-    expect(instance.clausesMap.delete).toBe('DELETE');
+    expect(instance.clausesMap.delete).toBe('DELETE\nFROM users');
+  });
+
+  it('should contain a delete clause with using', () => {
+    const instance = qb('users').delete('users_trips');
+    expect(instance.clausesMap.delete).toBe('DELETE\nFROM users\nUSING users_trips');
   });
 
   it('should contain a where clause', () => {

@@ -1,6 +1,7 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
 import { TripItineraryRecord } from 'common/src/types/tripItinerary';
+import { UserTripRecord } from 'common/lib/types/userTrip';
 import TripModel from '../models/Trip';
 import UserTripModel from '../models/UserTrip';
 import { TripServiceDeps } from './Trip.types';
@@ -12,8 +13,7 @@ import {
   CreateTripItineraryInput
 } from '../schema/resolvers/trip.types';
 import TripItineraryModel from '../models/TripItinerary';
-import { OmitId } from '../types';
-import { WhereArgGroup, WhereArgs } from '../utils/QueryBuilder';
+import {OmitId, WhereArgGroup, WhereArgs} from '../types';
 
 export default class TripService {
   private readonly user: UserRecord;
@@ -59,14 +59,12 @@ export default class TripService {
   }
 
   // eslint-disable-next-line no-dupe-class-members
-  public findMany(
-    whereArgs: WhereArgs<Partial<TripRecord>>
-  ): Promise<TripRecord[]> {
+  public findMany(whereArgs: WhereArgs<Partial<TripRecord>>): Promise<TripRecord[]> {
     const { id, role } = this.user;
     if (role === 'admin') {
       return this.TripModel.findMany(whereArgs);
     }
-    
+
     const userIdWhereGroup: WhereArgGroup = {
       items: { user_id: id },
       prefixTableName: false
@@ -79,18 +77,22 @@ export default class TripService {
 
   public updateOne(
     updateTripInput: OmitId<UpdateTripInput['input']>,
-    andWhereArgs: Partial<TripRecord> = {},
-    orWhereArgs: Partial<TripRecord> = {}
+    whereArgs: WhereArgs<Partial<TripRecord>>
   ): Promise<TripRecord | undefined> {
     const { id, role } = this.user;
+    if (role === 'admin') {
+      return this.TripModel.updateOne(updateTripInput, whereArgs);
+    }
 
-    return role === 'admin'
-      ? this.TripModel.updateOne(updateTripInput, andWhereArgs, orWhereArgs)
-      : this.TripModel.updateOneByUserId(updateTripInput, {
-          userId: id,
-          andWhereArgs,
-          orWhereArgs
-        });
+    const userIdWhereGroup: WhereArgGroup<Partial<UserTripRecord>> = {
+      items: { user_id: id },
+      prefixTableName: false
+    };
+    const whereArgsWithUserId: WhereArgs = Array.isArray(whereArgs)
+      ? [...whereArgs, userIdWhereGroup]
+      : [whereArgs, userIdWhereGroup];
+
+    return this.TripModel.updateOneByUserId(updateTripInput, whereArgsWithUserId);
   }
 
   public deleteOne(tripId: TripRecord['id']): Promise<TripRecord | undefined> {
@@ -114,14 +116,9 @@ export default class TripService {
 
   public updateTripItinerary(
     updateTripItineraryInput: OmitId<UpdateTripItineraryInput['input']>,
-    andWhereArgs: Partial<TripItineraryRecord> = {},
-    orWhereArgs: Partial<TripItineraryRecord> = {}
+    whereArgs: WhereArgs<Partial<TripItineraryRecord>>
   ): Promise<TripItineraryRecord | undefined> {
-    return this.TripItineraryModel.updateOne(
-      updateTripItineraryInput,
-      andWhereArgs,
-      orWhereArgs
-    );
+    return this.TripItineraryModel.updateOne(updateTripItineraryInput, whereArgs);
   }
 
   public deleteTripItinerary(

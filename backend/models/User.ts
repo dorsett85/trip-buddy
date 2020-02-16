@@ -1,6 +1,6 @@
 import { UserRecord } from 'common/lib/types/user';
 import BaseModel from './Base';
-import {WhereArgs} from "../utils/QueryBuilder";
+import { WhereArgs } from '../types';
 
 export default class UserModel extends BaseModel {
   public static tableName = 'users';
@@ -23,9 +23,8 @@ export default class UserModel extends BaseModel {
 
   public static updateOne(
     updateArgs: Partial<UserRecord>,
-    andWhereArgs: Partial<UserRecord> = {},
-    orWhereArgs: Partial<UserRecord> = {}
+    whereArgs: WhereArgs<Partial<UserRecord>>
   ): Promise<UserRecord | undefined> {
-    return this.baseUpdateOne(updateArgs, andWhereArgs, orWhereArgs);
+    return this.baseUpdateOne(updateArgs, whereArgs);
   }
 }

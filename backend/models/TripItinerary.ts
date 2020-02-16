@@ -1,7 +1,7 @@
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
-import BaseModel from './Base';
 import { TripRecord } from 'common/lib/types/trip';
-import {WhereArgs} from "../utils/QueryBuilder";
+import BaseModel from './Base';
+import { WhereArgs } from '../types';
 
 export default class TripItineraryModel extends BaseModel {
   public static tableName = 'trip_itineraries';
@@ -32,10 +32,9 @@ export default class TripItineraryModel extends BaseModel {
 
   public static updateOne(
     updateArgs: Partial<TripItineraryRecord>,
-    andWhereArgs: Partial<TripItineraryRecord> = {},
-    orWhereArgs: Partial<TripItineraryRecord> = {}
+    whereArgs: WhereArgs<Partial<TripItineraryRecord>>
   ): Promise<TripItineraryRecord | undefined> {
-    return this.baseUpdateOne(updateArgs, andWhereArgs, orWhereArgs);
+    return this.baseUpdateOne(updateArgs, whereArgs);
   }
 
   public static deleteOne(
