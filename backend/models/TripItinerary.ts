@@ -1,6 +1,7 @@
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 import BaseModel from './Base';
 import { TripRecord } from 'common/lib/types/trip';
+import {WhereArgs} from "../utils/QueryBuilder";
 
 export default class TripItineraryModel extends BaseModel {
   public static tableName = 'trip_itineraries';
@@ -12,23 +13,21 @@ export default class TripItineraryModel extends BaseModel {
   }
 
   public static findOne(
-    andWhereArgs: Partial<TripItineraryRecord> = {},
-    orWhereArgs: Partial<TripItineraryRecord> = {}
+    whereArgs: WhereArgs<Partial<TripItineraryRecord>>
   ): Promise<TripItineraryRecord | undefined> {
-    return this.baseFindOne(andWhereArgs, orWhereArgs);
+    return this.baseFindOne(whereArgs);
   }
 
   public static findMany(
-    andWhereArgs: Partial<TripItineraryRecord> = {},
-    orWhereArgs: Partial<TripItineraryRecord> = {}
+    whereArgs: WhereArgs<Partial<TripItineraryRecord>>
   ): Promise<TripItineraryRecord[]> {
-    return this.baseFindMany(andWhereArgs, orWhereArgs);
+    return this.baseFindMany(whereArgs);
   }
 
   public static async findByTripId(
     tripId: TripRecord['id']
   ): Promise<TripItineraryRecord[]> {
-    return this.findMany({ trip_id: tripId });
+    return this.findMany({ items: { trip_id: tripId } });
   }
 
   public static updateOne(

@@ -60,7 +60,7 @@ describe('test QueryBuilder class', () => {
     const instance = qb('users').where({ items });
     expect(instance.clausesMap.where).toStrictEqual([
       'WHERE',
-      'id = $1 AND username = $2'
+      'users.id = $1 AND users.username = $2'
     ]);
     expect(instance.parameterizedValues).toStrictEqual({
       paramVal: 3,
@@ -81,7 +81,7 @@ describe('test QueryBuilder class', () => {
     const instance = qb('users').where(whereArgs);
     expect(instance.clausesMap.where).toStrictEqual([
       'WHERE',
-      '(id > $1 OR username >= $2)'
+      '(users.id > $1 OR users.username >= $2)'
     ]);
   });
 
@@ -97,8 +97,8 @@ describe('test QueryBuilder class', () => {
     const instance = qb('users').where(whereArgs);
     expect(instance.clausesMap.where).toStrictEqual([
       'WHERE',
-      'id = $1 AND username = $2',
-      'OR (email = $3 AND email_verified = $4)'
+      'users.id = $1 AND users.username = $2',
+      'OR (users.email = $3 AND users.email_verified = $4)'
     ]);
     expect(instance.parameterizedValues).toStrictEqual({
       paramVal: 5,

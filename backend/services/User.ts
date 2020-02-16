@@ -16,7 +16,7 @@ export default class UserService {
 
   public findOne(): Promise<UserRecord | undefined> {
     const { id } = this.user;
-    return this.UserModel.findOne({ id });
+    return this.UserModel.findOne({ items: { id } });
   }
 
   public updateOne(

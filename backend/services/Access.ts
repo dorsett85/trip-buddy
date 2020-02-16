@@ -35,14 +35,17 @@ export default class AccessService {
 
   public async getActiveUser(token: string): Promise<UserRecord | null> {
     const user = AccessService.verify(token);
-    return user && (await this.UserModel.findOne({ id: user.id }) || null);
+    return user && ((await this.UserModel.findOne({ items: { id: user.id } })) || null);
   }
 
   public async login(args: LoginArgs): Promise<string> {
     const { username, password } = args;
 
     // check if username or email exists
-    const user = await this.UserModel.findOne({}, { username, email: username });
+    const user = await this.UserModel.findOne({
+      items: { username, email: username },
+      logicalOperator: 'OR'
+    });
     if (!user) {
       return USER_NOT_FOUND_MESSAGE;
     }
@@ -60,7 +63,7 @@ export default class AccessService {
     const { email, password } = args;
 
     // Check if user exists
-    const user = await this.UserModel.findOne({ email });
+    const user = await this.UserModel.findOne({ items: { email } });
     if (user) {
       return USER_ALREADY_EXISTS_MESSAGE;
     }

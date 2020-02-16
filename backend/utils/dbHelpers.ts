@@ -184,7 +184,7 @@ export const addWhere = (
 /**
  * Extract rows from a QueryResult
  */
-export const extractRows = <T>(result: QueryResult): T[] => {
+export const extractRows = <T>(result: QueryResult<T>): T[] => {
   const { rows }: { rows: T[] } = result;
   return rows;
 };
@@ -192,6 +192,6 @@ export const extractRows = <T>(result: QueryResult): T[] => {
 /**
  * Return a row from a QueryResult
  */
-export const extractRow = <T>(result: QueryResult): T => {
+export const extractRow = <T>(result: QueryResult<T>): T => {
   return extractRows<T>(result)[0];
 };

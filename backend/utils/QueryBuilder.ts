@@ -1,23 +1,25 @@
 import { Pool, QueryResult } from 'pg';
+import { LngLatArray } from 'common/lib/types/utils';
 import { ComparisonOperator, LogicalOperator, prefixTableName } from './dbHelpers';
 import { KeyValue } from '../types';
 
-type WhereArgValue = string | number | boolean;
+type WhereArgValue = string | number | boolean | LngLatArray;
 
 type WhereArgValueArray = WhereArgValue[];
 
 type WhereArgComparisonValue = [ComparisonOperator, WhereArgValue];
 
-export interface WhereArgGroup {
+export interface WhereArgGroup<T = any> {
   items: {
-    [key: string]: WhereArgValue | WhereArgComparisonValue;
+    [K in keyof T]: WhereArgValue | WhereArgComparisonValue;
   };
   wrap?: boolean;
+  prefixTableName?: string | false;
   prefixOperator?: LogicalOperator;
   logicalOperator?: LogicalOperator;
 }
 
-export type WhereArgs = WhereArgGroup | WhereArgGroup[];
+export type WhereArgs<T = any> = WhereArgGroup<T> | WhereArgGroup<T>[];
 
 interface Clauses {
   insert?: string;
@@ -32,7 +34,8 @@ interface Clauses {
 export default class QueryBuilder<T = any> {
   // Make it thenable to return an async QueryResult
   public readonly then: (
-    onfulfilled?: (value: QueryResult<T>) => QueryResult<T>
+    onfulfilled?: (value: QueryResult<T>) => QueryResult<T>,
+    onrejected?: (reason: any) => Promise<any>
   ) => Promise<QueryResult<T>>;
 
   /**
@@ -79,9 +82,10 @@ export default class QueryBuilder<T = any> {
   private rawText = '';
 
   constructor(pool: Pool, table: string) {
-    this.then = <T = any>(resolve: any): Promise<QueryResult<T>> => {
-      return this.run().then(resolve);
+    this.then = (resolve: any, reject: any): Promise<QueryResult<T>> => {
+      return this.run().then(resolve).catch(reject);
     };
+    // this.catch = (reject: any): Promise<any> => Promise.reject(reject);
     this.table = table;
     this.pool = pool;
   }
@@ -178,21 +182,22 @@ export default class QueryBuilder<T = any> {
     } else {
       // Function to add to where class array and update the paramVal and values properties
       const processWhereArgs = (whereArgs: WhereArgGroup) => {
-        const {
-          items,
-          wrap,
-          prefixOperator,
-          logicalOperator,
-        } = whereArgs;
-        
+        const { items, wrap, prefixOperator, logicalOperator } = whereArgs;
+
         let text = '';
         Object.entries(items).forEach(([key, value], idx, arr) => {
-          const comparisonOperator = Array.isArray(value) ? value[0]: '=';
+          const comparisonOperator = Array.isArray(value) ? value[0] : '=';
           const itemValue = Array.isArray(value) ? value[1] : value;
-          
-          text += `${key} ${comparisonOperator} $${this.paramVal}`;
-          text += arr.length > 1 && idx !== arr.length - 1 ? ` ${logicalOperator || 'AND'} ` : '';
-          
+          const column =
+            whereArgs.prefixTableName === false
+              ? key
+              : prefixTableName(whereArgs.prefixTableName || this.table, key);
+          text += `${column} ${comparisonOperator} $${this.paramVal}`;
+          text +=
+            arr.length > 1 && idx !== arr.length - 1
+              ? ` ${logicalOperator || 'AND'} `
+              : '';
+
           this.paramVal += 1;
           this.values.push(itemValue);
         });
@@ -202,10 +207,10 @@ export default class QueryBuilder<T = any> {
         if (this.clauses.where![1]) {
           text = `${prefixOperator || 'AND'} ${text}`;
         }
-        
+
         this.clauses.where!.push(text);
       };
-      
+
       // Finally, run the processing function on the WhereArgs based on its type
       if (Array.isArray(args)) {
         args.forEach(processWhereArgs);

@@ -12,7 +12,7 @@ import {
   OmitIdCreatedDate,
   JoinUserIdArgs
 } from '../types';
-import { QB } from '../utils/QueryBuilder';
+import { QB, WhereArgs } from '../utils/QueryBuilder';
 
 const qb = QB(db);
 
@@ -21,45 +21,32 @@ export default class BaseModel {
 
   protected static async baseCreateOne<T>(record: KeyValue): Promise<T> {
     const query = qb(this.tableName).insert(record);
-    return extractRow(await query);
+    return extractRow<T>(await query);
   }
 
   protected static async baseFindOne<T>(
-    andWhereArgs: KeyValue = {},
-    orWhereArgs: KeyValue = {}
+    whereArgs: WhereArgs<Partial<T>>
   ): Promise<T> {
-    const [row]: T[] = await this.baseFindMany(andWhereArgs, orWhereArgs);
+    const [row]: T[] = await this.baseFindMany(whereArgs);
     return row;
   }
 
   protected static async baseFindMany<T>(
-    andWhereArgs: KeyValue = {},
-    orWhereArgs: KeyValue = {}
+    whereArgs: WhereArgs<Partial<T>>
   ): Promise<T[]> {
-    const select = addSelect(this.tableName);
-    const where = addWhere(this.tableName, { andWhereArgs, orWhereArgs });
-    const text = `${select.text} ${where.text};`;
-    const { values } = where;
-
-    return extractRows(await db.query({ text, values }));
+    const query = qb(this.tableName).select().where(whereArgs);
+    return extractRows<T>(await query);
   }
 
   protected static async baseFindManyByUserId<T>(
-    args: WhereJoinUserIdArgs
+    whereArgs: WhereArgs<Partial<T>>,
+    joinStatement: string
   ): Promise<T[]> {
-    const { joinStatement, ...restWhereArgs } = args;
-
-    const select = addSelect(this.tableName);
-    const where = addWhere(this.tableName, restWhereArgs);
-
-    const text = `
-      ${select.text}
-        ${joinStatement}
-      ${where.text}
-    `;
-    const { values } = where;
-
-    return extractRows(await db.query({ text, values }));
+    const query = qb(this.tableName)
+      .select()
+      .joinRaw(joinStatement)
+      .where(whereArgs);
+    return extractRows<T>(await query);
   }
 
   protected static async baseUpdateOne<T>(
@@ -87,7 +74,7 @@ export default class BaseModel {
     `;
     const values = [update.values!, where.values!].flat();
 
-    return extractRow(await db.query({ text, values }));
+    return extractRow<T>(await db.query({ text, values }));
   }
 
   protected static async baseUpdateOneByUserId<T>(
@@ -96,6 +83,8 @@ export default class BaseModel {
   ): Promise<T | undefined> {
     const { userId, joinStatement, andWhereArgs, orWhereArgs } = args;
     let paramVal = 1;
+    console.log('update args', updateArgs);
+    console.log('where args', args)
 
     // Select statement with id column is needed in the where clause
     // subquery (e.g., WHERE id = ...) so that only it only matches 1 id
@@ -124,14 +113,14 @@ export default class BaseModel {
     `;
     const values = [update.values!, where.values!].flat();
 
-    return extractRow(await db.query({ text, values }));
+    return extractRow<T>(await db.query({ text, values }));
   }
 
   protected static async baseDeleteOne<T>(id: number): Promise<T> {
     const query = qb(this.tableName)
       .delete()
       .where({ items: { id } });
-    return extractRow(await query);
+    return extractRow<T>(await query);
   }
 
   protected static async baseDeleteOneByUserId<T>(
@@ -154,6 +143,6 @@ export default class BaseModel {
         [id, userId]
       );
 
-    return extractRow(await query);
+    return extractRow<T>(await query);
   }
 }

@@ -7,21 +7,21 @@ import {
 
 const Trip: TripResolvers['Trip'] = {
   itineraries: async ({ id }, __, { tripService }) => {
-    const itineraries = await tripService.findTripItinerary({ trip_id: id });
+    const itineraries = await tripService.findTripItinerary({ items: { trip_id: id } });
     return itineraries;
   }
 };
 
 const Query: TripResolvers['Query'] = {
   trip: async (_, { input }, { tripService }) => {
-    const trip = await tripService.findOne(input);
+    const trip = await tripService.findOne({ items: input });
     if (!trip) {
       throw new UserInputError(NOT_FOUND_MESSAGE);
     }
     return trip;
   },
   trips: async (_, { input }, { tripService }) => {
-    return tripService.findMany(input);
+    return tripService.findMany({ items: input });
   }
 };
 

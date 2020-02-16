@@ -2,6 +2,7 @@ import { TripRecord } from 'common/lib/types/trip';
 import { UserRecord } from 'common/lib/types/user';
 import BaseModel from './Base';
 import { WhereUserIdArgs, WhereJoinUserIdArgs, OmitId } from '../types';
+import { WhereArgs } from '../utils/QueryBuilder';
 
 export default class TripModel extends BaseModel {
   public static tableName = 'trips';
@@ -11,38 +12,30 @@ export default class TripModel extends BaseModel {
   }
 
   public static findOne(
-    andWhereArgs: Partial<TripRecord> = {},
-    orWhereArgs: Partial<TripRecord> = {}
+    whereArgs: WhereArgs<Partial<TripRecord>>
   ): Promise<TripRecord | undefined> {
-    return this.baseFindOne(andWhereArgs, orWhereArgs);
+    return this.baseFindOne(whereArgs);
   }
 
   public static findMany(
-    andWhereArgs: Partial<TripRecord> = {},
-    orWhereArgs: Partial<TripRecord> = {}
+    whereArgs: WhereArgs<Partial<TripRecord>>
   ): Promise<TripRecord[]> {
-    return this.baseFindMany(andWhereArgs, orWhereArgs);
+    return this.baseFindMany(whereArgs);
   }
 
   public static async findOneByUserId(
-    userId: UserRecord['id'],
-    andWhereArgs: Partial<TripRecord> = {},
-    orWhereArgs: Partial<TripRecord> = {}
+    whereArgs: WhereArgs<Partial<TripRecord>>
   ): Promise<TripRecord | undefined> {
-    return (await this.findManyByUserId(userId, andWhereArgs, orWhereArgs))[0];
+    return (await this.findManyByUserId(whereArgs))[0];
   }
 
   public static async findManyByUserId(
-    userId: UserRecord['id'],
-    andWhereArgs: Partial<TripRecord> = {},
-    orWhereArgs: Partial<TripRecord> = {}
+    whereArgs: WhereArgs<Partial<TripRecord>>
   ): Promise<TripRecord[]> {
-    return this.baseFindManyByUserId({
-      userId,
-      joinStatement: `LEFT JOIN users_trips ut ON ut.trip_id = ${this.tableName}.id`,
-      andWhereArgs,
-      orWhereArgs
-    });
+    return this.baseFindManyByUserId(
+      whereArgs,
+      `LEFT JOIN users_trips ut ON ut.trip_id = ${this.tableName}.id`
+    );
   }
 
   public static updateOne(

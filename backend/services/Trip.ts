@@ -13,6 +13,7 @@ import {
 } from '../schema/resolvers/trip.types';
 import TripItineraryModel from '../models/TripItinerary';
 import { OmitId } from '../types';
+import { WhereArgGroup, WhereArgs } from '../utils/QueryBuilder';
 
 export default class TripService {
   private readonly user: UserRecord;
@@ -39,42 +40,41 @@ export default class TripService {
   }
 
   public findOne(
-    andWhereArgs: Partial<TripRecord> = {},
-    orWhereArgs: Partial<TripRecord> = {}
+    whereArgs: WhereArgs<Partial<TripRecord>>
   ): Promise<TripRecord | undefined> {
     const { id, role } = this.user;
-    return role === 'admin'
-      ? this.TripModel.findOne(andWhereArgs, orWhereArgs)
-      : this.TripModel.findOneByUserId(id, andWhereArgs, orWhereArgs);
-  }
 
-  public findMany(
-    userId: UserRecord['id'],
-    andWhereArgs?: Partial<TripRecord>,
-    orWhereArgs?: Partial<TripRecord>
-  ): Promise<TripRecord[]>;
-
-  // eslint-disable-next-line no-dupe-class-members
-  public findMany(
-    andWhereArgs: Partial<TripRecord>,
-    orWhereArgs?: Partial<TripRecord>
-  ): Promise<TripRecord[]>;
-
-  // eslint-disable-next-line no-dupe-class-members
-  public findMany(
-    arg1: Partial<TripRecord> | UserRecord['id'],
-    arg2: Partial<TripRecord> = {},
-    arg3: Partial<TripRecord> = {}
-  ): Promise<TripRecord[]> {
-    const { id, role } = this.user;
-
-    if (typeof arg1 === 'number') {
-      return this.TripModel.findManyByUserId(id, arg2, arg3);
+    if (role === 'admin') {
+      return this.TripModel.findOne(whereArgs);
     }
 
-    return role === 'admin'
-      ? this.TripModel.findMany(arg1, arg2)
-      : this.TripModel.findManyByUserId(id, arg1, arg2);
+    const userIdWhereGroup: WhereArgGroup = {
+      items: { user_id: id },
+      prefixTableName: false
+    };
+    const whereArgsWithUserId: WhereArgs = Array.isArray(whereArgs)
+      ? [...whereArgs, userIdWhereGroup]
+      : [whereArgs, userIdWhereGroup];
+    return this.TripModel.findOneByUserId(whereArgsWithUserId);
+  }
+
+  // eslint-disable-next-line no-dupe-class-members
+  public findMany(
+    whereArgs: WhereArgs<Partial<TripRecord>>
+  ): Promise<TripRecord[]> {
+    const { id, role } = this.user;
+    if (role === 'admin') {
+      return this.TripModel.findMany(whereArgs);
+    }
+    
+    const userIdWhereGroup: WhereArgGroup = {
+      items: { user_id: id },
+      prefixTableName: false
+    };
+    const whereArgsWithUserId: WhereArgs = Array.isArray(whereArgs)
+      ? [...whereArgs, userIdWhereGroup]
+      : [whereArgs, userIdWhereGroup];
+    return this.TripModel.findManyByUserId(whereArgsWithUserId);
   }
 
   public updateOne(
@@ -101,10 +101,9 @@ export default class TripService {
   }
 
   public findTripItinerary(
-    andWhereArgs: Partial<TripItineraryRecord> = {},
-    orWhereArgs: Partial<TripItineraryRecord> = {}
+    whereArgs: WhereArgs<Partial<TripItineraryRecord>>
   ): Promise<TripItineraryRecord[]> {
-    return this.TripItineraryModel.findMany(andWhereArgs, orWhereArgs);
+    return this.TripItineraryModel.findMany(whereArgs);
   }
 
   public createTripItinerary(

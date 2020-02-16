@@ -1,5 +1,6 @@
 import { UserRecord } from 'common/lib/types/user';
 import BaseModel from './Base';
+import {WhereArgs} from "../utils/QueryBuilder";
 
 export default class UserModel extends BaseModel {
   public static tableName = 'users';
@@ -9,17 +10,15 @@ export default class UserModel extends BaseModel {
   }
 
   public static findOne(
-    andWhereArgs: Partial<UserRecord> = {},
-    orWhereArgs: Partial<UserRecord> = {}
+    whereArgs: WhereArgs<Partial<UserRecord>>
   ): Promise<UserRecord | undefined> {
-    return this.baseFindOne(andWhereArgs, orWhereArgs);
+    return this.baseFindOne(whereArgs);
   }
 
   public static findMany(
-    andWhereArgs: Partial<UserRecord> = {},
-    orWhereArgs: Partial<UserRecord> = {}
+    whereArgs: WhereArgs<Partial<UserRecord>>
   ): Promise<UserRecord[]> {
-    return this.baseFindMany(andWhereArgs, orWhereArgs);
+    return this.baseFindMany(whereArgs);
   }
 
   public static updateOne(
