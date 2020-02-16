@@ -1,6 +1,6 @@
 import db from '../db/db';
 import { extractRow, extractRows } from '../utils/dbHelpers';
-import {KeyValue, RecordDict, WhereArgs, WhereArgsWithUserIdJoin} from '../types';
+import { RecordDict, WhereArgs, WhereArgsWithUserIdJoin } from '../types';
 import { QB } from '../utils/QueryBuilder';
 
 const qb = QB(db);
@@ -8,8 +8,8 @@ const qb = QB(db);
 export default class BaseModel {
   public static tableName: string;
 
-  protected static async baseCreateOne<T>(record: RecordDict<T>): Promise<T> {
-    const query = qb(this.tableName).insert(record);
+  protected static async baseCreateOne<T>(record: RecordDict): Promise<T> {
+    const query = qb<T>(this.tableName).insert(record);
     return extractRow<T>(await query);
   }
 
@@ -19,7 +19,7 @@ export default class BaseModel {
   }
 
   protected static async baseFindMany<T>(whereArgs: WhereArgs<Partial<T>>): Promise<T[]> {
-    const query = qb(this.tableName)
+    const query = qb<T>(this.tableName)
       .select()
       .where(whereArgs);
     return extractRows<T>(await query);
@@ -29,7 +29,7 @@ export default class BaseModel {
     whereArgs: WhereArgs<Partial<T>>,
     joinUserIdStatement: string
   ): Promise<T[]> {
-    const query = qb(this.tableName)
+    const query = qb<T>(this.tableName)
       .select()
       .joinRaw(joinUserIdStatement)
       .where(whereArgs);
@@ -40,7 +40,7 @@ export default class BaseModel {
     updateArgs: RecordDict,
     whereArgs: WhereArgs<Partial<T>>
   ): Promise<T> {
-    const query = qb(this.tableName)
+    const query = qb<T>(this.tableName)
       .update(updateArgs)
       .where(whereArgs);
     return extractRow<T>(await query);
@@ -52,7 +52,7 @@ export default class BaseModel {
   ): Promise<T | undefined> {
     const { userIdTable, userIdJoin, whereArgs } = args;
 
-    const query = qb(this.tableName)
+    const query = qb<T>(this.tableName)
       .update(updateArgs, userIdTable)
       .where(userIdJoin)
       .where(whereArgs);
@@ -61,7 +61,7 @@ export default class BaseModel {
   }
 
   protected static async baseDeleteOne<T>(id: number): Promise<T> {
-    const query = qb(this.tableName)
+    const query = qb<T>(this.tableName)
       .delete()
       .where({ items: { id } });
     return extractRow<T>(await query);
@@ -72,7 +72,7 @@ export default class BaseModel {
   ): Promise<T> {
     const { userIdTable, userIdJoin, whereArgs } = args;
 
-    const query = qb(this.tableName)
+    const query = qb<T>(this.tableName)
       .delete(userIdTable)
       .where(userIdJoin)
       .where(whereArgs);

@@ -47,7 +47,7 @@ export type RecordValues = string | number | boolean | Date | LngLatArray | unde
  * Object of db column key/value pairs
  */
 export type RecordDict<T = any> = {
-  [K in keyof T]: Extract<RecordValues, T[K]>;
+  [K in keyof T]: T[K];
 };
 
 /**
