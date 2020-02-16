@@ -1,4 +1,4 @@
-import QueryBuilder, { QB } from './QueryBuilder';
+import QueryBuilder, { QB, WhereArgs } from './QueryBuilder';
 import db from '../db/db';
 
 const qb = QB(db);
@@ -49,7 +49,7 @@ describe('test QueryBuilder class', () => {
 
   it('should contain a delete clause', () => {
     const instance = qb('users').delete();
-    expect(instance.clausesMap.delete).toBe(`DELETE FROM users`);
+    expect(instance.clausesMap.delete).toBe('DELETE');
   });
 
   it('should contain a where clause', () => {
@@ -57,7 +57,7 @@ describe('test QueryBuilder class', () => {
       id: 1,
       username: 'clayton'
     };
-    const instance = qb('users').where(items);
+    const instance = qb('users').where({ items });
     expect(instance.clausesMap.where).toStrictEqual([
       'WHERE',
       'id = $1 AND username = $2'
@@ -68,13 +68,50 @@ describe('test QueryBuilder class', () => {
     });
   });
 
-  it('should contain where clause from whereRaw string', () => {
-    const text = `id = 1 and username = 'clayton'`;
-    const instance = qb('user').whereRaw(text);
+  it('should contain a where clause with different operators', () => {
+    const whereArgs: WhereArgs = {
+      items: {
+        id: ['>', 1],
+        username: ['>=', 'clayton']
+      },
+      wrap: true,
+      prefixOperator: 'AND',
+      logicalOperator: 'OR'
+    };
+    const instance = qb('users').where(whereArgs);
     expect(instance.clausesMap.where).toStrictEqual([
       'WHERE',
-      `id = 1 and username = 'clayton'`
+      '(id > $1 OR username >= $2)'
     ]);
+  });
+
+  it('should contain a where clause with an array as input', () => {
+    const whereArgs: WhereArgs = [
+      { items: { id: 1, username: 'clayton' } },
+      {
+        items: { email: 'clayton@gmail.com', email_verified: true },
+        wrap: true,
+        prefixOperator: 'OR'
+      }
+    ];
+    const instance = qb('users').where(whereArgs);
+    expect(instance.clausesMap.where).toStrictEqual([
+      'WHERE',
+      'id = $1 AND username = $2',
+      'OR (email = $3 AND email_verified = $4)'
+    ]);
+    expect(instance.parameterizedValues).toStrictEqual({
+      paramVal: 5,
+      values: [1, 'clayton', 'clayton@gmail.com', true]
+    });
+  });
+
+  it('should contain where clause with raw input', () => {
+    const text = `id = (
+      id = 1 and username = 'clayton'
+    )`;
+    const instance = qb('users').where(text);
+    expect(instance.clausesMap.where).toStrictEqual(['WHERE', text]);
   });
 
   it('should contain a returning clause', () => {
@@ -105,6 +142,23 @@ describe('test QueryBuilder class', () => {
     });
   });
 
+  it('should not replace escaped params', () => {
+    const text = `
+      SELECT * FROM USERS
+      WHERE id = '\\?' and username = ?
+    `;
+    const values = ['clayton'];
+    const instance = qb('users').raw(text, values);
+    expect(instance.rawQuery).toBe(`
+      SELECT * FROM USERS
+      WHERE id = '?' and username = $1
+    `);
+    expect(instance.parameterizedValues).toStrictEqual({
+      paramVal: 2,
+      values
+    });
+  });
+
   it('should error with unequal raw params and values', () => {
     expect.assertions(1);
     const text = `id = ?`;
@@ -116,25 +170,9 @@ describe('test QueryBuilder class', () => {
     }
   });
 
-  it('should contain where clause from whereRaw method', () => {
-    const text = `id = (
-      id = 1 and username = 'clayton'
-    )`;
-    const instance = qb('users').whereRaw(text);
-    expect(instance.clausesMap.where).toStrictEqual(['WHERE', text]);
-  });
-
-  it('should contain where clause with replaced params', () => {
-    const text = 'id = ? AND username = ?';
-    const values = [1, 'clayton'];
-    const instance = qb('users').whereRaw(text, values);
-    expect(instance.clausesMap.where).toStrictEqual([
-      'WHERE',
-      'id = $1 AND username = $2'
-    ]);
-    expect(instance.parameterizedValues).toStrictEqual({
-      paramVal: 3,
-      values
-    });
+  it('should contain a join clause', () => {
+    const text = 'INNER JOIN trips t on trip.user_id = users.id';
+    const instance = qb('users').joinRaw(text);
+    expect(instance.clausesMap.join).toBe(text);
   });
 });

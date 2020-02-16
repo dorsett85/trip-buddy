@@ -2,11 +2,29 @@ import { Pool, QueryResult } from 'pg';
 import { ComparisonOperator, LogicalOperator, prefixTableName } from './dbHelpers';
 import { KeyValue } from '../types';
 
+type WhereArgValue = string | number | boolean;
+
+type WhereArgValueArray = WhereArgValue[];
+
+type WhereArgComparisonValue = [ComparisonOperator, WhereArgValue];
+
+export interface WhereArgGroup {
+  items: {
+    [key: string]: WhereArgValue | WhereArgComparisonValue;
+  };
+  wrap?: boolean;
+  prefixOperator?: LogicalOperator;
+  logicalOperator?: LogicalOperator;
+}
+
+export type WhereArgs = WhereArgGroup | WhereArgGroup[];
+
 interface Clauses {
   insert?: string;
   select?: string;
   update?: string;
   delete?: string;
+  join?: string;
   where?: string[];
   returning?: string;
 }
@@ -53,7 +71,7 @@ export default class QueryBuilder<T = any> {
    *
    * "INSERT INTO users (id, username) VALUES(1, 'clayton')"
    */
-  private values: (string | number)[] = [];
+  private values: WhereArgValue[] = [];
 
   /**
    * String that represents a SQL query
@@ -135,27 +153,67 @@ export default class QueryBuilder<T = any> {
   }
 
   public delete(): this {
-    this.clauses.delete = `DELETE FROM ${this.table}`;
+    this.clauses.delete = `DELETE`;
     return this;
   }
 
-  public where(
-    items: KeyValue<string | number>,
-    logicalOperator: LogicalOperator = 'AND',
-    comparisonOperator: ComparisonOperator = '='
-  ): this {
+  public where(text: string, values?: WhereArgValueArray): this;
+
+  // eslint-disable-next-line no-dupe-class-members
+  public where(whereArgs: WhereArgs): this;
+
+  // eslint-disable-next-line no-dupe-class-members
+  public where(args: string | WhereArgs, values?: WhereArgValueArray): this {
     // Set the initial where array in the clauses map.  We'll keep adding
     // to this with items and additional where methods (e.g., orWhere, andWhere)
     this.clauses.where = this.clauses.where || ['WHERE'];
-    let text = '';
-    Object.entries(items).forEach(([key, value], idx, arr) => {
-      text += `${key} ${comparisonOperator} $${this.paramVal}`;
-      text += arr.length > 1 && idx !== arr.length - 1 ? ` ${logicalOperator} ` : '';
-      this.paramVal += 1;
-      this.values.push(value);
-    });
 
-    this.clauses.where.push(text);
+    if (typeof args === 'string') {
+      if (!values) {
+        this.clauses.where.push(args);
+      } else {
+        const replacedText = this.updateTextParamsAndValues(args, values);
+        this.clauses.where.push(replacedText);
+      }
+    } else {
+      // Function to add to where class array and update the paramVal and values properties
+      const processWhereArgs = (whereArgs: WhereArgGroup) => {
+        const {
+          items,
+          wrap,
+          prefixOperator,
+          logicalOperator,
+        } = whereArgs;
+        
+        let text = '';
+        Object.entries(items).forEach(([key, value], idx, arr) => {
+          const comparisonOperator = Array.isArray(value) ? value[0]: '=';
+          const itemValue = Array.isArray(value) ? value[1] : value;
+          
+          text += `${key} ${comparisonOperator} $${this.paramVal}`;
+          text += arr.length > 1 && idx !== arr.length - 1 ? ` ${logicalOperator || 'AND'} ` : '';
+          
+          this.paramVal += 1;
+          this.values.push(itemValue);
+        });
+
+        // Last check to wrap the text in parentheses and add a prefix operator
+        text = wrap ? `(${text})` : text;
+        if (this.clauses.where![1]) {
+          text = `${prefixOperator || 'AND'} ${text}`;
+        }
+        
+        this.clauses.where!.push(text);
+      };
+      
+      // Finally, run the processing function on the WhereArgs based on its type
+      if (Array.isArray(args)) {
+        args.forEach(processWhereArgs);
+      } else {
+        processWhereArgs(args);
+      }
+    }
+
     return this;
   }
 
@@ -166,23 +224,17 @@ export default class QueryBuilder<T = any> {
     return this;
   }
 
-  public raw(text: string, values?: (string | number)[]): this {
+  public raw(text: string, values?: WhereArgValueArray): this {
     this.rawText = !values ? text : this.updateTextParamsAndValues(text, values);
     return this;
   }
 
-  public whereRaw(text: string, values?: (string | number)[]): this {
-    this.clauses.where = this.clauses.where || ['WHERE'];
-    if (!values) {
-      this.clauses.where.push(text);
-    } else {
-      const replacedText = this.updateTextParamsAndValues(text, values);
-      this.clauses.where.push(replacedText);
-    }
+  public joinRaw(text: string, values?: WhereArgValueArray): this {
+    this.clauses.join = !values ? text : this.updateTextParamsAndValues(text, values);
     return this;
   }
 
-  private updateTextParamsAndValues(text: string, values: (string | number)[]): string {
+  private updateTextParamsAndValues(text: string, values: WhereArgValueArray): string {
     const { replacedText, replacements } = this.replaceTextParams(text);
     QueryBuilder.checkParamValuesEquality(text, replacements, values);
     this.values.push(...values);
@@ -193,7 +245,13 @@ export default class QueryBuilder<T = any> {
     text: string
   ): { replacedText: string; replacements: number } {
     let replacements = 0;
-    const replacedText = text.replace(/\?/g, () => {
+    const replacedText = text.replace(/\?|\\\?/g, match => {
+      // Replace escaped param (e.g., '\?') with an actual '?' character
+      if (match !== '?') {
+        return '?';
+      }
+
+      // Otherwise replace the param with its value replacement
       const param = `$${this.paramVal}`;
       this.paramVal += 1;
       replacements += 1;
@@ -212,7 +270,7 @@ export default class QueryBuilder<T = any> {
   private static checkParamValuesEquality(
     text: string,
     params: number,
-    values: (string | number)[]
+    values: WhereArgValueArray
   ) {
     if (params !== values.length) {
       throw Error(`
@@ -250,6 +308,9 @@ export default class QueryBuilder<T = any> {
       sqlQuery += clauses.insert;
     } else if (clauses.select) {
       sqlQuery += `${clauses.select}\n${this.fromString()}`;
+      if (clauses.join) {
+        sqlQuery += `\n  ${clauses.join}`;
+      }
     } else if (clauses.update) {
       sqlQuery += clauses.update;
     } else if (clauses.delete) {

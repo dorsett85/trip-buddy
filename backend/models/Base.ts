@@ -12,8 +12,7 @@ import {
   OmitIdCreatedDate,
   JoinUserIdArgs
 } from '../types';
-import {QB} from "../utils/QueryBuilder";
-import {Query} from "pg";
+import { QB } from '../utils/QueryBuilder';
 
 const qb = QB(db);
 
@@ -21,8 +20,8 @@ export default class BaseModel {
   public static tableName: string;
 
   protected static async baseCreateOne<T>(record: KeyValue): Promise<T> {
-    const queryResult = await qb(this.tableName).insert(record);
-    return extractRow(queryResult);
+    const query = qb(this.tableName).insert(record);
+    return extractRow(await query);
   }
 
   protected static async baseFindOne<T>(
@@ -129,13 +128,10 @@ export default class BaseModel {
   }
 
   protected static async baseDeleteOne<T>(id: number): Promise<T> {
-    const deleteTxt = `DELETE FROM ${this.tableName}`;
-    const where = addWhere(this.tableName, { andWhereArgs: { id }, orWhereArgs: {} });
-
-    const text = `${deleteTxt} ${where.text} RETURNING *;`;
-    const { values } = where;
-
-    return extractRow(await db.query({ text, values }));
+    const query = qb(this.tableName)
+      .delete()
+      .where({ items: { id } });
+    return extractRow(await query);
   }
 
   protected static async baseDeleteOneByUserId<T>(
@@ -144,28 +140,20 @@ export default class BaseModel {
   ): Promise<T> {
     const { userId, joinStatement } = joinUserIdArgs;
 
-    // Select statement with id column is needed in the where clause
-    // subquery (e.g., WHERE id = ...) so that only it only matches 1 id
-    const select = addSelect(this.tableName, ['id']);
+    const query = qb(this.tableName)
+      .delete()
+      .where(
+        `
+        id = (
+          SELECT ${this.tableName}.id
+          FROM ${this.tableName}
+            ${joinStatement}
+          WHERE ${this.tableName}.id = ? AND user_id = ?
+        )
+       `,
+        [id, userId]
+      );
 
-    const deleteTxt = `DELETE FROM ${this.tableName}`;
-
-    const where = addWhere(this.tableName, {
-      andWhereArgs: { id },
-      orWhereArgs: {}
-    });
-
-    const text = `
-      ${deleteTxt}
-      WHERE id = (
-        ${select.text}
-          ${joinStatement}
-        ${where.text} AND user_id = ${userId}
-      )
-      RETURNING *;
-    `;
-    const { values } = where;
-
-    return extractRow(await db.query({ text, values }));
+    return extractRow(await query);
   }
 }
