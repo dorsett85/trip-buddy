@@ -317,7 +317,7 @@ export default class QueryBuilder<T = any> {
       sqlQuery += `\n${this.whereString()}`;
     }
 
-    // Last, for certain sql commands we'll want return rows (e.g., for update clauses)
+    // Last, for certain sql commands we'll want a RETURNING clause (e.g., for update clauses)
     if (clauses.insert || clauses.update || clauses.delete) {
       sqlQuery += `\n${clauses.returning || 'RETURNING *'}`;
     }
