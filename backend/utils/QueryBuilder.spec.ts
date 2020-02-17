@@ -1,5 +1,6 @@
-import QueryBuilder, { QB, WhereArgs } from './QueryBuilder';
+import QueryBuilder, { QB } from './QueryBuilder';
 import db from '../db/db';
+import { WhereArgs } from '../types';
 
 const qb = QB(db);
 

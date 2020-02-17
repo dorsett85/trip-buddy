@@ -15,8 +15,8 @@ interface Clauses {
 export default class QueryBuilder<T = any> {
   // Make it thenable to return an async QueryResult
   public readonly then: (
-    onfulfilled?: (value: QueryResult<T>) => QueryResult<T>,
-    onrejected?: (reason: any) => Promise<any>
+    onfulfilled?: (value: QueryResult<T>) => any,
+    onrejected?: (reason: any) => any
   ) => Promise<QueryResult<T>>;
 
   /**
