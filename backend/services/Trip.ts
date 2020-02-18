@@ -1,17 +1,10 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
-import { TripItineraryRecord } from 'common/src/types/tripItinerary';
 import TripModel from '../models/Trip';
 import UserTripModel from '../models/UserTrip';
 import { TripServiceDeps } from './Trip.types';
 // eslint-disable-next-line import/no-cycle
-import {
-  CreateTripInput,
-  UpdateTripInput,
-  UpdateTripItineraryInput,
-  CreateTripItineraryInput
-} from '../schema/resolvers/trip.types';
-import TripItineraryModel from '../models/TripItinerary';
+import { CreateTripInput, UpdateTripInput } from '../schema/resolvers/trip.types';
 import { OmitId, WhereArgs } from '../types';
 
 export default class TripService {
@@ -19,14 +12,11 @@ export default class TripService {
 
   private TripModel: typeof TripModel;
 
-  private TripItineraryModel: typeof TripItineraryModel;
-
   private UserTripModel: typeof UserTripModel;
 
   constructor(dependencies: TripServiceDeps) {
     this.user = dependencies.user;
     this.TripModel = dependencies.TripModel;
-    this.TripItineraryModel = dependencies.TripItineraryModel;
     this.UserTripModel = dependencies.UserTripModel;
   }
 
@@ -65,36 +55,5 @@ export default class TripService {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
     return this.TripModel.deleteOne(tripId, userId);
-  }
-
-  public findTripItinerary(
-    whereArgs: WhereArgs<Partial<TripItineraryRecord>>
-  ): Promise<TripItineraryRecord[]> {
-    const { id, role } = this.user;
-    const userId = role === 'admin' ? undefined : id;
-    return this.TripItineraryModel.findMany(whereArgs, userId);
-  }
-
-  public createTripItinerary(
-    createTripItineraryInput: CreateTripItineraryInput['input']
-  ): Promise<TripItineraryRecord> {
-    return this.TripItineraryModel.createOne(createTripItineraryInput);
-  }
-
-  public updateTripItinerary(
-    updateTripItineraryInput: OmitId<UpdateTripItineraryInput['input']>,
-    whereArgs: WhereArgs<Partial<TripItineraryRecord>>
-  ): Promise<TripItineraryRecord | undefined> {
-    const { id, role } = this.user;
-    const userId = role === 'admin' ? undefined : id;
-    return this.TripItineraryModel.updateOne(updateTripItineraryInput, whereArgs, userId);
-  }
-
-  public deleteTripItinerary(
-    itineraryId: TripItineraryRecord['id']
-  ): Promise<TripItineraryRecord | undefined> {
-    const { id, role } = this.user;
-    const userId = role === 'admin' ? undefined : id;
-    return this.TripItineraryModel.deleteOne(itineraryId, userId);
   }
 }

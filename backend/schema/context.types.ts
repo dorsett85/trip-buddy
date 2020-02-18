@@ -7,12 +7,14 @@ import UserModel from '../models/User';
 import UserTripModel from '../models/UserTrip';
 import TripModel from '../models/Trip';
 import TripItineraryModel from '../models/TripItinerary';
+import TripItineraryService from "../services/TripItinerary";
 
 export interface ContextDeps {
   services: {
     AccessService: typeof AccessService;
     UserService: typeof UserService;
     TripService: typeof TripService;
+    TripItineraryService: typeof TripItineraryService
   };
   models: {
     UserModel: typeof UserModel;
@@ -27,4 +29,5 @@ export interface ContextObj<TAuth = false> {
   accessService: AccessService;
   userService: TAuth extends false ? null : UserService;
   tripService: TAuth extends false ? null : TripService;
+  tripItineraryService: TAuth extends false ? null : TripItineraryService;
 }

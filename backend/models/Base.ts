@@ -1,6 +1,6 @@
 import db from '../db/db';
 import { extractRow, extractRows } from '../utils/dbHelpers';
-import { RecordDict, WhereArgs, WhereArgsWithUserIdJoin } from '../types';
+import { RecordDict, WhereArgs } from '../types';
 import { QB } from '../utils/QueryBuilder';
 
 const qb = QB(db);

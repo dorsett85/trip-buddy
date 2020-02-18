@@ -6,8 +6,8 @@ import {
 } from '../../utils/constants/errors';
 
 const Trip: TripResolvers['Trip'] = {
-  itineraries: async ({ id }, __, { tripService }) => {
-    const itineraries = await tripService.findTripItinerary({ items: { trip_id: id } });
+  itineraries: async ({ id }, __, { tripItineraryService }) => {
+    const itineraries = await tripItineraryService.findOne({ items: { trip_id: id } });
     return itineraries;
   }
 };
@@ -45,23 +45,23 @@ const Mutation: TripResolvers['Mutation'] = {
     }
     return trip.id;
   },
-  createTripItinerary: async (_, { input }, { tripService }) => {
-    const itinerary = await tripService.createTripItinerary(input);
+  createTripItinerary: async (_, { input }, { tripItineraryService }) => {
+    const itinerary = await tripItineraryService.createOne(input);
     if (!itinerary) {
       throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
     }
     return itinerary;
   },
-  updateTripItinerary: async (_, { input }, { tripService }) => {
+  updateTripItinerary: async (_, { input }, { tripItineraryService }) => {
     const { id, ...rest } = input;
-    const itinerary = await tripService.updateTripItinerary(rest, { items: { id } });
+    const itinerary = await tripItineraryService.updateOne(rest, { items: { id } });
     if (!itinerary) {
       throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
     }
     return itinerary;
   },
-  deleteTripItinerary: async (_, { id }, { tripService }) => {
-    const itinerary = await tripService.deleteTripItinerary(id);
+  deleteTripItinerary: async (_, { id }, { tripItineraryService }) => {
+    const itinerary = await tripItineraryService.deleteOne(id);
     if (!itinerary) {
       throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
     }

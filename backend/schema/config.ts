@@ -3,6 +3,7 @@ import { GraphQLError } from 'graphql';
 import AccessService from '../services/Access';
 import UserService from '../services/User';
 import TripService from '../services/Trip';
+import TripItineraryService from '../services/TripItinerary';
 import {
   rootTypeDefs,
   directivesTypeDefs,
@@ -44,7 +45,8 @@ const context = getContext({
   services: {
     AccessService,
     UserService,
-    TripService
+    TripService,
+    TripItineraryService
   },
   models: {
     UserModel,

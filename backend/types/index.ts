@@ -109,19 +109,7 @@ export interface ParamQuery {
   values?: RecordValueArray;
 }
 
-export type WhereArgs<T = any> = WhereArgGroup<T> | ParamQuery | (WhereArgGroup<T> | ParamQuery)[];
-
-/**
- * Convenience type for including a user_id property that is useful for interfaces
- * that require joining a table to get the user_id column
- */
-export type WithUserId<T> = T & {
-  // eslint-disable-next-line camelcase
-  user_id: number;
-};
-
-export interface WhereArgsWithUserIdJoin<T = any> {
-  userIdTable: string;
-  userIdJoin: string;
-  whereArgs: WhereArgs<Partial<T>>;
-}
+export type WhereArgs<T = any> =
+  | WhereArgGroup<T>
+  | ParamQuery
+  | (WhereArgGroup<T> | ParamQuery)[];
