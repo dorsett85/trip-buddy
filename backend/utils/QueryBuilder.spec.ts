@@ -108,17 +108,22 @@ describe('test QueryBuilder class', () => {
         items: { email: 'clayton@gmail.com', email_verified: true },
         wrap: true,
         prefixOperator: 'OR'
+      },
+      {
+        text: 'AND (users.role = ?)',
+        values: ['customer']
       }
     ];
     const instance = qb('users').where(whereArgs);
     expect(instance.clausesMap.where).toStrictEqual([
       'WHERE',
       'users.id = $1 AND users.username = $2',
-      'OR (users.email = $3 AND users.email_verified = $4)'
+      'OR (users.email = $3 AND users.email_verified = $4)',
+      'AND (users.role = $5)'
     ]);
     expect(instance.parameterizedValues).toStrictEqual({
-      paramVal: 5,
-      values: [1, 'clayton', 'clayton@gmail.com', true]
+      paramVal: 6,
+      values: [1, 'clayton', 'clayton@gmail.com', true, 'customer']
     });
   });
 

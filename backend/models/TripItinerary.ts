@@ -1,10 +1,17 @@
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
-import { TripRecord } from 'common/lib/types/trip';
+import { UserRecord } from 'common/lib/types/user';
+import { UserTripRecord } from 'common/lib/types/userTrip';
 import BaseModel from './Base';
-import { WhereArgs } from '../types';
+import { OmitId, WhereArgGroup, WhereArgs } from '../types';
 
 export default class TripItineraryModel extends BaseModel {
-  public static tableName = 'trip_itineraries';
+  public static readonly tableName = 'trip_itineraries';
+
+  public static readonly tableWithUserId = 'users_trips ut';
+
+  public static readonly joinTableWithUserId = `LEFT JOIN ${TripItineraryModel.tableWithUserId} ON ut.trip_id = ${TripItineraryModel.tableName}.trip_id`;
+
+  public static readonly whereTableWithUserId = `${TripItineraryModel.tableName}.trip_id = ut.trip_id`;
 
   public static createOne(
     tripItinerary: Partial<TripItineraryRecord>
@@ -13,33 +20,80 @@ export default class TripItineraryModel extends BaseModel {
   }
 
   public static findOne(
-    whereArgs: WhereArgs<Partial<TripItineraryRecord>>
+    whereArgs: WhereArgs<Partial<TripItineraryRecord>>,
+    userId?: UserRecord['id']
   ): Promise<TripItineraryRecord | undefined> {
-    return this.baseFindOne(whereArgs);
+    if (!userId) {
+      return this.baseFindOne(whereArgs);
+    }
+    const userIdWhereGroup: WhereArgGroup = {
+      items: { user_id: userId },
+      prefixTableName: false
+    };
+    const whereArgsWithUserId: WhereArgs = Array.isArray(whereArgs)
+      ? [...whereArgs, userIdWhereGroup]
+      : [whereArgs, userIdWhereGroup];
+    return this.baseFindOne(whereArgsWithUserId, this.joinTableWithUserId);
   }
 
   public static findMany(
-    whereArgs: WhereArgs<Partial<TripItineraryRecord>>
+    whereArgs: WhereArgs<Partial<TripItineraryRecord>>,
+    userId?: UserRecord['id']
   ): Promise<TripItineraryRecord[]> {
-    return this.baseFindMany(whereArgs);
-  }
+    if (!userId) {
+      return this.baseFindMany(whereArgs);
+    }
 
-  public static async findByTripId(
-    tripId: TripRecord['id']
-  ): Promise<TripItineraryRecord[]> {
-    return this.findMany({ items: { trip_id: tripId } });
+    const userIdWhereGroup: WhereArgGroup = {
+      items: { user_id: userId },
+      prefixTableName: false
+    };
+    const whereArgsWithUserId: WhereArgs = !whereArgs
+      ? userIdWhereGroup
+      : Array.isArray(whereArgs)
+      ? [...whereArgs, userIdWhereGroup]
+      : [whereArgs, userIdWhereGroup];
+    return this.baseFindMany(whereArgsWithUserId, this.joinTableWithUserId);
   }
 
   public static updateOne(
-    updateArgs: Partial<TripItineraryRecord>,
-    whereArgs: WhereArgs<Partial<TripItineraryRecord>>
+    updateArgs: OmitId<Partial<TripItineraryRecord>>,
+    whereArgs: WhereArgs<Partial<TripItineraryRecord>>,
+    userId?: UserRecord['id']
   ): Promise<TripItineraryRecord | undefined> {
-    return this.baseUpdateOne(updateArgs, whereArgs);
+    if (!userId) {
+      return this.baseUpdateOne(updateArgs, whereArgs);
+    }
+
+    const userIdWhereGroup: WhereArgs<Partial<UserTripRecord>> = [
+      { text: this.whereTableWithUserId },
+      {
+        items: { user_id: userId },
+        prefixTableName: false
+      }
+    ];
+    const whereArgsWithUserId: WhereArgs = Array.isArray(whereArgs)
+      ? [...userIdWhereGroup, ...userIdWhereGroup]
+      : [...userIdWhereGroup, whereArgs];
+    return this.baseUpdateOne(updateArgs, whereArgsWithUserId, this.tableWithUserId);
   }
 
   public static deleteOne(
-    id: TripRecord['id']
+    itineraryId: TripItineraryRecord['id'],
+    userId?: UserRecord['id']
   ): Promise<TripItineraryRecord | undefined> {
-    return this.baseDeleteOne(id);
+    const whereArgs: WhereArgs<Partial<TripItineraryRecord>> = {
+      items: { id: itineraryId }
+    };
+    if (!userId) {
+      return this.baseDeleteOne(whereArgs);
+    }
+
+    const userIdWhereArgs: WhereArgs = {
+      items: { user_id: userId },
+      prefixTableName: false
+    };
+
+    return this.baseDeleteOne([userIdWhereArgs, whereArgs], this.tableWithUserId);
   }
 }

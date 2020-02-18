@@ -9,7 +9,7 @@ import {
 
 const User: UserResolvers['User'] = {
   trips: async (_, __, { tripService }) => {
-    const userTrips = await tripService.findMany({ items: {} });
+    const userTrips = await tripService.findMany();
     return userTrips;
   }
 };

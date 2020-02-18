@@ -104,7 +104,12 @@ export interface WhereArgGroup<T = any> {
   logicalOperator?: LogicalOperator;
 }
 
-export type WhereArgs<T = any> = WhereArgGroup<T> | WhereArgGroup<T>[];
+export interface ParamQuery {
+  text: string;
+  values?: RecordValueArray;
+}
+
+export type WhereArgs<T = any> = WhereArgGroup<T> | ParamQuery | (WhereArgGroup<T> | ParamQuery)[];
 
 /**
  * Convenience type for including a user_id property that is useful for interfaces

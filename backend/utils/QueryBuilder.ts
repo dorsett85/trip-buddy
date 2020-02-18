@@ -1,6 +1,16 @@
 import { Pool, QueryResult } from 'pg';
 import { prefixTableName } from './dbHelpers';
-import { RecordDict, RecordValueArray, WhereArgGroup, WhereArgs } from '../types';
+import {
+  ParamQuery,
+  RecordDict,
+  RecordValueArray,
+  WhereArgGroup,
+  WhereArgs
+} from '../types';
+import { isEmptyObject } from './isEmptyObject';
+
+const isParamQuery = (obj: ParamQuery | WhereArgGroup): obj is ParamQuery =>
+  Object.keys(obj).some(key => key !== 'items' && key === 'text');
 
 interface Clauses {
   insert?: string;
@@ -68,7 +78,6 @@ export default class QueryBuilder<T = any> {
         .then(resolve)
         .catch(reject);
     };
-    // this.catch = (reject: any): Promise<any> => Promise.reject(reject);
     this.table = table;
     this.pool = pool;
   }
@@ -126,6 +135,14 @@ export default class QueryBuilder<T = any> {
     return this;
   }
 
+  /**
+   * Add UPDATE clause with optional from argument.  If defined, the using arg
+   * will add a FROM clause below the UPDATE clause with the text from the
+   * from argument.
+   *
+   * The from argument is helpful when we need to add where statements from
+   * another table.
+   */
   public update(items: RecordDict, from?: string): this {
     let updateText = `UPDATE ${this.table}\nSET `;
     Object.entries(items).forEach(([key, value], idx, arr) => {
@@ -144,6 +161,14 @@ export default class QueryBuilder<T = any> {
     return this;
   }
 
+  /**
+   * Add DELETE clause with optional using arg.  If defined, the using arg
+   * will add a USING clause below the DELETE clause with the text from the
+   * using argument.
+   *
+   * The using argument is helpful when we need to add where statements from
+   * another table.
+   */
   public delete(using?: string): this {
     this.clauses.delete = `DELETE\n${this.fromString()}${
       using ? `\nUSING ${using}` : ''
@@ -154,10 +179,14 @@ export default class QueryBuilder<T = any> {
   public where(text: string, values?: RecordValueArray): this;
 
   // eslint-disable-next-line no-dupe-class-members
-  public where(whereArgs: WhereArgs): this;
+  public where(whereArgs?: WhereArgs): this;
 
   // eslint-disable-next-line no-dupe-class-members
-  public where(args: string | WhereArgs, values?: RecordValueArray): this {
+  public where(args?: string | WhereArgs, values?: RecordValueArray): this {
+    // Check all empty cases so we don't add a where clause without any items
+    if (!args) {
+      return this;
+    }
     // Set the initial where array in the clauses map.  We'll keep adding
     // to this with items and additional where methods (e.g., orWhere, andWhere)
     this.clauses.where = this.clauses.where || ['WHERE'];
@@ -170,8 +199,23 @@ export default class QueryBuilder<T = any> {
         this.clauses.where.push(replacedText);
       }
     } else {
-      // Function to add to where class array and update the paramVal and values properties
-      const processWhereArgs = (whereArgs: WhereArgGroup) => {
+      // Function to add to where clause array and update the paramVal and values properties
+      const processWhereArgs = (whereArgs: WhereArgGroup<T> | ParamQuery) => {
+        // Early check and exit if the whereArgs is a ParamQuery
+        if (isParamQuery(whereArgs)) {
+          if (!whereArgs.values) {
+            this.clauses.where!.push(whereArgs.text);
+          } else {
+            const replacedText = this.updateTextParamsAndValues(
+              whereArgs.text,
+              whereArgs.values
+            );
+            this.clauses.where!.push(replacedText);
+          }
+          return;
+        }
+
+        // Otherwise process as a WhereArgGroup
         const { items, wrap, prefixOperator, logicalOperator } = whereArgs;
 
         let text = '';
@@ -224,7 +268,10 @@ export default class QueryBuilder<T = any> {
     return this;
   }
 
-  public joinRaw(text: string, values?: RecordValueArray): this {
+  public joinRaw(text?: string, values?: RecordValueArray): this {
+    if (!text) {
+      return this;
+    }
     this.clauses.join = !values ? text : this.updateTextParamsAndValues(text, values);
     return this;
   }

@@ -6,77 +6,56 @@ import { QB } from '../utils/QueryBuilder';
 const qb = QB(db);
 
 export default class BaseModel {
-  public static tableName: string;
+  public static readonly tableName: string;
+
+  public static readonly tableWithUserId: string;
+
+  public static readonly joinTableWithUserId: string;
+
+  public static readonly whereTableWithUserId: string;
 
   protected static async baseCreateOne<T>(record: RecordDict): Promise<T> {
     const query = qb<T>(this.tableName).insert(record);
     return extractRow<T>(await query);
   }
 
-  protected static async baseFindOne<T>(whereArgs: WhereArgs<Partial<T>>): Promise<T> {
-    const [row]: T[] = await this.baseFindMany(whereArgs);
+  protected static async baseFindOne<T>(
+    whereArgs: WhereArgs<Partial<T>>,
+    joinUserIdTable?: string
+  ): Promise<T> {
+    const [row]: T[] = await this.baseFindMany(whereArgs, joinUserIdTable);
     return row;
   }
 
-  protected static async baseFindMany<T>(whereArgs: WhereArgs<Partial<T>>): Promise<T[]> {
-    const query = qb<T>(this.tableName)
-      .select()
-      .where(whereArgs);
-    return extractRows<T>(await query);
-  }
-
-  protected static async baseFindManyByUserId<T>(
-    whereArgs: WhereArgs<Partial<T>>,
-    joinUserIdStatement: string
+  protected static async baseFindMany<T>(
+    whereArgs?: WhereArgs<Partial<T>>,
+    joinUserIdTable?: string
   ): Promise<T[]> {
     const query = qb<T>(this.tableName)
       .select()
-      .joinRaw(joinUserIdStatement)
+      .joinRaw(joinUserIdTable)
       .where(whereArgs);
     return extractRows<T>(await query);
   }
 
   protected static async baseUpdateOne<T>(
     updateArgs: RecordDict,
-    whereArgs: WhereArgs<Partial<T>>
-  ): Promise<T> {
-    const query = qb<T>(this.tableName)
-      .update(updateArgs)
-      .where(whereArgs);
-    return extractRow<T>(await query);
-  }
-
-  protected static async baseUpdateOneByUserId<T>(
-    updateArgs: RecordDict,
-    args: WhereArgsWithUserIdJoin<T>
+    whereArgs: WhereArgs<Partial<T>>,
+    tableWithUserId?: string
   ): Promise<T | undefined> {
-    const { userIdTable, userIdJoin, whereArgs } = args;
-
     const query = qb<T>(this.tableName)
-      .update(updateArgs, userIdTable)
-      .where(userIdJoin)
+      .update(updateArgs, tableWithUserId)
       .where(whereArgs);
-
     return extractRow<T>(await query);
   }
 
-  protected static async baseDeleteOne<T>(id: number): Promise<T> {
-    const query = qb<T>(this.tableName)
-      .delete()
-      .where({ items: { id } });
-    return extractRow<T>(await query);
-  }
-
-  protected static async baseDeleteOneByUserId<T>(
-    args: WhereArgsWithUserIdJoin<T>
+  protected static async baseDeleteOne<T>(
+    whereArgs: WhereArgs<Partial<T>>,
+    tableWithUserId?: string
   ): Promise<T> {
-    const { userIdTable, userIdJoin, whereArgs } = args;
-
     const query = qb<T>(this.tableName)
-      .delete(userIdTable)
-      .where(userIdJoin)
+      .delete(tableWithUserId)
       .where(whereArgs);
-
     return extractRow<T>(await query);
   }
 }
