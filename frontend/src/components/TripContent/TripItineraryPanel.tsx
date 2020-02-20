@@ -166,8 +166,8 @@ const ItineraryNameInput: React.FC<IntineraryNameInputProps> = ({
   const [updateNameError, setUpdateNameError] = useState<JSX.Element>();
 
   const [updateTripItineraryQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
-    onCompleted: data => {
-      dispatch(updateTripItinerary(data.updateTripItinerary));
+    onCompleted: () => {
+      dispatch(updateTripItinerary({ ...itinerary, name }));
       onSubmitOrCancel();
     },
     onError: error => {
@@ -222,8 +222,8 @@ const ItineraryDescriptionInput: React.FC<ItineraryInputProps> = ({
   const [updateDescriptionError, setUpdateDescriptionError] = useState<JSX.Element>();
 
   const [updateTripQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
-    onCompleted: data => {
-      dispatch(updateTripItinerary(data.updateTripItinerary));
+    onCompleted: () => {
+      dispatch(updateTripItinerary({ ...itinerary, description }));
       setEditingDescription(false);
       setUpdateDescriptionError(undefined);
       setUpdateDescriptionText(<SuccessText />);
@@ -284,12 +284,13 @@ const ItineraryStartDateSelect: React.FC<ItineraryInputProps> = ({
   dispatch,
   itinerary
 }) => {
+  const [startTime, setStartTime] = useState(itinerary.start_time);
   const [updateStartDateText, setUpdateStartDateText] = useState<JSX.Element>();
   const [updateStartDateError, setUpdateStartDateError] = useState<JSX.Element>();
 
   const [updateTripItineraryQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
-    onCompleted: data => {
-      dispatch(updateTripItinerary(data.updateTripItinerary));
+    onCompleted: () => {
+      dispatch(updateTripItinerary({ ...itinerary, start_time: startTime }));
       setUpdateStartDateError(undefined);
       setUpdateStartDateText(<SuccessText />);
     },
@@ -300,6 +301,7 @@ const ItineraryStartDateSelect: React.FC<ItineraryInputProps> = ({
 
   const handleStartDateChange = (date: MaterialUiPickersDate) => {
     if (date) {
+      setStartTime(date.toISOString());
       updateTripItineraryQuery({
         variables: { input: { id: itinerary.id, start_time: date.toISOString() } }
       });
@@ -315,14 +317,14 @@ const ItineraryStartDateSelect: React.FC<ItineraryInputProps> = ({
       onChange={handleStartDateChange}
       helperText={helperText}
       error={!!updateStartDateError}
-      value={itinerary.start_time || null}
+      value={startTime}
       margin='normal'
       fullWidth
     />
   );
 };
 
-const DEFAUL_NO_OPTIONS_TEXT = 'Enter at least four characters...';
+const DEFAULT_NO_OPTIONS_TEXT = 'Enter at least four characters...';
 const DEFAULT_UPDATE_LOCATION_TEXT = 'Click an option from the dropdown list to update';
 
 const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
@@ -338,7 +340,7 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
   const [location, setLocation] = useState(itinerary.location_address);
   const [locationOptions, setLocationOptions] = useState<Feature[]>();
   const [locationsLoading, setLocationsLoading] = useState(false);
-  const [noOptionsText, setNoOptionsText] = useState(DEFAUL_NO_OPTIONS_TEXT);
+  const [noOptionsText, setNoOptionsText] = useState(DEFAULT_NO_OPTIONS_TEXT);
   const [updateLocationText, setUpdateLocationText] = useState<JSX.Element | string>(
     DEFAULT_UPDATE_LOCATION_TEXT
   );
@@ -398,7 +400,7 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
     setLocation(target.value);
     // Wait for the input to be a least 4 characters before search
     if (target.value.length <= 3) {
-      setNoOptionsText(DEFAUL_NO_OPTIONS_TEXT);
+      setNoOptionsText(DEFAULT_NO_OPTIONS_TEXT);
       setLocationOptions(undefined);
     } else if (target.value.length > 3) {
       setNoOptionsText('No options');

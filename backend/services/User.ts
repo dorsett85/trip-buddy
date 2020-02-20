@@ -21,7 +21,7 @@ export default class UserService {
 
   public updateOne(
     updateUserInput: UpdateUserInput['input']
-  ): Promise<UserRecord | undefined> {
+  ): Promise<number> {
     const { id } = this.user;
     return this.UserModel.updateOne(updateUserInput, { items: { id } });
   }

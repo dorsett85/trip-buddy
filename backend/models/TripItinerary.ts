@@ -19,23 +19,6 @@ export default class TripItineraryModel extends BaseModel {
     return this.baseCreateOne(tripItinerary);
   }
 
-  public static findOne(
-    whereArgs: WhereArgs<Partial<TripItineraryRecord>>,
-    userId?: UserRecord['id']
-  ): Promise<TripItineraryRecord | undefined> {
-    if (!userId) {
-      return this.baseFindOne(whereArgs);
-    }
-    const userIdWhereGroup: WhereArgGroup = {
-      items: { user_id: userId },
-      prefixTableName: false
-    };
-    const whereArgsWithUserId: WhereArgs = Array.isArray(whereArgs)
-      ? [...whereArgs, userIdWhereGroup]
-      : [whereArgs, userIdWhereGroup];
-    return this.baseFindOne(whereArgsWithUserId, this.joinTableWithUserId);
-  }
-
   public static findMany(
     whereArgs: WhereArgs<Partial<TripItineraryRecord>>,
     userId?: UserRecord['id']
@@ -60,7 +43,7 @@ export default class TripItineraryModel extends BaseModel {
     updateArgs: OmitId<Partial<TripItineraryRecord>>,
     whereArgs: WhereArgs<Partial<TripItineraryRecord>>,
     userId?: UserRecord['id']
-  ): Promise<TripItineraryRecord | undefined> {
+  ): Promise<number> {
     if (!userId) {
       return this.baseUpdateOne(updateArgs, whereArgs);
     }
@@ -81,7 +64,7 @@ export default class TripItineraryModel extends BaseModel {
   public static deleteOne(
     itineraryId: TripItineraryRecord['id'],
     userId?: UserRecord['id']
-  ): Promise<TripItineraryRecord | undefined> {
+  ): Promise<number> {
     const whereArgs: WhereArgs<Partial<TripItineraryRecord>> = {
       items: { id: itineraryId }
     };

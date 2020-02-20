@@ -89,10 +89,10 @@ export const tripTypeDefs = gql`
 
   extend type Mutation {
     createTrip(input: CreateTripInput): Trip @isAuth
-    updateTrip(input: UpdateTripInput): Trip @isAuth
+    updateTrip(input: UpdateTripInput): Int @isAuth
     deleteTrip(id: Int!): Int @isAuth
     createTripItinerary(input: CreateTripItineraryInput): TripItinerary @isAuth
-    updateTripItinerary(input: UpdateTripItineraryInput): TripItinerary @isAuth
+    updateTripItinerary(input: UpdateTripItineraryInput): Int @isAuth
     deleteTripItinerary(id: Int!): Int @isAuth
   }
 `;

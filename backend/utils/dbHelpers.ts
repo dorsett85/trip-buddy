@@ -40,8 +40,6 @@ export const extractRows = <T>(result: QueryResult<T>): T[] => {
 };
 
 /**
- * Return a row from a QueryResult
+ * Extract row from a QueryResult
  */
-export const extractRow = <T>(result: QueryResult<T>): T => {
-  return extractRows<T>(result)[0];
-};
+export const extractRow = <T>(result: QueryResult<T>): T => extractRows(result)[0];

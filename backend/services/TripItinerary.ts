@@ -25,7 +25,7 @@ export default class TripItineraryService {
     return this.TripItineraryModel.createOne(createTripItineraryInput);
   }
 
-  public findOne(
+  public findMany(
     whereArgs: WhereArgs<Partial<TripItineraryRecord>>
   ): Promise<TripItineraryRecord[]> {
     const { id, role } = this.user;
@@ -36,7 +36,7 @@ export default class TripItineraryService {
   public updateOne(
     updateTripItineraryInput: OmitId<UpdateTripItineraryInput['input']>,
     whereArgs: WhereArgs<Partial<TripItineraryRecord>>
-  ): Promise<TripItineraryRecord | undefined> {
+  ): Promise<number> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
     return this.TripItineraryModel.updateOne(updateTripItineraryInput, whereArgs, userId);
@@ -44,7 +44,7 @@ export default class TripItineraryService {
 
   public deleteOne(
     itineraryId: TripItineraryRecord['id']
-  ): Promise<TripItineraryRecord | undefined> {
+  ): Promise<number> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
     return this.TripItineraryModel.deleteOne(itineraryId, userId);

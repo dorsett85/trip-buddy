@@ -45,13 +45,13 @@ export default class TripService {
   public updateOne(
     updateTripInput: OmitId<UpdateTripInput['input']>,
     whereArgs: WhereArgs<Partial<TripRecord>>
-  ): Promise<TripRecord | undefined> {
+  ): Promise<number> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
     return this.TripModel.updateOne(updateTripInput, whereArgs, userId);
   }
 
-  public deleteOne(tripId: TripRecord['id']): Promise<TripRecord | undefined> {
+  public deleteOne(tripId: TripRecord['id']): Promise<number> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
     return this.TripModel.deleteOne(tripId, userId);

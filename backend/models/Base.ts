@@ -1,5 +1,5 @@
 import db from '../db/db';
-import { extractRow, extractRows } from '../utils/dbHelpers';
+import {extractRow, extractRows} from '../utils/dbHelpers';
 import { RecordDict, WhereArgs } from '../types';
 import { QB } from '../utils/QueryBuilder';
 
@@ -22,9 +22,8 @@ export default class BaseModel {
   protected static async baseFindOne<T>(
     whereArgs: WhereArgs<Partial<T>>,
     joinUserIdTable?: string
-  ): Promise<T> {
-    const [row]: T[] = await this.baseFindMany(whereArgs, joinUserIdTable);
-    return row;
+  ): Promise<T | undefined> {
+    return (await this.baseFindMany(whereArgs, joinUserIdTable))[0];
   }
 
   protected static async baseFindMany<T>(
@@ -42,20 +41,20 @@ export default class BaseModel {
     updateArgs: RecordDict,
     whereArgs: WhereArgs<Partial<T>>,
     tableWithUserId?: string
-  ): Promise<T | undefined> {
+  ): Promise<number> {
     const query = qb<T>(this.tableName)
       .update(updateArgs, tableWithUserId)
       .where(whereArgs);
-    return extractRow<T>(await query);
+    return (await query).rowCount;
   }
 
   protected static async baseDeleteOne<T>(
     whereArgs: WhereArgs<Partial<T>>,
     tableWithUserId?: string
-  ): Promise<T> {
+  ): Promise<number> {
     const query = qb<T>(this.tableName)
       .delete(tableWithUserId)
       .where(whereArgs);
-    return extractRow<T>(await query);
+    return (await query).rowCount;
   }
 }

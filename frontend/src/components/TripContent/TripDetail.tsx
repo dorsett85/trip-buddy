@@ -18,7 +18,12 @@ import { DispatchProp } from 'react-redux';
 import { TripRecord, tripStatus } from 'common/lib/types/trip';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { UPDATING_MESSAGE } from '../../utils/constants/messages';
-import { updateTrip, deleteTrip, setActiveTripInfo, setTripItineraries } from '../../store/trip/reducer';
+import {
+  updateTrip,
+  deleteTrip,
+  setActiveTripInfo,
+  setTripItineraries
+} from '../../store/trip/reducer';
 import { getFirstError } from '../../utils/apolloErrors';
 import TripItineraries from './TripItineraries';
 import { setDrawer, setFlyTo } from '../../store/general/reducer';
@@ -57,16 +62,16 @@ const BackToTripsButton: React.FC<Omit<TripDetailProps, 'trip'>> = ({ dispatch }
 
 const Header = styled.div(
   ({ theme }) => css`
-  > div:nth-of-type(1) {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  div:nth-of-type(2) {
-    margin-top: ${theme.spacing('xs')};
-    color: ${theme.colors.red};
-  }
-`
+    > div:nth-of-type(1) {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    div:nth-of-type(2) {
+      margin-top: ${theme.spacing('xs')};
+      color: ${theme.colors.red};
+    }
+  `
 );
 
 const ElevatedPopper = styled(Popper)`
@@ -264,12 +269,13 @@ const TripDescriptionInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => 
 };
 
 const TripStartDateSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
+  const [startDate, setStartDate] = useState(trip.start_date);
   const [updateStartDateText, setUpdateStartDateText] = useState<JSX.Element>();
   const [updateStartDateError, setUpdateStartDateError] = useState<JSX.Element>();
 
   const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
-    onCompleted: data => {
-      dispatch(updateTrip({ ...trip, start_date: data.updateTrip.start_date }));
+    onCompleted: () => {
+      dispatch(updateTrip({ ...trip, start_date: startDate }));
       setUpdateStartDateError(undefined);
       setUpdateStartDateText(<SuccessText />);
     },
@@ -280,6 +286,7 @@ const TripStartDateSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
 
   const handleStartDateChange = (date: MaterialUiPickersDate) => {
     if (date) {
+      setStartDate(date.toISOString());
       updateTripQuery({
         variables: { input: { id: trip.id, start_date: date.toISOString() } }
       });
@@ -295,7 +302,7 @@ const TripStartDateSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
       onChange={handleStartDateChange}
       helperText={helperText}
       error={!!updateStartDateError}
-      value={trip.start_date || null}
+      value={startDate}
       margin='normal'
       fullWidth
     />
@@ -447,19 +454,16 @@ const TripStatusSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   const [updateStatusText, setUpdateStatusText] = useState<JSX.Element>();
   const [updateStatusError, setUpdateStatusError] = useState<JSX.Element>();
 
-  const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP, {
-    onCompleted: data => {
-      dispatch(updateTrip({ ...trip, status: data.updateTrip.status }));
-      setUpdateStatusError(undefined);
-      setUpdateStatusText(<SuccessText />);
-    },
-    onError: error => {
-      setUpdateStatusError(<ErrorText text={getFirstError(error)} />);
-    }
-  });
+  const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP);
 
   const handleStatusChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-    updateTripQuery({ variables: { input: { id: trip.id, status: target.value } } });
+    updateTripQuery({ variables: { input: { id: trip.id, status: target.value } } }).then(() => {
+      dispatch(updateTrip({ ...trip, status: (target.value as any) }));
+      setUpdateStatusError(undefined);
+      setUpdateStatusText(<SuccessText />);
+    }).catch(error => {
+      setUpdateStatusError(<ErrorText text={getFirstError(error)} />);
+    });
   };
 
   const helperText =

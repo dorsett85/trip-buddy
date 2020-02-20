@@ -7,7 +7,6 @@ import {
   WhereArgGroup,
   WhereArgs
 } from '../types';
-import { isEmptyObject } from './isEmptyObject';
 
 const isParamQuery = (obj: ParamQuery | WhereArgGroup): obj is ParamQuery =>
   Object.keys(obj).some(key => key !== 'items' && key === 'text');
@@ -366,7 +365,7 @@ export default class QueryBuilder<T = any> {
 
     // Last, for certain sql commands we'll want a RETURNING clause (e.g., for update clauses)
     if (clauses.insert || clauses.update || clauses.delete) {
-      sqlQuery += `\n${clauses.returning || 'RETURNING *'}`;
+      sqlQuery += clauses.returning ? `\n${clauses.returning}` : clauses.insert ? 'RETURNING *' : '';
     }
     return `${sqlQuery};`;
   }

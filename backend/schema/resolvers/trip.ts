@@ -7,7 +7,7 @@ import {
 
 const Trip: TripResolvers['Trip'] = {
   itineraries: async ({ id }, __, { tripItineraryService }) => {
-    const itineraries = await tripItineraryService.findOne({ items: { trip_id: id } });
+    const itineraries = await tripItineraryService.findMany({ items: { trip_id: id } });
     return itineraries;
   }
 };
@@ -32,40 +32,37 @@ const Mutation: TripResolvers['Mutation'] = {
   },
   updateTrip: async (_, { input }, { tripService }) => {
     const { id, ...rest } = input;
-    const trip = await tripService.updateOne(rest, { items: { id } });
-    if (!trip) {
+    const updatedCount = await tripService.updateOne(rest, { items: { id } });
+    if (!updatedCount) {
       throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
     }
-    return trip;
+    return id;
   },
   deleteTrip: async (_, { id }, { tripService }) => {
-    const trip = await tripService.deleteOne(id);
-    if (!trip) {
+    const deletedCount = await tripService.deleteOne(id);
+    if (!deletedCount) {
       throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
     }
-    return trip.id;
+    return id;
   },
   createTripItinerary: async (_, { input }, { tripItineraryService }) => {
     const itinerary = await tripItineraryService.createOne(input);
-    if (!itinerary) {
-      throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
-    }
     return itinerary;
   },
   updateTripItinerary: async (_, { input }, { tripItineraryService }) => {
     const { id, ...rest } = input;
-    const itinerary = await tripItineraryService.updateOne(rest, { items: { id } });
-    if (!itinerary) {
+    const updatedCount = await tripItineraryService.updateOne(rest, { items: { id } });
+    if (!updatedCount) {
       throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
     }
-    return itinerary;
+    return id;
   },
   deleteTripItinerary: async (_, { id }, { tripItineraryService }) => {
-    const itinerary = await tripItineraryService.deleteOne(id);
-    if (!itinerary) {
+    const deletedCount = await tripItineraryService.deleteOne(id);
+    if (!deletedCount) {
       throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
     }
-    return itinerary.id;
+    return id;
   }
 };
 

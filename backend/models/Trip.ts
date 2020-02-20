@@ -58,7 +58,7 @@ export default class TripModel extends BaseModel {
     updateArgs: OmitId<Partial<TripRecord>>,
     whereArgs: WhereArgs<Partial<TripRecord>>,
     userId?: UserRecord['id']
-  ): Promise<TripRecord | undefined> {
+  ): Promise<number> {
     if (!userId) {
       return this.baseUpdateOne(updateArgs, whereArgs);
     }
@@ -79,7 +79,7 @@ export default class TripModel extends BaseModel {
   public static deleteOne(
     tripId: TripRecord['id'],
     userId?: UserRecord['id']
-  ): Promise<TripRecord | undefined> {
+  ): Promise<number> {
     const whereArgs: WhereArgs<Partial<TripRecord>> = { items: { id: tripId } };
     if (!userId) {
       return this.baseDeleteOne(whereArgs);

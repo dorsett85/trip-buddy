@@ -1,12 +1,12 @@
 /* eslint-disable import/no-cycle */
 import { IResolvers } from 'apollo-server-express';
 import { UserRecord } from 'common/lib/types/user';
+import {TripRecord} from "common/lib/types/trip";
 import {
   InputResolverArg,
   FieldResolver,
   AuthFieldResolver
 } from '../../types/resolvers';
-import { TripSchema } from './trip.types';
 
 export interface LoginArgs {
   username: string;
@@ -22,15 +22,15 @@ export type UpdateUserInput = InputResolverArg<Omit<UserSchema, 'id' | 'created_
 
 export interface UserResolvers extends IResolvers {
   User: {
-    trips: AuthFieldResolver<UserRecord, any, Promise<TripSchema[]>>;
+    trips: AuthFieldResolver<UserRecord, any, Promise<TripRecord[]>>;
   };
   Query: {
-    user: AuthFieldResolver<any, any, Promise<UserSchema>>;
+    user: AuthFieldResolver<any, any, Promise<UserRecord>>;
   };
   Mutation: {
     loginUser: FieldResolver<any, LoginArgs, Promise<string>>;
     registerUser: FieldResolver<any, RegisterArgs, Promise<string>>;
-    updateUser: AuthFieldResolver<any, UpdateUserInput, Promise<UserSchema>>;
+    updateUser: AuthFieldResolver<any, UpdateUserInput, Promise<UserRecord['id']>>;
   };
 }
 

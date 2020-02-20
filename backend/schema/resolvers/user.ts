@@ -16,11 +16,11 @@ const User: UserResolvers['User'] = {
 
 const Query: UserResolvers['Query'] = {
   user: async (_, __, { userService }) => {
-    const foundUser = await userService.findOne();
-    if (!foundUser) {
+    const user = await userService.findOne();
+    if (!user) {
       throw new UserInputError(USER_NOT_FOUND_MESSAGE);
     }
-    return foundUser;
+    return user;
   }
 };
 
@@ -47,12 +47,12 @@ const Mutation: UserResolvers['Mutation'] = {
 
     return token;
   },
-  updateUser: async (_, { input }, { userService }) => {
-    const updatedUser = await userService.updateOne(input);
-    if (!updatedUser) {
+  updateUser: async (_, { input }, { userService, user }) => {
+    const updatedCount = await userService.updateOne(input);
+    if (!updatedCount) {
       throw new UserInputError(NOT_FOUND_MESSAGE);
     }
-    return updatedUser;
+    return user.id;
   }
 };
 

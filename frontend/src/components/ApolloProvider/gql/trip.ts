@@ -24,13 +24,7 @@ export const CREATE_TRIP = gql`
 
 export const UPDATE_TRIP = gql`
   mutation UpdateTrip($input: UpdateTripInput) {
-    updateTrip(input: $input) {
-      name
-      status
-      start_date
-      location
-      location_address
-    }
+    updateTrip(input: $input)
   }
 `;
 
@@ -75,9 +69,7 @@ export const CREATE_ITINERARY = gql`
 
 export const UPDATE_ITINERARY = gql`
   mutation UpdateTripItinerary($input: UpdateTripItineraryInput) {
-    updateTripItinerary(input: $input) {
-      ${ITINERARY_FIELDS}
-    }
+    updateTripItinerary(input: $input)
   }
 `;
 

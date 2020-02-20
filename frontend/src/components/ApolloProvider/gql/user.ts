@@ -23,9 +23,6 @@ export const GET_LOGGED_IN_DATA = gql`
 
 export const UPDATE_USER = gql`
   mutation UpdateUser($input: UpdateUserInput) {
-    updateUser(input: $input) {
-      username
-      email
-    }
+    updateUser(input: $input)
   }
 `;

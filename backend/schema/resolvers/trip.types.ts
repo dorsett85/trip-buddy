@@ -23,25 +23,25 @@ export type UpdateTripItineraryInput = InputResolverArg<
 
 export interface TripResolvers extends IResolvers {
   Trip: {
-    itineraries: AuthFieldResolver<TripSchema, any, Promise<TripItinerarySchema[]>>;
+    itineraries: AuthFieldResolver<TripSchema, any, Promise<TripItineraryRecord[]>>;
   };
   Query: {
-    trip: AuthFieldResolver<any, FindTripInput, Promise<TripSchema>>;
-    trips: AuthFieldResolver<any, FindTripInput, Promise<TripSchema[]>>;
+    trip: AuthFieldResolver<any, FindTripInput, Promise<TripRecord>>;
+    trips: AuthFieldResolver<any, FindTripInput, Promise<TripRecord[]>>;
   };
   Mutation: {
-    createTrip: AuthFieldResolver<any, CreateTripInput, Promise<TripSchema>>;
-    updateTrip: AuthFieldResolver<any, UpdateTripInput, Promise<TripSchema>>;
+    createTrip: AuthFieldResolver<any, CreateTripInput, Promise<TripRecord>>;
+    updateTrip: AuthFieldResolver<any, UpdateTripInput, Promise<TripRecord['id']>>;
     deleteTrip: AuthFieldResolver<any, Pick<TripRecord, 'id'>, Promise<TripRecord['id']>>;
     createTripItinerary: AuthFieldResolver<
       any,
       CreateTripItineraryInput,
-      Promise<TripItinerarySchema>
+      Promise<TripItineraryRecord>
     >;
     updateTripItinerary: AuthFieldResolver<
       any,
       UpdateTripItineraryInput,
-      Promise<TripItinerarySchema>
+      Promise<TripItineraryRecord['id']>
     >;
     deleteTripItinerary: AuthFieldResolver<
       any,

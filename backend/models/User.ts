@@ -15,16 +15,10 @@ export default class UserModel extends BaseModel {
     return this.baseFindOne(whereArgs);
   }
 
-  public static findMany(
-    whereArgs: WhereArgs<Partial<UserRecord>>
-  ): Promise<UserRecord[]> {
-    return this.baseFindMany(whereArgs);
-  }
-
   public static updateOne(
     updateArgs: Partial<UserRecord>,
     whereArgs: WhereArgs<Partial<UserRecord>>
-  ): Promise<UserRecord | undefined> {
+  ): Promise<number> {
     return this.baseUpdateOne(updateArgs, whereArgs);
   }
 }
