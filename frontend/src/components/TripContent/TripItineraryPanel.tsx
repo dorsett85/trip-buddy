@@ -346,25 +346,7 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
   );
   const [updateLocationError, setUpdateLocationError] = useState<JSX.Element>();
 
-  const [updateLocationMutation, { loading }] = useMutation(UPDATE_ITINERARY, {
-    onCompleted: data => {
-      dispatch(updateTripItinerary(data.updateTripItinerary));
-      setUpdateLocationError(undefined);
-      setUpdateLocationText(<SuccessText />);
-
-      // Clean up the active trip state and fly to the new location
-      dispatch(
-        setActiveTripInfo({
-          newItineraryLocation: undefined,
-          updatingItineraryLocationId: undefined
-        })
-      );
-      dispatch(setFlyTo(data.updateTripItinerary.location));
-    },
-    onError: error => {
-      setUpdateLocationError(<ErrorText text={getFirstError(error)} />);
-    }
-  });
+  const [updateLocationMutation, { loading }] = useMutation(UPDATE_ITINERARY);
 
   // Listener for updating the itinerary location. This will fire after a location
   // is selected on the map and the newLocation lng/lat is set
@@ -383,7 +365,30 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
               location_address: locationText
             }
           }
-        });
+        })
+          .then(() => {
+            dispatch(
+              updateTripItinerary({
+                id: itinerary.id,
+                location: newLocation,
+                location_address: locationText
+              })
+            );
+            setUpdateLocationError(undefined);
+            setUpdateLocationText(<SuccessText />);
+
+            // Clean up the active trip state and fly to the new location
+            dispatch(
+              setActiveTripInfo({
+                newItineraryLocation: undefined,
+                updatingItineraryLocationId: undefined
+              })
+            );
+            dispatch(setFlyTo(newLocation));
+          })
+          .catch(error => {
+            setUpdateLocationError(<ErrorText text={getFirstError(error)} />);
+          });
       });
     }
   }, [
@@ -431,7 +436,30 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
             location_address: selectedLocation
           }
         }
-      });
+      })
+        .then(() => {
+          dispatch(
+            updateTripItinerary({
+              id: itinerary.id,
+              location: center,
+              location_address: selectedLocation
+            })
+          );
+          setUpdateLocationError(undefined);
+          setUpdateLocationText(<SuccessText />);
+
+          // Clean up the active trip state and fly to the new location
+          dispatch(
+            setActiveTripInfo({
+              newItineraryLocation: undefined,
+              updatingItineraryLocationId: undefined
+            })
+          );
+          dispatch(setFlyTo(center));
+        })
+        .catch(error => {
+          setUpdateLocationError(<ErrorText text={getFirstError(error)} />);
+        });
     } else {
       setLocation('');
     }

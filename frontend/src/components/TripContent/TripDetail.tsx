@@ -325,26 +325,7 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   );
   const [updateLocationError, setUpdateLocationError] = useState<JSX.Element>();
 
-  const [updateLocationMutation, { loading }] = useMutation(UPDATE_TRIP, {
-    onCompleted: data => {
-      dispatch(
-        updateTrip({
-          id: trip.id,
-          location: data.updateTrip.location,
-          location_address: data.updateTrip.location_address
-        })
-      );
-      setUpdateLocationError(undefined);
-      setUpdateLocationText(<SuccessText />);
-
-      // Clean up the active trip state and fly to the new location
-      dispatch(setActiveTripInfo({ newLocation: undefined, updatingLocation: false }));
-      dispatch(setFlyTo(data.updateTrip.location));
-    },
-    onError: error => {
-      setUpdateLocationError(<ErrorText text={getFirstError(error)} />);
-    }
-  });
+  const [updateLocationMutation, { loading }] = useMutation(UPDATE_TRIP);
 
   // Listener for updating the trip location. This will fire after a location
   // is selected on the map and the newLocation lng/lat is set
@@ -363,7 +344,27 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
               location_address: locationText
             }
           }
-        });
+        })
+          .then(() => {
+            dispatch(
+              updateTrip({
+                id: trip.id,
+                location: newLocation,
+                location_address: locationText
+              })
+            );
+            setUpdateLocationError(undefined);
+            setUpdateLocationText(<SuccessText />);
+
+            // Clean up the active trip state and fly to the new location
+            dispatch(
+              setActiveTripInfo({ newLocation: undefined, updatingLocation: false })
+            );
+            dispatch(setFlyTo(newLocation));
+          })
+          .catch(error => {
+            setUpdateLocationError(<ErrorText text={getFirstError(error)} />);
+          });
       });
     }
   }, [dispatch, newLocation, trip.id, updateLocationMutation]);
@@ -398,7 +399,27 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
         variables: {
           input: { id: trip.id, location: center, location_address: selectedLocation }
         }
-      });
+      })
+        .then(() => {
+          dispatch(
+            updateTrip({
+              id: trip.id,
+              location: center,
+              location_address: selectedLocation
+            })
+          );
+          setUpdateLocationError(undefined);
+          setUpdateLocationText(<SuccessText />);
+
+          // Clean up the active trip state and fly to the new location
+          dispatch(
+            setActiveTripInfo({ newLocation: undefined, updatingLocation: false })
+          );
+          dispatch(setFlyTo(center));
+        })
+        .catch(error => {
+          setUpdateLocationError(<ErrorText text={getFirstError(error)} />);
+        });
     } else {
       setLocation('');
     }
@@ -457,13 +478,15 @@ const TripStatusSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   const [updateTripQuery, { loading }] = useMutation(UPDATE_TRIP);
 
   const handleStatusChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-    updateTripQuery({ variables: { input: { id: trip.id, status: target.value } } }).then(() => {
-      dispatch(updateTrip({ ...trip, status: (target.value as any) }));
-      setUpdateStatusError(undefined);
-      setUpdateStatusText(<SuccessText />);
-    }).catch(error => {
-      setUpdateStatusError(<ErrorText text={getFirstError(error)} />);
-    });
+    updateTripQuery({ variables: { input: { id: trip.id, status: target.value } } })
+      .then(() => {
+        dispatch(updateTrip({ ...trip, status: target.value as any }));
+        setUpdateStatusError(undefined);
+        setUpdateStatusText(<SuccessText />);
+      })
+      .catch(error => {
+        setUpdateStatusError(<ErrorText text={getFirstError(error)} />);
+      });
   };
 
   const helperText =
