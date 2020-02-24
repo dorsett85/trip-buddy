@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, {memo, useState, useEffect, useRef} from 'react';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -523,6 +523,17 @@ const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({
 }) => {
   const [expanded, setExpanded] = useState(true);
   const [editingName, setEditingName] = useState(false);
+  const activeMarker = useAppSelector(state => state.trip.activeTripInfo!.activeMarker);
+  const panelRef = useRef<HTMLElement>();
+  
+  // Check if the itinerary panel needs to be scrolled to. This would be true
+  // if the activeMarker property from activeTrip state matches the itinerary id 
+  useEffect(() => {
+    const { current } = panelRef;
+    if (current && itinerary.id === +activeMarker.split('-')[1]) {
+      (panelRef.current as HTMLElement).scrollIntoView();
+    }
+  }, [activeMarker, itinerary.id]);
 
   const handleExpandClick = () => {
     setExpanded(state => !state);
@@ -553,7 +564,7 @@ const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({
   );
 
   return (
-    <ExpansionPanelStyled expanded={expanded} onChange={handleExpandClick}>
+    <ExpansionPanelStyled expanded={expanded} onChange={handleExpandClick} ref={panelRef}>
       <ExpansionPanelSummary
         className='itineraryPanel-summary'
         expandIcon={<ExpandMoreIcon />}
