@@ -531,7 +531,7 @@ const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({
   useEffect(() => {
     const { current } = panelRef;
     if (current && itinerary.id === +activeMarker.split('-')[1]) {
-      (panelRef.current as HTMLElement).scrollIntoView();
+      current.scrollIntoView();
     }
   }, [activeMarker, itinerary.id]);
 
