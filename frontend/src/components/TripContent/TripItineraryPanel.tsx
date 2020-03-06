@@ -1,4 +1,4 @@
-import React, {memo, useState, useEffect, useRef} from 'react';
+import React, { memo, useState, useEffect, useRef } from 'react';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -33,6 +33,7 @@ import { useAppSelector } from '../../store/hooks/useAppSelector';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
 import ErrorText from '../AppText/ErrorText';
 import SuccessText from '../AppText/SuccessText';
+import FlyToButton from '../generic/FlyToButton';
 
 interface TripItineraryPanelProps extends DispatchProp {
   /**
@@ -516,6 +517,17 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
   );
 };
 
+const PanelHeader = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    margin: -${theme.spacing('xs')} 0;
+    > span {
+      margin-right: ${theme.spacing('xs')};
+    }
+  `
+);
+
 const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({
   dispatch,
   itinerary,
@@ -525,9 +537,9 @@ const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({
   const [editingName, setEditingName] = useState(false);
   const activeMarker = useAppSelector(state => state.trip.activeTripInfo!.activeMarker);
   const panelRef = useRef<HTMLElement>();
-  
+
   // Check if the itinerary panel needs to be scrolled to. This would be true
-  // if the activeMarker property from activeTrip state matches the itinerary id 
+  // if the activeMarker property from activeTrip state matches the itinerary id
   useEffect(() => {
     const { current } = panelRef;
     if (current && itinerary.id === +activeMarker.split('-')[1]) {
@@ -537,6 +549,12 @@ const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({
 
   const handleExpandClick = () => {
     setExpanded(state => !state);
+  };
+
+  const handleFlyToClick: React.MouseEventHandler = () => {
+    dispatch(setDrawer({ open: false }));
+    dispatch(setFlyTo(itinerary.location));
+    dispatch(setActiveTripInfo({ activeMarker: `${itinerary.trip_id}-${itinerary.id}` }));
   };
 
   const handleEditingName = () => {
@@ -569,11 +587,16 @@ const TripItineraryPanel: React.FC<TripItineraryPanelProps> = ({
         className='itineraryPanel-summary'
         expandIcon={<ExpandMoreIcon />}
       >
-        <span>
-          {index + 1}
-          .&nbsp;
-          {itinerary.name}
-        </span>
+        <PanelHeader>
+          <span>
+            {index + 1}
+            .&nbsp;
+            {itinerary.name}
+          </span>
+          <div>
+            <FlyToButton onClick={handleFlyToClick} />
+          </div>
+        </PanelHeader>
       </ExpansionPanelSummary>
       <ExpansionPanelDetails className='itineraryPanel-content'>
         {itineraryContent}

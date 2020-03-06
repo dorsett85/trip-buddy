@@ -35,6 +35,7 @@ import { useAppSelector } from '../../store/hooks/useAppSelector';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
 import SuccessText from '../AppText/SuccessText';
 import ErrorText from '../AppText/ErrorText';
+import FlyToButton from "../generic/FlyToButton";
 
 export interface TripDetailProps extends DispatchProp {
   trip: TripRecord;
@@ -66,6 +67,13 @@ const Header = styled.div(
       display: flex;
       justify-content: space-between;
       align-items: center;
+      > div {
+        display: flex;
+        align-items: center;
+        h2 {
+          margin-right: ${theme.spacing('xs')};
+        }
+      }
     }
     div:nth-of-type(2) {
       margin-top: ${theme.spacing('xs')};
@@ -95,6 +103,12 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
     }
   });
 
+  const handleFlyToClick = () => {
+    dispatch(setDrawer({ open: false }));
+    dispatch(setFlyTo(trip.location));
+    dispatch(setActiveTripInfo({ activeMarker: `${trip.id}` }));
+  };
+
   const handleToggleDeletePopper = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : e.currentTarget);
   };
@@ -109,7 +123,12 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   return (
     <Header>
       <div>
-        <h2>Trip Details</h2>
+        <div>
+          <h2>Trip Details</h2>
+          <div>
+            <FlyToButton onClick={handleFlyToClick} />
+          </div>
+        </div>
         <Fab
           color='secondary'
           variant={loading ? 'round' : 'extended'}

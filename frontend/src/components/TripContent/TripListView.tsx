@@ -5,13 +5,12 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
-import GpsFixedIcon from '@material-ui/icons/GpsFixed';
 import styled, { css } from 'styled-components';
 import { TripRecord } from 'common/lib/types/trip';
 import { setTripCreator, setActiveTripInfo } from '../../store/trip/reducer';
 import { setDrawer, setFlyTo } from '../../store/general/reducer';
 import { TripState } from '../../store/trip/types';
+import FlyToButton from '../generic/FlyToButton';
 
 export interface TripListProps extends DispatchProp {
   trips: TripState['trips'];
@@ -23,12 +22,6 @@ const Header = styled.div(
     justify-content: space-between;
     align-items: center;
     margin-bottom: ${theme.spacing()};
-  `
-);
-
-const FlyToButton = styled(IconButton)(
-  ({ theme }) => css`
-    color: ${theme.colors.primary};
   `
 );
 
@@ -66,19 +59,13 @@ const TripListView: React.FC<TripListProps> = ({ dispatch, trips }) => {
             ).toLocaleDateString()} - ${trip.status.toLocaleUpperCase()}`}
           />
           <ListItemSecondaryAction>
-            <FlyToButton
-              onClick={handleFlyToClick(trip.id)}
-              color='inherit'
-              title='Go to map location'
-              aria-label='Go to map location'
-            >
-              <GpsFixedIcon />
-            </FlyToButton>
+            <FlyToButton onClick={handleFlyToClick(trip.id)} />
           </ListItemSecondaryAction>
         </ListItem>
       ))}
     </List>
   );
+
   return (
     <div>
       <Header>
