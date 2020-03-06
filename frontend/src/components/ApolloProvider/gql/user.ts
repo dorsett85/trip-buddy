@@ -13,6 +13,8 @@ export const GET_LOGGED_IN_DATA = gql`
       email
       password
       email_validated
+      role
+      accepting_trip_invites
       created_date
       trips {
         ${TRIP_FIELDS}

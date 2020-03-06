@@ -1,9 +1,15 @@
 import { gql } from 'apollo-server-express';
 
 export const userTypeDefs = gql`
-  enum UserRole {
+  enum Role {
     admin
     customer
+  }
+  
+  enum AcceptingTripInvites {
+    no
+    friends
+    all
   }
 
   type User {
@@ -12,7 +18,8 @@ export const userTypeDefs = gql`
     email: String
     password: String
     email_validated: Boolean
-    role: UserRole
+    role: Role
+    accepting_trip_invites: AcceptingTripInvites
     created_date: Date
     trips: [Trip]
   }
@@ -22,6 +29,7 @@ export const userTypeDefs = gql`
     email: String
     password: String
     email_validated: Boolean
+    accepting_trip_invites: AcceptingTripInvites
   }
   
   extend type Query {

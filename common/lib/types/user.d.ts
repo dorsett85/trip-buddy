@@ -1,4 +1,5 @@
 export declare const userRole: readonly ["admin", "customer"];
+export declare const acceptingTripInvites: readonly ["no", "friends", "all"];
 export interface UserRecord {
     id: number;
     username: string;
@@ -6,6 +7,7 @@ export interface UserRecord {
     password: string;
     email_validated: boolean;
     role: typeof userRole[number];
+    accepting_trip_invites: typeof acceptingTripInvites[number];
     created_date: Date;
 }
 //# sourceMappingURL=user.d.ts.map

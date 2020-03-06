@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { DispatchProp } from 'react-redux';
 import { useMutation } from '@apollo/react-hooks';
-import { UserRecord } from 'common/lib/types/user';
+import { UserRecord, acceptingTripInvites } from 'common/lib/types/user';
+import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
 import { setUser } from '../../store/user/reducer';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { getFirstError } from '../../utils/apolloErrors';
@@ -141,12 +143,54 @@ const UserEmailInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
   );
 };
 
+const AcceptingTripInvitesSelect: React.FC<UserContentProps> = ({ dispatch, user }) => {
+  const [updateText, setUpdateText] = useState<JSX.Element>();
+  const [updateError, setUpdateError] = useState<JSX.Element>();
+
+  const [updateUser, { loading }] = useMutation(UPDATE_USER);
+
+  const handleOnChange: React.ChangeEventHandler<HTMLInputElement> = ({ target }) => {
+    const newValue = target.value as UserRecord['accepting_trip_invites'];
+    updateUser({ variables: { input: { accepting_trip_invites: newValue } } })
+      .then(() => {
+        dispatch(setUser({ accepting_trip_invites: newValue }));
+        setUpdateError(undefined);
+        setUpdateText(<SuccessText />);
+      })
+      .catch(error => {
+        setUpdateError(<ErrorText text={getFirstError(error)} />);
+      });
+  };
+
+  const helperText = updateError || updateText || (loading && UPDATING_MESSAGE) || '';
+
+  return (
+    <TextField
+      select
+      label='Accepting Trip Invites'
+      value={user.accepting_trip_invites}
+      onChange={handleOnChange}
+      helperText={helperText}
+      error={!!updateError}
+      fullWidth
+      margin='normal'
+    >
+      {acceptingTripInvites.map(option => (
+        <MenuItem key={option} value={option}>
+          {option}
+        </MenuItem>
+      ))}
+    </TextField>
+  );
+};
+
 const UserContent: React.FC<UserContentProps> = ({ dispatch, user }) => {
   return (
     <UserInfo>
       <h2>Account Details</h2>
       <UserNameInput dispatch={dispatch} user={user} />
       <UserEmailInput dispatch={dispatch} user={user} />
+      <AcceptingTripInvitesSelect dispatch={dispatch} user={user} />
     </UserInfo>
   );
 };
