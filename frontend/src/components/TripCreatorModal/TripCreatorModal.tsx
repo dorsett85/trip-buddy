@@ -7,7 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
 import { DateTimePicker } from '@material-ui/pickers';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete, {AutocompleteProps} from '@material-ui/lab/Autocomplete';
 import Button from '@material-ui/core/Button';
 import red from '@material-ui/core/colors/red';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
@@ -112,14 +112,12 @@ const TripCreatorModal: React.FC = () => {
       }
     };
 
-    const handleLocationSelect = ({ target }: React.ChangeEvent<any>) => {
-      const optionIdx = target.getAttribute('data-option-index');
-      if (locationOptions && optionIdx) {
-        const { center } = locationOptions[optionIdx];
+    const handleLocationSelect: AutocompleteProps['onChange'] = (_, feature: Feature | null) => {
+      if (feature) {
         dispatch(
           setTripCreator({
-            location: center,
-            location_address: locationOptions[optionIdx].place_name
+            location: feature.center,
+            location_address: feature.place_name
           })
         );
       } else {

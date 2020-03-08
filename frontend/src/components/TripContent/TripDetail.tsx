@@ -8,7 +8,7 @@ import Popper from '@material-ui/core/Popper';
 import Card from '@material-ui/core/Card';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Button from '@material-ui/core/Button';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete, {AutocompleteProps} from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import { DateTimePicker } from '@material-ui/pickers';
@@ -16,6 +16,7 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import styled, { css } from 'styled-components';
 import { DispatchProp } from 'react-redux';
 import { TripRecord, tripStatus } from 'common/lib/types/trip';
+import { UserRecord } from 'common/lib/types/user';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import {
@@ -37,7 +38,6 @@ import SuccessText from '../AppText/SuccessText';
 import ErrorText from '../AppText/ErrorText';
 import FlyToButton from '../generic/FlyToButton';
 import { TRIP_INVITE_USERS } from '../ApolloProvider/gql/user';
-import { UserRecord } from 'common/lib/types/user';
 
 export interface TripDetailProps extends DispatchProp {
   trip: TripRecord;
@@ -390,23 +390,20 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
     }
   };
 
-  const handleLocationSelect = ({ target }: React.ChangeEvent<any>) => {
-    const optionIdx = target.getAttribute('data-option-index');
-    if (locationOptions && optionIdx) {
-      const { center } = locationOptions[optionIdx];
-      const selectedLocation = locationOptions[optionIdx].place_name;
-      setLocation(selectedLocation);
+  const handleLocationSelect: AutocompleteProps['onChange'] = (_, feature: Feature | null) => {
+    if (feature) {
+      setLocation(feature.place_name);
       updateLocationMutation({
         variables: {
-          input: { id: trip.id, location: center, location_address: selectedLocation }
+          input: { id: trip.id, location: feature.center, location_address: feature.place_name }
         }
       })
         .then(() => {
           dispatch(
             updateTrip({
               id: trip.id,
-              location: center,
-              location_address: selectedLocation
+              location: feature.center,
+              location_address: feature.place_name
             })
           );
           setUpdateLocationError(undefined);
@@ -416,7 +413,7 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
           dispatch(
             setActiveTripInfo({ newLocation: undefined, updatingLocation: false })
           );
-          dispatch(setFlyTo(center));
+          dispatch(setFlyTo(feature.center));
         })
         .catch(error => {
           setUpdateLocationError(<ErrorText text={getFirstError(error)} />);

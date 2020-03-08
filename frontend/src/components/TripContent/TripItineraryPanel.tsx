@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button';
 import Popper from '@material-ui/core/Popper';
 import Card from '@material-ui/core/Card';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete, {AutocompleteProps} from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import styled, { css } from 'styled-components';
 import { DateTimePicker } from '@material-ui/pickers';
@@ -420,12 +420,9 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
     }
   };
 
-  const handleLocationSelect = ({ target }: React.ChangeEvent<any>) => {
-    const optionIdx = target.getAttribute('data-option-index');
-    if (locationOptions && optionIdx) {
-      const { center } = locationOptions[optionIdx];
-      const selectedLocation = locationOptions[optionIdx].place_name;
-      setLocation(selectedLocation);
+  const handleLocationSelect: AutocompleteProps['onChange'] = (_, feature: Feature | null) => {
+    if (feature) {
+      setLocation(feature.place_name);
       dispatch(
         setActiveTripInfo({ activeMarker: `${itinerary.trip_id}-${itinerary.id}` })
       );
@@ -433,8 +430,8 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
         variables: {
           input: {
             id: itinerary.id,
-            location: center,
-            location_address: selectedLocation
+            location: feature.center,
+            location_address: feature.place_name
           }
         }
       })
@@ -442,8 +439,8 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
           dispatch(
             updateTripItinerary({
               id: itinerary.id,
-              location: center,
-              location_address: selectedLocation
+              location: feature.center,
+              location_address: feature.place_name
             })
           );
           setUpdateLocationError(undefined);
@@ -456,7 +453,7 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
               updatingItineraryLocationId: undefined
             })
           );
-          dispatch(setFlyTo(center));
+          dispatch(setFlyTo(feature.center));
         })
         .catch(error => {
           setUpdateLocationError(<ErrorText text={getFirstError(error)} />);
