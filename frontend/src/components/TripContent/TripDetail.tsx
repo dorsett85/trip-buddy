@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import Fab from '@material-ui/core/Fab';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import DeleteIcon from '@material-ui/icons/Delete';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Popper from '@material-ui/core/Popper';
 import Card from '@material-ui/core/Card';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
@@ -35,7 +35,7 @@ import { useAppSelector } from '../../store/hooks/useAppSelector';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
 import SuccessText from '../AppText/SuccessText';
 import ErrorText from '../AppText/ErrorText';
-import FlyToButton from "../generic/FlyToButton";
+import FlyToButton from '../generic/FlyToButton';
 
 export interface TripDetailProps extends DispatchProp {
   trip: TripRecord;
@@ -54,13 +54,14 @@ const BackToTripsButton: React.FC<Omit<TripDetailProps, 'trip'>> = ({ dispatch }
   };
 
   return (
-    <ButtonStyled onClick={handleClick} variant='text' size='small' color='primary'>
+    <ButtonStyled onClick={handleClick} variant='text' size='small'>
       <ArrowBackIcon />
       &nbsp; View all trips
     </ButtonStyled>
   );
 };
 
+const InviteAutocompleteContainer = styled.div``;
 const Header = styled.div(
   ({ theme }) => css`
     > div:nth-of-type(1) {
@@ -75,50 +76,21 @@ const Header = styled.div(
         }
       }
     }
-    div:nth-of-type(2) {
-      margin-top: ${theme.spacing('xs')};
-      color: ${theme.colors.red};
-    }
   `
 );
 
-const ElevatedPopper = styled(Popper)`
-  z-index: 10000;
-`;
-
-const CircularProgressStyled = styled(CircularProgress)`
-  position: absolute;
-`;
-
 const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [deleteResponseText, setDeleteResponseText] = useState();
-  const [deleteTripMutation, { loading }] = useMutation(DELETE_TRIP, {
-    onCompleted: data => {
-      dispatch(setDrawer({ open: false }));
-      dispatch(deleteTrip(data.deleteTrip));
-    },
-    onError: error => {
-      setDeleteResponseText(<ErrorText text={getFirstError(error)} />);
-    }
-  });
+  const [showInvite, setShowInvite] = useState(false);
+
+  const handleShowInviteToggle = () => {
+    setShowInvite(!showInvite);
+  };
 
   const handleFlyToClick = () => {
     dispatch(setDrawer({ open: false }));
     dispatch(setFlyTo(trip.location));
     dispatch(setActiveTripInfo({ activeMarker: `${trip.id}` }));
   };
-
-  const handleToggleDeletePopper = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(anchorEl ? null : e.currentTarget);
-  };
-
-  const handleConfirmDeleteClick = () => {
-    setAnchorEl(null);
-    deleteTripMutation({ variables: { id: trip.id } });
-  };
-
-  const popperId = anchorEl ? 'delete-popper' : undefined;
 
   return (
     <Header>
@@ -129,34 +101,30 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
             <FlyToButton onClick={handleFlyToClick} />
           </div>
         </div>
-        <Fab
-          color='secondary'
-          variant={loading ? 'round' : 'extended'}
-          onClick={handleToggleDeletePopper}
-          aria-describedby={popperId}
-          disabled={loading}
-        >
-          {loading ? (
-            <CircularProgressStyled color='inherit' />
-          ) : (
-            <span>Delete &nbsp;</span>
-          )}
-          <DeleteIcon />
+        <Fab color='primary' variant='extended' onClick={handleShowInviteToggle}>
+          <span>Invite &nbsp;</span>
+          <PersonAddIcon />
         </Fab>
-        <ElevatedPopper id={popperId} open={!!anchorEl} anchorEl={anchorEl}>
-          <Card style={{ width: '300px' }}>
-            <ButtonGroup size='small' fullWidth>
-              <Button color='secondary' onClick={handleConfirmDeleteClick}>
-                Confirm Delete
-              </Button>
-              <Button color='primary' onClick={handleToggleDeletePopper}>
-                Cancel
-              </Button>
-            </ButtonGroup>
-          </Card>
-        </ElevatedPopper>
       </div>
-      {deleteResponseText && <div>{deleteResponseText}</div>}
+      {showInvite && (
+        <InviteAutocompleteContainer>
+          <Autocomplete
+            id='trip-invite-autocomplete'
+            multiple
+            filterSelectedOptions
+            renderInput={inputProps => (
+              <TextField
+                {...inputProps}
+                label='Enter invitee emails...'
+                placeholder='Email...'
+                variant='outlined'
+                margin='normal'
+                fullWidth
+              />
+            )}
+          />
+        </InviteAutocompleteContainer>
+      )}
     </Header>
   );
 };
@@ -531,6 +499,78 @@ const TripStatusSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   );
 };
 
+const ElevatedPopperCard = styled(Card)``;
+const ElevatedPopper = styled(Popper)`
+  z-index: 10000;
+  ${ElevatedPopperCard} {
+    width: 300px;
+  }
+`;
+
+const TripDeleteContainer = styled.div(
+  ({ theme }) => css`
+    margin-top: ${theme.spacing('sm')};
+    > div {
+      margin-top: ${theme.spacing('sm')};
+      color: ${theme.colors.red};
+    }
+  `
+);
+
+const TripDelete: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [deleteResponseText, setDeleteResponseText] = useState<React.ReactNode>();
+
+  const [deleteTripMutation, { loading }] = useMutation(DELETE_TRIP, {
+    onCompleted: data => {
+      dispatch(setDrawer({ open: false }));
+      dispatch(deleteTrip(data.deleteTrip));
+    },
+    onError: error => {
+      setDeleteResponseText(<ErrorText text={getFirstError(error)} />);
+    }
+  });
+
+  const handleToggleDeletePopper = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(anchorEl ? null : e.currentTarget);
+  };
+
+  const handleConfirmDeleteClick = () => {
+    setAnchorEl(null);
+    deleteTripMutation({ variables: { id: trip.id } });
+  };
+
+  const popperId = anchorEl ? 'delete-popper' : undefined;
+
+  return (
+    <TripDeleteContainer>
+      <Button
+        color='secondary'
+        variant='contained'
+        onClick={handleToggleDeletePopper}
+        aria-describedby={popperId}
+        disabled={loading}
+      >
+        <span>Delete Trip &nbsp;</span>
+        <DeleteIcon />
+      </Button>
+      <ElevatedPopper id={popperId} open={!!anchorEl} anchorEl={anchorEl}>
+        <ElevatedPopperCard>
+          <ButtonGroup size='small' fullWidth>
+            <Button color='secondary' onClick={handleConfirmDeleteClick}>
+              Confirm Delete
+            </Button>
+            <Button color='primary' onClick={handleToggleDeletePopper}>
+              Cancel
+            </Button>
+          </ButtonGroup>
+        </ElevatedPopperCard>
+      </ElevatedPopper>
+      {deleteResponseText && <div>{deleteResponseText}</div>}
+    </TripDeleteContainer>
+  );
+};
+
 const TripDetail: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   return (
     <div>
@@ -541,6 +581,7 @@ const TripDetail: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
       <TripStartDateSelect dispatch={dispatch} trip={trip} />
       <TripLocationInput dispatch={dispatch} trip={trip} />
       <TripStatusSelect dispatch={dispatch} trip={trip} />
+      <TripDelete trip={trip} dispatch={dispatch} />
       <TripItineraries dispatch={dispatch} tripId={trip.id} />
     </div>
   );
