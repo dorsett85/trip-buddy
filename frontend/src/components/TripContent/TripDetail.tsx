@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useMutation } from '@apollo/react-hooks';
+import { useLazyQuery, useMutation } from '@apollo/react-hooks';
 import Fab from '@material-ui/core/Fab';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
@@ -36,6 +36,8 @@ import LocationInputAdornment from '../generic/LocationInputAdornment/LocationIn
 import SuccessText from '../AppText/SuccessText';
 import ErrorText from '../AppText/ErrorText';
 import FlyToButton from '../generic/FlyToButton';
+import { TRIP_INVITE_USERS } from '../ApolloProvider/gql/user';
+import { UserRecord } from 'common/lib/types/user';
 
 export interface TripDetailProps extends DispatchProp {
   trip: TripRecord;
@@ -81,8 +83,17 @@ const Header = styled.div(
 
 const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   const [showInvite, setShowInvite] = useState(false);
+  const [tripInviteUsers, setTripInviteUsers] = useState<Pick<UserRecord, 'email'>[]>([]);
+
+  const [tripInviteUsersQuery] = useLazyQuery(TRIP_INVITE_USERS, {
+    onCompleted: data => {
+      console.log(data);
+      setTripInviteUsers(data.tripInviteUsers);
+    }
+  });
 
   const handleShowInviteToggle = () => {
+    tripInviteUsersQuery();
     setShowInvite(!showInvite);
   };
 
@@ -111,6 +122,9 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
           <Autocomplete
             id='trip-invite-autocomplete'
             multiple
+            onChange={(_, value) => console.log(value)}
+            options={tripInviteUsers}
+            getOptionLabel={option => option.email}
             filterSelectedOptions
             renderInput={inputProps => (
               <TextField

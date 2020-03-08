@@ -28,3 +28,11 @@ export const UPDATE_USER = gql`
     updateUser(input: $input)
   }
 `;
+
+export const TRIP_INVITE_USERS = gql`
+  query {
+    tripInviteUsers {
+      email
+    }
+  }
+`;

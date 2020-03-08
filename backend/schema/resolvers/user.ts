@@ -21,6 +21,10 @@ const Query: UserResolvers['Query'] = {
       throw new UserInputError(USER_NOT_FOUND_MESSAGE);
     }
     return user;
+  },
+  tripInviteUsers: async (_, __, { userService }) => {
+    const tripInviteUsers = await userService.tripInviteUsers();
+    return tripInviteUsers;
   }
 };
 

@@ -1,6 +1,7 @@
 import { UserRecord } from 'common/lib/types/user';
 import BaseModel from './Base';
 import { WhereArgs } from '../types';
+import { extractRows } from '../utils/dbHelpers';
 
 export default class UserModel extends BaseModel {
   public static tableName = 'users';
@@ -20,5 +21,11 @@ export default class UserModel extends BaseModel {
     whereArgs: WhereArgs<Partial<UserRecord>>
   ): Promise<number> {
     return this.baseUpdateOne(updateArgs, whereArgs);
+  }
+
+  public static findTripInviteUsers(): Promise<UserRecord[]> {
+    return this.baseFindMany<UserRecord>({
+      text: `accepting_trip_invites = 'no'`
+    });
   }
 }
