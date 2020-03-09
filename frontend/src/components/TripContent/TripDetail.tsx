@@ -131,6 +131,7 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
                 {...inputProps}
                 label='Enter invitee emails...'
                 placeholder='Email...'
+                helperText='List includes only users accepting invites'
                 variant='outlined'
                 margin='normal'
                 fullWidth
