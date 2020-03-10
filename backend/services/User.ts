@@ -26,7 +26,7 @@ export default class UserService {
     return this.UserModel.updateOne(updateUserInput, { items: { id } });
   }
   
-  public tripInviteUsers(): Promise<UserRecord[]> {
-    return this.UserModel.findTripInviteUsers();
+  public possibleTripInvitees(): Promise<UserRecord[]> {
+    return this.UserModel.findTripInvitees();
   }
 }

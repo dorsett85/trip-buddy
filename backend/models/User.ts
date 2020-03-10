@@ -23,7 +23,7 @@ export default class UserModel extends BaseModel {
     return this.baseUpdateOne(updateArgs, whereArgs);
   }
 
-  public static findTripInviteUsers(): Promise<UserRecord[]> {
+  public static findTripInvitees(): Promise<UserRecord[]> {
     return this.baseFindMany<UserRecord>({
       text: `accepting_trip_invites = 'no'`
     });

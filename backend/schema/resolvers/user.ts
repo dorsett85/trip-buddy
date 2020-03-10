@@ -22,9 +22,9 @@ const Query: UserResolvers['Query'] = {
     }
     return user;
   },
-  tripInviteUsers: async (_, __, { userService }) => {
-    const tripInviteUsers = await userService.tripInviteUsers();
-    return tripInviteUsers;
+  possibleTripInvitees: async (_, __, { userService }) => {
+    const possibleTripInvitees = await userService.possibleTripInvitees();
+    return possibleTripInvitees;
   }
 };
 
@@ -57,6 +57,9 @@ const Mutation: UserResolvers['Mutation'] = {
       throw new UserInputError(NOT_FOUND_MESSAGE);
     }
     return user.id;
+  },
+  createTripInvites: async (_, { input }, { userService }) => {
+    return [1, 2];
   }
 };
 

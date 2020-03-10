@@ -8,7 +8,7 @@ import Popper from '@material-ui/core/Popper';
 import Card from '@material-ui/core/Card';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Button from '@material-ui/core/Button';
-import Autocomplete, {AutocompleteProps} from '@material-ui/lab/Autocomplete';
+import Autocomplete, { AutocompleteProps } from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import { DateTimePicker } from '@material-ui/pickers';
@@ -37,7 +37,7 @@ import LocationInputAdornment from '../generic/LocationInputAdornment/LocationIn
 import SuccessText from '../AppText/SuccessText';
 import ErrorText from '../AppText/ErrorText';
 import FlyToButton from '../generic/FlyToButton';
-import { TRIP_INVITE_USERS } from '../ApolloProvider/gql/user';
+import { CREATE_TRIP_INVITES, GET_POSSIBLE_TRIP_INVITEES } from '../ApolloProvider/gql/user';
 
 export interface TripDetailProps extends DispatchProp {
   trip: TripRecord;
@@ -63,6 +63,7 @@ const BackToTripsButton: React.FC<Omit<TripDetailProps, 'trip'>> = ({ dispatch }
   );
 };
 
+const SendInviteButton = styled(Button)``;
 const InviteAutocompleteContainer = styled.div``;
 const Header = styled.div(
   ({ theme }) => css`
@@ -78,29 +79,52 @@ const Header = styled.div(
         }
       }
     }
+    ${InviteAutocompleteContainer} {
+      ${SendInviteButton} {
+        color: ${theme.colors.green};
+      }
+    }
   `
 );
 
+type TripInviteUser = Pick<UserRecord, 'id' | 'email'>;
+
 const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   const [showInvite, setShowInvite] = useState(false);
-  const [tripInviteUsers, setTripInviteUsers] = useState<Pick<UserRecord, 'email'>[]>([]);
+  const [possibleInvitees, setPossibleInvitees] = useState<TripInviteUser[]>([]);
+  const [selectedInvitees, setSelectedInvitees] = useState<TripInviteUser[]>([]);
 
-  const [tripInviteUsersQuery] = useLazyQuery(TRIP_INVITE_USERS, {
+  const [possibleTripInviteesQuery] = useLazyQuery(GET_POSSIBLE_TRIP_INVITEES, {
+    fetchPolicy: 'no-cache',
     onCompleted: data => {
-      console.log(data);
-      setTripInviteUsers(data.tripInviteUsers);
+      setPossibleInvitees(data.possibleTripInvitees);
     }
   });
 
-  const handleShowInviteToggle = () => {
-    tripInviteUsersQuery();
-    setShowInvite(!showInvite);
-  };
+  const [createTripInvitesMutation, { loading }] = useMutation(CREATE_TRIP_INVITES);
 
   const handleFlyToClick = () => {
     dispatch(setDrawer({ open: false }));
     dispatch(setFlyTo(trip.location));
     dispatch(setActiveTripInfo({ activeMarker: `${trip.id}` }));
+  };
+
+  const handleShowInviteToggle = () => {
+    possibleTripInviteesQuery();
+    setShowInvite(!showInvite);
+  };
+
+  const handleInviteAutocompleteOnChange: AutocompleteProps['onChange'] = (
+    _,
+    value: TripInviteUser[]
+  ) => {
+    setSelectedInvitees(value);
+  };
+
+  const handleSendInviteOnClick = () => {
+    createTripInvitesMutation({ variables: { inviteList: selectedInvitees } }).then(
+      console.log
+    ).catch(console.log);
   };
 
   return (
@@ -122,8 +146,8 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
           <Autocomplete
             id='trip-invite-autocomplete'
             multiple
-            onChange={(_, value) => console.log(value)}
-            options={tripInviteUsers}
+            onChange={handleInviteAutocompleteOnChange}
+            options={possibleInvitees}
             getOptionLabel={option => option.email}
             filterSelectedOptions
             renderInput={inputProps => (
@@ -138,6 +162,14 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
               />
             )}
           />
+          <SendInviteButton
+            onClick={handleSendInviteOnClick}
+            disabled={!selectedInvitees.length}
+          >
+            Send Invite
+            {selectedInvitees.length > 1 && 's'}
+          </SendInviteButton>
+          <Button onClick={handleShowInviteToggle}>Cancel</Button>
         </InviteAutocompleteContainer>
       )}
     </Header>
@@ -391,12 +423,19 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
     }
   };
 
-  const handleLocationSelect: AutocompleteProps['onChange'] = (_, feature: Feature | null) => {
+  const handleLocationSelect: AutocompleteProps['onChange'] = (
+    _,
+    feature: Feature | null
+  ) => {
     if (feature) {
       setLocation(feature.place_name);
       updateLocationMutation({
         variables: {
-          input: { id: trip.id, location: feature.center, location_address: feature.place_name }
+          input: {
+            id: trip.id,
+            location: feature.center,
+            location_address: feature.place_name
+          }
         }
       })
         .then(() => {

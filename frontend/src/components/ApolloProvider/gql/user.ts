@@ -29,10 +29,17 @@ export const UPDATE_USER = gql`
   }
 `;
 
-export const TRIP_INVITE_USERS = gql`
+export const GET_POSSIBLE_TRIP_INVITEES = gql`
   query {
-    tripInviteUsers {
+    possibleTripInvitees {
+      id
       email
     }
+  }
+`;
+
+export const CREATE_TRIP_INVITES = gql`
+  mutation CreateTripInvites($list: [CreateTripInvite]) {
+    createTripInvites(input: $list)
   }
 `;
