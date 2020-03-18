@@ -20,7 +20,7 @@ export interface RegisterArgs {
 
 export type UpdateUserInput = InputResolverArg<Omit<UserSchema, 'id' | 'created_date'>>;
 
-export type CreateTripInvites = InputResolverArg<
+export type CreateTripInvitesInput = InputResolverArg<
   { id?: UserRecord['id']; email: UserRecord['email'] }[]
 >;
 
@@ -36,7 +36,7 @@ export interface UserResolvers extends IResolvers {
     loginUser: FieldResolver<any, LoginArgs, Promise<string>>;
     registerUser: FieldResolver<any, RegisterArgs, Promise<string>>;
     updateUser: AuthFieldResolver<any, UpdateUserInput, Promise<UserRecord['id']>>;
-    createTripInvites: AuthFieldResolver<any, CreateTripInvites, Promise<number[]>>;
+    createTripInvites: AuthFieldResolver<any, CreateTripInvitesInput, Promise<number[]>>;
   };
 }
 

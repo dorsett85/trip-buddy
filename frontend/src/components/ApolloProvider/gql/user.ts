@@ -39,7 +39,7 @@ export const GET_POSSIBLE_TRIP_INVITEES = gql`
 `;
 
 export const CREATE_TRIP_INVITES = gql`
-  mutation CreateTripInvites($list: [CreateTripInvite]) {
-    createTripInvites(input: $list)
+  mutation CreateTripInvites($input: [CreateTripInvite]) {
+    createTripInvites(input: $input)
   }
 `;
