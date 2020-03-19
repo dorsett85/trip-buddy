@@ -37,7 +37,11 @@ import LocationInputAdornment from '../generic/LocationInputAdornment/LocationIn
 import SuccessText from '../AppText/SuccessText';
 import ErrorText from '../AppText/ErrorText';
 import FlyToButton from '../generic/FlyToButton';
-import { CREATE_TRIP_INVITES, GET_POSSIBLE_TRIP_INVITEES } from '../ApolloProvider/gql/user';
+import {
+  CREATE_TRIP_INVITES,
+  GET_POSSIBLE_TRIP_INVITEES
+} from '../ApolloProvider/gql/user';
+import AppText from '../AppText/AppText';
 
 export interface TripDetailProps extends DispatchProp {
   trip: TripRecord;
@@ -89,8 +93,12 @@ const Header = styled.div(
 
 type TripInviteUser = Pick<UserRecord, 'id' | 'email'>;
 
+const inviteHelperText = <AppText text='List includes only users accepting invites' />;
+
 const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   const [showInvite, setShowInvite] = useState(false);
+  const [inviteError, setInviteError] = useState(false);
+  const [inviteText, setInviteText] = useState<JSX.Element>(inviteHelperText);
   const [possibleInvitees, setPossibleInvitees] = useState<TripInviteUser[]>([]);
   const [selectedInvitees, setSelectedInvitees] = useState<TripInviteUser[]>([]);
 
@@ -110,22 +118,53 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   };
 
   const handleShowInviteToggle = () => {
-    possibleTripInviteesQuery();
-    setShowInvite(!showInvite);
+    setShowInvite(s => {
+      // Only query for trip invitees when the invite toggle opens
+      if (!s) {
+        possibleTripInviteesQuery();
+      }
+      return !s;
+    });
+
+    // Remove any error state when toggling the invitee list
+    if (inviteError) {
+      setInviteError(false);
+      setInviteText(inviteHelperText);
+    }
   };
 
   const handleInviteAutocompleteOnChange: AutocompleteProps['onChange'] = (
     _,
     value: TripInviteUser[]
   ) => {
+    if (inviteError) {
+      setInviteError(false);
+      setInviteText(inviteHelperText);
+    }
     setSelectedInvitees(value);
   };
 
   const handleSendInviteOnClick = () => {
-    createTripInvitesMutation({ variables: { inviteList: selectedInvitees } }).then(
-      console.log
-    ).catch(console.log);
+    const input = selectedInvitees.map(invitee => {
+      return {
+        trip_id: trip.id,
+        invitee_id: invitee.id,
+        invitee_email: invitee.email,
+      }
+    });
+    
+    createTripInvitesMutation({ variables: { input } })
+      .then(() => {
+        setInviteError(false);
+        setInviteText(<SuccessText />);
+      })
+      .catch(error => {
+        setInviteError(true);
+        setInviteText(<ErrorText text={getFirstError(error)} />);
+      });
   };
+
+  const helperText = (loading && UPDATING_MESSAGE) || inviteText;
 
   return (
     <Header>
@@ -155,7 +194,8 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
                 {...inputProps}
                 label='Enter invitee emails...'
                 placeholder='Email...'
-                helperText='List includes only users accepting invites'
+                helperText={helperText}
+                error={inviteError}
                 variant='outlined'
                 margin='normal'
                 fullWidth

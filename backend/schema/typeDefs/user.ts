@@ -33,8 +33,9 @@ export const userTypeDefs = gql`
   }
   
   input CreateTripInvite {
-    id: Int
-    email: String!
+    trip_id: Int!
+    invitee_id: Int
+    invitee_email: String!
   }
   
   extend type Query {

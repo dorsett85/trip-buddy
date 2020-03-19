@@ -1,4 +1,4 @@
-/* eslint-disable import/no-cycle */
+/* eslint-disable import/no-cycle,camelcase */
 import { IResolvers } from 'apollo-server-express';
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
@@ -21,7 +21,11 @@ export interface RegisterArgs {
 export type UpdateUserInput = InputResolverArg<Omit<UserSchema, 'id' | 'created_date'>>;
 
 export type CreateTripInvitesInput = InputResolverArg<
-  { id?: UserRecord['id']; email: UserRecord['email'] }[]
+  {
+    invitee_id?: UserRecord['id'];
+    invitee_email: UserRecord['email'];
+    trip_Id: TripRecord['id'];
+  }[]
 >;
 
 export interface UserResolvers extends IResolvers {
