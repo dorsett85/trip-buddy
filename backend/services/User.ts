@@ -1,10 +1,10 @@
 import { UserRecord } from 'common/lib/types/user';
+import {TripInviteRecord} from "common/lib/types/tripInvite";
+import {TripRecord} from "common/lib/types/trip";
 import UserModel from '../models/User';
 import { UserServiceDeps } from './User.types';
 // eslint-disable-next-line import/no-cycle
 import {CreateTripInvitesInput, UpdateUserInput} from '../schema/resolvers/user.types';
-import {TripInviteRecord} from "common/lib/types/tripInvite";
-import {TripRecord} from "common/lib/types/trip";
 
 export default class UserService {
   private readonly user: UserRecord;
