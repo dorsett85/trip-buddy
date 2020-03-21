@@ -33,10 +33,12 @@ export default class UserModel extends BaseModel {
     // TODO Update accepting_trip_invites to 'friends' or 'all' when user setup wizard is completed!
     const query = qb.raw(
       `
-      SELECT * FROM users
-        LEFT JOIN trip_invites ti on users.id = ti.invitee_id
-      WHERE ti.trip_id != ? OR ti.trip_id is null
-        AND accepting_trip_invites = 'no'
+      SELECT u.* FROM users u
+      WHERE u.id NOT IN (
+          SELECT t.invitee_id
+          FROM trip_invites t
+          WHERE t.trip_id = ?
+      ) AND u.accepting_trip_invites = 'no'
     `,
       [tripId]
     );
@@ -46,6 +48,7 @@ export default class UserModel extends BaseModel {
   public static async createTripInvites(
     invite: Partial<TripInviteRecord>[]
   ): Promise<TripInviteRecord[]> {
+    console.log(invite);
     const inviteIds = qb('trip_invites')
       .insert(invite)
       .returning(['id']);

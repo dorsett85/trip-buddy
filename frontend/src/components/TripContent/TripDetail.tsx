@@ -118,13 +118,11 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   };
 
   const handleShowInviteToggle = () => {
-    setShowInvite(s => {
-      // Only query for trip invitees when the invite toggle opens
-      if (!s) {
-        possibleTripInviteesQuery({ variables: { tripId: trip.id } });
-      }
-      return !s;
-    });
+    // Only query for trip invitees once
+    if (!possibleInvitees.length) {
+      possibleTripInviteesQuery({ variables: { tripId: trip.id } });
+    }
+    setShowInvite(!showInvite);
 
     // Remove any error state when toggling the invitee list
     if (inviteError) {
@@ -165,7 +163,7 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
       })
       .finally(() => {
         // Rerun the dropdown list query so we don't end up with duplicate invites
-        possibleTripInviteesQuery({ variables: { id: trip.id } });
+        possibleTripInviteesQuery({ variables: { tripId: trip.id } });
       });
   };
 
