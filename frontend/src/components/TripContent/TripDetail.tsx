@@ -121,7 +121,7 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
     setShowInvite(s => {
       // Only query for trip invitees when the invite toggle opens
       if (!s) {
-        possibleTripInviteesQuery();
+        possibleTripInviteesQuery({ variables: { tripId: trip.id } });
       }
       return !s;
     });
@@ -149,10 +149,10 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
       return {
         trip_id: trip.id,
         invitee_id: invitee.id,
-        invitee_email: invitee.email,
-      }
+        invitee_email: invitee.email
+      };
     });
-    
+
     createTripInvitesMutation({ variables: { input } })
       .then(() => {
         setInviteError(false);
@@ -162,10 +162,11 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
       .catch(error => {
         setInviteError(true);
         setInviteText(<ErrorText text={getFirstError(error)} />);
-      }).finally(() => {
+      })
+      .finally(() => {
         // Rerun the dropdown list query so we don't end up with duplicate invites
-        possibleTripInviteesQuery();
-    });
+        possibleTripInviteesQuery({ variables: { id: trip.id } });
+      });
   };
 
   const helperText = (loading && UPDATING_MESSAGE) || inviteText;

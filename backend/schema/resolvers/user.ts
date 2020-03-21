@@ -22,8 +22,8 @@ const Query: UserResolvers['Query'] = {
     }
     return user;
   },
-  possibleTripInvitees: async (_, __, { userService }) => {
-    const possibleTripInvitees = await userService.possibleTripInvitees();
+  possibleTripInvitees: async (_, { tripId }, { userService }) => {
+    const possibleTripInvitees = await userService.possibleTripInvitees(tripId);
     return possibleTripInvitees;
   }
 };

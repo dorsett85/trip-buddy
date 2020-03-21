@@ -36,7 +36,11 @@ export interface UserResolvers extends IResolvers {
   };
   Query: {
     user: AuthFieldResolver<any, any, Promise<UserRecord>>;
-    possibleTripInvitees: AuthFieldResolver<any, any, Promise<UserRecord[]>>;
+    possibleTripInvitees: AuthFieldResolver<
+      any,
+      { tripId: TripRecord['id'] },
+      Promise<UserRecord[]>
+    >;
   };
   Mutation: {
     loginUser: FieldResolver<any, LoginArgs, Promise<string>>;

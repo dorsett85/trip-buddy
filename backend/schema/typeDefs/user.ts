@@ -40,7 +40,7 @@ export const userTypeDefs = gql`
   
   extend type Query {
     user: User @isAuth
-    possibleTripInvitees: [User] @isAuth
+    possibleTripInvitees(tripId: Int!): [User] @isAuth
   }
 
   extend type Mutation {

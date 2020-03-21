@@ -30,8 +30,8 @@ export const UPDATE_USER = gql`
 `;
 
 export const GET_POSSIBLE_TRIP_INVITEES = gql`
-  query {
-    possibleTripInvitees {
+  query PossibleTripInvitees($tripId: Int!) {
+    possibleTripInvitees(tripId: $tripId) {
       id
       email
     }

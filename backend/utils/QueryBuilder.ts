@@ -397,6 +397,19 @@ export default class QueryBuilder<T = any> {
   }
 }
 
-export const QB = (pool: Pool) => <T = any>(table: string) => {
-  return new QueryBuilder<T>(pool, table);
+/**
+ * QB is a curried function that will accept a pool argument that will return a QueryBuilder
+ * instantiation function.  This instantiation function will return a new QueryBuilder object.
+ * 
+ * Alternatively you can call the raw property which is the same as calling the raw method on
+ * a new QueryBuilder object with a blank "table" argument.
+ */
+export const QB = (pool: Pool) => {
+  const fn = <T = any>(table: string) => {
+    return new QueryBuilder<T>(pool, table);
+  };
+  
+  // Add the QueryBuilder raw method as an option for writing raw sql statements
+  fn.raw = (text: string, values?: RecordValueArray) => fn('').raw(text, values);
+  return fn;
 };

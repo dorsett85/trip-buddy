@@ -163,7 +163,7 @@ describe('test QueryBuilder class', () => {
 
   it('should contain rawQuery', () => {
     const text = 'SELECT * FROM USERS';
-    const instance = qb('users').raw(text);
+    const instance = qb.raw(text);
     expect(instance.rawQuery).toBe(text);
   });
 
@@ -173,7 +173,7 @@ describe('test QueryBuilder class', () => {
       WHERE id = ? and username = ?
     `;
     const values = [1, 'clayton'];
-    const instance = qb('users').raw(text, values);
+    const instance = qb.raw(text, values);
     expect(instance.rawQuery).toBe(`
       SELECT * FROM USERS
       WHERE id = $1 and username = $2
@@ -190,7 +190,7 @@ describe('test QueryBuilder class', () => {
       WHERE id = '\\?' and username = ?
     `;
     const values = ['clayton'];
-    const instance = qb('users').raw(text, values);
+    const instance = qb.raw(text, values);
     expect(instance.rawQuery).toBe(`
       SELECT * FROM USERS
       WHERE id = '?' and username = $1
@@ -206,7 +206,7 @@ describe('test QueryBuilder class', () => {
     const text = `id = ?`;
     const values = [1, 'clayton'];
     try {
-      qb('users').raw(text, values);
+      qb.raw(text, values);
     } catch (e) {
       expect(e).toBeInstanceOf(Error);
     }
