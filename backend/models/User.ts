@@ -48,7 +48,6 @@ export default class UserModel extends BaseModel {
   public static async createTripInvites(
     invite: Partial<TripInviteRecord>[]
   ): Promise<TripInviteRecord[]> {
-    console.log(invite);
     const inviteIds = qb('trip_invites')
       .insert(invite)
       .returning(['id']);
