@@ -157,11 +157,15 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
       .then(() => {
         setInviteError(false);
         setInviteText(<SuccessText />);
+        setSelectedInvitees([]);
       })
       .catch(error => {
         setInviteError(true);
         setInviteText(<ErrorText text={getFirstError(error)} />);
-      });
+      }).finally(() => {
+        // Rerun the dropdown list query so we don't end up with duplicate invites
+        possibleTripInviteesQuery();
+    });
   };
 
   const helperText = (loading && UPDATING_MESSAGE) || inviteText;

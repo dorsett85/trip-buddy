@@ -34,6 +34,27 @@ describe('test QueryBuilder class', () => {
     });
   });
 
+  it('should contain an insert clause with an array of values', () => {
+    const items = [
+      {
+        id: 1,
+        username: 'clayton'
+      },
+      {
+        id: 2,
+        username: 'buddy'
+      }
+    ];
+
+    const instance = qb('users').insert(items);
+    const sql = `INSERT INTO users (id, username)\nVALUES ($1, $2), ($3, $4)`;
+    expect(instance.clausesMap.insert).toBe(sql);
+    expect(instance.parameterizedValues).toStrictEqual({
+      paramVal: 5,
+      values: [1, 'clayton', 2, 'buddy']
+    });
+  });
+
   it('should contain an update clause', () => {
     const items = {
       id: 1,

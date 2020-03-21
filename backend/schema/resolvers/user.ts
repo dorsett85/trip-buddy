@@ -59,8 +59,8 @@ const Mutation: UserResolvers['Mutation'] = {
     return user.id;
   },
   createTripInvites: async (_, { input }, { userService }) => {
-    console.log(input);
-    return [1, 2];
+    const tripInviteIds = await userService.createTripInvites(input);
+    return tripInviteIds;
   }
 };
 

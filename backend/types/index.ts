@@ -44,13 +44,6 @@ export type OmitIdCreatedDate<T> = OmitId<T> & OmitCreatedDate<T>;
 export type RecordValues = string | number | boolean | Date | LngLatArray | undefined;
 
 /**
- * Object of db column key/value pairs
- */
-export type RecordDict<T = any> = {
-  [K in keyof T]: T[K];
-};
-
-/**
  * Array of record value types
  */
 export type RecordValueArray = RecordValues[];

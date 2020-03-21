@@ -1,8 +1,8 @@
 import { Pool, QueryResult } from 'pg';
 import { prefixTableName } from './dbHelpers';
 import {
+  KeyValue,
   ParamQuery,
-  RecordDict,
   RecordValueArray,
   WhereArgGroup,
   WhereArgs
@@ -105,22 +105,40 @@ export default class QueryBuilder<T = any> {
     };
   }
 
-  public insert(items: RecordDict): this {
-    let insertText = `INSERT INTO ${this.table} `;
-    let valuesText = 'VALUES ';
+  public insert(insertObj: KeyValue | KeyValue[]): this {
+    let columnText = '';
+    let columnTextInserted = false;
+    let valuesText = '';
 
     // Loop through the insertArg entries to build the query and update variables
-    Object.entries(items).forEach(([key, value], idx, arr) => {
-      const addOpenParan = idx === 0 ? '(' : '';
-      const addCloseParan = idx === arr.length - 1 ? ')' : '';
-      const addCommaAndSpace = idx === arr.length - 1 ? '' : ', ';
-      insertText += `${addOpenParan}${key}${addCommaAndSpace}${addCloseParan}`;
-      valuesText += `${addOpenParan}$${this.paramVal}${addCommaAndSpace}${addCloseParan}`;
-      this.paramVal += 1;
-      this.values.push(value);
-    });
+    const processInsertObj = (insertItem: typeof insertObj) =>
+      Object.entries(insertItem).forEach(([key, value], idx, arr) => {
+        const addOpenParan = idx === 0 ? '(' : '';
+        const addCloseParan = idx === arr.length - 1 ? ')' : '';
+        const addCommaAndSpace = idx === arr.length - 1 ? '' : ', ';
+        
+        if (!columnTextInserted) {
+          columnText += `${addOpenParan}${key}${addCommaAndSpace}${addCloseParan}`;
+        }
+        valuesText += `${addOpenParan}$${this.paramVal}${addCommaAndSpace}${addCloseParan}`;
+        this.paramVal += 1;
+        this.values.push(value);
+      });
 
-    this.clauses.insert = `${insertText}\n${valuesText}`;
+    if (Array.isArray(insertObj)) {
+      insertObj.forEach((item, idx, arr) => {
+        processInsertObj(item);
+        // After the first item has been processed we already have the insert column text
+        columnTextInserted = true;
+        
+        // If there's more than one item to insert we also have to separate the value text
+        valuesText = idx === arr.length - 1 ? valuesText : `${valuesText}, `;
+      })
+    } else {
+      processInsertObj(insertObj);
+    }
+    
+    this.clauses.insert = `INSERT INTO ${this.table} ${columnText}\nVALUES ${valuesText}`;
     return this;
   }
 
@@ -142,7 +160,7 @@ export default class QueryBuilder<T = any> {
    * The from argument is helpful when we need to add where statements from
    * another table.
    */
-  public update(items: RecordDict, from?: string): this {
+  public update(items: KeyValue, from?: string): this {
     let updateText = `UPDATE ${this.table}\nSET `;
     Object.entries(items).forEach(([key, value], idx, arr) => {
       const addCommaAndSpace = idx === arr.length - 1 ? '' : ', ';
@@ -365,7 +383,11 @@ export default class QueryBuilder<T = any> {
 
     // Last, for certain sql commands we'll want a RETURNING clause (e.g., for update clauses)
     if (clauses.insert || clauses.update || clauses.delete) {
-      sqlQuery += clauses.returning ? `\n${clauses.returning}` : clauses.insert ? 'RETURNING *' : '';
+      sqlQuery += clauses.returning
+        ? `\n${clauses.returning}`
+        : clauses.insert
+        ? 'RETURNING *'
+        : '';
     }
     return `${sqlQuery};`;
   }

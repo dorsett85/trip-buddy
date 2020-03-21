@@ -1,5 +1,5 @@
 import { QueryResult } from 'pg';
-import { RecordDict } from '../types';
+import { KeyValue } from '../types';
 
 /**
  * Add table name prefix
@@ -10,8 +10,8 @@ import { RecordDict } from '../types';
  */
 export function prefixTableName(table: string, column: string): string;
 export function prefixTableName(table: string, columns: string[]): string[];
-export function prefixTableName(table: string, arg: RecordDict): RecordDict;
-export function prefixTableName(table: string, arg: RecordDict | string[] | string) {
+export function prefixTableName(table: string, arg: KeyValue): KeyValue;
+export function prefixTableName(table: string, arg: KeyValue | string[] | string) {
   // Prefix for string argument
   if (typeof arg === 'string') {
     return `${table}.${arg}`;
@@ -23,7 +23,7 @@ export function prefixTableName(table: string, arg: RecordDict | string[] | stri
   }
 
   // Prefix for objects argument
-  const keysWithTablePrefix: RecordDict = {};
+  const keysWithTablePrefix: KeyValue = {};
   return Object.keys(arg).reduce((acc, key) => {
     const obj = { ...acc };
     obj[`${table}.${key}`] = arg[key];

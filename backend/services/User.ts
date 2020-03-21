@@ -2,7 +2,8 @@ import { UserRecord } from 'common/lib/types/user';
 import UserModel from '../models/User';
 import { UserServiceDeps } from './User.types';
 // eslint-disable-next-line import/no-cycle
-import { UpdateUserInput } from '../schema/resolvers/user.types';
+import {CreateTripInvitesInput, UpdateUserInput} from '../schema/resolvers/user.types';
+import {TripInviteRecord} from "common/lib/types/tripInvite";
 
 export default class UserService {
   private readonly user: UserRecord;
@@ -28,5 +29,16 @@ export default class UserService {
   
   public possibleTripInvitees(): Promise<UserRecord[]> {
     return this.UserModel.findTripInvitees();
+  }
+  
+  public async createTripInvites(invites: CreateTripInvitesInput['input']): Promise<TripInviteRecord['id'][]> {
+    const invitesWithInvitee = invites.map(invite => {
+      return {
+        inviter_id: this.user.id,
+        ...invite
+      }
+    });
+    const tripInvites = await this.UserModel.createTripInvites(invitesWithInvitee);
+    return tripInvites.map(invite => invite.id);
   }
 }

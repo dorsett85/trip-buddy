@@ -1,6 +1,6 @@
 import db from '../db/db';
 import {extractRow, extractRows} from '../utils/dbHelpers';
-import { RecordDict, WhereArgs } from '../types';
+import { WhereArgs } from '../types';
 import { QB } from '../utils/QueryBuilder';
 
 const qb = QB(db);
@@ -14,7 +14,7 @@ export default class BaseModel {
 
   public static readonly whereTableWithUserId: string;
 
-  protected static async baseCreateOne<T>(record: RecordDict): Promise<T> {
+  protected static async baseCreateOne<T>(record: Partial<T>): Promise<T> {
     const query = qb<T>(this.tableName).insert(record);
     return extractRow<T>(await query);
   }
@@ -38,7 +38,7 @@ export default class BaseModel {
   }
 
   protected static async baseUpdateOne<T>(
-    updateArgs: RecordDict,
+    updateArgs: Partial<T>,
     whereArgs: WhereArgs<Partial<T>>,
     tableWithUserId?: string
   ): Promise<number> {

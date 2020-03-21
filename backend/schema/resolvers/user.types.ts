@@ -7,6 +7,7 @@ import {
   FieldResolver,
   AuthFieldResolver
 } from '../../types/resolvers';
+import { TripInviteRecord } from 'common/lib/types/tripInvite';
 
 export interface LoginArgs {
   username: string;
@@ -22,6 +23,7 @@ export type UpdateUserInput = InputResolverArg<Omit<UserSchema, 'id' | 'created_
 
 export type CreateTripInvitesInput = InputResolverArg<
   {
+    inviter_id: UserRecord['id'];
     invitee_id?: UserRecord['id'];
     invitee_email: UserRecord['email'];
     trip_Id: TripRecord['id'];
@@ -40,7 +42,11 @@ export interface UserResolvers extends IResolvers {
     loginUser: FieldResolver<any, LoginArgs, Promise<string>>;
     registerUser: FieldResolver<any, RegisterArgs, Promise<string>>;
     updateUser: AuthFieldResolver<any, UpdateUserInput, Promise<UserRecord['id']>>;
-    createTripInvites: AuthFieldResolver<any, CreateTripInvitesInput, Promise<number[]>>;
+    createTripInvites: AuthFieldResolver<
+      any,
+      CreateTripInvitesInput,
+      Promise<TripInviteRecord['id'][]>
+    >;
   };
 }
 
