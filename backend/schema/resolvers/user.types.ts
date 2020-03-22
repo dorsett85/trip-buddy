@@ -2,12 +2,12 @@
 import { IResolvers } from 'apollo-server-express';
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
+import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import {
   InputResolverArg,
   FieldResolver,
   AuthFieldResolver
-} from '../../types/resolvers';
-import { TripInviteRecord } from 'common/lib/types/tripInvite';
+} from '../types/resolvers';
 
 export interface LoginArgs {
   username: string;

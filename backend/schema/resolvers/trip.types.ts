@@ -3,7 +3,7 @@ import { IResolvers } from 'apollo-server-express';
 import { TripRecord } from 'common/lib/types/trip';
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 // eslint-disable-next-line import/no-cycle
-import { InputResolverArg, AuthFieldResolver } from '../../types/resolvers';
+import { InputResolverArg, AuthFieldResolver } from '../types/resolvers';
 import { OmitCreatedDate, OmitIdCreatedDate } from '../../types';
 
 // Trip inputs

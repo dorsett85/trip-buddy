@@ -1,6 +1,6 @@
 import { SchemaDirectiveVisitor, AuthenticationError } from 'apollo-server-express';
 import { defaultFieldResolver, GraphQLField } from 'graphql';
-import { ContextObj } from '../context.types';
+import { ContextObj } from '../types/contextObj';
 import { AUTHENTICATED_ERROR_MESSAGE } from '../../utils/constants/errors';
 
 export class IsAuthDirective extends SchemaDirectiveVisitor {

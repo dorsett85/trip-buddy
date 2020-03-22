@@ -1,7 +1,7 @@
 import { IFieldResolver } from 'apollo-server-express';
 // eslint-disable-next-line import/no-cycle
-import { ContextObj } from '../schema/context.types';
-import { ChangeReturnType } from '.';
+import { ContextObj } from './contextObj';
+import { ChangeReturnType } from '../../types';
 
 // IFieldResolver modification that puts arguments in the correct order, adds
 // a context object, and allows specifying a return type.  The TAuth argument

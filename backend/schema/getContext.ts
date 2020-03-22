@@ -1,7 +1,11 @@
 import { ExpressContext } from 'apollo-server-express/dist/ApolloServer';
-import { ContextDeps, ContextObj } from './context.types';
+import { ContextObj } from './types/contextObj';
+import { ContextDeps } from './types/contextDeps';
 import { getToken } from '../utils/getToken';
 
+/**
+ * Function to get the graphql context. This is run every time a new api request is made.
+ */
 export const getContext = ({ services, models }: ContextDeps) => async ({
   req
 }: ExpressContext): Promise<ContextObj | ContextObj<true>> => {

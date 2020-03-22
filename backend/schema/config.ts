@@ -1,5 +1,4 @@
 import { ApolloServerExpressConfig } from 'apollo-server-express';
-import { GraphQLError } from 'graphql';
 import AccessService from '../services/Access';
 import UserService from '../services/User';
 import TripService from '../services/Trip';
@@ -12,18 +11,14 @@ import {
   tripTypeDefs
 } from './typeDefs';
 import { userResolvers, dateResolvers, tripResolvers } from './resolvers';
-import { getContext } from './context';
+import { getContext } from './getContext';
 import { shallowMerge } from '../utils/shallowMerge';
-import {
-  INTERNAL_SERVER_ERROR,
-  INTERNAL_SERVER_ERROR_MESSAGE
-} from '../utils/constants/errors';
-import { env } from '../config/config';
 import { IsAuthDirective } from './directives/IsAuthDirective';
 import UserModel from '../models/UserModel';
 import TripModel from '../models/TripModel';
 import UserTripModel from '../models/UserTripModel';
 import TripItineraryModel from '../models/TripItineraryModel';
+import { getFormatError } from './getFormatError';
 
 /*
  * Define the ApolloServerExpressConfig here, which includes the
@@ -55,27 +50,7 @@ const context = getContext({
     TripItineraryModel
   }
 });
-
-const formatError = (err: GraphQLError): GraphQLError => {
-  const formattedErr = err;
-  const { extensions } = err;
-
-  if (extensions) {
-    console.log(err);
-    console.log('\n', extensions.exception.stacktrace.join('\n'));
-
-    // Define production overrides for errors sent to the client
-    if (env === 'production') {
-      if (extensions.code === INTERNAL_SERVER_ERROR) {
-        formattedErr.message = INTERNAL_SERVER_ERROR_MESSAGE;
-      }
-
-      delete extensions.exception;
-    }
-  }
-
-  return formattedErr;
-};
+const formatError = getFormatError();
 
 export const config: ApolloServerExpressConfig = {
   typeDefs,
