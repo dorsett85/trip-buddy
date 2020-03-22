@@ -1,11 +1,11 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
-import BaseModel from './Base';
+import { TripRecord } from 'common/lib/types/trip';
+import BaseModel from './BaseModel';
 import { WhereArgs } from '../types';
 import { QB } from '../utils/QueryBuilder';
 import db from '../db/db';
 import { extractRows } from '../utils/dbHelpers';
-import { TripRecord } from 'common/lib/types/trip';
 
 const qb = QB(db);
 

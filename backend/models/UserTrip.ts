@@ -1,5 +1,5 @@
 import { UserTripRecord } from 'common/lib/types/userTrip';
-import BaseModel from './Base';
+import BaseModel from './BaseModel';
 
 export default class UserTripModel extends BaseModel {
   public static tableName = 'users_trips';

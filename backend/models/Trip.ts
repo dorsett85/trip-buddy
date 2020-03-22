@@ -1,7 +1,7 @@
 import { TripRecord } from 'common/lib/types/trip';
 import { UserRecord } from 'common/lib/types/user';
 import { UserTripRecord } from 'common/lib/types/userTrip';
-import BaseModel from './Base';
+import BaseModel from './BaseModel';
 import { OmitId, WhereArgGroup, WhereArgs } from '../types';
 
 export default class TripModel extends BaseModel {
