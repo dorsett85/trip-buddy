@@ -1,7 +1,7 @@
 import { UserRecord } from 'common/lib/types/user';
-import UserModel from '../models/User';
+import { IUserModel } from '../models/UserModel.types';
 
 export interface UserServiceDeps {
   user: UserRecord;
-  UserModel: typeof UserModel;
+  userModel: IUserModel;
 }

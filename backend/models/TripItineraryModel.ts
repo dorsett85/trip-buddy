@@ -3,23 +3,22 @@ import { UserRecord } from 'common/lib/types/user';
 import { UserTripRecord } from 'common/lib/types/userTrip';
 import BaseModel from './BaseModel';
 import { OmitId, WhereArgGroup, WhereArgs } from '../types';
+import { ITripItineraryModel } from './TripItineraryModel.types';
 
-export default class TripItineraryModel extends BaseModel {
-  public static readonly tableName = 'trip_itineraries';
+export default class TripItineraryModel extends BaseModel implements ITripItineraryModel {
+  private readonly tableWithUserId = 'users_trips ut';
 
-  public static readonly tableWithUserId = 'users_trips ut';
+  private readonly joinTableWithUserId = `LEFT JOIN ${this.tableWithUserId} ON ut.trip_id = ${this.tableName}.trip_id`;
 
-  public static readonly joinTableWithUserId = `LEFT JOIN ${TripItineraryModel.tableWithUserId} ON ut.trip_id = ${TripItineraryModel.tableName}.trip_id`;
+  private readonly whereTableWithUserId = `${this.tableName}.trip_id = ut.trip_id`;
 
-  public static readonly whereTableWithUserId = `${TripItineraryModel.tableName}.trip_id = ut.trip_id`;
-
-  public static createOne(
+  public createOne(
     tripItinerary: Partial<TripItineraryRecord>
   ): Promise<TripItineraryRecord> {
     return this.baseCreateOne(tripItinerary);
   }
 
-  public static findMany(
+  public findMany(
     whereArgs: WhereArgs<Partial<TripItineraryRecord>>,
     userId?: UserRecord['id']
   ): Promise<TripItineraryRecord[]> {
@@ -39,7 +38,7 @@ export default class TripItineraryModel extends BaseModel {
     return this.baseFindMany(whereArgsWithUserId, this.joinTableWithUserId);
   }
 
-  public static updateOne(
+  public updateOne(
     updateArgs: OmitId<Partial<TripItineraryRecord>>,
     whereArgs: WhereArgs<Partial<TripItineraryRecord>>,
     userId?: UserRecord['id']
@@ -61,7 +60,7 @@ export default class TripItineraryModel extends BaseModel {
     return this.baseUpdateOne(updateArgs, whereArgsWithUserId, this.tableWithUserId);
   }
 
-  public static deleteOne(
+  public deleteOne(
     itineraryId: TripItineraryRecord['id'],
     userId?: UserRecord['id']
   ): Promise<number> {

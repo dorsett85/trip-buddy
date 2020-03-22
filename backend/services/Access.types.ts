@@ -1,5 +1,5 @@
-import UserModel from '../models/User';
+import { IUserModel } from '../models/UserModel.types';
 
 export interface AccessServiceDeps {
-  UserModel: typeof UserModel;
+  userModel: IUserModel;
 }

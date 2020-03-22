@@ -20,10 +20,10 @@ import {
 } from '../utils/constants/errors';
 import { env } from '../config/config';
 import { IsAuthDirective } from './directives/IsAuthDirective';
-import UserModel from '../models/User';
-import TripModel from '../models/Trip';
-import UserTripModel from '../models/UserTrip';
-import TripItineraryModel from '../models/TripItinerary';
+import UserModel from '../models/UserModel';
+import TripModel from '../models/TripModel';
+import UserTripModel from '../models/UserTripModel';
+import TripItineraryModel from '../models/TripItineraryModel';
 
 /*
  * Define the ApolloServerExpressConfig here, which includes the

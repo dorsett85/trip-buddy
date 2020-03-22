@@ -9,7 +9,7 @@ export const getContext = ({ services, models }: ContextDeps) => async ({
   const token = getToken(req.headers.authorization);
   const { AccessService } = services;
   const { UserModel } = models;
-  const accessService = new AccessService({ UserModel });
+  const accessService = new AccessService({ userModel: new UserModel('users') });
   const user = token ? await accessService.getActiveUser(token) : null;
 
   // If there's no user, then don't provide additional services!
@@ -27,13 +27,16 @@ export const getContext = ({ services, models }: ContextDeps) => async ({
   const { UserService, TripService, TripItineraryService } = services;
   const { UserTripModel, TripModel, TripItineraryModel } = models;
 
-  const userService = new UserService({ user, UserModel });
+  const userService = new UserService({ user, userModel: new UserModel('users') });
   const tripService = new TripService({
     user,
-    UserTripModel,
-    TripModel
+    userTripModel: new UserTripModel('users_trips'),
+    tripModel: new TripModel('trips')
   });
-  const tripItineraryService = new TripItineraryService({ user, TripItineraryModel });
+  const tripItineraryService = new TripItineraryService({
+    user,
+    tripItineraryModel: new TripItineraryModel('trip_itineraries')
+  });
 
   return {
     user,

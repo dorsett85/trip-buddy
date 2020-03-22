@@ -410,6 +410,6 @@ export const QB = (pool: Pool) => {
   };
   
   // Add the QueryBuilder raw method as an option for writing raw sql statements
-  fn.raw = (text: string, values?: RecordValueArray) => fn('').raw(text, values);
+  fn.raw = <T = any>(text: string, values?: RecordValueArray) => fn<T>('').raw(text, values);
   return fn;
 };

@@ -3,10 +3,10 @@ import { UserRecord } from 'common/lib/types/user';
 import UserService from '../services/User';
 import TripService from '../services/Trip';
 import AccessService from '../services/Access';
-import UserModel from '../models/User';
-import UserTripModel from '../models/UserTrip';
-import TripModel from '../models/Trip';
-import TripItineraryModel from '../models/TripItinerary';
+import UserModel from '../models/UserModel';
+import UserTripModel from '../models/UserTripModel';
+import TripModel from '../models/TripModel';
+import TripItineraryModel from '../models/TripItineraryModel';
 import TripItineraryService from "../services/TripItinerary";
 
 export interface ContextDeps {

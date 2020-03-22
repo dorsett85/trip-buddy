@@ -1,32 +1,31 @@
 import db from '../db/db';
-import {extractRow, extractRows} from '../utils/dbHelpers';
+import { extractRow, extractRows } from '../utils/dbHelpers';
 import { WhereArgs } from '../types';
 import { QB } from '../utils/QueryBuilder';
+import { IBaseModel } from './BaseModel.types';
 
 const qb = QB(db);
 
-export default class BaseModel {
-  public static readonly tableName: string;
+export default class BaseModel implements IBaseModel {
+  public readonly tableName: string;
 
-  public static readonly tableWithUserId: string;
+  constructor(tableName: string) {
+    this.tableName = tableName;
+  }
 
-  public static readonly joinTableWithUserId: string;
-
-  public static readonly whereTableWithUserId: string;
-
-  protected static async baseCreateOne<T>(record: Partial<T>): Promise<T> {
+  protected async baseCreateOne<T>(record: Partial<T>): Promise<T> {
     const query = qb<T>(this.tableName).insert(record);
     return extractRow<T>(await query);
   }
 
-  protected static async baseFindOne<T>(
+  protected async baseFindOne<T>(
     whereArgs: WhereArgs<Partial<T>>,
     joinUserIdTable?: string
   ): Promise<T | undefined> {
     return (await this.baseFindMany(whereArgs, joinUserIdTable))[0];
   }
 
-  protected static async baseFindMany<T>(
+  protected async baseFindMany<T>(
     whereArgs?: WhereArgs<Partial<T>>,
     joinUserIdTable?: string
   ): Promise<T[]> {
@@ -37,7 +36,7 @@ export default class BaseModel {
     return extractRows<T>(await query);
   }
 
-  protected static async baseUpdateOne<T>(
+  protected async baseUpdateOne<T>(
     updateArgs: Partial<T>,
     whereArgs: WhereArgs<Partial<T>>,
     tableWithUserId?: string
@@ -48,7 +47,7 @@ export default class BaseModel {
     return (await query).rowCount;
   }
 
-  protected static async baseDeleteOne<T>(
+  protected async baseDeleteOne<T>(
     whereArgs: WhereArgs<Partial<T>>,
     tableWithUserId?: string
   ): Promise<number> {

@@ -10,15 +10,15 @@ import {
 // eslint-disable-next-line import/no-cycle
 import { LoginArgs, RegisterArgs } from '../schema/resolvers/user.types';
 import { AccessServiceDeps } from './Access.types';
-import UserModel from '../models/User';
+import { IUserModel } from '../models/UserModel.types';
 
 const { jwtSecretKey } = expressServer;
 
 export default class AccessService {
-  private UserModel: typeof UserModel;
+  private userModel: IUserModel;
 
   public constructor(dependencies: AccessServiceDeps) {
-    this.UserModel = dependencies.UserModel;
+    this.userModel = dependencies.userModel;
   }
 
   private static sign(user: UserRecord): string {
@@ -35,14 +35,14 @@ export default class AccessService {
 
   public async getActiveUser(token: string): Promise<UserRecord | null> {
     const user = AccessService.verify(token);
-    return user && ((await this.UserModel.findOne({ items: { id: user.id } })) || null);
+    return user && ((await this.userModel.findOne({ items: { id: user.id } })) || null);
   }
 
   public async login(args: LoginArgs): Promise<string> {
     const { username, password } = args;
 
     // check if username or email exists
-    const user = await this.UserModel.findOne({
+    const user = await this.userModel.findOne({
       items: { username, email: username },
       logicalOperator: 'OR'
     });
@@ -63,14 +63,14 @@ export default class AccessService {
     const { email, password } = args;
 
     // Check if user exists
-    const user = await this.UserModel.findOne({ items: { email } });
+    const user = await this.userModel.findOne({ items: { email } });
     if (user) {
       return USER_ALREADY_EXISTS_MESSAGE;
     }
 
     // Now we can create a new user with hashed password and sign the token
     const hashedPassword = bcrypt.hashSync(password, 10);
-    const newUser = await this.UserModel.createOne({
+    const newUser = await this.userModel.createOne({
       username: email,
       password: hashedPassword,
       email

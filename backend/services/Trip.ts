@@ -1,29 +1,29 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
-import TripModel from '../models/Trip';
-import UserTripModel from '../models/UserTrip';
 import { TripServiceDeps } from './Trip.types';
 // eslint-disable-next-line import/no-cycle
 import { CreateTripInput, UpdateTripInput } from '../schema/resolvers/trip.types';
 import { OmitId, WhereArgs } from '../types';
+import { ITripModel } from '../models/TripModel.types';
+import {IUserTripModel} from "../models/UserTripModel.types";
 
 export default class TripService {
   private readonly user: UserRecord;
 
-  private TripModel: typeof TripModel;
+  private tripModel: ITripModel;
 
-  private UserTripModel: typeof UserTripModel;
+  private userTripModel: IUserTripModel;
 
   constructor(dependencies: TripServiceDeps) {
     this.user = dependencies.user;
-    this.TripModel = dependencies.TripModel;
-    this.UserTripModel = dependencies.UserTripModel;
+    this.tripModel = dependencies.tripModel;
+    this.userTripModel = dependencies.userTripModel;
   }
 
   public async createOne(createTripInput: CreateTripInput['input']): Promise<TripRecord> {
     // Create the new trip and add a record to the users_trips pivot table
-    const trip = await this.TripModel.createOne(createTripInput);
-    await this.UserTripModel.createOne({ user_id: this.user.id, trip_id: trip.id });
+    const trip = await this.tripModel.createOne(createTripInput);
+    await this.userTripModel.createOne({ user_id: this.user.id, trip_id: trip.id });
 
     return trip;
   }
@@ -33,13 +33,13 @@ export default class TripService {
   ): Promise<TripRecord | undefined> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
-    return this.TripModel.findOne(whereArgs, userId);
+    return this.tripModel.findOne(whereArgs, userId);
   }
 
   public findMany(whereArgs?: WhereArgs<Partial<TripRecord>>): Promise<TripRecord[]> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
-    return this.TripModel.findMany(whereArgs, userId);
+    return this.tripModel.findMany(whereArgs, userId);
   }
 
   public updateOne(
@@ -48,12 +48,12 @@ export default class TripService {
   ): Promise<number> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
-    return this.TripModel.updateOne(updateTripInput, whereArgs, userId);
+    return this.tripModel.updateOne(updateTripInput, whereArgs, userId);
   }
 
   public deleteOne(tripId: TripRecord['id']): Promise<number> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
-    return this.TripModel.deleteOne(tripId, userId);
+    return this.tripModel.deleteOne(tripId, userId);
   }
 }

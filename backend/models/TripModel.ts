@@ -3,21 +3,20 @@ import { UserRecord } from 'common/lib/types/user';
 import { UserTripRecord } from 'common/lib/types/userTrip';
 import BaseModel from './BaseModel';
 import { OmitId, WhereArgGroup, WhereArgs } from '../types';
+import { ITripModel } from './TripModel.types';
 
-export default class TripModel extends BaseModel {
-  public static tableName = 'trips';
+export default class TripModel extends BaseModel implements ITripModel {
+  private tableWithUserId = 'users_trips ut';
 
-  public static tableWithUserId = 'users_trips ut';
+  private joinTableWithUserId = `LEFT JOIN ${this.tableWithUserId} ON ut.trip_id = ${this.tableName}.id`;
 
-  public static joinTableWithUserId = `LEFT JOIN ${TripModel.tableWithUserId} ON ut.trip_id = ${TripModel.tableName}.id`;
+  private whereTableWithUserId = `${this.tableName}.id = ut.trip_id`;
 
-  public static whereTableWithUserId = `${TripModel.tableName}.id = ut.trip_id`;
-
-  public static createOne(trip: Partial<TripRecord>): Promise<TripRecord> {
+  public createOne(trip: Partial<TripRecord>): Promise<TripRecord> {
     return this.baseCreateOne(trip);
   }
 
-  public static findOne(
+  public findOne(
     whereArgs: WhereArgs<Partial<TripRecord>>,
     userId?: UserRecord['id']
   ): Promise<TripRecord | undefined> {
@@ -34,7 +33,7 @@ export default class TripModel extends BaseModel {
     return this.baseFindOne(whereArgsWithUserId, this.joinTableWithUserId);
   }
 
-  public static findMany(
+  public findMany(
     whereArgs?: WhereArgs<Partial<TripRecord>>,
     userId?: UserRecord['id']
   ): Promise<TripRecord[]> {
@@ -54,7 +53,7 @@ export default class TripModel extends BaseModel {
     return this.baseFindMany(whereArgsWithUserId, this.joinTableWithUserId);
   }
 
-  public static updateOne(
+  public updateOne(
     updateArgs: OmitId<Partial<TripRecord>>,
     whereArgs: WhereArgs<Partial<TripRecord>>,
     userId?: UserRecord['id']
@@ -76,10 +75,7 @@ export default class TripModel extends BaseModel {
     return this.baseUpdateOne(updateArgs, whereArgsWithUserId, this.tableWithUserId);
   }
 
-  public static deleteOne(
-    tripId: TripRecord['id'],
-    userId?: UserRecord['id']
-  ): Promise<number> {
+  public deleteOne(tripId: TripRecord['id'], userId?: UserRecord['id']): Promise<number> {
     const whereArgs: WhereArgs<Partial<TripRecord>> = { items: { id: tripId } };
     if (!userId) {
       return this.baseDeleteOne(whereArgs);

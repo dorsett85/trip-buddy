@@ -1,7 +1,7 @@
 import { UserRecord } from 'common/lib/types/user';
-import TripItineraryModel from '../models/TripItinerary';
+import { ITripItineraryModel } from '../models/TripItineraryModel.types';
 
 export interface TripItineraryServiceDeps {
   user: UserRecord;
-  TripItineraryModel: typeof TripItineraryModel;
+  tripItineraryModel: ITripItineraryModel;
 }
