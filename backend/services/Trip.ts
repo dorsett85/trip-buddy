@@ -1,11 +1,11 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
 import { TripServiceDeps } from './Trip.types';
-// eslint-disable-next-line import/no-cycle
 import { CreateTripInput, UpdateTripInput } from '../schema/resolvers/trip.types';
-import { OmitId, WhereArgs } from '../types';
+import { OmitId } from '../types';
 import { ITripModel } from '../models/TripModel.types';
-import {IUserTripModel} from "../models/UserTripModel.types";
+import { IUserTripModel } from '../models/UserTripModel.types';
+import { WhereArgs } from '../types/dbQueryUtils';
 
 export default class TripService {
   private readonly user: UserRecord;

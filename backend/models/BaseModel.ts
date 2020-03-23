@@ -1,7 +1,7 @@
 import { extractRow, extractRows } from '../utils/dbHelpers';
-import { WhereArgs } from '../types';
 import { GenerateQueryBuilder } from '../utils/QueryBuilder';
 import { IBaseModel } from './BaseModel.types';
+import { WhereArgs } from '../types/dbQueryUtils';
 
 export default class BaseModel implements IBaseModel {
   // eslint-disable-next-line no-empty-function

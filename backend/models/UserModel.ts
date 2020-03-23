@@ -2,10 +2,10 @@ import { UserRecord } from 'common/lib/types/user';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { TripRecord } from 'common/lib/types/trip';
 import BaseModel from './BaseModel';
-import { WhereArgs } from '../types';
 import { extractRows } from '../utils/dbHelpers';
 import { IUserModel } from './UserModel.types';
 import { UpdateTripInput } from '../schema/resolvers/trip.types';
+import { WhereArgs } from '../types/dbQueryUtils';
 
 export default class UserModel extends BaseModel implements IUserModel {
   public createOne(

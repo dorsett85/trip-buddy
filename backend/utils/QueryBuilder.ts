@@ -1,12 +1,12 @@
 import { Pool, QueryResult } from 'pg';
 import { prefixTableName } from './dbHelpers';
 import {
-  KeyValue,
   ParamQuery,
   RecordValueArray,
   WhereArgGroup,
   WhereArgs
-} from '../types';
+} from '../types/dbQueryUtils';
+import { KeyValue } from '../types';
 
 const isParamQuery = (obj: ParamQuery | WhereArgGroup): obj is ParamQuery =>
   Object.keys(obj).some(key => key !== 'items' && key === 'text');
@@ -116,7 +116,7 @@ export default class QueryBuilder<T = any> {
         const addOpenParan = idx === 0 ? '(' : '';
         const addCloseParan = idx === arr.length - 1 ? ')' : '';
         const addCommaAndSpace = idx === arr.length - 1 ? '' : ', ';
-        
+
         if (!columnTextInserted) {
           columnText += `${addOpenParan}${key}${addCommaAndSpace}${addCloseParan}`;
         }
@@ -130,14 +130,14 @@ export default class QueryBuilder<T = any> {
         processInsertObj(item);
         // After the first item has been processed we already have the insert column text
         columnTextInserted = true;
-        
+
         // If there's more than one item to insert we also have to separate the value text
         valuesText = idx === arr.length - 1 ? valuesText : `${valuesText}, `;
-      })
+      });
     } else {
       processInsertObj(insertObj);
     }
-    
+
     this.clauses.insert = `INSERT INTO ${this.table} ${columnText}\nVALUES ${valuesText}`;
     return this;
   }
@@ -400,7 +400,7 @@ export default class QueryBuilder<T = any> {
 /**
  * QB is a curried function that will accept a pool argument that will return a QueryBuilder
  * instantiation function.  This instantiation function will return a new QueryBuilder object.
- * 
+ *
  * Alternatively you can call the raw property which is the same as calling the raw method on
  * a new QueryBuilder object with a blank "table" argument.
  */
@@ -408,9 +408,10 @@ export const ConnectQueryBuilder = (pool: Pool) => {
   const fn = <T = any>(table: string) => {
     return new QueryBuilder<T>(pool, table);
   };
-  
+
   // Add the QueryBuilder raw method as an option for writing raw sql statements
-  fn.raw = <T = any>(text: string, values?: RecordValueArray) => fn<T>('').raw(text, values);
+  fn.raw = <T = any>(text: string, values?: RecordValueArray) =>
+    fn<T>('').raw(text, values);
   return fn;
 };
 

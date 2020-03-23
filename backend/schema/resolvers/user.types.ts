@@ -1,23 +1,10 @@
-/* eslint-disable import/no-cycle,camelcase */
+/* eslint-disable camelcase */
 import { IResolvers } from 'apollo-server-express';
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
-import {
-  InputResolverArg,
-  FieldResolver,
-  AuthFieldResolver
-} from '../types/resolvers';
-
-export interface LoginArgs {
-  username: string;
-  password: string;
-}
-
-export interface RegisterArgs {
-  email: string;
-  password: string;
-}
+import { InputResolverArg, FieldResolver, AuthFieldResolver } from '../types/resolvers';
+import { LoginArgs, RegisterArgs } from '../../types/access';
 
 export type UpdateUserInput = InputResolverArg<Omit<UserSchema, 'id' | 'created_date'>>;
 

@@ -2,9 +2,10 @@ import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 import { UserRecord } from 'common/lib/types/user';
 import { UserTripRecord } from 'common/lib/types/userTrip';
 import BaseModel from './BaseModel';
-import { OmitId, WhereArgGroup, WhereArgs } from '../types';
+import { OmitId } from '../types';
 import { ITripItineraryModel } from './TripItineraryModel.types';
-import {CreateTripItineraryInput} from "../schema/resolvers/trip.types";
+import { CreateTripItineraryInput } from '../schema/resolvers/trip.types';
+import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
 
 export default class TripItineraryModel extends BaseModel implements ITripItineraryModel {
   private readonly tableWithUserId = 'users_trips ut';

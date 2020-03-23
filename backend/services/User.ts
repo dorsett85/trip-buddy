@@ -2,7 +2,6 @@ import { UserRecord } from 'common/lib/types/user';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { TripRecord } from 'common/lib/types/trip';
 import { UserServiceDeps } from './User.types';
-// eslint-disable-next-line import/no-cycle
 import { CreateTripInvitesInput, UpdateUserInput } from '../schema/resolvers/user.types';
 import {IUserModel} from "../models/UserModel.types";
 

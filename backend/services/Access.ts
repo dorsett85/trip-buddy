@@ -7,14 +7,13 @@ import {
   INVALID_LOGIN_MESSAGE,
   USER_ALREADY_EXISTS_MESSAGE
 } from '../utils/constants/errors';
-// eslint-disable-next-line import/no-cycle
-import { LoginArgs, RegisterArgs } from '../schema/resolvers/user.types';
-import { AccessServiceDeps } from './Access.types';
+import {AccessServiceDeps, IAccessService} from './Access.types';
 import { IUserModel } from '../models/UserModel.types';
+import {LoginArgs, RegisterArgs} from "../types/access";
 
 const { jwtSecretKey } = expressServer;
 
-export default class AccessService {
+export default class AccessService implements IAccessService {
   private userModel: IUserModel;
 
   public constructor(dependencies: AccessServiceDeps) {

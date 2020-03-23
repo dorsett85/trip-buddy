@@ -1,13 +1,13 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripItineraryRecord } from 'common/src/types/tripItinerary';
-// eslint-disable-next-line import/no-cycle
 import {
   UpdateTripItineraryInput,
   CreateTripItineraryInput
 } from '../schema/resolvers/trip.types';
-import { OmitId, WhereArgs } from '../types';
+import { OmitId } from '../types';
 import { TripItineraryServiceDeps } from './TripItinerary.types';
 import { ITripItineraryModel } from '../models/TripItineraryModel.types';
+import { WhereArgs } from '../types/dbQueryUtils';
 
 export default class TripItineraryService {
   private readonly user: UserRecord;

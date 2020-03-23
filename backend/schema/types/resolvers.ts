@@ -1,5 +1,4 @@
 import { IFieldResolver } from 'apollo-server-express';
-// eslint-disable-next-line import/no-cycle
 import { ContextObj } from './contextObj';
 import { ChangeReturnType } from '../../types';
 
