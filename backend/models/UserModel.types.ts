@@ -1,20 +1,28 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
-import { WhereArgs } from '../types';
 import { IBaseModel } from './BaseModel.types';
+import {
+  CreateTripInvitesWithInviterIdArgs,
+  CreateUserArgs,
+  PartialUserRecord,
+  UpdateUserArgs
+} from '../types/user';
+import { WhereArgs } from '../types/dbQueryUtils';
 
 export interface IUserModel extends IBaseModel {
-  createOne(user: Pick<UserRecord, 'username' | 'password' | 'email'>): Promise<UserRecord>;
+  createOne(user: CreateUserArgs): Promise<UserRecord>;
 
-  findOne(whereArgs: WhereArgs<Partial<UserRecord>>): Promise<UserRecord | undefined>;
+  findOne(whereArgs: WhereArgs<PartialUserRecord>): Promise<UserRecord | undefined>;
 
   updateOne(
-    updateArgs: Partial<UserRecord>,
-    whereArgs: WhereArgs<Partial<UserRecord>>
+    updateArgs: UpdateUserArgs,
+    whereArgs: WhereArgs<PartialUserRecord>
   ): Promise<number>;
 
   findTripInvitees(tripId: TripRecord['id']): Promise<UserRecord[]>;
 
-  createTripInvites(invite: Partial<TripInviteRecord>[]): Promise<TripInviteRecord[]>;
+  createTripInvites(
+    invite: CreateTripInvitesWithInviterIdArgs
+  ): Promise<TripInviteRecord[]>;
 }

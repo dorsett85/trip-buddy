@@ -1,15 +1,18 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripItineraryRecord } from 'common/src/types/tripItinerary';
 import {
-  UpdateTripItineraryInput,
-  CreateTripItineraryInput
-} from '../schema/resolvers/trip.types';
-import { OmitId } from '../types';
-import { TripItineraryServiceDeps } from './TripItinerary.types';
+  ITripItineraryService,
+  TripItineraryServiceDeps
+} from './TripItineraryService.types';
 import { ITripItineraryModel } from '../models/TripItineraryModel.types';
 import { WhereArgs } from '../types/dbQueryUtils';
+import {
+  CreateTripItineraryArgs,
+  PartialTripItineraryRecord,
+  UpdateTripItineraryOmitIdArgs
+} from '../types/tripItinerary';
 
-export default class TripItineraryService {
+export default class TripItineraryService implements ITripItineraryService {
   private readonly user: UserRecord;
 
   private tripItineraryModel: ITripItineraryModel;
@@ -20,13 +23,13 @@ export default class TripItineraryService {
   }
 
   public createOne(
-    createTripItineraryInput: CreateTripItineraryInput['input']
+    createTripItineraryInput: CreateTripItineraryArgs
   ): Promise<TripItineraryRecord> {
     return this.tripItineraryModel.createOne(createTripItineraryInput);
   }
 
   public findMany(
-    whereArgs: WhereArgs<Partial<TripItineraryRecord>>
+    whereArgs: WhereArgs<PartialTripItineraryRecord>
   ): Promise<TripItineraryRecord[]> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
@@ -34,8 +37,8 @@ export default class TripItineraryService {
   }
 
   public updateOne(
-    updateTripItineraryInput: OmitId<UpdateTripItineraryInput['input']>,
-    whereArgs: WhereArgs<Partial<TripItineraryRecord>>
+    updateTripItineraryInput: UpdateTripItineraryOmitIdArgs,
+    whereArgs: WhereArgs<PartialTripItineraryRecord>
   ): Promise<number> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;

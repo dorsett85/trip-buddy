@@ -2,6 +2,7 @@ import { CaseReducer, PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit'
 import { TripRecord } from 'common/lib/types/trip';
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 import { LngLatArray } from 'common/lib/types/utils';
+import {PartialTripRecord} from "../../../../backend/types/trip";
 
 // State
 export interface TripCreator {
@@ -50,7 +51,7 @@ export interface TripState {
 }
 
 // Action payload args
-interface UpdateTripPayload extends Partial<TripRecord> {
+interface UpdateTripPayload extends PartialTripRecord {
   id: TripRecord['id'];
 }
 interface UpdateTripItineraryPayload extends Partial<TripItineraryRecord> {

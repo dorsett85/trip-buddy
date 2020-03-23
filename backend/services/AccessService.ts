@@ -6,7 +6,7 @@ import {
   INVALID_LOGIN_MESSAGE,
   USER_ALREADY_EXISTS_MESSAGE
 } from '../utils/constants/errors';
-import { AccessServiceDeps, IAccessService } from './Access.types';
+import { AccessServiceDeps, IAccessService } from './AccessService.types';
 import { IUserModel } from '../models/UserModel.types';
 import { LoginArgs, RegisterArgs } from '../types/access';
 

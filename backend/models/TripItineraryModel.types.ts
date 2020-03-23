@@ -1,19 +1,24 @@
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 import { UserRecord } from 'common/lib/types/user';
-import { OmitId, WhereArgs } from '../types';
 import { IBaseModel } from './BaseModel.types';
+import {
+  CreateTripItineraryArgs,
+  PartialTripItineraryRecord,
+  UpdateTripItineraryOmitIdArgs
+} from '../types/tripItinerary';
+import { WhereArgs } from '../types/dbQueryUtils';
 
 export interface ITripItineraryModel extends IBaseModel {
-  createOne(tripItinerary: Partial<TripItineraryRecord>): Promise<TripItineraryRecord>;
+  createOne(tripItinerary: CreateTripItineraryArgs): Promise<TripItineraryRecord>;
 
   findMany(
-    whereArgs: WhereArgs<Partial<TripItineraryRecord>>,
+    whereArgs: WhereArgs<PartialTripItineraryRecord>,
     userId?: UserRecord['id']
   ): Promise<TripItineraryRecord[]>;
 
   updateOne(
-    updateArgs: OmitId<Partial<TripItineraryRecord>>,
-    whereArgs: WhereArgs<Partial<TripItineraryRecord>>,
+    updateArgs: UpdateTripItineraryOmitIdArgs,
+    whereArgs: WhereArgs<PartialTripItineraryRecord>,
     userId?: UserRecord['id']
   ): Promise<number>;
 

@@ -1,8 +1,8 @@
 import { ApolloServerExpressConfig } from 'apollo-server-express';
-import AccessService from '../services/Access';
-import UserService from '../services/User';
-import TripService from '../services/Trip';
-import TripItineraryService from '../services/TripItinerary';
+import AccessService from '../services/AccessService';
+import UserService from '../services/UserService';
+import TripService from '../services/TripService';
+import TripItineraryService from '../services/TripItineraryService';
 import {
   rootTypeDefs,
   directivesTypeDefs,

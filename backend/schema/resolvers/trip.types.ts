@@ -2,27 +2,13 @@
 import { IResolvers } from 'apollo-server-express';
 import { TripRecord } from 'common/lib/types/trip';
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
-import { InputResolverArg, AuthFieldResolver } from '../types/resolvers';
-import { OmitCreatedDate, OmitIdCreatedDate } from '../../types';
-
-// Trip inputs
-export type CreateTripInput = InputResolverArg<
-  Pick<TripRecord, 'name' | 'description' | 'location' | 'start_date'>
->;
-export type FindTripInput = InputResolverArg<TripSchema>;
-export type UpdateTripInput = InputResolverArg<OmitCreatedDate<TripSchemaWithId>>;
-
-// Trip itinerary inputs
-export type CreateTripItineraryInput = InputResolverArg<
-  Omit<OmitIdCreatedDate<TripItineraryRecord>, 'end_time'>
->;
-export type UpdateTripItineraryInput = InputResolverArg<
-  OmitCreatedDate<TripItinerarySchemaWithId>
->;
+import { AuthFieldResolver } from '../types/resolvers';
+import { CreateTripInput, FindTripInput, UpdateTripInput } from '../../types/trip';
+import {CreateTripItineraryInput, UpdateTripItineraryInput} from "../../types/tripItinerary";
 
 export interface TripResolvers extends IResolvers {
   Trip: {
-    itineraries: AuthFieldResolver<TripSchema, any, Promise<TripItineraryRecord[]>>;
+    itineraries: AuthFieldResolver<TripRecord, any, Promise<TripItineraryRecord[]>>;
   };
   Query: {
     trip: AuthFieldResolver<any, FindTripInput, Promise<TripRecord>>;
@@ -48,14 +34,4 @@ export interface TripResolvers extends IResolvers {
       Promise<TripItineraryRecord['id']>
     >;
   };
-}
-
-export interface TripSchema extends Partial<TripRecord> {}
-export interface TripSchemaWithId extends TripSchema {
-  id: TripRecord['id'];
-}
-
-export interface TripItinerarySchema extends Partial<TripItineraryRecord> {}
-export interface TripItinerarySchemaWithId extends TripItinerarySchema {
-  id: TripItineraryRecord['id'];
 }

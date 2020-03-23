@@ -1,13 +1,12 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
-import { TripServiceDeps } from './Trip.types';
-import { CreateTripInput, UpdateTripInput } from '../schema/resolvers/trip.types';
-import { OmitId } from '../types';
+import { ITripService, TripServiceDeps } from './TripService.types';
 import { ITripModel } from '../models/TripModel.types';
 import { IUserTripModel } from '../models/UserTripModel.types';
 import { WhereArgs } from '../types/dbQueryUtils';
+import { CreateTripArgs, PartialTripRecord, UpdateTripOmitIdArgs } from '../types/trip';
 
-export default class TripService {
+export default class TripService implements ITripService {
   private readonly user: UserRecord;
 
   private tripModel: ITripModel;
@@ -20,7 +19,7 @@ export default class TripService {
     this.userTripModel = dependencies.userTripModel;
   }
 
-  public async createOne(createTripInput: CreateTripInput['input']): Promise<TripRecord> {
+  public async createOne(createTripInput: CreateTripArgs): Promise<TripRecord> {
     // Create the new trip and add a record to the users_trips pivot table
     const trip = await this.tripModel.createOne(createTripInput);
     await this.userTripModel.createOne({ user_id: this.user.id, trip_id: trip.id });
@@ -29,22 +28,22 @@ export default class TripService {
   }
 
   public findOne(
-    whereArgs: WhereArgs<Partial<TripRecord>>
+    whereArgs: WhereArgs<PartialTripRecord>
   ): Promise<TripRecord | undefined> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
     return this.tripModel.findOne(whereArgs, userId);
   }
 
-  public findMany(whereArgs?: WhereArgs<Partial<TripRecord>>): Promise<TripRecord[]> {
+  public findMany(whereArgs?: WhereArgs<PartialTripRecord>): Promise<TripRecord[]> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
     return this.tripModel.findMany(whereArgs, userId);
   }
 
   public updateOne(
-    updateTripInput: OmitId<UpdateTripInput['input']>,
-    whereArgs: WhereArgs<Partial<TripRecord>>
+    updateTripInput: UpdateTripOmitIdArgs,
+    whereArgs: WhereArgs<PartialTripRecord>
   ): Promise<number> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;

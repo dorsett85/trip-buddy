@@ -18,8 +18,3 @@ export type AuthFieldResolver<
   TArgs = Record<string, any>,
   TReturn = any
 > = FieldResolver<TSource, TArgs, TReturn, true>;
-
-// Resolver args that are placed within an input property
-export interface InputResolverArg<T> {
-  input: T;
-}

@@ -4,25 +4,28 @@ import { TripRecord } from 'common/lib/types/trip';
 import BaseModel from './BaseModel';
 import { extractRows } from '../utils/dbHelpers';
 import { IUserModel } from './UserModel.types';
-import { UpdateTripInput } from '../schema/resolvers/trip.types';
 import { WhereArgs } from '../types/dbQueryUtils';
+import {
+  CreateTripInvitesWithInviterIdArgs,
+  CreateUserArgs,
+  PartialUserRecord,
+  UpdateUserArgs
+} from '../types/user';
 
 export default class UserModel extends BaseModel implements IUserModel {
-  public createOne(
-    user: Pick<UserRecord, 'username' | 'password' | 'email'>
-  ): Promise<UserRecord> {
+  public createOne(user: CreateUserArgs): Promise<UserRecord> {
     return this.baseCreateOne<UserRecord>(user);
   }
 
   public findOne(
-    whereArgs: WhereArgs<Partial<UserRecord>>
+    whereArgs: WhereArgs<PartialUserRecord>
   ): Promise<UserRecord | undefined> {
     return this.baseFindOne(whereArgs);
   }
 
   public updateOne(
-    updateArgs: UpdateTripInput['input'],
-    whereArgs: WhereArgs<Partial<UserRecord>>
+    updateArgs: UpdateUserArgs,
+    whereArgs: WhereArgs<PartialUserRecord>
   ): Promise<number> {
     return this.baseUpdateOne(updateArgs, whereArgs);
   }
@@ -44,7 +47,7 @@ export default class UserModel extends BaseModel implements IUserModel {
   }
 
   public async createTripInvites(
-    invite: Partial<TripInviteRecord>[]
+    invite: CreateTripInvitesWithInviterIdArgs
   ): Promise<TripInviteRecord[]> {
     const inviteIds = this.db('trip_invites')
       .insert(invite)

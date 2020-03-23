@@ -3,19 +3,9 @@ import { IResolvers } from 'apollo-server-express';
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
-import { InputResolverArg, FieldResolver, AuthFieldResolver } from '../types/resolvers';
+import { FieldResolver, AuthFieldResolver } from '../types/resolvers';
 import { LoginArgs, RegisterArgs } from '../../types/access';
-
-export type UpdateUserInput = InputResolverArg<Omit<UserSchema, 'id' | 'created_date'>>;
-
-export type CreateTripInvitesInput = InputResolverArg<
-  {
-    inviter_id: UserRecord['id'];
-    invitee_id?: UserRecord['id'];
-    invitee_email: UserRecord['email'];
-    trip_Id: TripRecord['id'];
-  }[]
->;
+import { CreateTripInvitesInput, UpdateUserInput } from '../../types/user';
 
 export interface UserResolvers extends IResolvers {
   User: {
@@ -40,5 +30,3 @@ export interface UserResolvers extends IResolvers {
     >;
   };
 }
-
-export interface UserSchema extends Partial<UserRecord> {}

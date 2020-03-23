@@ -36,3 +36,10 @@ export type OmitCreatedDate<T> = Omit<T, 'created_date'>;
  */
 export type OmitIdCreatedDate<T> = OmitId<T> & OmitCreatedDate<T>;
 
+/**
+ * Enclose a type with an object with an input property. This is used for resolver
+ * args that have an input property to align with the graphql schema.
+ */
+export interface InputResolverArg<T> {
+  input: T;
+}

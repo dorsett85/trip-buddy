@@ -2,10 +2,13 @@ import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 import { UserRecord } from 'common/lib/types/user';
 import { UserTripRecord } from 'common/lib/types/userTrip';
 import BaseModel from './BaseModel';
-import { OmitId } from '../types';
 import { ITripItineraryModel } from './TripItineraryModel.types';
-import { CreateTripItineraryInput } from '../schema/resolvers/trip.types';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
+import {
+  CreateTripItineraryArgs,
+  PartialTripItineraryRecord,
+  UpdateTripItineraryOmitIdArgs
+} from '../types/tripItinerary';
 
 export default class TripItineraryModel extends BaseModel implements ITripItineraryModel {
   private readonly tableWithUserId = 'users_trips ut';
@@ -14,14 +17,12 @@ export default class TripItineraryModel extends BaseModel implements ITripItiner
 
   private readonly whereTableWithUserId = `${this.tableName}.trip_id = ut.trip_id`;
 
-  public createOne(
-    tripItinerary: CreateTripItineraryInput['input']
-  ): Promise<TripItineraryRecord> {
+  public createOne(tripItinerary: CreateTripItineraryArgs): Promise<TripItineraryRecord> {
     return this.baseCreateOne<TripItineraryRecord>(tripItinerary);
   }
 
   public findMany(
-    whereArgs: WhereArgs<Partial<TripItineraryRecord>>,
+    whereArgs: WhereArgs<PartialTripItineraryRecord>,
     userId?: UserRecord['id']
   ): Promise<TripItineraryRecord[]> {
     if (!userId) {
@@ -41,8 +42,8 @@ export default class TripItineraryModel extends BaseModel implements ITripItiner
   }
 
   public updateOne(
-    updateArgs: OmitId<Partial<TripItineraryRecord>>,
-    whereArgs: WhereArgs<Partial<TripItineraryRecord>>,
+    updateArgs: UpdateTripItineraryOmitIdArgs,
+    whereArgs: WhereArgs<PartialTripItineraryRecord>,
     userId?: UserRecord['id']
   ): Promise<number> {
     if (!userId) {
@@ -66,7 +67,7 @@ export default class TripItineraryModel extends BaseModel implements ITripItiner
     itineraryId: TripItineraryRecord['id'],
     userId?: UserRecord['id']
   ): Promise<number> {
-    const whereArgs: WhereArgs<Partial<TripItineraryRecord>> = {
+    const whereArgs: WhereArgs<PartialTripItineraryRecord> = {
       items: { id: itineraryId }
     };
     if (!userId) {
