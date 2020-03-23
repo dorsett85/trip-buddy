@@ -4,7 +4,7 @@ import { UserTripRecord } from 'common/lib/types/userTrip';
 import BaseModel from './BaseModel';
 import { ITripModel } from './TripModel.types';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
-import { CreateTripArgs, PartialTripRecord, UpdateTripOmitIdArgs } from '../types/trip';
+import {CreateTripArgs, PartialTripRecord, UpdateTripOmitIdCreatedDateArgs} from '../types/trip';
 
 export default class TripModel extends BaseModel implements ITripModel {
   private tableWithUserId = 'users_trips ut';
@@ -55,7 +55,7 @@ export default class TripModel extends BaseModel implements ITripModel {
   }
 
   public updateOne(
-    updateArgs: UpdateTripOmitIdArgs,
+    updateArgs: UpdateTripOmitIdCreatedDateArgs,
     whereArgs: WhereArgs<PartialTripRecord>,
     userId?: UserRecord['id']
   ): Promise<number> {

@@ -4,7 +4,7 @@ import { ITripItineraryModel } from '../models/TripItineraryModel.types';
 import {
   CreateTripItineraryArgs,
   PartialTripItineraryRecord,
-  UpdateTripItineraryOmitIdArgs
+  UpdateTripItineraryOmitIdCreatedDateArgs
 } from '../types/tripItinerary';
 import { WhereArgs } from '../types/dbQueryUtils';
 
@@ -23,7 +23,7 @@ export interface ITripItineraryService {
   ): Promise<TripItineraryRecord[]>;
 
   updateOne(
-    updateTripItineraryInput: UpdateTripItineraryOmitIdArgs,
+    updateTripItineraryInput: UpdateTripItineraryOmitIdCreatedDateArgs,
     whereArgs: WhereArgs<PartialTripItineraryRecord>
   ): Promise<number>;
 

@@ -9,7 +9,7 @@ import { WhereArgs } from '../types/dbQueryUtils';
 import {
   CreateTripItineraryArgs,
   PartialTripItineraryRecord,
-  UpdateTripItineraryOmitIdArgs
+  UpdateTripItineraryOmitIdCreatedDateArgs
 } from '../types/tripItinerary';
 
 export default class TripItineraryService implements ITripItineraryService {
@@ -37,7 +37,7 @@ export default class TripItineraryService implements ITripItineraryService {
   }
 
   public updateOne(
-    updateTripItineraryInput: UpdateTripItineraryOmitIdArgs,
+    updateTripItineraryInput: UpdateTripItineraryOmitIdCreatedDateArgs,
     whereArgs: WhereArgs<PartialTripItineraryRecord>
   ): Promise<number> {
     const { id, role } = this.user;

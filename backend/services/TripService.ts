@@ -4,7 +4,7 @@ import { ITripService, TripServiceDeps } from './TripService.types';
 import { ITripModel } from '../models/TripModel.types';
 import { IUserTripModel } from '../models/UserTripModel.types';
 import { WhereArgs } from '../types/dbQueryUtils';
-import { CreateTripArgs, PartialTripRecord, UpdateTripOmitIdArgs } from '../types/trip';
+import {CreateTripArgs, PartialTripRecord, UpdateTripOmitIdCreatedDateArgs} from '../types/trip';
 
 export default class TripService implements ITripService {
   private readonly user: UserRecord;
@@ -42,7 +42,7 @@ export default class TripService implements ITripService {
   }
 
   public updateOne(
-    updateTripInput: UpdateTripOmitIdArgs,
+    updateTripInput: UpdateTripOmitIdCreatedDateArgs,
     whereArgs: WhereArgs<PartialTripRecord>
   ): Promise<number> {
     const { id, role } = this.user;

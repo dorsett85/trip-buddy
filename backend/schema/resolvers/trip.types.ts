@@ -2,30 +2,49 @@
 import { IResolvers } from 'apollo-server-express';
 import { TripRecord } from 'common/lib/types/trip';
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
-import { AuthFieldResolver } from '../types/resolvers';
-import { CreateTripInput, FindTripInput, UpdateTripInput } from '../../types/trip';
-import {CreateTripItineraryInput, UpdateTripItineraryInput} from "../../types/tripItinerary";
+import { AuthFieldResolver, InputResolverArg } from '../types/resolvers';
+import { CreateTripArgs, PartialTripRecord, UpdateTripArgs } from '../../types/trip';
+import {
+  CreateTripItineraryArgs,
+  UpdateTripItineraryArgs
+} from '../../types/tripItinerary';
 
 export interface TripResolvers extends IResolvers {
   Trip: {
     itineraries: AuthFieldResolver<TripRecord, any, Promise<TripItineraryRecord[]>>;
   };
   Query: {
-    trip: AuthFieldResolver<any, FindTripInput, Promise<TripRecord>>;
-    trips: AuthFieldResolver<any, FindTripInput, Promise<TripRecord[]>>;
+    trip: AuthFieldResolver<
+      any,
+      InputResolverArg<PartialTripRecord>,
+      Promise<TripRecord>
+    >;
+    trips: AuthFieldResolver<
+      any,
+      InputResolverArg<PartialTripRecord>,
+      Promise<TripRecord[]>
+    >;
   };
   Mutation: {
-    createTrip: AuthFieldResolver<any, CreateTripInput, Promise<TripRecord>>;
-    updateTrip: AuthFieldResolver<any, UpdateTripInput, Promise<TripRecord['id']>>;
+    createTrip: AuthFieldResolver<
+      any,
+      InputResolverArg<CreateTripArgs>,
+      Promise<TripRecord>
+    >;
+    updateTrip: AuthFieldResolver<
+      any,
+      InputResolverArg<UpdateTripArgs>,
+      Promise<TripRecord['id']>
+    >;
     deleteTrip: AuthFieldResolver<any, Pick<TripRecord, 'id'>, Promise<TripRecord['id']>>;
     createTripItinerary: AuthFieldResolver<
       any,
-      CreateTripItineraryInput,
+      InputResolverArg<CreateTripItineraryArgs>,
       Promise<TripItineraryRecord>
     >;
     updateTripItinerary: AuthFieldResolver<
       any,
-      UpdateTripItineraryInput,
+      InputResolverArg<UpdateTripItineraryArgs>,
       Promise<TripItineraryRecord['id']>
     >;
     deleteTripItinerary: AuthFieldResolver<

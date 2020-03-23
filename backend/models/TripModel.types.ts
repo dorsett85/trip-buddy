@@ -2,7 +2,7 @@ import { TripRecord } from 'common/lib/types/trip';
 import { UserRecord } from 'common/lib/types/user';
 import { IBaseModel } from './BaseModel.types';
 import { WhereArgs } from '../types/dbQueryUtils';
-import { CreateTripArgs, PartialTripRecord, UpdateTripOmitIdArgs } from '../types/trip';
+import { CreateTripArgs, PartialTripRecord, UpdateTripOmitIdCreatedDateArgs } from '../types/trip';
 
 export interface ITripModel extends IBaseModel {
   createOne(trip: CreateTripArgs): Promise<TripRecord>;
@@ -18,7 +18,7 @@ export interface ITripModel extends IBaseModel {
   ): Promise<TripRecord[]>;
 
   updateOne(
-    updateArgs: UpdateTripOmitIdArgs,
+    updateArgs: UpdateTripOmitIdCreatedDateArgs,
     whereArgs: WhereArgs<PartialTripRecord>,
     userId?: UserRecord['id']
   ): Promise<number>;

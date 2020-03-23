@@ -7,7 +7,7 @@ import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
 import {
   CreateTripItineraryArgs,
   PartialTripItineraryRecord,
-  UpdateTripItineraryOmitIdArgs
+  UpdateTripItineraryOmitIdCreatedDateArgs
 } from '../types/tripItinerary';
 
 export default class TripItineraryModel extends BaseModel implements ITripItineraryModel {
@@ -42,7 +42,7 @@ export default class TripItineraryModel extends BaseModel implements ITripItiner
   }
 
   public updateOne(
-    updateArgs: UpdateTripItineraryOmitIdArgs,
+    updateArgs: UpdateTripItineraryOmitIdCreatedDateArgs,
     whereArgs: WhereArgs<PartialTripItineraryRecord>,
     userId?: UserRecord['id']
   ): Promise<number> {

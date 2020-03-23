@@ -3,7 +3,7 @@ import { TripRecord } from 'common/lib/types/trip';
 import { ITripModel } from '../models/TripModel.types';
 import { IUserTripModel } from '../models/UserTripModel.types';
 import { WhereArgs } from '../types/dbQueryUtils';
-import { CreateTripArgs, PartialTripRecord, UpdateTripArgsOmitId } from '../types/trip';
+import { CreateTripArgs, PartialTripRecord, UpdateTripOmitIdCreatedDateArgs } from '../types/trip';
 
 export interface TripServiceDeps {
   user: UserRecord;
@@ -19,7 +19,7 @@ export interface ITripService {
   findMany(whereArgs?: WhereArgs<PartialTripRecord>): Promise<TripRecord[]>;
 
   updateOne(
-    updateTripInput: UpdateTripArgsOmitId,
+    updateTripInput: UpdateTripOmitIdCreatedDateArgs,
     whereArgs: WhereArgs<PartialTripRecord>
   ): Promise<number>;
 
