@@ -1,20 +1,14 @@
-import db from '../db/db';
 import { extractRow, extractRows } from '../utils/dbHelpers';
 import { WhereArgs } from '../types';
-import { QB } from '../utils/QueryBuilder';
+import { GenerateQueryBuilder } from '../utils/QueryBuilder';
 import { IBaseModel } from './BaseModel.types';
 
-const qb = QB(db);
-
 export default class BaseModel implements IBaseModel {
-  public readonly tableName: string;
-
-  constructor(tableName: string) {
-    this.tableName = tableName;
-  }
+  // eslint-disable-next-line no-empty-function
+  constructor(public tableName: string, protected db: GenerateQueryBuilder) {}
 
   protected async baseCreateOne<T>(record: Partial<T>): Promise<T> {
-    const query = qb<T>(this.tableName).insert(record);
+    const query = this.db<T>(this.tableName).insert(record);
     return extractRow<T>(await query);
   }
 
@@ -29,7 +23,7 @@ export default class BaseModel implements IBaseModel {
     whereArgs?: WhereArgs<Partial<T>>,
     joinUserIdTable?: string
   ): Promise<T[]> {
-    const query = qb<T>(this.tableName)
+    const query = this.db<T>(this.tableName)
       .select()
       .joinRaw(joinUserIdTable)
       .where(whereArgs);
@@ -41,7 +35,7 @@ export default class BaseModel implements IBaseModel {
     whereArgs: WhereArgs<Partial<T>>,
     tableWithUserId?: string
   ): Promise<number> {
-    const query = qb<T>(this.tableName)
+    const query = this.db<T>(this.tableName)
       .update(updateArgs, tableWithUserId)
       .where(whereArgs);
     return (await query).rowCount;
@@ -51,7 +45,7 @@ export default class BaseModel implements IBaseModel {
     whereArgs: WhereArgs<Partial<T>>,
     tableWithUserId?: string
   ): Promise<number> {
-    const query = qb<T>(this.tableName)
+    const query = this.db<T>(this.tableName)
       .delete(tableWithUserId)
       .where(whereArgs);
     return (await query).rowCount;

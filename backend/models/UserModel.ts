@@ -3,12 +3,8 @@ import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { TripRecord } from 'common/lib/types/trip';
 import BaseModel from './BaseModel';
 import { WhereArgs } from '../types';
-import { QB } from '../utils/QueryBuilder';
-import db from '../db/db';
 import { extractRows } from '../utils/dbHelpers';
-import { IUserModel } from './UserModel.types'
-
-const qb = QB(db);
+import { IUserModel } from './UserModel.types';
 
 export default class UserModel extends BaseModel implements IUserModel {
   public createOne(user: Partial<UserRecord>): Promise<UserRecord> {
@@ -30,7 +26,7 @@ export default class UserModel extends BaseModel implements IUserModel {
 
   public async findTripInvitees(tripId: TripRecord['id']): Promise<UserRecord[]> {
     // TODO Update accepting_trip_invites to 'friends' or 'all' when user setup wizard is completed!
-    const query = qb.raw(
+    const query = this.db.raw(
       `
       SELECT u.* FROM users u
       WHERE u.id NOT IN (
@@ -47,7 +43,7 @@ export default class UserModel extends BaseModel implements IUserModel {
   public async createTripInvites(
     invite: Partial<TripInviteRecord>[]
   ): Promise<TripInviteRecord[]> {
-    const inviteIds = qb('trip_invites')
+    const inviteIds = this.db('trip_invites')
       .insert(invite)
       .returning(['id']);
     return extractRows(await inviteIds);

@@ -23,7 +23,6 @@ const Query: UserResolvers['Query'] = {
     return user;
   },
   possibleTripInvitees: async (_, { tripId }, { userService }) => {
-    console.log(tripId);
     const possibleTripInvitees = await userService.possibleTripInvitees(tripId);
     return possibleTripInvitees;
   }

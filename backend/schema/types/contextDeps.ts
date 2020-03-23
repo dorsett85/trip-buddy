@@ -5,14 +5,15 @@ import UserModel from '../../models/UserModel';
 import UserTripModel from '../../models/UserTripModel';
 import TripModel from '../../models/TripModel';
 import TripItineraryModel from '../../models/TripItineraryModel';
-import TripItineraryService from "../../services/TripItinerary";
+import TripItineraryService from '../../services/TripItinerary';
+import { GenerateQueryBuilder } from '../../utils/QueryBuilder';
 
 export interface ContextDeps {
   services: {
     AccessService: typeof AccessService;
     UserService: typeof UserService;
     TripService: typeof TripService;
-    TripItineraryService: typeof TripItineraryService
+    TripItineraryService: typeof TripItineraryService;
   };
   models: {
     UserModel: typeof UserModel;
@@ -20,4 +21,5 @@ export interface ContextDeps {
     TripModel: typeof TripModel;
     TripItineraryModel: typeof TripItineraryModel;
   };
+  db: GenerateQueryBuilder;
 }

@@ -19,6 +19,10 @@ import TripModel from '../models/TripModel';
 import UserTripModel from '../models/UserTripModel';
 import TripItineraryModel from '../models/TripItineraryModel';
 import { getFormatError } from './getFormatError';
+import {ConnectQueryBuilder} from "../utils/QueryBuilder";
+import db from "../db/db";
+
+const qb = ConnectQueryBuilder(db);
 
 /*
  * Define the ApolloServerExpressConfig here, which includes the
@@ -32,10 +36,13 @@ const typeDefs = [
   dateTypeDefs,
   tripTypeDefs
 ];
+
 const resolvers = shallowMerge([userResolvers, tripResolvers, dateResolvers]);
+
 const schemaDirectives = {
   isAuth: IsAuthDirective
 };
+
 const context = getContext({
   services: {
     AccessService,
@@ -48,8 +55,10 @@ const context = getContext({
     UserTripModel,
     TripModel,
     TripItineraryModel
-  }
+  },
+  db: qb
 });
+
 const formatError = getFormatError();
 
 export const config: ApolloServerExpressConfig = {
