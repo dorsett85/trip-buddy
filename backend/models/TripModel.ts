@@ -4,6 +4,7 @@ import { UserTripRecord } from 'common/lib/types/userTrip';
 import BaseModel from './BaseModel';
 import { OmitId, WhereArgGroup, WhereArgs } from '../types';
 import { ITripModel } from './TripModel.types';
+import {CreateTripInput, UpdateTripInput} from "../schema/resolvers/trip.types";
 
 export default class TripModel extends BaseModel implements ITripModel {
   private tableWithUserId = 'users_trips ut';
@@ -12,8 +13,8 @@ export default class TripModel extends BaseModel implements ITripModel {
 
   private whereTableWithUserId = `${this.tableName}.id = ut.trip_id`;
 
-  public createOne(trip: Partial<TripRecord>): Promise<TripRecord> {
-    return this.baseCreateOne(trip);
+  public createOne(trip: CreateTripInput['input']): Promise<TripRecord> {
+    return this.baseCreateOne<TripRecord>(trip);
   }
 
   public findOne(
@@ -54,7 +55,7 @@ export default class TripModel extends BaseModel implements ITripModel {
   }
 
   public updateOne(
-    updateArgs: OmitId<Partial<TripRecord>>,
+    updateArgs: OmitId<UpdateTripInput['input']>,
     whereArgs: WhereArgs<Partial<TripRecord>>,
     userId?: UserRecord['id']
   ): Promise<number> {

@@ -5,7 +5,7 @@ import { WhereArgs } from '../types';
 import { IBaseModel } from './BaseModel.types';
 
 export interface IUserModel extends IBaseModel {
-  createOne(user: Partial<UserRecord>): Promise<UserRecord>;
+  createOne(user: Pick<UserRecord, 'username' | 'password' | 'email'>): Promise<UserRecord>;
 
   findOne(whereArgs: WhereArgs<Partial<UserRecord>>): Promise<UserRecord | undefined>;
 

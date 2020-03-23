@@ -4,6 +4,7 @@ import { UserTripRecord } from 'common/lib/types/userTrip';
 import BaseModel from './BaseModel';
 import { OmitId, WhereArgGroup, WhereArgs } from '../types';
 import { ITripItineraryModel } from './TripItineraryModel.types';
+import {CreateTripItineraryInput} from "../schema/resolvers/trip.types";
 
 export default class TripItineraryModel extends BaseModel implements ITripItineraryModel {
   private readonly tableWithUserId = 'users_trips ut';
@@ -13,9 +14,9 @@ export default class TripItineraryModel extends BaseModel implements ITripItiner
   private readonly whereTableWithUserId = `${this.tableName}.trip_id = ut.trip_id`;
 
   public createOne(
-    tripItinerary: Partial<TripItineraryRecord>
+    tripItinerary: CreateTripItineraryInput['input']
   ): Promise<TripItineraryRecord> {
-    return this.baseCreateOne(tripItinerary);
+    return this.baseCreateOne<TripItineraryRecord>(tripItinerary);
   }
 
   public findMany(

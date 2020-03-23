@@ -5,10 +5,13 @@ import BaseModel from './BaseModel';
 import { WhereArgs } from '../types';
 import { extractRows } from '../utils/dbHelpers';
 import { IUserModel } from './UserModel.types';
+import { UpdateTripInput } from '../schema/resolvers/trip.types';
 
 export default class UserModel extends BaseModel implements IUserModel {
-  public createOne(user: Partial<UserRecord>): Promise<UserRecord> {
-    return this.baseCreateOne(user);
+  public createOne(
+    user: Pick<UserRecord, 'username' | 'password' | 'email'>
+  ): Promise<UserRecord> {
+    return this.baseCreateOne<UserRecord>(user);
   }
 
   public findOne(
@@ -18,7 +21,7 @@ export default class UserModel extends BaseModel implements IUserModel {
   }
 
   public updateOne(
-    updateArgs: Partial<UserRecord>,
+    updateArgs: UpdateTripInput['input'],
     whereArgs: WhereArgs<Partial<UserRecord>>
   ): Promise<number> {
     return this.baseUpdateOne(updateArgs, whereArgs);

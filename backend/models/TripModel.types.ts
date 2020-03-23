@@ -24,3 +24,7 @@ export interface ITripModel extends IBaseModel {
 
   deleteOne(tripId: TripRecord['id'], userId?: UserRecord['id']): Promise<number>;
 }
+
+export interface CreateTripArgs {
+  
+}
