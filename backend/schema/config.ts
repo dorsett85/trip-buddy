@@ -19,10 +19,6 @@ import TripModel from '../models/TripModel';
 import UserTripModel from '../models/UserTripModel';
 import TripItineraryModel from '../models/TripItineraryModel';
 import { getFormatError } from './getFormatError';
-import {ConnectQueryBuilder} from "../utils/QueryBuilder";
-import db from "../db/db";
-
-const qb = ConnectQueryBuilder(db);
 
 /*
  * Define the ApolloServerExpressConfig here, which includes the
@@ -55,8 +51,7 @@ const context = getContext({
     UserTripModel,
     TripModel,
     TripItineraryModel
-  },
-  db: qb
+  }
 });
 
 const formatError = getFormatError();

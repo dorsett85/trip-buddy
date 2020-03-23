@@ -4,6 +4,7 @@ import { LoginArgs, RegisterArgs } from '../types/access';
 
 export interface AccessServiceDeps {
   userModel: IUserModel;
+  jwtSecretKey: string;
 }
 
 export interface IAccessService {

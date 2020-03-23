@@ -1,39 +1,39 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { UserRecord } from 'common/lib/types/user';
-import { expressServer } from '../config/config';
 import {
   USER_NOT_FOUND_MESSAGE,
   INVALID_LOGIN_MESSAGE,
   USER_ALREADY_EXISTS_MESSAGE
 } from '../utils/constants/errors';
-import {AccessServiceDeps, IAccessService} from './Access.types';
+import { AccessServiceDeps, IAccessService } from './Access.types';
 import { IUserModel } from '../models/UserModel.types';
-import {LoginArgs, RegisterArgs} from "../types/access";
-
-const { jwtSecretKey } = expressServer;
+import { LoginArgs, RegisterArgs } from '../types/access';
 
 export default class AccessService implements IAccessService {
   private userModel: IUserModel;
 
+  private readonly jwtSecretKey: string;
+
   public constructor(dependencies: AccessServiceDeps) {
     this.userModel = dependencies.userModel;
+    this.jwtSecretKey = dependencies.jwtSecretKey;
   }
 
-  private static sign(user: UserRecord): string {
-    return jwt.sign(user, jwtSecretKey);
+  private sign(user: UserRecord): string {
+    return jwt.sign(user, this.jwtSecretKey);
   }
 
-  private static verify(token: string): UserRecord | null {
+  private verify(token: string): UserRecord | null {
     try {
-      return jwt.verify(token, jwtSecretKey) as UserRecord;
+      return jwt.verify(token, this.jwtSecretKey) as UserRecord;
     } catch (err) {
       return null;
     }
   }
 
   public async getActiveUser(token: string): Promise<UserRecord | null> {
-    const user = AccessService.verify(token);
+    const user = this.verify(token);
     return user && ((await this.userModel.findOne({ items: { id: user.id } })) || null);
   }
 
@@ -55,7 +55,7 @@ export default class AccessService implements IAccessService {
       return INVALID_LOGIN_MESSAGE;
     }
 
-    return AccessService.sign(user);
+    return this.sign(user);
   }
 
   public async register(args: RegisterArgs): Promise<string> {
@@ -75,6 +75,6 @@ export default class AccessService implements IAccessService {
       email
     });
 
-    return AccessService.sign(newUser);
+    return this.sign(newUser);
   }
 }

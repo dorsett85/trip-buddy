@@ -6,7 +6,6 @@ import UserTripModel from '../../models/UserTripModel';
 import TripModel from '../../models/TripModel';
 import TripItineraryModel from '../../models/TripItineraryModel';
 import TripItineraryService from '../../services/TripItinerary';
-import { GenerateQueryBuilder } from '../../utils/QueryBuilder';
 
 export interface ContextDeps {
   services: {
@@ -21,5 +20,4 @@ export interface ContextDeps {
     TripModel: typeof TripModel;
     TripItineraryModel: typeof TripItineraryModel;
   };
-  db: GenerateQueryBuilder;
 }

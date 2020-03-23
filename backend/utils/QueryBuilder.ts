@@ -404,7 +404,7 @@ export default class QueryBuilder<T = any> {
  * Alternatively you can call the raw property which is the same as calling the raw method on
  * a new QueryBuilder object with a blank "table" argument.
  */
-export const ConnectQueryBuilder = (pool: Pool) => {
+export const connectQueryBuilder = (pool: Pool) => {
   const fn = <T = any>(table: string) => {
     return new QueryBuilder<T>(pool, table);
   };
@@ -415,4 +415,4 @@ export const ConnectQueryBuilder = (pool: Pool) => {
   return fn;
 };
 
-export type GenerateQueryBuilder = ReturnType<typeof ConnectQueryBuilder>;
+export type GenerateQueryBuilder = ReturnType<typeof connectQueryBuilder>;
