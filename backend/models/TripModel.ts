@@ -2,11 +2,10 @@ import { TripRecord } from 'common/lib/types/trip';
 import { UserRecord } from 'common/lib/types/user';
 import { UserTripRecord } from 'common/lib/types/userTrip';
 import BaseModel from './BaseModel';
-import { ITripModel } from './TripModel.types';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
 import {CreateTripArgs, PartialTripRecord, UpdateTripOmitIdCreatedDateArgs} from '../types/trip';
 
-export default class TripModel extends BaseModel implements ITripModel {
+export default class TripModel extends BaseModel {
   private tableWithUserId = 'users_trips ut';
 
   private joinTableWithUserId = `LEFT JOIN ${this.tableWithUserId} ON ut.trip_id = ${this.tableName}.id`;

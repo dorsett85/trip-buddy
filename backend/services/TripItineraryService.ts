@@ -1,21 +1,18 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripItineraryRecord } from 'common/src/types/tripItinerary';
-import {
-  ITripItineraryService,
-  TripItineraryServiceDeps
-} from './TripItineraryService.types';
-import { ITripItineraryModel } from '../models/TripItineraryModel.types';
+import { TripItineraryServiceDeps } from './TripItineraryService.types';
 import { WhereArgs } from '../types/dbQueryUtils';
 import {
   CreateTripItineraryArgs,
   PartialTripItineraryRecord,
   UpdateTripItineraryOmitIdCreatedDateArgs
 } from '../types/tripItinerary';
+import TripItineraryModel from '../models/TripItineraryModel';
 
-export default class TripItineraryService implements ITripItineraryService {
+export default class TripItineraryService {
   private readonly user: UserRecord;
 
-  private tripItineraryModel: ITripItineraryModel;
+  private tripItineraryModel: TripItineraryModel;
 
   constructor(dependencies: TripItineraryServiceDeps) {
     this.user = dependencies.user;

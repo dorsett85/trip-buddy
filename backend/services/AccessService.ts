@@ -6,12 +6,12 @@ import {
   INVALID_LOGIN_MESSAGE,
   USER_ALREADY_EXISTS_MESSAGE
 } from '../utils/constants/errors';
-import { AccessServiceDeps, IAccessService } from './AccessService.types';
-import { IUserModel } from '../models/UserModel.types';
+import { AccessServiceDeps } from './AccessService.types';
 import { LoginArgs, RegisterArgs } from '../types/access';
+import UserModel from '../models/UserModel';
 
-export default class AccessService implements IAccessService {
-  private userModel: IUserModel;
+export default class AccessService {
+  private userModel: UserModel;
 
   private readonly jwtSecretKey: string;
 

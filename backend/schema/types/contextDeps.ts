@@ -1,11 +1,11 @@
-import UserService from '../../services/User';
-import TripService from '../../services/Trip';
-import AccessService from '../../services/Access';
+import UserService from '../../services/UserService';
+import TripService from '../../services/TripService';
+import AccessService from '../../services/AccessService';
 import UserModel from '../../models/UserModel';
 import UserTripModel from '../../models/UserTripModel';
 import TripModel from '../../models/TripModel';
 import TripItineraryModel from '../../models/TripItineraryModel';
-import TripItineraryService from '../../services/TripItinerary';
+import TripItineraryService from '../../services/TripItineraryService';
 
 export interface ContextDeps {
   services: {

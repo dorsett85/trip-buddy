@@ -1,17 +1,21 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
-import { ITripService, TripServiceDeps } from './TripService.types';
-import { ITripModel } from '../models/TripModel.types';
-import { IUserTripModel } from '../models/UserTripModel.types';
+import { TripServiceDeps } from './TripService.types';
 import { WhereArgs } from '../types/dbQueryUtils';
-import {CreateTripArgs, PartialTripRecord, UpdateTripOmitIdCreatedDateArgs} from '../types/trip';
+import {
+  CreateTripArgs,
+  PartialTripRecord,
+  UpdateTripOmitIdCreatedDateArgs
+} from '../types/trip';
+import TripModel from '../models/TripModel';
+import UserTripModel from '../models/UserTripModel';
 
-export default class TripService implements ITripService {
+export default class TripService {
   private readonly user: UserRecord;
 
-  private tripModel: ITripModel;
+  private tripModel: TripModel;
 
-  private userTripModel: IUserTripModel;
+  private userTripModel: UserTripModel;
 
   constructor(dependencies: TripServiceDeps) {
     this.user = dependencies.user;

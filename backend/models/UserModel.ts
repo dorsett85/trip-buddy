@@ -3,7 +3,6 @@ import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { TripRecord } from 'common/lib/types/trip';
 import BaseModel from './BaseModel';
 import { extractRows } from '../utils/dbHelpers';
-import { IUserModel } from './UserModel.types';
 import { WhereArgs } from '../types/dbQueryUtils';
 import {
   CreateTripInvitesWithInviterIdArgs,
@@ -12,7 +11,7 @@ import {
   UpdateUserArgs
 } from '../types/user';
 
-export default class UserModel extends BaseModel implements IUserModel {
+export default class UserModel extends BaseModel {
   public createOne(user: CreateUserArgs): Promise<UserRecord> {
     return this.baseCreateOne<UserRecord>(user);
   }

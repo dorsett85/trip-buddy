@@ -2,7 +2,6 @@ import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 import { UserRecord } from 'common/lib/types/user';
 import { UserTripRecord } from 'common/lib/types/userTrip';
 import BaseModel from './BaseModel';
-import { ITripItineraryModel } from './TripItineraryModel.types';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
 import {
   CreateTripItineraryArgs,
@@ -10,7 +9,7 @@ import {
   UpdateTripItineraryOmitIdCreatedDateArgs
 } from '../types/tripItinerary';
 
-export default class TripItineraryModel extends BaseModel implements ITripItineraryModel {
+export default class TripItineraryModel extends BaseModel {
   private readonly tableWithUserId = 'users_trips ut';
 
   private readonly joinTableWithUserId = `LEFT JOIN ${this.tableWithUserId} ON ut.trip_id = ${this.tableName}.trip_id`;

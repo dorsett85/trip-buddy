@@ -1,18 +1,18 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { TripRecord } from 'common/lib/types/trip';
-import { IUserService, UserServiceDeps } from './UserService.types';
-import { IUserModel } from '../models/UserModel.types';
+import { UserServiceDeps } from './UserService.types';
 import {
   CreateTripInvitesArgs,
   CreateTripInvitesWithInviterIdArgs,
   UpdateUserArgs
 } from '../types/user';
+import UserModel from '../models/UserModel';
 
-export default class UserService implements IUserService {
+export default class UserService {
   private readonly user: UserRecord;
 
-  private userModel: IUserModel;
+  private userModel: UserModel;
 
   constructor(dependencies: UserServiceDeps) {
     this.user = dependencies.user;
