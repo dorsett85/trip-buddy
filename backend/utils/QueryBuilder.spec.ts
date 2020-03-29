@@ -1,8 +1,8 @@
-import QueryBuilder, { QB } from './QueryBuilder';
+import QueryBuilder, { connectQueryBuilder } from './QueryBuilder';
 import db from '../db/db';
-import { WhereArgs } from '../types';
+import {WhereArgs} from "../types/dbQueryUtils";
 
-const qb = QB(db);
+const qb = connectQueryBuilder(db);
 
 describe('test QueryBuilder class', () => {
   it('should create new QueryBuilder instance', async () => {
@@ -26,6 +26,7 @@ describe('test QueryBuilder class', () => {
       username: 'clayton'
     };
     const instance = qb('users').insert(items);
+    
     const sql = `INSERT INTO users (id, username)\nVALUES ($1, $2)`;
     expect(instance.clausesMap.insert).toBe(sql);
     expect(instance.parameterizedValues).toStrictEqual({

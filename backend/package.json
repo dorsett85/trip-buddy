@@ -24,7 +24,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "type:check": "tsc --noEmit",
-    "type:check:watch": "npm run type:check -- --watch",
     "update:common": "npm i ../common"
   },
   "devDependencies": {
