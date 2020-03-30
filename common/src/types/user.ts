@@ -8,7 +8,7 @@ export interface UserRecord {
   username: string;
   email: string;
   password: string;
-  email_validated: boolean;
+  email_verified: boolean;
   role: typeof userRole[number];
   accepting_trip_invites: typeof acceptingTripInvites[number];
   created_date: Date;

@@ -12,7 +12,7 @@ export const GET_LOGGED_IN_DATA = gql`
       username
       email
       password
-      email_validated
+      email_verified
       role
       accepting_trip_invites
       created_date

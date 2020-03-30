@@ -17,7 +17,7 @@ export const userTypeDefs = gql`
     username: String
     email: String
     password: String
-    email_validated: Boolean
+    email_verified: Boolean
     role: Role
     accepting_trip_invites: AcceptingTripInvites
     created_date: Date
@@ -28,7 +28,7 @@ export const userTypeDefs = gql`
     username: String
     email: String
     password: String
-    email_validated: Boolean
+    email_verified: Boolean
     accepting_trip_invites: AcceptingTripInvites
   }
   

@@ -10,7 +10,7 @@ export const up = async (pool: Pool): Promise<QueryResult<any>> => (
       username varchar NOT NULL UNIQUE,
       password varchar NOT NULL,
       email varchar NOT NULL UNIQUE,
-      email_validated boolean DEFAULT false NOT NULL,
+      email_verified boolean DEFAULT false NOT NULL,
       created_date timestamp DEFAULT NOW() NOT NULL
     );
   `)
