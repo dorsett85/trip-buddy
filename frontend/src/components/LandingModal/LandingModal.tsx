@@ -5,14 +5,13 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import Slide from '@material-ui/core/Slide';
-import { TransitionProps } from '@material-ui/core/transitions';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import styled from 'styled-components';
 import LoginForm from '../LoginForm/LoginForm';
 import RegisterForm from '../RegisterForm/RegisterForm';
 import { ShowProps } from '../../types/componentProps';
+import TransitionModal from '../TransitionModal/TransitionModal';
 
 interface LandingFormProps {
   formType: string;
@@ -29,10 +28,6 @@ const ToggleButtonGroupStyled = styled(ToggleButtonGroup)`
 const LandingForm: React.FC<LandingFormProps> = ({ formType }) =>
   formType === 'login' ? <LoginForm /> : <RegisterForm />;
 
-const Transition = React.forwardRef<unknown, TransitionProps>((props, ref) => {
-  return <Slide direction='up' ref={ref} {...props} />;
-});
-
 const LandingModal: React.FC<ShowProps> = ({ show }) => {
   const [tabValue, setTabValue] = useState('login');
   const theme = useTheme();
@@ -43,7 +38,13 @@ const LandingModal: React.FC<ShowProps> = ({ show }) => {
   };
 
   return (
-    <Dialog open={show} TransitionComponent={Transition} fullScreen={fullScreen} fullWidth maxWidth='xs'>
+    <Dialog
+      open={show}
+      TransitionComponent={TransitionModal}
+      fullScreen={fullScreen}
+      fullWidth
+      maxWidth='xs'
+    >
       <DialogContent>
         <Box pb={2}>
           <Typography variant='h4' align='center'>

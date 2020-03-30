@@ -1,8 +1,9 @@
-import { useLazyQuery } from '@apollo/react-hooks';
+import { LazyQueryHookOptions, useLazyQuery } from '@apollo/react-hooks';
 import { GET_LOGGED_IN_DATA } from '../gql/user';
 
-//
-// User
-//
+/*
+ * User
+ */
 
-export const useLoggedInQuery = () => useLazyQuery(GET_LOGGED_IN_DATA);
+export const useLoggedInQuery = <TData = any>(options?: LazyQueryHookOptions<TData>) =>
+  useLazyQuery(GET_LOGGED_IN_DATA, options);
