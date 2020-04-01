@@ -15,9 +15,9 @@ const server = new ApolloServer(config);
 server.applyMiddleware({ app });
 
 // Serve static assets if not on the webpack dev server
-// app.use('/', express.static(path.resolve(__dirname, '../build')));
+// app.use('/', express.static(path.resolve(__dirname, '../frontend/build')));
 // app.use('/', (req: any, res: any) => {
-//   res.sendFile(path.resolve(__dirname, '../build/index.html'));
+//   res.sendFile(path.resolve(__dirname, '../frontend/build/index.html'));
 // });
 
 app.listen(expressServer.port, () =>
