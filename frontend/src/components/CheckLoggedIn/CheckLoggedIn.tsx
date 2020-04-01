@@ -9,20 +9,21 @@ import SideDrawerLazy from '../SideDrawer/SideDrawerLazy';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { useLoggedInQuery } from '../ApolloProvider/hooks/queries';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
-import NewUserSetupModal from '../NewUserSetupModal/NewUserSetupModal';
 
 const CheckLoggedIn: React.FC = () => {
   const dispatch = useAppDispatch();
-  const loggedIn = useAppSelector(({ user }) => user.loggedIn);
+  const user = useAppSelector(state => state.user);
   const [getLoggedInData, { loading }] = useLoggedInQuery({
     onCompleted: data => {
       const {
-        user: { trips, ...user }
+        user: { trips, ...loggedInUser }
       } = data;
-      dispatch(setUser(user));
+      dispatch(setUser(loggedInUser));
       dispatch(setTrips(trips));
     }
   });
+
+  const { loggedIn } = user;
 
   // Check login and run dispatch actions
   useEffect(() => {
@@ -45,7 +46,6 @@ const CheckLoggedIn: React.FC = () => {
   return (
     <>
       <LandingModal show={!loggedIn} />
-      <NewUserSetupModal />
       <Navigator show={loggedIn} />
       <TripMapLazy loggedIn={loggedIn} />
       <SideDrawerLazy />
