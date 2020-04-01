@@ -23,7 +23,7 @@ const CheckLoggedIn: React.FC = () => {
     }
   });
 
-  const { loggedIn } = user;
+  const { loggedIn, setupComplete } = user;
 
   // Check login and run dispatch actions
   useEffect(() => {
@@ -42,12 +42,14 @@ const CheckLoggedIn: React.FC = () => {
     dispatch(setLoadingUser(loading));
     dispatch(setLoadingTrips(loading));
   }, [dispatch, loading]);
+  
+  const showLanding = !loggedIn || !setupComplete;
 
   return (
     <>
       <LandingModal show={!loggedIn} />
       <Navigator show={loggedIn} />
-      <TripMapLazy loggedIn={loggedIn} />
+      <TripMapLazy />
       <SideDrawerLazy />
     </>
   );

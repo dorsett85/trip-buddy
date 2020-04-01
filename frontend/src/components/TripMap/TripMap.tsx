@@ -7,10 +7,7 @@ import TripCreatorModal from '../TripCreatorModal/TripCreatorModal';
 import TripCreatorSnackbar from '../TripCreatorSnackbar/TripCreatorSnackbar';
 import ActiveTripSnackbar from '../ActiveTripSnackbar/ActiveTripSnackbar';
 import DeleteTripSnackbar from '../DeleteTripSnackbar/DeleteTripSnackbar';
-
-interface TripMapProps {
-  loggedIn: boolean;
-}
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 interface MapContainerProps {
   updatingLocation: boolean;
@@ -31,7 +28,8 @@ const MapContainer = styled.div<MapContainerProps>(
   `
 );
 
-const TripMap: React.FC<TripMapProps> = ({ loggedIn }) => {
+const TripMap: React.FC = () => {
+  const showControls = useAppSelector(({ user }) => user.loggedIn && user.setupComplete);
   const { viewport, updateViewport, handleClick } = useMap();
   const { tripMarkers, updatingLocation } = useMapTrips();
 
@@ -48,7 +46,7 @@ const TripMap: React.FC<TripMapProps> = ({ loggedIn }) => {
           mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_API_TOKEN}
         >
           {tripMarkers}
-          {loggedIn && (
+          {showControls && (
             <Slide in direction='down'>
               <div className='mapNavControl'>
                 <NavigationControl />

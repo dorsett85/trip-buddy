@@ -6,7 +6,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import { ShowProps } from '../../types/componentProps';
 import TransitionModal from '../TransitionModal/TransitionModal';
 import Entry from "../Entry/Entry";
-
+import NewUserSetup from "../NewUserSetup/NewUserSetup";
 
 const LandingModal: React.FC<ShowProps> = ({ show }) => {
   const theme = useTheme();
@@ -22,6 +22,7 @@ const LandingModal: React.FC<ShowProps> = ({ show }) => {
     >
       <DialogContent>
         <Entry />
+        <NewUserSetup />
       </DialogContent>
     </Dialog>
   );
