@@ -13,6 +13,10 @@ export interface UserState {
    */
   loggedIn: boolean;
   /**
+   * If the user has completed their initial setup
+   */
+  setupComplete: boolean;
+  /**
    * Record of the logged in user
    */
   data: UserRecord | undefined;

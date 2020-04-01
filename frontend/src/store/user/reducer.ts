@@ -5,6 +5,7 @@ import { UserState, UserSliceCaseReducers } from './types';
 const initialState: UserState = {
   loading: false,
   loggedIn: false,
+  setupComplete: false,
   data: undefined
 };
 

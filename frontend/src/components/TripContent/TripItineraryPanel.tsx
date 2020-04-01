@@ -33,7 +33,7 @@ import { useAppSelector } from '../../store/hooks/useAppSelector';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
 import ErrorText from '../AppText/ErrorText';
 import SuccessText from '../AppText/SuccessText';
-import FlyToButton from '../generic/FlyToButton';
+import FlyToButton from '../generic/FlyToButton/FlyToButton';
 
 interface TripItineraryPanelProps extends DispatchProp {
   /**

@@ -11,6 +11,12 @@ export const userTypeDefs = gql`
     friends
     all
   }
+  
+  type NewUserSetup {
+    email_verified: Boolean!
+    username: Boolean!
+    accepting_trip_invites: Boolean!
+  }
 
   type User {
     id: Int
@@ -21,6 +27,7 @@ export const userTypeDefs = gql`
     role: Role
     accepting_trip_invites: AcceptingTripInvites
     created_date: Date
+    new_user_setup: NewUserSetup
     trips: [Trip]
   }
 
@@ -30,6 +37,7 @@ export const userTypeDefs = gql`
     password: String
     email_verified: Boolean
     accepting_trip_invites: AcceptingTripInvites
+    new_user_setup: NewUserSetup
   }
   
   input CreateTripInvite {

@@ -10,7 +10,7 @@ import { TripRecord } from 'common/lib/types/trip';
 import { setTripCreator, setActiveTripInfo } from '../../store/trip/reducer';
 import { setDrawer, setFlyTo } from '../../store/general/reducer';
 import { TripState } from '../../store/trip/types';
-import FlyToButton from '../generic/FlyToButton';
+import FlyToButton from '../generic/FlyToButton/FlyToButton';
 
 export interface TripListProps extends DispatchProp {
   trips: TripState['trips'];

@@ -36,7 +36,7 @@ import { useAppSelector } from '../../store/hooks/useAppSelector';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
 import SuccessText from '../AppText/SuccessText';
 import ErrorText from '../AppText/ErrorText';
-import FlyToButton from '../generic/FlyToButton';
+import FlyToButton from '../generic/FlyToButton/FlyToButton';
 import {
   CREATE_TRIP_INVITES,
   GET_POSSIBLE_TRIP_INVITEES

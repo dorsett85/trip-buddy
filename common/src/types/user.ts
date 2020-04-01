@@ -3,6 +3,12 @@ export const userRole = ['admin', 'customer'] as const;
 
 export const acceptingTripInvites = ['no', 'friends', 'all'] as const;
 
+export interface NewUserSetup {
+  email_verified: boolean;
+  username: boolean;
+  accepting_trip_invites: boolean;
+}
+
 export interface UserRecord {
   id: number;
   username: string;
@@ -12,4 +18,5 @@ export interface UserRecord {
   role: typeof userRole[number];
   accepting_trip_invites: typeof acceptingTripInvites[number];
   created_date: Date;
+  new_user_setup: NewUserSetup;
 }
