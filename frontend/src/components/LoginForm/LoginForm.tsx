@@ -7,10 +7,14 @@ import Box from '@material-ui/core/Box';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
 import { setLoggedIn } from '../../store/user/reducer';
-import { LoginFormInputs } from './LoginForm.types';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setLocalToken } from '../../utils/localToken';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
+
+enum LoginFormInputs {
+  username = '',
+  password = ''
+}
 
 export const LOGIN_USER = gql`
   mutation LoginUser($username: String!, $password: String!) {

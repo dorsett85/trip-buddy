@@ -12,7 +12,7 @@ import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 const CheckLoggedIn: React.FC = () => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector(state => state.user);
+  const userState = useAppSelector(state => state.user);
   const [getLoggedInData, { loading }] = useLoggedInQuery({
     onCompleted: data => {
       const {
@@ -23,7 +23,7 @@ const CheckLoggedIn: React.FC = () => {
     }
   });
 
-  const { loggedIn, setupComplete } = user;
+  const { loggedIn, setupComplete } = userState;
 
   // Check login and run dispatch actions
   useEffect(() => {
@@ -47,8 +47,8 @@ const CheckLoggedIn: React.FC = () => {
 
   return (
     <>
-      <LandingModal show={!loggedIn} />
-      <Navigator show={loggedIn} />
+      <LandingModal userState={userState} />
+      <Navigator show={!showLanding} />
       <TripMapLazy />
       <SideDrawerLazy />
     </>
