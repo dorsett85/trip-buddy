@@ -4,6 +4,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import { LinearProgress } from '@material-ui/core';
+import styled, {css} from "styled-components";
 import TransitionModal from '../TransitionModal/TransitionModal';
 import Entry from '../Entry/Entry';
 import { UserState } from '../../store/user/types';
@@ -12,6 +13,19 @@ import NewUserSetup from '../NewUserSetup/NewUserSetup';
 interface LandingModalProps {
   userState: UserState;
 }
+
+const LoadingUserContainer = styled.div(({ theme }) => css`
+  margin-bottom: ${theme.spacing()};  
+`);
+
+const LoadingUser: React.FC = () => {
+  return (
+    <LoadingUserContainer>
+      <h3>Loading user...</h3>
+      <LinearProgress />
+    </LoadingUserContainer>
+  );
+};
 
 const LandingModal: React.FC<LandingModalProps> = ({ userState }) => {
   const theme = useTheme();
@@ -25,7 +39,7 @@ const LandingModal: React.FC<LandingModalProps> = ({ userState }) => {
   ) : data && !setupComplete ? (
     <NewUserSetup newUserSetup={data.new_user_setup} />
   ) : (
-    <LinearProgress />
+    <LoadingUser />
   );
 
   return (
