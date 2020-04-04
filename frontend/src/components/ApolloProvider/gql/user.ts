@@ -1,10 +1,6 @@
 import { gql } from 'apollo-boost';
 import { TRIP_FIELDS } from './trip';
 
-//
-// User
-//
-
 export const GET_LOGGED_IN_DATA = gql`
   query {
     user {
@@ -25,6 +21,12 @@ export const GET_LOGGED_IN_DATA = gql`
         ${TRIP_FIELDS}
       }
     }
+  }
+`;
+
+export const VERIFY_EMAIL = gql`
+  mutation VerifyEmail($token: String!) {
+    verifyEmail(token: $token)
   }
 `;
 

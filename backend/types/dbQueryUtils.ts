@@ -1,9 +1,17 @@
 import { LngLatArray } from 'common/lib/types/utils';
+import { UserRecord } from 'common/lib/types/user';
 
 /**
  * All possible db value types
  */
-export type RecordValues = string | number | boolean | Date | LngLatArray | undefined;
+export type RecordValues =
+  | string
+  | number
+  | boolean
+  | Date
+  | LngLatArray
+  | undefined
+  | Partial<UserRecord['new_user_setup']>;
 
 /**
  * Array of record value types

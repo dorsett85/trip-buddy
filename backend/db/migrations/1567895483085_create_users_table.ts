@@ -11,6 +11,7 @@ export const up = async (pool: Pool): Promise<QueryResult<any>> => (
       password varchar NOT NULL,
       email varchar NOT NULL UNIQUE,
       email_verified boolean DEFAULT false NOT NULL,
+      email_verification_token varchar DEFAULT md5(random()::text) NOT NULL,
       created_date timestamp DEFAULT NOW() NOT NULL
     );
   `)

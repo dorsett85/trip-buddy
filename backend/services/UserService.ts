@@ -8,6 +8,7 @@ import {
   UpdateUserArgs
 } from '../types/user';
 import UserModel from '../models/UserModel';
+import {WhereArgGroup} from "../types/dbQueryUtils";
 
 export default class UserService {
   private readonly user: UserRecord;
@@ -17,6 +18,10 @@ export default class UserService {
   constructor(dependencies: UserServiceDeps) {
     this.user = dependencies.user;
     this.userModel = dependencies.userModel;
+  }
+  
+  public async verifyEmail(token: string): Promise<number> {
+    return this.userModel.verifyEmail(token, this.user);
   }
 
   public findOne(): Promise<UserRecord | undefined> {

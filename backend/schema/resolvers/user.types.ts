@@ -5,10 +5,7 @@ import { TripRecord } from 'common/lib/types/trip';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { FieldResolver, AuthFieldResolver, InputResolverArg } from '../types/resolvers';
 import { LoginArgs, RegisterArgs } from '../../types/access';
-import {
-  CreateTripInvitesArgs,
-  UpdateUserArgs,
-} from '../../types/user';
+import { CreateTripInvitesArgs, UpdateUserArgs } from '../../types/user';
 
 export interface UserResolvers extends IResolvers {
   User: {
@@ -25,11 +22,8 @@ export interface UserResolvers extends IResolvers {
   Mutation: {
     loginUser: FieldResolver<any, LoginArgs, Promise<string>>;
     registerUser: FieldResolver<any, RegisterArgs, Promise<string>>;
-    updateUser: AuthFieldResolver<
-      any,
-      InputResolverArg<UpdateUserArgs>,
-      Promise<UserRecord['id']>
-    >;
+    verifyEmail: AuthFieldResolver<any, { token: string }, Promise<number>>;
+    updateUser: AuthFieldResolver<any, InputResolverArg<UpdateUserArgs>, Promise<number>>;
     createTripInvites: AuthFieldResolver<
       any,
       InputResolverArg<CreateTripInvitesArgs>,

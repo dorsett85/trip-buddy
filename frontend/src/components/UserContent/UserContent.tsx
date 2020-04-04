@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { DispatchProp } from 'react-redux';
-import { useMutation } from '@apollo/react-hooks';
 import { UserRecord, acceptingTripInvites } from 'common/lib/types/user';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -11,7 +10,7 @@ import { getFirstError } from '../../utils/apolloErrors';
 import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import SuccessText from '../AppText/SuccessText';
 import ErrorText from '../AppText/ErrorText';
-import { UPDATE_USER } from '../ApolloProvider/gql/user';
+import { useUpdateUserMutation } from '../ApolloProvider/hooks/user';
 
 export interface UserContentProps extends DispatchProp {
   user: UserRecord;
@@ -30,7 +29,7 @@ const UserNameInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
   const [updateUsernameError, setUpdateUsernameError] = useState<JSX.Element>();
 
   // Define update user mutation and handlers
-  const [updateUser, { loading }] = useMutation(UPDATE_USER, {
+  const [updateUser, { loading }] = useUpdateUserMutation({
     onCompleted: () => {
       setEditingUsername(false);
       dispatch(setUser({ username }));
@@ -90,7 +89,7 @@ const UserEmailInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
   const [updateEmailError, setUpdateEmailError] = useState<JSX.Element>();
 
   // Define update user mutation and handlers
-  const [updateUser, { loading }] = useMutation(UPDATE_USER, {
+  const [updateUser, { loading }] = useUpdateUserMutation({
     onCompleted: () => {
       setEditingEmail(false);
       dispatch(setUser({ email }));
@@ -147,7 +146,7 @@ const AcceptingTripInvitesSelect: React.FC<UserContentProps> = ({ dispatch, user
   const [updateText, setUpdateText] = useState<JSX.Element>();
   const [updateError, setUpdateError] = useState<JSX.Element>();
 
-  const [updateUser, { loading }] = useMutation(UPDATE_USER);
+  const [updateUser, { loading }] = useUpdateUserMutation();
 
   const handleOnChange: React.ChangeEventHandler<HTMLInputElement> = ({ target }) => {
     const newValue = target.value as UserRecord['accepting_trip_invites'];

@@ -51,6 +51,9 @@ const Mutation: UserResolvers['Mutation'] = {
 
     return token;
   },
+  verifyEmail: (_, { token }, { userService }) => {
+    return userService.verifyEmail(token);
+  },
   updateUser: async (_, { input }, { userService, user }) => {
     const updatedCount = await userService.updateOne(input);
     if (!updatedCount) {

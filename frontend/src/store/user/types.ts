@@ -29,5 +29,6 @@ export interface UserSliceCaseReducers extends SliceCaseReducers<UserState> {
   resetUserState: UserCaseReducer;
   setLoadingUser: UserCaseReducer<UserState['loading']>;
   setLoggedIn: UserCaseReducer<UserState['loggedIn']>;
+  setSetupCompleted: UserCaseReducer<UserState['setupComplete']>;
   setUser: UserCaseReducer<Partial<UserRecord>>;
 }

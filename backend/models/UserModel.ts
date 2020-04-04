@@ -12,6 +12,20 @@ import {
 } from '../types/user';
 
 export default class UserModel extends BaseModel {
+  public async verifyEmail(token: string, user: UserRecord): Promise<number> {
+    const query = this.db.raw(
+      `
+      UPDATE users
+      SET 
+          new_user_setup = new_user_setup || ?,
+          email_verified = true
+      WHERE username = ? -- TODO add email_verification_token check
+    `,
+      [{ email_verified: true }, user.username, /* TODO add token */]
+    );
+    return (await query).rowCount;
+  }
+
   public createOne(user: CreateUserArgs): Promise<UserRecord> {
     return this.baseCreateOne<UserRecord>(user);
   }

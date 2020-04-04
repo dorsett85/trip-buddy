@@ -1,13 +1,18 @@
 import React, { useEffect } from 'react';
 import LandingModal from '../LandingModal/LandingModal';
 import Navigator from '../Navigator/Navigator';
-import { setLoadingUser, setUser, setLoggedIn } from '../../store/user/reducer';
+import {
+  setLoadingUser,
+  setUser,
+  setLoggedIn,
+  setSetupCompleted
+} from '../../store/user/reducer';
 import { getLocalToken } from '../../utils/localToken';
 import { setLoadingTrips, setTrips } from '../../store/trip/reducer';
 import TripMapLazy from '../TripMap/TripMapLazy';
 import SideDrawerLazy from '../SideDrawer/SideDrawerLazy';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import { useLoggedInQuery } from '../ApolloProvider/hooks/queries';
+import { useLoggedInQuery } from '../ApolloProvider/hooks/user';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 const CheckLoggedIn: React.FC = () => {
@@ -18,8 +23,20 @@ const CheckLoggedIn: React.FC = () => {
       const {
         user: { trips, ...loggedInUser }
       } = data;
-      dispatch(setUser(loggedInUser));
-      dispatch(setTrips(trips));
+      // Remove __typename from new_user_setup object.
+      // TODO should we turn this off in the apollo config?
+      // eslint-disable-next-line no-underscore-dangle
+      delete loggedInUser.new_user_setup.__typename;
+
+      // Set a small timeout so that the progress loading bar appears
+      setTimeout(() => {
+        // Check if the user has completed all of their setup steps
+        if (Object.values(loggedInUser.new_user_setup).every(Boolean)) {
+          dispatch(setSetupCompleted(true));
+        }
+        dispatch(setUser(loggedInUser));
+        dispatch(setTrips(trips));
+      }, 1000)
     }
   });
 
@@ -42,13 +59,11 @@ const CheckLoggedIn: React.FC = () => {
     dispatch(setLoadingUser(loading));
     dispatch(setLoadingTrips(loading));
   }, [dispatch, loading]);
-  
-  const showLanding = !loggedIn || !setupComplete;
 
   return (
     <>
       <LandingModal userState={userState} />
-      <Navigator show={!showLanding} />
+      <Navigator show={loggedIn && setupComplete} />
       <TripMapLazy />
       <SideDrawerLazy />
     </>

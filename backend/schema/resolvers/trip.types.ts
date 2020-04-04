@@ -31,12 +31,8 @@ export interface TripResolvers extends IResolvers {
       InputResolverArg<CreateTripArgs>,
       Promise<TripRecord>
     >;
-    updateTrip: AuthFieldResolver<
-      any,
-      InputResolverArg<UpdateTripArgs>,
-      Promise<TripRecord['id']>
-    >;
-    deleteTrip: AuthFieldResolver<any, Pick<TripRecord, 'id'>, Promise<TripRecord['id']>>;
+    updateTrip: AuthFieldResolver<any, InputResolverArg<UpdateTripArgs>, Promise<number>>;
+    deleteTrip: AuthFieldResolver<any, Pick<TripRecord, 'id'>, Promise<number>>;
     createTripItinerary: AuthFieldResolver<
       any,
       InputResolverArg<CreateTripItineraryArgs>,
@@ -45,12 +41,12 @@ export interface TripResolvers extends IResolvers {
     updateTripItinerary: AuthFieldResolver<
       any,
       InputResolverArg<UpdateTripItineraryArgs>,
-      Promise<TripItineraryRecord['id']>
+      Promise<number>
     >;
     deleteTripItinerary: AuthFieldResolver<
       any,
       Pick<TripItineraryRecord, 'id'>,
-      Promise<TripItineraryRecord['id']>
+      Promise<number>
     >;
   };
 }

@@ -17,6 +17,9 @@ const reducers: UserSliceCaseReducers = {
   setLoggedIn: (state, { payload }) => {
     state.loggedIn = payload;
   },
+  setSetupCompleted: (state, { payload }) => {
+    state.setupComplete = payload;
+  },
   setUser: (state, { payload }) => {
     state.data = payload && {
       ...state.data!,
@@ -31,6 +34,12 @@ const userSlice = createSlice({
   reducers
 });
 
-export const { resetUserState, setLoadingUser, setLoggedIn, setUser } = userSlice.actions;
+export const {
+  resetUserState,
+  setLoadingUser,
+  setLoggedIn,
+  setSetupCompleted,
+  setUser
+} = userSlice.actions;
 
 export const userReducer = userSlice.reducer;

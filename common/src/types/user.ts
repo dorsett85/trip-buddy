@@ -15,6 +15,7 @@ export interface UserRecord {
   email: string;
   password: string;
   email_verified: boolean;
+  email_verification_token: string;
   role: typeof userRole[number];
   accepting_trip_invites: typeof acceptingTripInvites[number];
   created_date: Date;
