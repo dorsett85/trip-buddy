@@ -9,14 +9,13 @@ const StyledIconButton = styled(IconButton)(
   `
 );
 
-const FlyToButton: React.FC<IconButtonProps> = ({ onClick, ...rest }) => {
+const FlyToButton: React.FC<IconButtonProps> = props => {
   return (
     <StyledIconButton
-      onClick={onClick}
+      {...props}
       color='inherit'
       title='Go to map location'
       aria-label='Go to map location'
-      {...rest}
     >
       <GpsFixedIcon />
     </StyledIconButton>
