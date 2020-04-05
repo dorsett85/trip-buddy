@@ -11,6 +11,19 @@ const Trip: TripResolvers['Trip'] = {
   }
 };
 
+const TripInvite: TripResolvers['TripInvite'] = {
+  trip: async (tripInviteRecord, __, { tripService }) => {
+    const trip = await tripService.findOne(
+      { items: { id: tripInviteRecord.trip_id } },
+      false
+    );
+    if (!trip) {
+      throw new UserInputError(NOT_FOUND_MESSAGE);
+    }
+    return trip;
+  }
+};
+
 const Query: TripResolvers['Query'] = {
   trip: async (_, { input }, { tripService }) => {
     const trip = await tripService.findOne({ items: input });
@@ -22,9 +35,7 @@ const Query: TripResolvers['Query'] = {
   trips: (_, { input }, { tripService }) => {
     return tripService.findMany({ items: input });
   },
-  tripInvites: (_, __, { tripService }) => {
-    return tripService.findMany();
-  }
+  tripInvites: (_, __, { tripInviteService }) => tripInviteService.findMany()
 };
 
 const Mutation: TripResolvers['Mutation'] = {
@@ -64,13 +75,14 @@ const Mutation: TripResolvers['Mutation'] = {
     }
     return id;
   },
-  createTripInvites: (_, { input }, { tripService }) => {
-    return tripService.createTripInvites(input);
+  createTripInvites: (_, { input }, { tripInviteService }) => {
+    return tripInviteService.createMany(input);
   }
 };
 
 export const tripResolvers: TripResolvers = {
   Trip,
+  TripInvite,
   Query,
   Mutation
 };

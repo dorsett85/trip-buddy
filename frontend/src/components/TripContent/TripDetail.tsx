@@ -37,12 +37,10 @@ import LocationInputAdornment from '../generic/LocationInputAdornment/LocationIn
 import SuccessText from '../AppText/SuccessText';
 import ErrorText from '../AppText/ErrorText';
 import FlyToButton from '../generic/FlyToButton/FlyToButton';
-import {
-  CREATE_TRIP_INVITES,
-  GET_POSSIBLE_TRIP_INVITEES
-} from '../ApolloProvider/gql/user';
+import { GET_POSSIBLE_TRIP_INVITEES } from '../ApolloProvider/gql/user';
 import AppText from '../AppText/AppText';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
+import { CREATE_TRIP_INVITES_MUTATION } from '../ApolloProvider/gql/tripInvite';
 
 export interface TripDetailProps {
   trip: TripRecord;
@@ -112,7 +110,9 @@ const TripHeader: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
     }
   });
 
-  const [createTripInvitesMutation, { loading }] = useMutation(CREATE_TRIP_INVITES);
+  const [createTripInvitesMutation, { loading }] = useMutation(
+    CREATE_TRIP_INVITES_MUTATION
+  );
 
   const handleFlyToClick = () => {
     dispatch(setDrawer({ open: false }));

@@ -61,7 +61,7 @@ export interface WhereArgGroup<T = any> {
    */
   prefixOperator?: LogicalOperator;
   /**
-   * The logical operator that seperates the key/value item statements. E.g., the
+   * The logical operator that separates the key/value item statements. E.g., the
    * 'OR' in "id = 1 OR username = 'clayton'"
    */
   logicalOperator?: LogicalOperator;

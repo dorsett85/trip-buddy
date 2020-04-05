@@ -2,7 +2,7 @@ import { gql } from 'apollo-boost';
 import { TRIP_FIELDS } from './trip';
 
 export const GET_LOGGED_IN_DATA = gql`
-  query {
+  query GetLoggedInUser {
     user {
       id
       username
@@ -42,11 +42,5 @@ export const GET_POSSIBLE_TRIP_INVITEES = gql`
       id
       email
     }
-  }
-`;
-
-export const CREATE_TRIP_INVITES = gql`
-  mutation CreateTripInvites($input: [CreateTripInvite]) {
-    createTripInvites(input: $input)
   }
 `;

@@ -7,6 +7,7 @@ import TripModel from '../../models/TripModel';
 import TripItineraryModel from '../../models/TripItineraryModel';
 import TripItineraryService from '../../services/TripItineraryService';
 import TripInviteModel from '../../models/TripInviteModel';
+import TripInviteService from "../../services/TripInviteService";
 
 export interface ContextDeps {
   services: {
@@ -14,6 +15,7 @@ export interface ContextDeps {
     UserService: typeof UserService;
     TripService: typeof TripService;
     TripItineraryService: typeof TripItineraryService;
+    TripInviteService: typeof TripInviteService;
   };
   models: {
     UserModel: typeof UserModel;

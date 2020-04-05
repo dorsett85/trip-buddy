@@ -38,7 +38,7 @@ export default class UserModel extends BaseModel {
   }
 
   public async findTripInvitees(tripId: TripRecord['id']): Promise<UserRecord[]> {
-    // TODO Update accepting_trip_invites to 'friends' or 'all' when user setup wizard is completed!
+    // TODO add 'friends' into the query when user friends functionality is ready
     const query = this.db.raw(
       `
       SELECT u.* FROM users u
@@ -46,7 +46,7 @@ export default class UserModel extends BaseModel {
           SELECT t.invitee_id
           FROM trip_invites t
           WHERE t.trip_id = ?
-      ) AND u.accepting_trip_invites = 'no'
+      ) AND u.accepting_trip_invites = 'all'
     `,
       [tripId]
     );

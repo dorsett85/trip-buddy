@@ -3,14 +3,12 @@ import { TripRecord } from 'common/lib/types/trip';
 import { TripServiceDeps } from './TripService.types';
 import { WhereArgs } from '../types/dbQueryUtils';
 import {
-  CreateTripArgs, CreateTripInvitesArgs, CreateTripInvitesWithInviterIdArgs,
+  CreateTripArgs,
   PartialTripRecord,
   UpdateTripOmitIdCreatedDateArgs
 } from '../types/trip';
 import TripModel from '../models/TripModel';
 import UserTripModel from '../models/UserTripModel';
-import {TripInviteRecord} from "common/lib/types/tripInvite";
-import TripInviteModel from "../models/TripInviteModel";
 
 export default class TripService {
   private readonly user: UserRecord;
@@ -19,13 +17,10 @@ export default class TripService {
 
   private userTripModel: UserTripModel;
 
-  private tripInviteModel: TripInviteModel;
-
   constructor(dependencies: TripServiceDeps) {
     this.user = dependencies.user;
     this.tripModel = dependencies.tripModel;
     this.userTripModel = dependencies.userTripModel;
-    this.tripInviteModel = dependencies.tripInviteModel;
   }
 
   public async createOne(createTripInput: CreateTripArgs): Promise<TripRecord> {
@@ -37,10 +32,11 @@ export default class TripService {
   }
 
   public findOne(
-    whereArgs: WhereArgs<PartialTripRecord>
+    whereArgs: WhereArgs<PartialTripRecord>,
+    restrictUser = true
   ): Promise<TripRecord | undefined> {
     const { id, role } = this.user;
-    const userId = role === 'admin' ? undefined : id;
+    const userId = role === 'admin' || !restrictUser ? undefined : id;
     return this.tripModel.findOne(whereArgs, userId);
   }
 
@@ -63,20 +59,5 @@ export default class TripService {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
     return this.tripModel.deleteOne(tripId, userId);
-  }
-
-  public async createTripInvites(
-    invites: CreateTripInvitesArgs
-  ): Promise<TripInviteRecord['id'][]> {
-    const invitesWithInviterId: CreateTripInvitesWithInviterIdArgs = invites.map(
-      invite => {
-        return {
-          inviter_id: this.user.id,
-          ...invite
-        };
-      }
-    );
-    const tripInvites = await this.tripInviteModel.createTripInvites(invitesWithInviterId);
-    return tripInvites.map(invite => invite.id);
   }
 }

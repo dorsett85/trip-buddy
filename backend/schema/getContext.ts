@@ -34,24 +34,28 @@ export const getContext = ({ services, models }: ContextDeps) => async ({
       accessService,
       userService: null,
       tripService: null,
-      tripItineraryService: null
+      tripItineraryService: null,
+      tripInviteService: null
     };
   }
 
   // Instantiate user and trip services
-  const { UserService, TripService, TripItineraryService } = services;
+  const { UserService, TripService, TripItineraryService, TripInviteService } = services;
   const { UserTripModel, TripModel, TripItineraryModel, TripInviteModel } = models;
 
   const userService = new UserService({ user, userModel: new UserModel('users', qb) });
   const tripService = new TripService({
     user,
     tripModel: new TripModel('trips', qb),
-    userTripModel: new UserTripModel('users_trips', qb),
-    tripInviteModel: new  TripInviteModel('trip_invites', qb)
+    userTripModel: new UserTripModel('users_trips', qb)
   });
   const tripItineraryService = new TripItineraryService({
     user,
     tripItineraryModel: new TripItineraryModel('trip_itineraries', qb)
+  });
+  const tripInviteService = new TripInviteService({
+    user,
+    tripInviteModel: new TripInviteModel('trip_invites', qb)
   });
 
   return {
@@ -59,6 +63,7 @@ export const getContext = ({ services, models }: ContextDeps) => async ({
     accessService,
     userService,
     tripService,
-    tripItineraryService
+    tripItineraryService,
+    tripInviteService
   };
 };

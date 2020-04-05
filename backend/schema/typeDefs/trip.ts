@@ -57,12 +57,6 @@ export const tripTypeDefs = gql`
     start_time: Date
     end_time: Date
   }
-  
-  input CreateTripInvite {
-    trip_id: Int!
-    invitee_id: Int
-    invitee_email: String!
-  }
 
   type Trip {
     id: Int
@@ -91,7 +85,6 @@ export const tripTypeDefs = gql`
   extend type Query {
     trip(input: FindTripInput): Trip @isAuth
     trips(input: FindTripInput): [Trip] @isAuth
-    tripInvites: [Trip] @isAuth
   }
 
   extend type Mutation {
@@ -101,6 +94,5 @@ export const tripTypeDefs = gql`
     createTripItinerary(input: CreateTripItineraryInput): TripItinerary @isAuth
     updateTripItinerary(input: UpdateTripItineraryInput): Int @isAuth
     deleteTripItinerary(id: Int!): Int @isAuth
-    createTripInvites(input: [CreateTripInvite]): [Int] @isAuth
   }
 `;

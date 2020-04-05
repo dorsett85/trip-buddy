@@ -36,7 +36,7 @@ const CheckLoggedIn: React.FC = () => {
         }
         dispatch(setUser(loggedInUser));
         dispatch(setTrips(trips));
-      }, 1000)
+      }, 500)
     }
   });
 

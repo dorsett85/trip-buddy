@@ -19,6 +19,9 @@ export interface TripResolvers extends IResolvers {
   Trip: {
     itineraries: AuthFieldResolver<TripRecord, {}, Promise<TripItineraryRecord[]>>;
   };
+  TripInvite: {
+    trip: AuthFieldResolver<TripInviteRecord, {}, Promise<TripRecord>>;
+  };
   Query: {
     trip: AuthFieldResolver<
       any,
@@ -30,7 +33,7 @@ export interface TripResolvers extends IResolvers {
       InputResolverArg<PartialTripRecord>,
       Promise<TripRecord[]>
     >;
-    tripInvites: AuthFieldResolver<any, {}, Promise<TripRecord[]>>;
+    tripInvites: AuthFieldResolver<any, {}, Promise<TripInviteRecord[]>>;
   };
   Mutation: {
     createTrip: AuthFieldResolver<
