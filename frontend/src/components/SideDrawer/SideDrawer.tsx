@@ -15,7 +15,6 @@ export interface SideDrawerProps extends DrawerProps {
 }
 
 const DrawerContent = styled.div``;
-
 const DrawerContentContainer = styled.div(
   ({ theme }) => css`
     width: 100vw;
