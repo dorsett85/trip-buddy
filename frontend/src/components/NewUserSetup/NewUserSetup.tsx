@@ -190,7 +190,7 @@ const AcceptingTripInvites: React.FC<StepComponentProps> = ({ onSubmit }) => {
             value={acceptInvites}
             onChange={handleChange}
           >
-            <FormControlLabel value='no' control={<Radio color='primary' />} label='No' />
+            <FormControlLabel value='no' control={<Radio color='primary' />} label='Nobody' />
             <FormControlLabel
               value='friends'
               disabled
