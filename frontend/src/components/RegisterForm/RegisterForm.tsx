@@ -1,6 +1,4 @@
 import React, { memo, useState } from 'react';
-import { gql } from 'apollo-boost';
-import { useMutation } from '@apollo/react-hooks';
 import FormGroup from '@material-ui/core/FormGroup';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
@@ -10,17 +8,12 @@ import { setLoggedIn } from '../../store/user/reducer';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setLocalToken } from '../../utils/localToken';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
+import {useRegisterUserMutation} from "../ApolloProvider/hooks/user";
 
 enum RegisterFormInputs {
   email = '',
   password = ''
 }
-
-export const REGISTER_USER = gql`
-  mutation RegisterUser($email: String!, $password: String!) {
-    registerUser(email: $email, password: $password)
-  }
-`;
 
 const inputProps = {
   minLength: 4
@@ -43,7 +36,7 @@ const RegisterForm: React.FC = () => {
   const [registerError, setRegisterError] = useState('');
 
   // Define registration mutation and handlers
-  const [registerUser, { loading }] = useMutation(REGISTER_USER, {
+  const [registerUserMutation, { loading }] = useRegisterUserMutation({
     onCompleted: data => {
       setRegisterError('');
       setLocalToken(data.registerUser);
@@ -63,7 +56,7 @@ const RegisterForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    registerUser({ variables: { email, password } });
+    registerUserMutation({ variables: { email, password } });
   };
 
   return (

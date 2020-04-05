@@ -38,26 +38,6 @@ export const tripTypeDefs = gql`
     status: TripStatus
   }
 
-  input CreateTripItineraryInput {
-    trip_id: Int!
-    name: String!
-    description: String
-    location: [Float]!
-    location_address: String!
-    start_time: Date!
-  }
-
-  input UpdateTripItineraryInput {
-    id: Int
-    trip_id: Int
-    name: String
-    description: String
-    location: [Float]
-    location_address: String
-    start_time: Date
-    end_time: Date
-  }
-
   type Trip {
     id: Int
     name: String
@@ -66,19 +46,6 @@ export const tripTypeDefs = gql`
     location_address: String
     start_date: Date
     status: TripStatus
-    created_date: Date
-    itineraries: [TripItinerary]
-  }
-
-  type TripItinerary {
-    id: Int
-    trip_id: Int
-    name: String
-    description: String
-    location: [Float]
-    location_address: String
-    start_time: Date
-    end_time: Date
     created_date: Date
   }
 
@@ -91,8 +58,5 @@ export const tripTypeDefs = gql`
     createTrip(input: CreateTripInput): Trip @isAuth
     updateTrip(input: UpdateTripInput): Int @isAuth
     deleteTrip(id: Int!): Int @isAuth
-    createTripItinerary(input: CreateTripItineraryInput): TripItinerary @isAuth
-    updateTripItinerary(input: UpdateTripItineraryInput): Int @isAuth
-    deleteTripItinerary(id: Int!): Int @isAuth
   }
 `;

@@ -1,6 +1,6 @@
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { UserRecord } from 'common/lib/types/user';
-import { CreateTripInvitesWithInviterIdArgs } from '../types/trip';
+import { CreateTripInvitesWithInviterIdArgs } from '../types/tripInvite';
 import { extractRows } from '../utils/dbHelpers';
 import BaseModel from './BaseModel';
 import { WhereArgGroup } from '../types/dbQueryUtils';

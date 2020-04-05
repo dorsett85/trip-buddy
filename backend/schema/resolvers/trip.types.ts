@@ -1,27 +1,9 @@
-/* eslint-disable camelcase */
 import { IResolvers } from 'apollo-server-express';
 import { TripRecord } from 'common/lib/types/trip';
-import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
-import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { AuthFieldResolver, InputResolverArg } from '../types/resolvers';
-import {
-  CreateTripArgs,
-  PartialTripRecord,
-  UpdateTripArgs,
-  CreateTripInvitesArgs
-} from '../../types/trip';
-import {
-  CreateTripItineraryArgs,
-  UpdateTripItineraryArgs
-} from '../../types/tripItinerary';
+import { CreateTripArgs, PartialTripRecord, UpdateTripArgs } from '../../types/trip';
 
 export interface TripResolvers extends IResolvers {
-  Trip: {
-    itineraries: AuthFieldResolver<TripRecord, {}, Promise<TripItineraryRecord[]>>;
-  };
-  TripInvite: {
-    trip: AuthFieldResolver<TripInviteRecord, {}, Promise<TripRecord>>;
-  };
   Query: {
     trip: AuthFieldResolver<
       any,
@@ -33,7 +15,6 @@ export interface TripResolvers extends IResolvers {
       InputResolverArg<PartialTripRecord>,
       Promise<TripRecord[]>
     >;
-    tripInvites: AuthFieldResolver<any, {}, Promise<TripInviteRecord[]>>;
   };
   Mutation: {
     createTrip: AuthFieldResolver<
@@ -43,25 +24,5 @@ export interface TripResolvers extends IResolvers {
     >;
     updateTrip: AuthFieldResolver<any, InputResolverArg<UpdateTripArgs>, Promise<number>>;
     deleteTrip: AuthFieldResolver<any, Pick<TripRecord, 'id'>, Promise<number>>;
-    createTripItinerary: AuthFieldResolver<
-      any,
-      InputResolverArg<CreateTripItineraryArgs>,
-      Promise<TripItineraryRecord>
-    >;
-    updateTripItinerary: AuthFieldResolver<
-      any,
-      InputResolverArg<UpdateTripItineraryArgs>,
-      Promise<number>
-    >;
-    deleteTripItinerary: AuthFieldResolver<
-      any,
-      Pick<TripItineraryRecord, 'id'>,
-      Promise<number>
-    >;
-    createTripInvites: AuthFieldResolver<
-      any,
-      InputResolverArg<CreateTripInvitesArgs>,
-      Promise<TripInviteRecord['id'][]>
-    >;
   };
 }

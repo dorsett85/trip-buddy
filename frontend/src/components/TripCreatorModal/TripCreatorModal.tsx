@@ -7,12 +7,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
 import { DateTimePicker } from '@material-ui/pickers';
-import Autocomplete, {AutocompleteProps} from '@material-ui/lab/Autocomplete';
+import Autocomplete, { AutocompleteProps } from '@material-ui/lab/Autocomplete';
 import Button from '@material-ui/core/Button';
 import red from '@material-ui/core/colors/red';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import styled from 'styled-components';
-import { useMutation } from '@apollo/react-hooks';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { TripRecord } from 'common/lib/types/trip';
 import { setTripCreator, addTrip, setActiveTripInfo } from '../../store/trip/reducer';
@@ -22,9 +21,9 @@ import { Feature } from '../../types/apiResponses';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setFlyTo } from '../../store/general/reducer';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import { CREATE_TRIP } from '../ApolloProvider/gql/trip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
+import { useCreateTripMutation } from '../ApolloProvider/hooks/trip';
 
 const ErrorStyled = styled.div`
   font-weight: bold;
@@ -43,7 +42,7 @@ const TripCreatorModal: React.FC = () => {
   const [errors, setErrors] = useState<JSX.Element>();
 
   // Final form submit graphlql mutation
-  const [createTripMutation, { loading }] = useMutation(CREATE_TRIP, {
+  const [createTripMutation, { loading }] = useCreateTripMutation({
     onCompleted: (data: { createTrip: TripRecord }) => {
       dispatch(addTrip(data.createTrip));
       dispatch(setTripCreator());
@@ -112,7 +111,10 @@ const TripCreatorModal: React.FC = () => {
       }
     };
 
-    const handleLocationSelect: AutocompleteProps['onChange'] = (_, feature: Feature | null) => {
+    const handleLocationSelect: AutocompleteProps['onChange'] = (
+      _,
+      feature: Feature | null
+    ) => {
       if (feature) {
         dispatch(
           setTripCreator({

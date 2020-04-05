@@ -1,6 +1,4 @@
 import React, { memo, useState } from 'react';
-import { gql } from 'apollo-boost';
-import { useMutation } from '@apollo/react-hooks';
 import FormGroup from '@material-ui/core/FormGroup';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
@@ -10,17 +8,12 @@ import { setLoggedIn } from '../../store/user/reducer';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setLocalToken } from '../../utils/localToken';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
+import { useLoginUserMutation } from '../ApolloProvider/hooks/user';
 
 enum LoginFormInputs {
   username = '',
   password = ''
 }
-
-export const LOGIN_USER = gql`
-  mutation LoginUser($username: String!, $password: String!) {
-    loginUser(username: $username, password: $password)
-  }
-`;
 
 const LoginForm: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -29,7 +22,7 @@ const LoginForm: React.FC = () => {
   const [loginError, setLoginError] = useState('');
 
   // Define login mutation and handlers
-  const [loginUser, { loading }] = useMutation(LOGIN_USER, {
+  const [loginUserMutation, { loading }] = useLoginUserMutation({
     onCompleted: data => {
       setLoginError('');
       setLocalToken(data.loginUser);
@@ -50,7 +43,7 @@ const LoginForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    loginUser({ variables: { username, password } });
+    loginUserMutation({ variables: { username, password } });
   };
 
   return (

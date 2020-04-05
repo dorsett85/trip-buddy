@@ -8,12 +8,11 @@ import Button from '@material-ui/core/Button';
 import Popper from '@material-ui/core/Popper';
 import Card from '@material-ui/core/Card';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import Autocomplete, {AutocompleteProps} from '@material-ui/lab/Autocomplete';
+import Autocomplete, { AutocompleteProps } from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import styled, { css } from 'styled-components';
 import { DateTimePicker } from '@material-ui/pickers';
 import { DispatchProp } from 'react-redux';
-import { useMutation } from '@apollo/react-hooks';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 import { UPDATING_MESSAGE } from '../../utils/constants/messages';
@@ -28,12 +27,15 @@ import { setFlyTo, setDrawer } from '../../store/general/reducer';
 import { Feature } from '../../types/apiResponses';
 import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
-import { UPDATE_ITINERARY, DELETE_ITINERARY } from '../ApolloProvider/gql/trip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
 import ErrorText from '../AppText/ErrorText';
 import SuccessText from '../AppText/SuccessText';
 import FlyToButton from '../generic/FlyToButton/FlyToButton';
+import {
+  useDeleteTripItineraryMutation,
+  useUpdateTripItineraryMutation
+} from '../ApolloProvider/hooks/tripItinerary';
 
 interface TripItineraryPanelProps extends DispatchProp {
   /**
@@ -104,7 +106,7 @@ const ItineraryButtonGroup: React.FC<ItineraryButtonGroupProps> = ({
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [deleteResponseText, setDeleteResponseText] = useState('');
-  const [deleteItineraryMutation, { loading }] = useMutation(DELETE_ITINERARY, {
+  const [deleteItineraryMutation, { loading }] = useDeleteTripItineraryMutation({
     onCompleted: data => {
       dispatch(deleteTripItinerary(data.deleteTripItinerary));
     },
@@ -166,7 +168,7 @@ const ItineraryNameInput: React.FC<IntineraryNameInputProps> = ({
   const [name, setName] = useState(itinerary.name);
   const [updateNameError, setUpdateNameError] = useState<JSX.Element>();
 
-  const [updateTripItineraryQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
+  const [updateTripItineraryMutation, { loading }] = useUpdateTripItineraryMutation({
     onCompleted: () => {
       dispatch(updateTripItinerary({ ...itinerary, name }));
       onSubmitOrCancel();
@@ -182,7 +184,7 @@ const ItineraryNameInput: React.FC<IntineraryNameInputProps> = ({
 
   const handleSubmitName = () => {
     if (name.length >= 4) {
-      updateTripItineraryQuery({ variables: { input: { id: itinerary.id, name } } });
+      updateTripItineraryMutation({ variables: { input: { id: itinerary.id, name } } });
     } else {
       setUpdateNameError(<ErrorText text='Trip name must be at least 4 characters' />);
     }
@@ -222,7 +224,7 @@ const ItineraryDescriptionInput: React.FC<ItineraryInputProps> = ({
   const [updateDescriptionText, setUpdateDescriptionText] = useState<JSX.Element>();
   const [updateDescriptionError, setUpdateDescriptionError] = useState<JSX.Element>();
 
-  const [updateTripQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
+  const [updateTripItineraryMutation, { loading }] = useUpdateTripItineraryMutation({
     onCompleted: () => {
       dispatch(updateTripItinerary({ ...itinerary, description }));
       setEditingDescription(false);
@@ -242,7 +244,9 @@ const ItineraryDescriptionInput: React.FC<ItineraryInputProps> = ({
   const handleSubmitDescription = () => {
     setUpdateDescriptionError(undefined);
     setUpdateDescriptionText(undefined);
-    updateTripQuery({ variables: { input: { id: itinerary.id, description } } });
+    updateTripItineraryMutation({
+      variables: { input: { id: itinerary.id, description } }
+    });
   };
 
   const handleCancelDescription = () => {
@@ -289,7 +293,7 @@ const ItineraryStartDateSelect: React.FC<ItineraryInputProps> = ({
   const [updateStartDateText, setUpdateStartDateText] = useState<JSX.Element>();
   const [updateStartDateError, setUpdateStartDateError] = useState<JSX.Element>();
 
-  const [updateTripItineraryQuery, { loading }] = useMutation(UPDATE_ITINERARY, {
+  const [updateTripItineraryMutation, { loading }] = useUpdateTripItineraryMutation({
     onCompleted: () => {
       dispatch(updateTripItinerary({ ...itinerary, start_time: startTime }));
       setUpdateStartDateError(undefined);
@@ -303,7 +307,7 @@ const ItineraryStartDateSelect: React.FC<ItineraryInputProps> = ({
   const handleStartDateChange = (date: MaterialUiPickersDate) => {
     if (date) {
       setStartTime(date.toISOString());
-      updateTripItineraryQuery({
+      updateTripItineraryMutation({
         variables: { input: { id: itinerary.id, start_time: date.toISOString() } }
       });
     }
@@ -347,7 +351,7 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
   );
   const [updateLocationError, setUpdateLocationError] = useState<JSX.Element>();
 
-  const [updateLocationMutation, { loading }] = useMutation(UPDATE_ITINERARY);
+  const [updateLocationMutation, { loading }] = useUpdateTripItineraryMutation();
 
   // Listener for updating the itinerary location. This will fire after a location
   // is selected on the map and the newLocation lng/lat is set
@@ -420,7 +424,10 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
     }
   };
 
-  const handleLocationSelect: AutocompleteProps['onChange'] = (_, feature: Feature | null) => {
+  const handleLocationSelect: AutocompleteProps['onChange'] = (
+    _,
+    feature: Feature | null
+  ) => {
     if (feature) {
       setLocation(feature.place_name);
       dispatch(

@@ -1,7 +1,7 @@
 import { gql } from 'apollo-boost';
 import { TRIP_FIELDS } from './trip';
 
-export const GET_LOGGED_IN_DATA = gql`
+export const GET_LOGGED_IN_DATA_QUERY = gql`
   query GetLoggedInUser {
     user {
       id
@@ -24,19 +24,31 @@ export const GET_LOGGED_IN_DATA = gql`
   }
 `;
 
-export const VERIFY_EMAIL = gql`
+export const LOGIN_USER_MUTATION = gql`
+  mutation LoginUser($username: String!, $password: String!) {
+    loginUser(username: $username, password: $password)
+  }
+`;
+
+export const REGISTER_USER_MUTATION = gql`
+  mutation RegisterUser($email: String!, $password: String!) {
+    registerUser(email: $email, password: $password)
+  }
+`;
+
+export const VERIFY_EMAIL_MUTATION = gql`
   mutation VerifyEmail($token: String!) {
     verifyEmail(token: $token)
   }
 `;
 
-export const UPDATE_USER = gql`
+export const UPDATE_USER_MUTATION = gql`
   mutation UpdateUser($input: UpdateUserInput) {
     updateUser(input: $input)
   }
 `;
 
-export const GET_POSSIBLE_TRIP_INVITEES = gql`
+export const GET_POSSIBLE_TRIP_INVITEES_QUERY = gql`
   query PossibleTripInvitees($tripId: Int!) {
     possibleTripInvitees(tripId: $tripId) {
       id

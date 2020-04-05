@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useQuery } from '@apollo/react-hooks';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -10,8 +9,8 @@ import { ActiveTripInfo } from '../../store/trip/types';
 import { setTripItineraries, setTripItineraryCreator } from '../../store/trip/reducer';
 import { useTripItineraries } from '../../store/hooks/useTrip';
 import TripItineraryCreate from './TripItineraryCreate';
-import { GET_ITINERARIES } from '../ApolloProvider/gql/trip';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
+import { useGetTripItinerariesQuery } from '../ApolloProvider/hooks/tripItinerary';
 
 const ItineraryHeader = styled.div`
   display: flex;
@@ -26,14 +25,14 @@ interface TripItinerariesProps extends DispatchProp {
 const TripItineraries: React.FC<TripItinerariesProps> = ({ dispatch, tripId }) => {
   const itineraries = useTripItineraries();
   const itineraryCreator = useAppSelector(({ trip }) => trip.itineraryCreator);
-  const { data, loading } = useQuery(GET_ITINERARIES, {
-    variables: { input: { id: tripId } },
+  const { data, loading } = useGetTripItinerariesQuery({
+    variables: { input: { trip_id: tripId } },
     fetchPolicy: 'no-cache'
   });
 
   useEffect(() => {
     if (data) {
-      dispatch(setTripItineraries(data.trip.itineraries));
+      dispatch(setTripItineraries(data.tripItineraries));
     }
   }, [dispatch, data]);
 

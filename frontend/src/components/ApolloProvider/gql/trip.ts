@@ -1,8 +1,5 @@
 import { gql } from 'apollo-boost';
 
-//
-// Trips
-//
 export const TRIP_FIELDS = `
   id
   name
@@ -14,7 +11,7 @@ export const TRIP_FIELDS = `
   created_date
 `;
 
-export const CREATE_TRIP = gql`
+export const CREATE_TRIP_MUTATION = gql`
   mutation createTrip($input: CreateTripInput) {
     createTrip(input: $input) {
       ${TRIP_FIELDS}
@@ -22,59 +19,14 @@ export const CREATE_TRIP = gql`
   }
 `;
 
-export const UPDATE_TRIP = gql`
+export const UPDATE_TRIP_MUTATION = gql`
   mutation UpdateTrip($input: UpdateTripInput) {
     updateTrip(input: $input)
   }
 `;
 
-export const DELETE_TRIP = gql`
+export const DELETE_TRIP_MUTATION = gql`
   mutation DeleteTrip($id: Int!) {
     deleteTrip(id: $id)
-  }
-`;
-
-//
-// Itineraries
-//
-
-export const ITINERARY_FIELDS = `
-  id
-  trip_id
-  name
-  description
-  location
-  location_address
-  start_time
-  end_time
-`;
-
-export const GET_ITINERARIES = gql`
-  query GetItinerary($input: FindTripInput) {
-    trip(input: $input) {
-      itineraries {
-        ${ITINERARY_FIELDS}
-      }
-    }
-  }
-`;
-
-export const CREATE_ITINERARY = gql`
-  mutation CreateTripItinerary($input: CreateTripItineraryInput) {
-    createTripItinerary(input: $input) {
-      ${ITINERARY_FIELDS}
-    }
-  }
-`;
-
-export const UPDATE_ITINERARY = gql`
-  mutation UpdateTripItinerary($input: UpdateTripItineraryInput) {
-    updateTripItinerary(input: $input)
-  }
-`;
-
-export const DELETE_ITINERARY = gql`
-  mutation DeleteTripItinerary($id: Int!) {
-    deleteTripItinerary(id: $id)
   }
 `;

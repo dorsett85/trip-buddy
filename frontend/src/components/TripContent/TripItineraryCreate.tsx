@@ -11,7 +11,6 @@ import Button from '@material-ui/core/Button';
 import styled, { css } from 'styled-components';
 import { DispatchProp } from 'react-redux';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-import { useMutation } from '@apollo/react-hooks';
 import { TripItineraryCreator } from '../../store/trip/types';
 import {
   setTripItineraryCreator,
@@ -23,8 +22,8 @@ import { setFlyTo, setDrawer } from '../../store/general/reducer';
 import { getFirstError } from '../../utils/apolloErrors';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { debounce } from '../../utils/debouce';
-import { CREATE_ITINERARY } from '../ApolloProvider/gql/trip';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
+import { useCreateTripItineraryMutation } from '../ApolloProvider/hooks/tripItinerary';
 
 interface TripItineraryCreateProps extends DispatchProp {
   itinerary: TripItineraryCreator;
@@ -202,7 +201,7 @@ const TripItineraryCreate: React.FC<TripItineraryCreateProps> = ({
   dispatch
 }) => {
   const [errors, setErrors] = useState<JSX.Element>();
-  const [createItineraryMutation, { loading }] = useMutation(CREATE_ITINERARY, {
+  const [createItineraryMutation, { loading }] = useCreateTripItineraryMutation({
     onCompleted: ({ createTripItinerary }) => {
       dispatch(setTripItineraryCreator());
       dispatch(addTripItinerary(createTripItinerary));

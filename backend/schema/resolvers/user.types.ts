@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import { IResolvers } from 'apollo-server-express';
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';

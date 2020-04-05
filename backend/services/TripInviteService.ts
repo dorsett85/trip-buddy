@@ -1,6 +1,9 @@
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { UserRecord } from 'common/lib/types/user';
-import {CreateTripInvitesArgs, CreateTripInvitesWithInviterIdArgs } from '../types/trip';
+import {
+  CreateTripInvitesArgs,
+  CreateTripInvitesWithInviterIdArgs
+} from '../types/tripInvite';
 import TripInviteModel from '../models/TripInviteModel';
 import { TripInviteServiceTypes } from './TripInviteService.types';
 
@@ -31,9 +34,7 @@ export default class TripService {
         };
       }
     );
-    const tripInvites = await this.tripInviteModel.createMany(
-      invitesWithInviterId
-    );
+    const tripInvites = await this.tripInviteModel.createMany(invitesWithInviterId);
     return tripInvites.map(invite => invite.id);
   }
 }
