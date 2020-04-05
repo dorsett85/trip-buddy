@@ -10,7 +10,9 @@ import TripInviteList from '../TripInviteList/TripInviteList';
 
 const Header = styled.div(
   ({ theme }) => css`
-    text-align: right;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: ${theme.spacing()};
   `
 );
@@ -100,6 +102,7 @@ const TripsView: React.FC = () => {
   return (
     <div>
       <Header>
+        <h2>View Trips</h2>
         <Fab color='primary' variant='extended' onClick={handleCreateTripClick}>
           Create New Trip
         </Fab>
