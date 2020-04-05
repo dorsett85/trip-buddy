@@ -46,12 +46,6 @@ export const userTypeDefs = gql`
     new_user_setup: NewUserSetupInput
   }
   
-  input CreateTripInvite {
-    trip_id: Int!
-    invitee_id: Int
-    invitee_email: String!
-  }
-  
   extend type Query {
     user: User @isAuth
     possibleTripInvitees(tripId: Int!): [User] @isAuth
@@ -62,6 +56,5 @@ export const userTypeDefs = gql`
     registerUser(email: String!, password: String!): String
     verifyEmail(token: String!): Int @isAuth
     updateUser(input: UpdateUserInput): Int @isAuth
-    createTripInvites(input: [CreateTripInvite]): [Int] @isAuth
   }
 `;

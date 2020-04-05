@@ -18,6 +18,7 @@ import UserModel from '../models/UserModel';
 import TripModel from '../models/TripModel';
 import UserTripModel from '../models/UserTripModel';
 import TripItineraryModel from '../models/TripItineraryModel';
+import TripInviteModel from '../models/TripInviteModel';
 import { getFormatError } from './getFormatError';
 
 /*
@@ -50,7 +51,8 @@ const context = getContext({
     UserModel,
     UserTripModel,
     TripModel,
-    TripItineraryModel
+    TripItineraryModel,
+    TripInviteModel
   }
 });
 

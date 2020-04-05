@@ -8,9 +8,8 @@ import {
 } from '../../utils/constants/errors';
 
 const User: UserResolvers['User'] = {
-  trips: async (_, __, { tripService }) => {
-    const userTrips = await tripService.findMany();
-    return userTrips;
+  trips: (_, __, { tripService }) => {
+    return tripService.findMany();
   }
 };
 
@@ -22,9 +21,8 @@ const Query: UserResolvers['Query'] = {
     }
     return user;
   },
-  possibleTripInvitees: async (_, { tripId }, { userService }) => {
-    const possibleTripInvitees = await userService.possibleTripInvitees(tripId);
-    return possibleTripInvitees;
+  possibleTripInvitees: (_, { tripId }, { userService }) => {
+    return userService.possibleTripInvitees(tripId);
   }
 };
 
@@ -60,10 +58,6 @@ const Mutation: UserResolvers['Mutation'] = {
       throw new UserInputError(NOT_FOUND_MESSAGE);
     }
     return user.id;
-  },
-  createTripInvites: async (_, { input }, { userService }) => {
-    const tripInviteIds = await userService.createTripInvites(input);
-    return tripInviteIds;
   }
 };
 

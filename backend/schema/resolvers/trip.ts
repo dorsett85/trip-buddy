@@ -6,9 +6,8 @@ import {
 } from '../../utils/constants/errors';
 
 const Trip: TripResolvers['Trip'] = {
-  itineraries: async ({ id }, __, { tripItineraryService }) => {
-    const itineraries = await tripItineraryService.findMany({ items: { trip_id: id } });
-    return itineraries;
+  itineraries: ({ id }, __, { tripItineraryService }) => {
+    return tripItineraryService.findMany({ items: { trip_id: id } });
   }
 };
 
@@ -20,15 +19,17 @@ const Query: TripResolvers['Query'] = {
     }
     return trip;
   },
-  trips: async (_, { input }, { tripService }) => {
+  trips: (_, { input }, { tripService }) => {
     return tripService.findMany({ items: input });
+  },
+  tripInvites: (_, __, { tripService }) => {
+    return tripService.findMany();
   }
 };
 
 const Mutation: TripResolvers['Mutation'] = {
-  createTrip: async (_, { input }, { tripService }) => {
-    const trip = await tripService.createOne(input);
-    return trip;
+  createTrip: (_, { input }, { tripService }) => {
+    return tripService.createOne(input);
   },
   updateTrip: async (_, { input }, { tripService }) => {
     const { id, ...rest } = input;
@@ -45,9 +46,8 @@ const Mutation: TripResolvers['Mutation'] = {
     }
     return id;
   },
-  createTripItinerary: async (_, { input }, { tripItineraryService }) => {
-    const itinerary = await tripItineraryService.createOne(input);
-    return itinerary;
+  createTripItinerary: (_, { input }, { tripItineraryService }) => {
+    return tripItineraryService.createOne(input);
   },
   updateTripItinerary: async (_, { input }, { tripItineraryService }) => {
     const { id, ...rest } = input;
@@ -63,6 +63,9 @@ const Mutation: TripResolvers['Mutation'] = {
       throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
     }
     return id;
+  },
+  createTripInvites: (_, { input }, { tripService }) => {
+    return tripService.createTripInvites(input);
   }
 };
 

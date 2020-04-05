@@ -2,8 +2,14 @@
 import { IResolvers } from 'apollo-server-express';
 import { TripRecord } from 'common/lib/types/trip';
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
+import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { AuthFieldResolver, InputResolverArg } from '../types/resolvers';
-import { CreateTripArgs, PartialTripRecord, UpdateTripArgs } from '../../types/trip';
+import {
+  CreateTripArgs,
+  PartialTripRecord,
+  UpdateTripArgs,
+  CreateTripInvitesArgs
+} from '../../types/trip';
 import {
   CreateTripItineraryArgs,
   UpdateTripItineraryArgs
@@ -11,7 +17,7 @@ import {
 
 export interface TripResolvers extends IResolvers {
   Trip: {
-    itineraries: AuthFieldResolver<TripRecord, any, Promise<TripItineraryRecord[]>>;
+    itineraries: AuthFieldResolver<TripRecord, {}, Promise<TripItineraryRecord[]>>;
   };
   Query: {
     trip: AuthFieldResolver<
@@ -24,6 +30,7 @@ export interface TripResolvers extends IResolvers {
       InputResolverArg<PartialTripRecord>,
       Promise<TripRecord[]>
     >;
+    tripInvites: AuthFieldResolver<any, {}, Promise<TripRecord[]>>;
   };
   Mutation: {
     createTrip: AuthFieldResolver<
@@ -47,6 +54,11 @@ export interface TripResolvers extends IResolvers {
       any,
       Pick<TripItineraryRecord, 'id'>,
       Promise<number>
+    >;
+    createTripInvites: AuthFieldResolver<
+      any,
+      InputResolverArg<CreateTripInvitesArgs>,
+      Promise<TripInviteRecord['id'][]>
     >;
   };
 }

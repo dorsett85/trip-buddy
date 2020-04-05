@@ -40,13 +40,14 @@ export const getContext = ({ services, models }: ContextDeps) => async ({
 
   // Instantiate user and trip services
   const { UserService, TripService, TripItineraryService } = services;
-  const { UserTripModel, TripModel, TripItineraryModel } = models;
+  const { UserTripModel, TripModel, TripItineraryModel, TripInviteModel } = models;
 
   const userService = new UserService({ user, userModel: new UserModel('users', qb) });
   const tripService = new TripService({
     user,
+    tripModel: new TripModel('trips', qb),
     userTripModel: new UserTripModel('users_trips', qb),
-    tripModel: new TripModel('trips', qb)
+    tripInviteModel: new  TripInviteModel('trip_invites', qb)
   });
   const tripItineraryService = new TripItineraryService({
     user,

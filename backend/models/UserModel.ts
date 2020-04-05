@@ -1,15 +1,9 @@
 import { UserRecord } from 'common/lib/types/user';
-import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { TripRecord } from 'common/lib/types/trip';
 import BaseModel from './BaseModel';
 import { extractRows } from '../utils/dbHelpers';
 import { WhereArgs } from '../types/dbQueryUtils';
-import {
-  CreateTripInvitesWithInviterIdArgs,
-  CreateUserArgs,
-  PartialUserRecord,
-  UpdateUserArgs
-} from '../types/user';
+import { CreateUserArgs, PartialUserRecord, UpdateUserArgs } from '../types/user';
 
 export default class UserModel extends BaseModel {
   public async verifyEmail(token: string, user: UserRecord): Promise<number> {
@@ -21,7 +15,7 @@ export default class UserModel extends BaseModel {
           email_verified = true
       WHERE username = ? -- TODO add email_verification_token check
     `,
-      [{ email_verified: true }, user.username, /* TODO add token */]
+      [{ email_verified: true }, user.username /* TODO add token */]
     );
     return (await query).rowCount;
   }
@@ -57,14 +51,5 @@ export default class UserModel extends BaseModel {
       [tripId]
     );
     return extractRows(await query);
-  }
-
-  public async createTripInvites(
-    invite: CreateTripInvitesWithInviterIdArgs
-  ): Promise<TripInviteRecord[]> {
-    const inviteIds = this.db('trip_invites')
-      .insert(invite)
-      .returning(['id']);
-    return extractRows(await inviteIds);
   }
 }
