@@ -1,5 +1,4 @@
 import React, { memo, useState } from 'react';
-import { DispatchProp } from 'react-redux';
 import Fab from '@material-ui/core/Fab';
 import { Tab, Tabs } from '@material-ui/core';
 import List from '@material-ui/core/List';
@@ -12,8 +11,9 @@ import { setTripCreator, setActiveTripInfo } from '../../store/trip/reducer';
 import { setDrawer, setFlyTo } from '../../store/general/reducer';
 import { TripState } from '../../store/trip/types';
 import FlyToButton from '../generic/FlyToButton/FlyToButton';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 
-export interface TripListProps extends DispatchProp {
+export interface TripListProps {
   trips: TripState['trips'];
 }
 
@@ -40,9 +40,11 @@ const TRIPS_TAB_PANEL_INVITES = `${TRIPS}-tabpanel-${INVITES}`;
 
 type TabsValue = typeof LIST | typeof INVITES;
 
-const TabPanel = styled.div(({ theme }) => css`
-  padding-top: ${theme.spacing('lg')};
-`);
+const TabPanel = styled.div(
+  ({ theme }) => css`
+    padding-top: ${theme.spacing('lg')};
+  `
+);
 
 const TripsTabLayout: React.FC<TripsTabPanelProps> = ({
   listContent,
@@ -96,7 +98,8 @@ const TripsTabLayout: React.FC<TripsTabPanelProps> = ({
   );
 };
 
-const TripListView: React.FC<TripListProps> = ({ dispatch, trips }) => {
+const TripsView: React.FC<TripListProps> = ({ trips }) => {
+  const dispatch = useAppDispatch();
   const tripArray = Object.values(trips);
 
   const handleCreateTripClick = () => {
@@ -157,4 +160,4 @@ const TripListView: React.FC<TripListProps> = ({ dispatch, trips }) => {
   );
 };
 
-export default memo(TripListView);
+export default memo(TripsView);

@@ -42,10 +42,13 @@ import {
   GET_POSSIBLE_TRIP_INVITEES
 } from '../ApolloProvider/gql/user';
 import AppText from '../AppText/AppText';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 
-export interface TripDetailProps extends DispatchProp {
+export interface TripDetailProps {
   trip: TripRecord;
 }
+
+interface TripDetailInputProps extends TripDetailProps, DispatchProp {}
 
 const ButtonStyled = styled(Button)(
   ({ theme }) => css`
@@ -53,7 +56,7 @@ const ButtonStyled = styled(Button)(
   `
 );
 
-const BackToTripsButton: React.FC<Omit<TripDetailProps, 'trip'>> = ({ dispatch }) => {
+const BackToTripsButton: React.FC<DispatchProp> = ({ dispatch }) => {
   const handleClick = () => {
     dispatch(setActiveTripInfo());
     dispatch(setTripItineraries());
@@ -95,7 +98,7 @@ type TripInviteUser = Pick<UserRecord, 'id' | 'email'>;
 
 const inviteHelperText = <AppText text='List includes only users accepting invites' />;
 
-const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
+const TripHeader: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
   const [showInvite, setShowInvite] = useState(false);
   const [inviteError, setInviteError] = useState(false);
   const [inviteText, setInviteText] = useState<JSX.Element>(inviteHelperText);
@@ -219,7 +222,7 @@ const TripHeader: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   );
 };
 
-const TripNameInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
+const TripNameInput: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
   const [name, setName] = useState(trip.name);
   const [editingName, setEditingName] = useState(false);
   const [updateNameText, setUpdateNameText] = useState<JSX.Element>();
@@ -280,7 +283,7 @@ const TripNameInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   );
 };
 
-const TripDescriptionInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
+const TripDescriptionInput: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
   const [description, setDescription] = useState(trip.description);
   const [editingDescription, setEditingDescription] = useState(false);
   const [updateDescriptionText, setUpdateDescriptionText] = useState<JSX.Element>();
@@ -345,7 +348,7 @@ const TripDescriptionInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => 
   );
 };
 
-const TripStartDateSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
+const TripStartDateSelect: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
   const [startDate, setStartDate] = useState(trip.start_date);
   const [updateStartDateText, setUpdateStartDateText] = useState<JSX.Element>();
   const [updateStartDateError, setUpdateStartDateError] = useState<JSX.Element>();
@@ -389,7 +392,7 @@ const TripStartDateSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
 const DEFAUL_NO_OPTIONS_TEXT = 'Enter at least four characters...';
 const DEFAULT_UPDATE_LOCATION_TEXT = 'Click an option from the dropdown list to update';
 
-const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
+const TripLocationInput: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
   const newLocation = useAppSelector(
     state => state.trip.activeTripInfo && state.trip.activeTripInfo.newLocation
   );
@@ -552,7 +555,7 @@ const TripLocationInput: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   );
 };
 
-const TripStatusSelect: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
+const TripStatusSelect: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
   const [updateStatusText, setUpdateStatusText] = useState<JSX.Element>();
   const [updateStatusError, setUpdateStatusError] = useState<JSX.Element>();
 
@@ -611,7 +614,7 @@ const TripDeleteContainer = styled.div(
   `
 );
 
-const TripDelete: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
+const TripDelete: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [deleteResponseText, setDeleteResponseText] = useState<React.ReactNode>();
 
@@ -665,7 +668,9 @@ const TripDelete: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
   );
 };
 
-const TripDetail: React.FC<TripDetailProps> = ({ dispatch, trip }) => {
+const TripDetail: React.FC<TripDetailProps> = ({ trip }) => {
+  const dispatch = useAppDispatch();
+
   return (
     <div>
       <BackToTripsButton dispatch={dispatch} />

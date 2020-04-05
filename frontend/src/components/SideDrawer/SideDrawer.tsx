@@ -66,7 +66,7 @@ const SideDrawerContainer: React.FC = () => {
 
   const content =
     drawer.content === 'trip' ? (
-      <TripContent dispatch={dispatch} />
+      <TripContent />
     ) : drawer.content === 'user' && user.data ? (
       <UserContent dispatch={dispatch} user={user.data} />
     ) : null;
