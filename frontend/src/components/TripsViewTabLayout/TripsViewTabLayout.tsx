@@ -1,26 +1,8 @@
-import React, { memo, useState } from 'react';
-import Fab from '@material-ui/core/Fab';
-import { Tab, Tabs } from '@material-ui/core';
+import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import { setTripCreator } from '../../store/trip/reducer';
-import { setDrawer } from '../../store/general/reducer';
-import { useAppDispatch } from '../../store/hooks/useAppDispatch';
+import { Tab, Tabs } from '@material-ui/core';
 import TripList from '../TripList/TripList';
 import TripInviteList from '../TripInviteList/TripInviteList';
-
-const Header = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: ${theme.spacing()};
-  `
-);
-
-interface TripsTabPanelProps {
-  listContent: React.ReactNode;
-  invitesContent: React.ReactNode;
-}
 
 const TRIPS = 'trips';
 const LIST = 'list';
@@ -39,15 +21,15 @@ const TabPanel = styled.div(
   `
 );
 
-const TripsTabLayout: React.FC<TripsTabPanelProps> = ({
-  listContent,
-  invitesContent
-}) => {
+const TripTabLayout: React.FC = () => {
   const [tab, setTab] = useState<TabsValue>(LIST);
 
   const handleOnChange = (e: React.ChangeEvent<{}>, value: TabsValue) => {
     setTab(value);
   };
+
+  const viewingTripListTab = tab === LIST;
+  const viewingInvitesTab = !viewingTripListTab;
 
   return (
     <div>
@@ -75,44 +57,20 @@ const TripsTabLayout: React.FC<TripsTabPanelProps> = ({
         id={TRIPS_TAB_PANEL_LIST}
         role='tabpanel'
         aria-labelledby={TRIPS_TAB_LIST}
-        hidden={tab !== LIST}
+        hidden={viewingInvitesTab}
       >
-        {listContent}
+        <TripList />
       </TabPanel>
       <TabPanel
         id={TRIPS_TAB_PANEL_INVITES}
         role='tabpanel'
         aria-labelledby={TRIPS_TAB_INVITES}
-        hidden={tab !== INVITES}
+        hidden={viewingTripListTab}
       >
-        {invitesContent}
+        <TripInviteList viewing={viewingInvitesTab} />
       </TabPanel>
     </div>
   );
 };
 
-const TripsView: React.FC = () => {
-  const dispatch = useAppDispatch();
-
-  const handleCreateTripClick = () => {
-    dispatch(setDrawer({ open: false, content: undefined }));
-    dispatch(setTripCreator({ openModal: true }));
-  };
-
-  return (
-    <div>
-      <Header>
-        <h2>View Trips</h2>
-        <Fab color='primary' variant='extended' onClick={handleCreateTripClick}>
-          Create New Trip
-        </Fab>
-      </Header>
-      <TripsTabLayout
-        listContent={<TripList dispatch={dispatch} />}
-        invitesContent={<TripInviteList dispatch={dispatch} />}
-      />
-    </div>
-  );
-};
-
-export default memo(TripsView);
+export default TripTabLayout;

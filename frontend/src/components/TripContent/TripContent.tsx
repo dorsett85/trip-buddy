@@ -1,7 +1,7 @@
 import React from 'react';
 import TripDetail from './TripDetail';
 import { useActiveTrip } from '../../store/hooks/useTrip';
-import TripsView from './TripsView';
+import TripsView from '../TripsView/TripsView';
 
 const TripContent: React.FC = () => {
   const activeTrip = useActiveTrip();
