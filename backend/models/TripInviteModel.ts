@@ -42,12 +42,12 @@ export default class TripItineraryModel extends BaseModel {
 
     // For non-admin users we want them to only update trip invites where
     // they are the invitee.
-    const userIdWhereGroup: WhereArgs<PartialTripInviteRecord> = {
+    const inviteeIdWhereGroup: WhereArgs<PartialTripInviteRecord> = {
       items: { invitee_id: userId }
     };
-    const whereArgsWithUserId: WhereArgs = Array.isArray(whereArgs)
-      ? [userIdWhereGroup, ...whereArgs]
-      : [userIdWhereGroup, whereArgs];
-    return this.baseUpdateOne(updateArgs, whereArgsWithUserId);
+    const whereArgsWithInviteeId: WhereArgs = Array.isArray(whereArgs)
+      ? [inviteeIdWhereGroup, ...whereArgs]
+      : [inviteeIdWhereGroup, whereArgs];
+    return this.baseUpdateOne(updateArgs, whereArgsWithInviteeId);
   }
 }
