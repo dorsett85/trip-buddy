@@ -21,6 +21,10 @@ export interface UserResolvers extends IResolvers {
     loginUser: FieldResolver<any, LoginArgs, Promise<string>>;
     registerUser: FieldResolver<any, RegisterArgs, Promise<string>>;
     verifyEmail: AuthFieldResolver<any, { token: string }, Promise<number>>;
-    updateUser: AuthFieldResolver<any, InputResolverArg<UpdateUserArgs>, Promise<number>>;
+    updateUser: AuthFieldResolver<
+      any,
+      InputResolverArg<UpdateUserArgs>,
+      Promise<UserRecord['id']>
+    >;
   };
 }

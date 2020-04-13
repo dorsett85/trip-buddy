@@ -22,7 +22,11 @@ export interface TripResolvers extends IResolvers {
       InputResolverArg<CreateTripArgs>,
       Promise<TripRecord>
     >;
-    updateTrip: AuthFieldResolver<any, InputResolverArg<UpdateTripArgs>, Promise<number>>;
-    deleteTrip: AuthFieldResolver<any, Pick<TripRecord, 'id'>, Promise<number>>;
+    updateTrip: AuthFieldResolver<
+      any,
+      InputResolverArg<UpdateTripArgs>,
+      Promise<TripRecord['id']>
+    >;
+    deleteTrip: AuthFieldResolver<any, Pick<TripRecord, 'id'>, Promise<TripRecord['id']>>;
   };
 }

@@ -22,14 +22,13 @@ const TabPanel = styled.div(
 );
 
 const TripTabLayout: React.FC = () => {
-  const [tab, setTab] = useState<TabsValue>(LIST);
+  const [tab, setTab] = useState<TabsValue>(INVITES);
 
   const handleOnChange = (e: React.ChangeEvent<{}>, value: TabsValue) => {
     setTab(value);
   };
 
   const viewingTripListTab = tab === LIST;
-  const viewingInvitesTab = !viewingTripListTab;
 
   return (
     <div>
@@ -57,7 +56,7 @@ const TripTabLayout: React.FC = () => {
         id={TRIPS_TAB_PANEL_LIST}
         role='tabpanel'
         aria-labelledby={TRIPS_TAB_LIST}
-        hidden={viewingInvitesTab}
+        hidden={!viewingTripListTab}
       >
         <TripList />
       </TabPanel>
@@ -67,7 +66,7 @@ const TripTabLayout: React.FC = () => {
         aria-labelledby={TRIPS_TAB_INVITES}
         hidden={viewingTripListTab}
       >
-        <TripInviteList viewing={viewingInvitesTab} />
+        <TripInviteList />
       </TabPanel>
     </div>
   );

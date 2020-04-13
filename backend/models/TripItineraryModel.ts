@@ -57,7 +57,7 @@ export default class TripItineraryModel extends BaseModel {
       }
     ];
     const whereArgsWithUserId: WhereArgs = Array.isArray(whereArgs)
-      ? [...userIdWhereGroup, ...userIdWhereGroup]
+      ? [...userIdWhereGroup, ...whereArgs]
       : [...userIdWhereGroup, whereArgs];
     return this.baseUpdateOne(updateArgs, whereArgsWithUserId, this.tableWithUserId);
   }

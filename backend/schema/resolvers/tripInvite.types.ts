@@ -2,7 +2,7 @@ import { IResolvers } from 'apollo-server-express';
 import { TripRecord } from 'common/lib/types/trip';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { AuthFieldResolver, InputResolverArg } from '../types/resolvers';
-import { CreateTripInvitesArgs } from '../../types/tripInvite';
+import { CreateTripInvitesArgs, UpdateTripInviteArgs } from '../../types/tripInvite';
 
 export interface TripInviteResolvers extends IResolvers {
   TripInvite: {
@@ -16,6 +16,11 @@ export interface TripInviteResolvers extends IResolvers {
       any,
       InputResolverArg<CreateTripInvitesArgs>,
       Promise<TripInviteRecord['id'][]>
+    >;
+    updateTripInvite: AuthFieldResolver<
+      any,
+      InputResolverArg<UpdateTripInviteArgs>,
+      Promise<TripInviteRecord['id']>
     >;
   };
 }

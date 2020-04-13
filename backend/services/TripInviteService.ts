@@ -2,10 +2,13 @@ import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { UserRecord } from 'common/lib/types/user';
 import {
   CreateTripInvitesArgs,
-  CreateTripInvitesWithInviterIdArgs
+  CreateTripInvitesWithInviterIdArgs,
+  PartialTripInviteRecord,
+  UpdateTripInviteOmitIdCreatedDateArgs
 } from '../types/tripInvite';
 import TripInviteModel from '../models/TripInviteModel';
 import { TripInviteServiceTypes } from './TripInviteService.types';
+import { WhereArgs } from '../types/dbQueryUtils';
 
 export default class TripService {
   private readonly user: UserRecord;
@@ -15,12 +18,6 @@ export default class TripService {
   constructor(dependencies: TripInviteServiceTypes) {
     this.user = dependencies.user;
     this.tripInviteModel = dependencies.tripInviteModel;
-  }
-
-  public findMany(): Promise<TripInviteRecord[]> {
-    const { id, role } = this.user;
-    const userId = role === 'admin' ? undefined : id;
-    return this.tripInviteModel.findMany(userId);
   }
 
   public async createMany(
@@ -36,5 +33,20 @@ export default class TripService {
     );
     const tripInvites = await this.tripInviteModel.createMany(invitesWithInviterId);
     return tripInvites.map(invite => invite.id);
+  }
+
+  public findMany(): Promise<TripInviteRecord[]> {
+    const { id, role } = this.user;
+    const userId = role === 'admin' ? undefined : id;
+    return this.tripInviteModel.findMany(userId);
+  }
+
+  public updateOne(
+    updateTripInviteInput: UpdateTripInviteOmitIdCreatedDateArgs,
+    whereArgs: WhereArgs<PartialTripInviteRecord>
+  ): Promise<number> {
+    const { id, role } = this.user;
+    const userId = role === 'admin' ? undefined : id;
+    return this.tripInviteModel.updateOne(updateTripInviteInput, whereArgs, userId);
   }
 }

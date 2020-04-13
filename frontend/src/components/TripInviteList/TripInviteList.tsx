@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -6,13 +6,63 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import DoneIcon from '@material-ui/icons/Done';
 import styled, { css } from 'styled-components';
-import { useGetTripInvitesQuery } from '../ApolloProvider/hooks/tripInvite';
+import { TripInviteRecord } from 'common/lib/types/tripInvite';
+import { Radio, ListItemIcon } from '@material-ui/core';
+import {
+  useGetTripInvitesQuery,
+  useUpdateTripInviteMutation
+} from '../ApolloProvider/hooks/tripInvite';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 
-interface TripInviteListProps {
-  viewing: boolean;
+interface ListItemNotificationProps {
+  notificationInfo: Pick<TripInviteRecord, 'id' | 'status'>;
+  onClick: (inviteUpdate: Pick<TripInviteRecord, 'id' | 'status'>) => void;
 }
+
+const NotificationRadio = styled(Radio)(
+  ({ theme }) => css`
+    &.MuiRadio-colorPrimary {
+      color: ${theme.colors.primary};
+    }
+    &.Mui-checked {
+      color: ${theme.colors.primary};
+    }
+  `
+);
+
+const ListItemNotification: React.FC<ListItemNotificationProps> = ({
+  notificationInfo,
+  onClick
+}) => {
+  const notified = notificationInfo.status !== 'initiated';
+  const [checked, setChecked] = useState(notified);
+
+  if (notified) {
+    return null;
+  }
+
+  const handleOnClick = () => {
+    setChecked(true);
+    onClick({ id: notificationInfo.id, status: 'notified' });
+  };
+
+  return (
+    <ListItemIcon>
+      <NotificationRadio
+        edge='start'
+        checked={checked}
+        onClick={handleOnClick}
+        icon={<NotificationsIcon />}
+        checkedIcon={<DoneIcon />}
+        color='primary'
+        inputProps={{ 'aria-label': 'notified' }}
+      />
+    </ListItemIcon>
+  );
+};
 
 const ThumbUpIconStyled = styled(ThumbUpIcon)(
   ({ theme }) => css`
@@ -26,22 +76,27 @@ const ThumbDownIconStyled = styled(ThumbDownIcon)(
   `
 );
 
-const TripInviteList: React.FC<TripInviteListProps> = ({ viewing }) => {
+const TripInviteList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const tripInvitesQuery = useGetTripInvitesQuery();
-  const invites = tripInvitesQuery.data?.tripInvites;
-
-  useEffect(() => {
-    return () => {
-      console.log('unmount');
-    };
-  }, []);
+  const { data, refetch } = useGetTripInvitesQuery();
+  const [updateTripInviteMutation] = useUpdateTripInviteMutation();
+  const invites = data?.tripInvites;
 
   if (!invites) {
     return null;
   }
 
-  console.log(invites);
+  const handleNotificationClick: ListItemNotificationProps['onClick'] = async inviteUpdate => {
+    
+    try {
+      await updateTripInviteMutation({ variables: { input: inviteUpdate }});
+      
+      // Refetch the data to get updated invite status
+      await refetch();
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <>
@@ -54,6 +109,10 @@ const TripInviteList: React.FC<TripInviteListProps> = ({ viewing }) => {
       <List>
         {invites.map((invite: any) => (
           <ListItem key={invite.id}>
+            <ListItemNotification
+              notificationInfo={invite}
+              onClick={handleNotificationClick}
+            />
             <ListItemText
               primary={invite.trip.name}
               secondary={new Date(invite.trip.start_date).toLocaleDateString()}

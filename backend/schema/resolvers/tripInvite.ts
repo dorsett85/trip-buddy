@@ -1,5 +1,8 @@
 import { UserInputError } from 'apollo-server-express';
-import { NOT_FOUND_MESSAGE } from '../../utils/constants/errors';
+import {
+  INTERNAL_SERVER_ERROR_MESSAGE,
+  NOT_FOUND_MESSAGE
+} from '../../utils/constants/errors';
 import { TripInviteResolvers } from './tripInvite.types';
 
 export const tripInviteResolvers: TripInviteResolvers = {
@@ -21,6 +24,14 @@ export const tripInviteResolvers: TripInviteResolvers = {
   Mutation: {
     createTripInvites: (_, { input }, { tripInviteService }) => {
       return tripInviteService.createMany(input);
+    },
+    updateTripInvite: async (_, { input }, { tripInviteService }) => {
+      const { id, ...rest } = input;
+      const updatedCount = await tripInviteService.updateOne(rest, { items: { id } });
+      if (!updatedCount) {
+        throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
+      }
+      return id;
     }
   }
 };

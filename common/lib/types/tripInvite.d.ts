@@ -1,4 +1,4 @@
-export declare const tripInviteStatus: string[];
+export declare const tripInviteStatus: readonly ["initiated", "notified", "accepted", "declined"];
 export interface TripInviteRecord {
     id: number;
     trip_id: number;

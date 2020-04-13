@@ -3,7 +3,7 @@ export const tripInviteStatus = [
   'notified',
   'accepted',
   'declined'
-];
+] as const;
 
 /* eslint-disable camelcase */
 export interface TripInviteRecord {

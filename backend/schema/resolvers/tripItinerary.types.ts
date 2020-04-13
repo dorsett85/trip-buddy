@@ -24,12 +24,12 @@ export interface TripItineraryResolvers extends IResolvers {
     updateTripItinerary: AuthFieldResolver<
       any,
       InputResolverArg<UpdateTripItineraryArgs>,
-      Promise<number>
+      Promise<TripItineraryRecord['id']>
     >;
     deleteTripItinerary: AuthFieldResolver<
       any,
       Pick<TripItineraryRecord, 'id'>,
-      Promise<number>
+      Promise<TripItineraryRecord['id']>
     >;
   };
 }
