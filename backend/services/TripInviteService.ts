@@ -51,7 +51,11 @@ export default class TripService {
     return this.tripInviteModel.updateOne(updateTripInviteInput, whereArgs, userId);
   }
   
-  public acceptOne(acceptTripInvite: UpdateTripInviteArgs): Promise<TripRecord> {
-    return this.tripInviteModel.acceptOne(acceptTripInvite);
+  public acceptOne(inviteId: TripInviteRecord['id']): Promise<TripRecord> {
+    const whereVals = {
+      inviteId,
+      userId: this.user.role === 'admin' ? undefined : this.user.id
+    };
+    return this.tripInviteModel.acceptOne(whereVals);
   }
 }

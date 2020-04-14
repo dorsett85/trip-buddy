@@ -17,6 +17,7 @@ import {
   useUpdateTripInviteMutation
 } from '../ApolloProvider/hooks/tripInvite';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
+import { addTrip } from '../../store/trip/reducer';
 
 type TripInviteStatusUpdate = Pick<TripInviteRecord, 'id' | 'status'>;
 
@@ -68,20 +69,20 @@ const ListItemNotification: React.FC<ListItemNotificationProps> = ({
 };
 
 const ThumbUpIconStyled = styled(ThumbUpIcon)(
-  ({ theme }) => css`
-    color: ${theme.colors.primary};
+  ({ theme, color }) => css`
+    color: ${color === 'disabled' ? 'inherit' : theme.colors.primary};
   `
 );
 
 const ThumbDownIconStyled = styled(ThumbDownIcon)(
-  ({ theme }) => css`
-    color: ${theme.colors.secondary};
+  ({ theme, color }) => css`
+    color: ${color === 'disabled' ? 'inherit' : theme.colors.secondary};
   `
 );
 
 const TripInviteList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { data, refetch } = useGetTripInvitesQuery();
+  const { data, refetch } = useGetTripInvitesQuery({ fetchPolicy: 'no-cache' });
   const [updateTripInviteMutation] = useUpdateTripInviteMutation();
   const [acceptTripInviteMutation] = useAcceptTripInviteMutation();
   const invites = data?.tripInvites;
@@ -96,7 +97,7 @@ const TripInviteList: React.FC = () => {
       await updateTripInviteMutation({ variables: { input: inviteUpdate } });
       await refetch();
     } catch (e) {
-      console.log(e);
+      // TODO do something with failed notified update
     }
   };
 
@@ -112,8 +113,10 @@ const TripInviteList: React.FC = () => {
         // For 'accepted' trip invites, we need to make a different gql mutation call that will
         // not just update the trip invite status, but also create a new users_trips record and
         // return the entire trip record so we can update the ui.
-        const acceptedTrip = await acceptTripInviteMutation({ variables: { input } });
-        console.log(acceptedTrip);
+        const res = await acceptTripInviteMutation({
+          variables: { id: input.id }
+        });
+        dispatch(addTrip(res.data.acceptTripInvite));
       } else {
         // 'declined' trip invites simply need to update the trip invite record
         await updateTripInviteMutation({ variables: { input } });
@@ -121,8 +124,53 @@ const TripInviteList: React.FC = () => {
       // Refresh the trip invites to update the UI
       await refetch();
     } catch (e) {
-      console.log(e);
+      // TODO do something with failed status update
     }
+  };
+
+  const showInviteItems = (invite: any) => {
+    const isAccepted = invite.status === 'accepted';
+    const isDeclined = invite.status === 'declined';
+    const isDisabled = isAccepted || isDeclined;
+    const showAcceptBtn = !isDeclined;
+    const showDeclineBtn = !isAccepted;
+    return (
+      <ListItem key={invite.id} disabled={isDisabled}>
+        <ListItemNotification
+          notificationInfo={invite}
+          onClick={handleNotificationClick}
+        />
+        <ListItemText
+          primary={invite.trip.name}
+          secondary={new Date(invite.trip.start_date).toLocaleString(navigator.language, {
+            weekday: 'short',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+          })}
+        />
+        <ListItemSecondaryAction>
+          {showAcceptBtn && (
+            <IconButton
+              onClick={handleStatusOnClick('accepted')}
+              value={invite.id}
+              disabled={isDisabled}
+            >
+              <ThumbUpIconStyled color={isDisabled ? 'disabled' : undefined} />
+            </IconButton>
+          )}
+          {showDeclineBtn && (
+            <IconButton
+              onClick={handleStatusOnClick('declined')}
+              value={invite.id}
+              disabled={isDisabled}
+            >
+              <ThumbDownIconStyled color={isDisabled ? 'disabled' : undefined} />
+            </IconButton>
+          )}
+        </ListItemSecondaryAction>
+      </ListItem>
+    );
   };
 
   return (
@@ -133,28 +181,7 @@ const TripInviteList: React.FC = () => {
         &nbsp;invite
         {invites.length !== 1 ? 's' : ''}
       </div>
-      <List>
-        {invites.map((invite: any) => (
-          <ListItem key={invite.id}>
-            <ListItemNotification
-              notificationInfo={invite}
-              onClick={handleNotificationClick}
-            />
-            <ListItemText
-              primary={invite.trip.name}
-              secondary={new Date(invite.trip.start_date).toLocaleDateString()}
-            />
-            <ListItemSecondaryAction>
-              <IconButton onClick={handleStatusOnClick('accepted')} value={invite.id}>
-                <ThumbUpIconStyled />
-              </IconButton>
-              <IconButton onClick={handleStatusOnClick('declined')} value={invite.id}>
-                <ThumbDownIconStyled />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        ))}
-      </List>
+      <List>{invites.map(showInviteItems)}</List>
     </>
   );
 };

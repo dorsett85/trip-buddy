@@ -24,7 +24,7 @@ export interface TripInviteResolvers extends IResolvers {
     >;
     acceptTripInvite: AuthFieldResolver<
       any,
-      InputResolverArg<UpdateTripInviteArgs>,
+      Pick<TripInviteRecord, 'id'>,
       Promise<TripRecord>
     >;
   };

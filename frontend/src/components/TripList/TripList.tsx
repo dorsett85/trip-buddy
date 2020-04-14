@@ -46,9 +46,12 @@ const TripList: React.FC = () => {
           >
             <ListItemText
               primary={trip.name}
-              secondary={`${new Date(
-                trip.start_date
-              ).toLocaleDateString()} - ${trip.status.toLocaleUpperCase()}`}
+              secondary={`${new Date(trip.start_date).toLocaleString(navigator.language, {
+                weekday: 'short',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+              })} - ${trip.status.toLocaleUpperCase()}`}
             />
             <ListItemSecondaryAction>
               <FlyToButton onClick={handleFlyToClick} value={trip.id} />

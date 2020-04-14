@@ -22,7 +22,7 @@ const TabPanel = styled.div(
 );
 
 const TripTabLayout: React.FC = () => {
-  const [tab, setTab] = useState<TabsValue>(INVITES);
+  const [tab, setTab] = useState<TabsValue>(LIST);
 
   const handleOnChange = (e: React.ChangeEvent<{}>, value: TabsValue) => {
     setTab(value);

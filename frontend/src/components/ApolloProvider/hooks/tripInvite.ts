@@ -7,11 +7,11 @@ import {
   UPDATE_TRIP_INVITE_MUTATION
 } from '../gql/tripInvite';
 
-export const useGetTripInvitesQuery = <TData = any>() =>
-  useQuery<TData>(GET_TRIP_INVITES_QUERY);
+export const useGetTripInvitesQuery = <TData = any>(options?: QueryHookOptions) =>
+  useQuery<TData>(GET_TRIP_INVITES_QUERY, options);
 
 export const useCreateTripInvitesMutation = <TData = any>(
-  options?: QueryHookOptions<TData>
+  options?: MutationHookOptions<TData>
 ) => useMutation<TData>(CREATE_TRIP_INVITES_MUTATION, options);
 
 export const useUpdateTripInviteMutation = <TData = any>(

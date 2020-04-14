@@ -30,8 +30,8 @@ export const UPDATE_TRIP_INVITE_MUTATION = gql`
 `;
 
 export const ACCEPT_TRIP_INVITE_MUTATION = gql`
-  mutation AcceptTripInvite($input: UpdateTripInviteInput) {
-    acceptTripInvite(input: $input) {
+  mutation AcceptTripInvite($id: Int) {
+    acceptTripInvite(id: $id) {
       ${TRIP_FIELDS}
     }
   }
