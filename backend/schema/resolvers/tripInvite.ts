@@ -32,6 +32,13 @@ export const tripInviteResolvers: TripInviteResolvers = {
         throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
       }
       return id;
+    },
+    acceptTripInvite: async (_, { input }, { tripInviteService }) => {
+      const trip = await tripInviteService.acceptOne(input);
+      if (!trip) {
+        throw new UserInputError(NOT_FOUND_MESSAGE);
+      }
+      return trip;
     }
   }
 };

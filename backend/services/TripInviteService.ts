@@ -3,12 +3,13 @@ import { UserRecord } from 'common/lib/types/user';
 import {
   CreateTripInvitesArgs,
   CreateTripInvitesWithInviterIdArgs,
-  PartialTripInviteRecord,
-  UpdateTripInviteOmitIdCreatedDateArgs
+  PartialTripInviteRecord, UpdateTripInviteArgs,
+  UpdateTripInviteOmitIdArgs
 } from '../types/tripInvite';
 import TripInviteModel from '../models/TripInviteModel';
 import { TripInviteServiceTypes } from './TripInviteService.types';
 import { WhereArgs } from '../types/dbQueryUtils';
+import {TripRecord} from "common/lib/types/trip";
 
 export default class TripService {
   private readonly user: UserRecord;
@@ -42,11 +43,15 @@ export default class TripService {
   }
 
   public updateOne(
-    updateTripInviteInput: UpdateTripInviteOmitIdCreatedDateArgs,
+    updateTripInviteInput: UpdateTripInviteOmitIdArgs,
     whereArgs: WhereArgs<PartialTripInviteRecord>
   ): Promise<number> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
     return this.tripInviteModel.updateOne(updateTripInviteInput, whereArgs, userId);
+  }
+  
+  public acceptOne(acceptTripInvite: UpdateTripInviteArgs): Promise<TripRecord> {
+    return this.tripInviteModel.acceptOne(acceptTripInvite);
   }
 }

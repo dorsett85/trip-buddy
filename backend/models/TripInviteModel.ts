@@ -2,12 +2,13 @@ import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { UserRecord } from 'common/lib/types/user';
 import {
   CreateTripInvitesWithInviterIdArgs,
-  PartialTripInviteRecord,
-  UpdateTripInviteOmitIdCreatedDateArgs
+  PartialTripInviteRecord, UpdateTripInviteArgs,
+  UpdateTripInviteOmitIdArgs
 } from '../types/tripInvite';
 import { extractRows } from '../utils/dbHelpers';
 import BaseModel from './BaseModel';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
+import {TripRecord} from "common/lib/types/trip";
 
 export default class TripItineraryModel extends BaseModel {
   public async findMany(userId?: UserRecord['id']): Promise<TripInviteRecord[]> {
@@ -32,7 +33,7 @@ export default class TripItineraryModel extends BaseModel {
   }
 
   public updateOne(
-    updateArgs: UpdateTripInviteOmitIdCreatedDateArgs,
+    updateArgs: UpdateTripInviteOmitIdArgs,
     whereArgs: WhereArgs<PartialTripInviteRecord>,
     userId?: UserRecord['id']
   ): Promise<number> {
@@ -49,5 +50,9 @@ export default class TripItineraryModel extends BaseModel {
       ? [inviteeIdWhereGroup, ...whereArgs]
       : [inviteeIdWhereGroup, whereArgs];
     return this.baseUpdateOne(updateArgs, whereArgsWithInviteeId);
+  }
+  
+  public async acceptOne(acceptTripInvite: UpdateTripInviteArgs): Promise<TripRecord> {
+    return {} as TripRecord;
   }
 }

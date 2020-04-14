@@ -12,14 +12,17 @@ import styled, { css } from 'styled-components';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { Radio, ListItemIcon } from '@material-ui/core';
 import {
+  useAcceptTripInviteMutation,
   useGetTripInvitesQuery,
   useUpdateTripInviteMutation
 } from '../ApolloProvider/hooks/tripInvite';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 
+type TripInviteStatusUpdate = Pick<TripInviteRecord, 'id' | 'status'>;
+
 interface ListItemNotificationProps {
-  notificationInfo: Pick<TripInviteRecord, 'id' | 'status'>;
-  onClick: (inviteUpdate: Pick<TripInviteRecord, 'id' | 'status'>) => void;
+  notificationInfo: TripInviteStatusUpdate;
+  onClick: (inviteUpdate: TripInviteStatusUpdate) => void;
 }
 
 const NotificationRadio = styled(Radio)(
@@ -80,6 +83,7 @@ const TripInviteList: React.FC = () => {
   const dispatch = useAppDispatch();
   const { data, refetch } = useGetTripInvitesQuery();
   const [updateTripInviteMutation] = useUpdateTripInviteMutation();
+  const [acceptTripInviteMutation] = useAcceptTripInviteMutation();
   const invites = data?.tripInvites;
 
   if (!invites) {
@@ -87,11 +91,34 @@ const TripInviteList: React.FC = () => {
   }
 
   const handleNotificationClick: ListItemNotificationProps['onClick'] = async inviteUpdate => {
-    
     try {
-      await updateTripInviteMutation({ variables: { input: inviteUpdate }});
-      
-      // Refetch the data to get updated invite status
+      // After making the status update, make sure to refetch the data to get updated invite status
+      await updateTripInviteMutation({ variables: { input: inviteUpdate } });
+      await refetch();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleStatusOnClick = (
+    status: 'accepted' | 'declined'
+  ): React.MouseEventHandler<HTMLButtonElement> => async ({ currentTarget }) => {
+    const input: TripInviteStatusUpdate = {
+      id: +currentTarget.value,
+      status
+    };
+    try {
+      if (input.status === 'accepted') {
+        // For 'accepted' trip invites, we need to make a different gql mutation call that will
+        // not just update the trip invite status, but also create a new users_trips record and
+        // return the entire trip record so we can update the ui.
+        const acceptedTrip = await acceptTripInviteMutation({ variables: { input } });
+        console.log(acceptedTrip);
+      } else {
+        // 'declined' trip invites simply need to update the trip invite record
+        await updateTripInviteMutation({ variables: { input } });
+      }
+      // Refresh the trip invites to update the UI
       await refetch();
     } catch (e) {
       console.log(e);
@@ -118,10 +145,10 @@ const TripInviteList: React.FC = () => {
               secondary={new Date(invite.trip.start_date).toLocaleDateString()}
             />
             <ListItemSecondaryAction>
-              <IconButton onClick={() => console.log('first')} value={invite.trip.id}>
+              <IconButton onClick={handleStatusOnClick('accepted')} value={invite.id}>
                 <ThumbUpIconStyled />
               </IconButton>
-              <IconButton onClick={() => console.log('second')} value={invite.trip.id}>
+              <IconButton onClick={handleStatusOnClick('declined')} value={invite.id}>
                 <ThumbDownIconStyled />
               </IconButton>
             </ListItemSecondaryAction>

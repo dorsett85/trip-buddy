@@ -2,7 +2,7 @@
 import { TripRecord } from 'common/lib/types/trip';
 import { UserRecord } from 'common/lib/types/user';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
-import {OmitCreatedDate, OmitIdCreatedDate} from './index';
+import { OmitId } from './index';
 
 export type PartialTripInviteRecord = Partial<TripInviteRecord>;
 
@@ -17,8 +17,6 @@ export type CreateTripInvitesWithInviterIdArgs = (CreateTripInvites & {
   inviter_id: UserRecord['id'];
 })[];
 
-export type UpdateTripInviteArgs = OmitCreatedDate<
-  PartialTripInviteRecord & { id: TripInviteRecord['id'] }
-  >;
+export type UpdateTripInviteArgs = Pick<TripInviteRecord, 'id' | 'status'>;
 
-export type UpdateTripInviteOmitIdCreatedDateArgs = OmitIdCreatedDate<PartialTripInviteRecord>;
+export type UpdateTripInviteOmitIdArgs = OmitId<UpdateTripInviteArgs>;

@@ -36,6 +36,10 @@ export default class TripService {
     restrictUser = true
   ): Promise<TripRecord | undefined> {
     const { id, role } = this.user;
+    // If the findOne method is called from within a nested gql query, we can safely
+    // query just the trip table without needing to join another table to get the user
+    // id. If the 'restrictUser' argument is false, the tripModel.findOne method will
+    // query the trip table directly.
     const userId = role === 'admin' || !restrictUser ? undefined : id;
     return this.tripModel.findOne(whereArgs, userId);
   }
