@@ -165,7 +165,7 @@ const ItineraryLocationInput: React.FC<TripItineraryCreateProps> = ({
 
   return (
     <Autocomplete
-      options={locationOptions}
+      options={locationOptions || []}
       loading={locationsLoading}
       onChange={handleLocationSelect}
       noOptionsText={noOptionsText}

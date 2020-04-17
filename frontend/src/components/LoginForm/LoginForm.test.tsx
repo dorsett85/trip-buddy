@@ -3,16 +3,18 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { render, fireEvent, waitForDomChange } from '@testing-library/react';
 import { MockedProvider } from '@apollo/react-testing';
-import { ApolloError } from 'apollo-boost';
-import LoginForm, { LOGIN_USER } from './LoginForm';
+import { ApolloError } from 'apollo-client';
+import { GraphQLError } from 'graphql';
+import LoginForm from './LoginForm';
 import store from '../../store';
+import { LOGIN_USER_MUTATION } from '../ApolloProvider/gql/user';
 
 let loginMutationCalled = false;
 const ERROR_MESSAGE = 'User does not exist';
 const mocks = [
   {
     request: {
-      query: LOGIN_USER,
+      query: LOGIN_USER_MUTATION,
       variables: {
         username: 'clayton',
         password: 'password123'
@@ -29,7 +31,7 @@ const mocks = [
   },
   {
     request: {
-      query: LOGIN_USER,
+      query: LOGIN_USER_MUTATION,
       variables: {
         username: 'invalid',
         password: 'user'
@@ -38,15 +40,12 @@ const mocks = [
     result: () => {
       loginMutationCalled = true;
       const error = new ApolloError({
-        message: ERROR_MESSAGE,
+        errorMessage: ERROR_MESSAGE,
         graphQLErrors: [
           {
             message: ERROR_MESSAGE
           }
-        ],
-        data: {
-          loginUser: null
-        }
+        ] as GraphQLError[]
       });
       return {
         errors: [error],

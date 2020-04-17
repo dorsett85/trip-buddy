@@ -1,22 +1,8 @@
-import React, { ReactNode } from 'react';
-import ApolloClient from 'apollo-boost';
+import React from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
+import { client } from './apolloClient';
 
-interface Props {
-  children: ReactNode;
-}
-
-export const client = new ApolloClient({
-  request: operation => {
-    operation.setContext({
-      headers: {
-        authorization: localStorage.getItem('token')
-      }
-    });
-  }
-});
-
-const Provider: React.FC<Props> = ({ children }) => (
+const Provider: React.FC = ({ children }) => (
   <ApolloProvider client={client}>{children}</ApolloProvider>
 );
 

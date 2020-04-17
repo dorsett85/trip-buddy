@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 import {TRIP_FIELDS} from "./trip";
 
 export const GET_TRIP_INVITES_QUERY = gql`

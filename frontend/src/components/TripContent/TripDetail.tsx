@@ -7,7 +7,7 @@ import Popper from '@material-ui/core/Popper';
 import Card from '@material-ui/core/Card';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Button from '@material-ui/core/Button';
-import Autocomplete, { AutocompleteProps } from '@material-ui/lab/Autocomplete';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import { DateTimePicker } from '@material-ui/pickers';
@@ -134,8 +134,8 @@ const TripHeader: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
     }
   };
 
-  const handleInviteAutocompleteOnChange: AutocompleteProps['onChange'] = (
-    _,
+  const handleInviteAutocompleteOnChange = (
+    _: React.ChangeEvent<{}>,
     value: TripInviteUser[]
   ) => {
     if (inviteError) {
@@ -189,6 +189,7 @@ const TripHeader: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
       {showInvite && (
         <InviteAutocompleteContainer>
           <Autocomplete
+            <TripInviteUser>
             id='trip-invite-autocomplete'
             multiple
             onChange={handleInviteAutocompleteOnChange}
@@ -469,8 +470,8 @@ const TripLocationInput: React.FC<TripDetailInputProps> = ({ dispatch, trip }) =
     }
   };
 
-  const handleLocationSelect: AutocompleteProps['onChange'] = (
-    _,
+  const handleLocationSelect = (
+    _: React.ChangeEvent<{}>,
     feature: Feature | null
   ) => {
     if (feature) {
@@ -522,7 +523,8 @@ const TripLocationInput: React.FC<TripDetailInputProps> = ({ dispatch, trip }) =
 
   return (
     <Autocomplete
-      options={locationOptions}
+      <Feature>
+      options={locationOptions || []}
       loading={locationsLoading}
       onChange={handleLocationSelect}
       noOptionsText={noOptionsText}
