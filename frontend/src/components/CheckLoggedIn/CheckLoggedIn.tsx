@@ -16,7 +16,6 @@ const CheckLoggedIn: React.FC = () => {
   const loggedIn = useAppSelector(state => state.user.loggedIn);
   const [getLoggedInData, { loading }] = useLoggedInQuery({
     onCompleted: data => {
-      console.log(data);
       const {
         user: { trips, ...loggedInUser }
       } = data;

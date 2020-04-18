@@ -1,18 +1,32 @@
-import { split } from 'apollo-link';
+import { ApolloLink, split } from 'apollo-link';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 
+/**
+ * Http link
+ */
 const httpLink = new HttpLink({
-  uri: '/graphql',
-  credentials: 'include',
-  headers: {
-    authorization: localStorage.getItem('token')
-  }
+  uri: '/graphql'
 });
 
+/**
+ * Perform actions before each http request
+ */
+const middlewareLink = new ApolloLink((operation, forward) => {
+  operation.setContext({
+    headers: {
+      authorization: localStorage.getItem('token')
+    }
+  });
+  return forward(operation);
+});
+
+/**
+ * Web socket link
+ */
 const wsLink = new WebSocketLink({
   uri: `ws://localhost:4001/graphql/ws`,
   options: {
@@ -34,7 +48,7 @@ const link = split(
     );
   },
   wsLink,
-  httpLink
+  middlewareLink.concat(httpLink)
 );
 
 export const client = new ApolloClient({
