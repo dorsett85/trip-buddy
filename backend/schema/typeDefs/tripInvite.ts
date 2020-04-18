@@ -39,4 +39,8 @@ export const tripInviteTypeDefs = gql`
     updateTripInvite(input: UpdateTripInviteInput): Int @isAuth
     acceptTripInvite(id: Int): Trip @isAuth
   }
+  
+  extend type Subscription {
+    tripInviteCreated: Boolean
+  }
 `;

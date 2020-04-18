@@ -2,6 +2,7 @@ import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
+import { createServer } from 'http';
 import { expressServer } from './config/config';
 import { config } from './schema';
 
@@ -10,9 +11,13 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+// Http server
+const httpServer = createServer(app);
+
 // Apollo server
 const server = new ApolloServer(config);
 server.applyMiddleware({ app });
+server.installSubscriptionHandlers(httpServer);
 
 // Serve static assets if not on the webpack dev server
 // app.use('/', express.static(path.resolve(__dirname, '../frontend/build')));
@@ -20,6 +25,6 @@ server.applyMiddleware({ app });
 //   res.sendFile(path.resolve(__dirname, '../frontend/build/index.html'));
 // });
 
-app.listen(expressServer.port, () =>
+httpServer.listen(expressServer.port, () =>
   console.log(`App listening on port ${expressServer.port}!`)
 );

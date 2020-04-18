@@ -1,45 +1,43 @@
-// On each gql request we want to attach our jwt token
-import { ApolloLink, Observable, Operation } from 'apollo-link';
+import { split } from 'apollo-link';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import { WebSocketLink } from 'apollo-link-ws';
+import { getMainDefinition } from 'apollo-utilities';
 
-const request = async (operation: Operation) => {
-  operation.setContext({
-    headers: {
-      authorization: localStorage.getItem('token')
+const httpLink = new HttpLink({
+  uri: '/graphql',
+  credentials: 'include',
+  headers: {
+    authorization: localStorage.getItem('token')
+  }
+});
+
+const wsLink = new WebSocketLink({
+  uri: `ws://localhost:4001/graphql/ws`,
+  options: {
+    reconnect: true,
+    connectionParams: {
+      authToken: localStorage.getItem('token')
     }
-  });
-};
+  }
+});
 
-const requestLink = new ApolloLink(
-  (operation, forward) =>
-    new Observable(observer => {
-      let handle: ZenObservable.Subscription;
-      Promise.resolve(operation)
-        .then(oper => request(oper))
-        .then(() => {
-          handle = forward(operation).subscribe({
-            next: observer.next.bind(observer),
-            error: observer.error.bind(observer),
-            complete: observer.complete.bind(observer)
-          });
-        })
-        .catch(observer.error.bind(observer));
-
-      return () => {
-        if (handle) handle.unsubscribe();
-      };
-    })
+// using the ability to split links, you can send data to each link
+// depending on what kind of operation is being sent
+const link = split(
+  // split based on operation type
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  httpLink
 );
 
 export const client = new ApolloClient({
-  link: ApolloLink.from([
-    requestLink,
-    new HttpLink({
-      uri: '/graphql',
-      credentials: 'include'
-    })
-  ]),
+  link,
   cache: new InMemoryCache()
 });

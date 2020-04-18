@@ -32,4 +32,9 @@ export interface TripItineraryResolvers extends IResolvers {
       Promise<TripItineraryRecord['id']>
     >;
   };
+  Subscription: {
+    tripInviteCreated: {
+      subscribe: AuthFieldResolver<any, {}>;
+    };
+  };
 }

@@ -17,6 +17,10 @@ const typeDefs = Object.values(typeDefsMod);
 
 const resolvers = shallowMerge(Object.values(resolversMod));
 
+const subscriptions = {
+  path: '/graphql/ws'
+}
+
 const schemaDirectives = {
   isAuth: IsAuthDirective
 };
@@ -31,6 +35,7 @@ const formatError = getFormatError();
 export const config: ApolloServerExpressConfig = {
   typeDefs,
   resolvers,
+  subscriptions,
   schemaDirectives,
   context,
   formatError

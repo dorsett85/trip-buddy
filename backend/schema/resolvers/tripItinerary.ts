@@ -1,6 +1,9 @@
 import { UserInputError } from 'apollo-server-express';
 import { INTERNAL_SERVER_ERROR_MESSAGE } from '../../utils/constants/errors';
 import { TripItineraryResolvers } from './tripItinerary.types';
+import { PubSub } from 'graphql-subscriptions';
+
+export const pubsub = new PubSub();
 
 export const tripItineraryResolvers: TripItineraryResolvers = {
   Query: {
@@ -26,6 +29,13 @@ export const tripItineraryResolvers: TripItineraryResolvers = {
         throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
       }
       return id;
+    }
+  },
+  Subscription: {
+    tripInviteCreated: {
+      subscribe: () => {
+        pubsub.asyncIterator('tripInviteCreated');
+      }
     }
   }
 };
