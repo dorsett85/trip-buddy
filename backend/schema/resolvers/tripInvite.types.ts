@@ -28,4 +28,9 @@ export interface TripInviteResolvers extends IResolvers {
       Promise<TripRecord>
     >;
   };
+  Subscription: {
+    tripInviteCreated: {
+      subscribe: AuthFieldResolver<any, {}>;
+    };
+  };
 }

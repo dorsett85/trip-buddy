@@ -10,7 +10,7 @@ import { getFormatError } from './getFormatError';
 
 /*
  * Define the ApolloServerExpressConfig here, which includes the
- * schema (make up of typeDefs and resolvers), directives, and the context
+ * schema (make up of typeDefs, resolvers, and subscriptions), directives, and the context
  */
 
 const typeDefs = Object.values(typeDefsMod);

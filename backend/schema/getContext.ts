@@ -1,10 +1,13 @@
 import { ExpressContext } from 'apollo-server-express/dist/ApolloServer';
+import { PubSub } from 'graphql-subscriptions';
 import { ContextObj } from './types/contextObj';
 import { ContextDeps } from './types/contextDeps';
 import { getToken } from '../utils/getToken';
 import { expressServer } from '../config/config';
 import db from '../db/db';
 import { connectQueryBuilder } from '../utils/QueryBuilder';
+
+export const pubsub = new PubSub();
 
 const qb = connectQueryBuilder(db);
 const { jwtSecretKey } = expressServer;
@@ -15,10 +18,14 @@ const { jwtSecretKey } = expressServer;
  * then be injected into our different services and models.
  */
 export const getContext = ({ services, models }: ContextDeps) => async ({
-  req
+  req,
+  connection
 }: ExpressContext): Promise<ContextObj | ContextObj<true>> => {
+  // Get the authorization token from either an http request or ws connection
+  const { authorization } = req?.headers || connection?.context;
+
   // Verify user and get their latest data
-  const token = getToken(req.headers.authorization);
+  const token = getToken(authorization);
   const { AccessService } = services;
   const { UserModel } = models;
   const accessService = new AccessService({
@@ -30,8 +37,9 @@ export const getContext = ({ services, models }: ContextDeps) => async ({
   // If there's no user, then don't provide additional services!
   if (!user) {
     return {
-      user,
       accessService,
+      user,
+      pubsub: null,
       userService: null,
       tripService: null,
       tripItineraryService: null,
@@ -39,7 +47,7 @@ export const getContext = ({ services, models }: ContextDeps) => async ({
     };
   }
 
-  // Instantiate user and trip services
+  // Instantiate all other services and models for a logged in user
   const { UserService, TripService, TripItineraryService, TripInviteService } = services;
   const { UserTripModel, TripModel, TripItineraryModel, TripInviteModel } = models;
 
@@ -59,8 +67,9 @@ export const getContext = ({ services, models }: ContextDeps) => async ({
   });
 
   return {
-    user,
     accessService,
+    user,
+    pubsub,
     userService,
     tripService,
     tripItineraryService,
