@@ -11,10 +11,13 @@ import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import SuccessText from '../AppText/SuccessText';
 import ErrorText from '../AppText/ErrorText';
 import { useUpdateUserMutation } from '../../api/apollo/hooks/user';
+import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 
-export interface UserContentProps extends DispatchProp {
+interface UserAccountProps {
   user: UserRecord;
 }
+
+type UserAccountInputProps = UserAccountProps & DispatchProp;
 
 const UserInfo = styled.div(
   ({ theme }) => css`
@@ -22,7 +25,7 @@ const UserInfo = styled.div(
   `
 );
 
-const UserNameInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
+const UserNameInput: React.FC<UserAccountInputProps> = ({ dispatch, user }) => {
   const [username, setUsername] = useState(user.username);
   const [editingUsername, setEditingUsername] = useState(false);
   const [updateUsernameText, setUpdateUsernameText] = useState<JSX.Element>();
@@ -82,7 +85,7 @@ const UserNameInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
   );
 };
 
-const UserEmailInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
+const UserEmailInput: React.FC<UserAccountInputProps> = ({ dispatch, user }) => {
   const [email, setEmail] = useState(user.email);
   const [editingEmail, setEditingEmail] = useState(false);
   const [updateEmailText, setUpdateEmailText] = useState<JSX.Element>();
@@ -142,7 +145,10 @@ const UserEmailInput: React.FC<UserContentProps> = ({ dispatch, user }) => {
   );
 };
 
-const AcceptingTripInvitesSelect: React.FC<UserContentProps> = ({ dispatch, user }) => {
+const AcceptingTripInvitesSelect: React.FC<UserAccountInputProps> = ({
+  dispatch,
+  user
+}) => {
   const [updateText, setUpdateText] = useState<JSX.Element>();
   const [updateError, setUpdateError] = useState<JSX.Element>();
 
@@ -183,7 +189,9 @@ const AcceptingTripInvitesSelect: React.FC<UserContentProps> = ({ dispatch, user
   );
 };
 
-const UserContent: React.FC<UserContentProps> = ({ dispatch, user }) => {
+const UserAccount: React.FC<UserAccountProps> = ({ user }) => {
+  const dispatch = useAppDispatch();
+
   return (
     <UserInfo>
       <h2>Account Details</h2>
@@ -194,4 +202,4 @@ const UserContent: React.FC<UserContentProps> = ({ dispatch, user }) => {
   );
 };
 
-export default UserContent;
+export default UserAccount;
