@@ -35,7 +35,7 @@ import FlyToButton from '../generic/FlyToButton/FlyToButton';
 import {
   useDeleteTripItineraryMutation,
   useUpdateTripItineraryMutation
-} from '../ApolloProvider/hooks/tripItinerary';
+} from '../../api/apollo/hooks/tripItinerary';
 
 interface TripItineraryPanelProps extends DispatchProp {
   /**

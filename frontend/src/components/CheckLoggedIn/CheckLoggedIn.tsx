@@ -1,6 +1,4 @@
 import React, { useEffect } from 'react';
-import LandingModal from '../LandingModal/LandingModal';
-import Navigator from '../Navigator/Navigator';
 import {
   setLoadingUser,
   setUser,
@@ -9,17 +7,16 @@ import {
 } from '../../store/user/reducer';
 import { getLocalToken } from '../../utils/localToken';
 import { setLoadingTrips, setTrips } from '../../store/trip/reducer';
-import TripMapLazy from '../TripMap/TripMapLazy';
-import SideDrawerLazy from '../SideDrawer/SideDrawerLazy';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import { useLoggedInQuery } from '../ApolloProvider/hooks/user';
+import { useLoggedInQuery } from '../../api/apollo/hooks/user';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 const CheckLoggedIn: React.FC = () => {
   const dispatch = useAppDispatch();
-  const userState = useAppSelector(state => state.user);
+  const loggedIn = useAppSelector(state => state.user.loggedIn);
   const [getLoggedInData, { loading }] = useLoggedInQuery({
     onCompleted: data => {
+      console.log(data);
       const {
         user: { trips, ...loggedInUser }
       } = data;
@@ -36,11 +33,9 @@ const CheckLoggedIn: React.FC = () => {
         }
         dispatch(setUser(loggedInUser));
         dispatch(setTrips(trips));
-      }, 500)
+      }, 500);
     }
   });
-
-  const { loggedIn, setupComplete } = userState;
 
   // Check login and run dispatch actions
   useEffect(() => {
@@ -60,14 +55,7 @@ const CheckLoggedIn: React.FC = () => {
     dispatch(setLoadingTrips(loading));
   }, [dispatch, loading]);
 
-  return (
-    <>
-      <LandingModal userState={userState} />
-      <Navigator show={loggedIn && setupComplete} />
-      <TripMapLazy />
-      <SideDrawerLazy />
-    </>
-  );
+  return null;
 };
 
 export default CheckLoggedIn;

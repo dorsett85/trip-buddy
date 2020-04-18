@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import {TRIP_FIELDS} from "./trip";
+import { TRIP_FIELDS } from './trip';
 
 export const GET_TRIP_INVITES_QUERY = gql`
   query TripInvites {
@@ -33,6 +33,15 @@ export const ACCEPT_TRIP_INVITE_MUTATION = gql`
   mutation AcceptTripInvite($id: Int) {
     acceptTripInvite(id: $id) {
       ${TRIP_FIELDS}
+    }
+  }
+`;
+
+export const TRIP_INVITE_CREATED_SUBSCRIPTION = gql`      
+  subscription TripInviteCreated {
+    tripInviteCreated {
+      id
+      status
     }
   }
 `;

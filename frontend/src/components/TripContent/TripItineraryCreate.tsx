@@ -23,7 +23,7 @@ import { getFirstError } from '../../utils/apolloErrors';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { debounce } from '../../utils/debouce';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
-import { useCreateTripItineraryMutation } from '../ApolloProvider/hooks/tripItinerary';
+import { useCreateTripItineraryMutation } from '../../api/apollo/hooks/tripItinerary';
 
 interface TripItineraryCreateProps extends DispatchProp {
   itinerary: TripItineraryCreator;

@@ -1,9 +1,16 @@
-import { MutationHookOptions, useMutation, useQuery } from '@apollo/react-hooks';
-import { QueryHookOptions } from '@apollo/react-hooks/lib/types';
+import {
+  QueryHookOptions,
+  MutationHookOptions,
+  SubscriptionHookOptions,
+  useMutation,
+  useQuery,
+  useSubscription
+} from '@apollo/react-hooks';
 import {
   ACCEPT_TRIP_INVITE_MUTATION,
   CREATE_TRIP_INVITES_MUTATION,
   GET_TRIP_INVITES_QUERY,
+  TRIP_INVITE_CREATED_SUBSCRIPTION,
   UPDATE_TRIP_INVITE_MUTATION
 } from '../gql/tripInvite';
 
@@ -21,3 +28,7 @@ export const useUpdateTripInviteMutation = <TData = any>(
 export const useAcceptTripInviteMutation = <TData = any>(
   options?: MutationHookOptions<TData>
 ) => useMutation<TData>(ACCEPT_TRIP_INVITE_MUTATION, options);
+
+export const useTripInviteCreatedSubscription = <TData = any>(
+  options?: SubscriptionHookOptions
+) => useSubscription<TData>(TRIP_INVITE_CREATED_SUBSCRIPTION, options);

@@ -10,7 +10,7 @@ import { setTripItineraries, setTripItineraryCreator } from '../../store/trip/re
 import { useTripItineraries } from '../../store/hooks/useTrip';
 import TripItineraryCreate from './TripItineraryCreate';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
-import { useGetTripItinerariesQuery } from '../ApolloProvider/hooks/tripItinerary';
+import { useGetTripItinerariesQuery } from '../../api/apollo/hooks/tripItinerary';
 
 const ItineraryHeader = styled.div`
   display: flex;

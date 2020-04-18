@@ -4,19 +4,17 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import { LinearProgress } from '@material-ui/core';
-import styled, {css} from "styled-components";
+import styled, { css } from 'styled-components';
 import TransitionModal from '../TransitionModal/TransitionModal';
 import Entry from '../Entry/Entry';
-import { UserState } from '../../store/user/types';
 import NewUserSetup from '../NewUserSetup/NewUserSetup';
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
-interface LandingModalProps {
-  userState: UserState;
-}
-
-const LoadingUserContainer = styled.div(({ theme }) => css`
-  margin-bottom: ${theme.spacing()};  
-`);
+const LoadingUserContainer = styled.div(
+  ({ theme }) => css`
+    margin-bottom: ${theme.spacing()};
+  `
+);
 
 const LoadingUser: React.FC = () => {
   return (
@@ -27,7 +25,8 @@ const LoadingUser: React.FC = () => {
   );
 };
 
-const LandingModal: React.FC<LandingModalProps> = ({ userState }) => {
+const LandingModal: React.FC = () => {
+  const userState = useAppSelector(({ user }) => user);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));
 

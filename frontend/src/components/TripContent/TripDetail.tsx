@@ -40,9 +40,9 @@ import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import {
   useDeleteTripMutation,
   useUpdateTripMutation
-} from '../ApolloProvider/hooks/trip';
-import { useCreateTripInvitesMutation } from '../ApolloProvider/hooks/tripInvite';
-import { useGetPossibleTripInviteesQuery } from '../ApolloProvider/hooks/user';
+} from '../../api/apollo/hooks/trip';
+import { useCreateTripInvitesMutation } from '../../api/apollo/hooks/tripInvite';
+import { useGetPossibleTripInviteesQuery } from '../../api/apollo/hooks/user';
 
 export interface TripDetailProps {
   trip: TripRecord;

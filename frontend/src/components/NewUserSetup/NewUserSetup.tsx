@@ -14,7 +14,7 @@ import styled, { css } from 'styled-components';
 import {
   useUpdateUserMutation,
   useVerifyEmailMutation
-} from '../ApolloProvider/hooks/user';
+} from '../../api/apollo/hooks/user';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { setUser, setSetupCompleted } from '../../store/user/reducer';
 import { INTERNAL_SERVER_ERROR_MESSAGE } from '../../utils/constants/errors';

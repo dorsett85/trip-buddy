@@ -15,7 +15,7 @@ import {
   useAcceptTripInviteMutation,
   useGetTripInvitesQuery,
   useUpdateTripInviteMutation
-} from '../ApolloProvider/hooks/tripInvite';
+} from '../../api/apollo/hooks/tripInvite';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { addTrip } from '../../store/trip/reducer';
 

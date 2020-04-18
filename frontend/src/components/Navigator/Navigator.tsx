@@ -1,10 +1,10 @@
 import React, { memo } from 'react';
 import Slide from '@material-ui/core/Slide';
 import styled, { css } from 'styled-components';
-import { ShowProps } from '../../types/componentProps';
 import UserDropdown from './UserDropdown';
 import CreateTripButton from './CreateTripButton';
 import ViewTripsButton from './ViewTripsButton';
+import {useAppSelector} from "../../store/hooks/useAppSelector";
 
 const AppBar = styled.header(
   ({ theme }) => css`
@@ -23,7 +23,9 @@ const TitleText = styled.h2`
   flex-grow: 1;
 `;
 
-const Navigator: React.FC<ShowProps> = ({ show }) => {
+const Navigator: React.FC = () => {
+  const show = useAppSelector(({ user }) => user.loggedIn && user.setupComplete);
+  
   return (
     <Slide in={show} direction='down'>
       <AppBar>

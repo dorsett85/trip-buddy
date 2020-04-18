@@ -10,7 +10,7 @@ import { getFirstError } from '../../utils/apolloErrors';
 import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import SuccessText from '../AppText/SuccessText';
 import ErrorText from '../AppText/ErrorText';
-import { useUpdateUserMutation } from '../ApolloProvider/hooks/user';
+import { useUpdateUserMutation } from '../../api/apollo/hooks/user';
 
 export interface UserContentProps extends DispatchProp {
   user: UserRecord;

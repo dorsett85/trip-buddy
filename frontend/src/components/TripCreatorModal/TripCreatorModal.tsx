@@ -23,7 +23,7 @@ import { setFlyTo } from '../../store/general/reducer';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
-import { useCreateTripMutation } from '../ApolloProvider/hooks/trip';
+import { useCreateTripMutation } from '../../api/apollo/hooks/trip';
 
 const ErrorStyled = styled.div`
   font-weight: bold;

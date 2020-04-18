@@ -8,7 +8,7 @@ import { setLoggedIn } from '../../store/user/reducer';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setLocalToken } from '../../utils/localToken';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import {useRegisterUserMutation} from "../ApolloProvider/hooks/user";
+import {useRegisterUserMutation} from "../../api/apollo/hooks/user";
 
 enum RegisterFormInputs {
   email = '',
