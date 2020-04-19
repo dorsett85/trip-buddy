@@ -108,6 +108,8 @@ const TripHeader: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
   const [possibleTripInviteesQuery] = useGetPossibleTripInviteesQuery({
     fetchPolicy: 'no-cache',
     onCompleted: data => {
+      // Clear the autocomplete before setting the new possibleInvitee
+      setSelectedInvitees([]);
       setPossibleInvitees(data.possibleTripInvitees);
     }
   });
@@ -140,8 +142,8 @@ const TripHeader: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
   ) => {
     if (inviteError) {
       setInviteError(false);
-      setInviteText(inviteHelperText);
     }
+    setInviteText(inviteHelperText);
     setSelectedInvitees(value);
   };
 
@@ -157,7 +159,7 @@ const TripHeader: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
     createTripInvitesMutation({ variables: { input } })
       .then(() => {
         setInviteError(false);
-        setInviteText(<SuccessText />);
+        setInviteText(<SuccessText text='Invite successful!' />);
         setSelectedInvitees([]);
       })
       .catch(error => {
@@ -188,13 +190,14 @@ const TripHeader: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
       </div>
       {showInvite && (
         <InviteAutocompleteContainer>
-          <Autocomplete
-            <TripInviteUser>
+          <Autocomplete<TripInviteUser>
             id='trip-invite-autocomplete'
             multiple
+            value={selectedInvitees}
             onChange={handleInviteAutocompleteOnChange}
             options={possibleInvitees}
             getOptionLabel={option => option.email}
+            getOptionSelected={(option, value) => value.id === option.id}
             filterSelectedOptions
             renderInput={inputProps => (
               <TextField
@@ -470,10 +473,7 @@ const TripLocationInput: React.FC<TripDetailInputProps> = ({ dispatch, trip }) =
     }
   };
 
-  const handleLocationSelect = (
-    _: React.ChangeEvent<{}>,
-    feature: Feature | null
-  ) => {
+  const handleLocationSelect = (_: React.ChangeEvent<{}>, feature: Feature | null) => {
     if (feature) {
       setLocation(feature.place_name);
       updateLocationMutation({
@@ -522,8 +522,7 @@ const TripLocationInput: React.FC<TripDetailInputProps> = ({ dispatch, trip }) =
     'DEFAULT_UPDATE_LOCATION_TEXT';
 
   return (
-    <Autocomplete
-      <Feature>
+    <Autocomplete<Feature>
       options={locationOptions || []}
       loading={locationsLoading}
       onChange={handleLocationSelect}
