@@ -9,11 +9,11 @@ import { getLocalToken } from '../../utils/localToken';
 import { setLoadingTrips, setTrips } from '../../store/trip/reducer';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { useLoggedInQuery } from '../../api/apollo/hooks/user';
-import {useUserReady} from "../../store/hooks/useUser";
+import { useUserLoggedInAndConnected } from "../../store/hooks/useUser";
 
 const CheckLoggedIn: React.FC = () => {
   const dispatch = useAppDispatch();
-  const userReady = useUserReady();
+  const userLoggedInAndConnected = useUserLoggedInAndConnected();
   const [getLoggedInData, { loading }] = useLoggedInQuery({
     onCompleted: data => {
       const {
@@ -39,7 +39,7 @@ const CheckLoggedIn: React.FC = () => {
   // In order to pull user data, we need to make sure that they are logged in
   // and the websocket subscription is connected.
   useEffect(() => {
-    if (userReady) {
+    if (userLoggedInAndConnected) {
       getLoggedInData();
     } else {
       const token = getLocalToken();
@@ -47,7 +47,7 @@ const CheckLoggedIn: React.FC = () => {
         dispatch(setLoggedIn(true));
       }
     }
-  }, [userReady, getLoggedInData, dispatch]);
+  }, [userLoggedInAndConnected, getLoggedInData, dispatch]);
 
   // Dispatch actions for initial loading
   useEffect(() => {

@@ -9,6 +9,7 @@ import TransitionModal from '../TransitionModal/TransitionModal';
 import Entry from '../Entry/Entry';
 import NewUserSetup from '../NewUserSetup/NewUserSetup';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
+import { useUserLoggedIn, useUserSetupData } from "../../store/hooks/useUser";
 
 const LoadingUserContainer = styled.div(
   ({ theme }) => css`
@@ -26,17 +27,18 @@ const LoadingUser: React.FC = () => {
 };
 
 const LandingModal: React.FC = () => {
-  const userState = useAppSelector(({ user }) => user);
+  const loggedIn = useUserLoggedIn();
+  const userSetupData = useUserSetupData();
+  const setupComplete = useAppSelector(({ user }) => user.setupComplete);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));
 
-  const { loggedIn, setupComplete, data } = userState;
   const show = !loggedIn || !setupComplete;
 
   const content = !loggedIn ? (
     <Entry />
-  ) : data && !setupComplete ? (
-    <NewUserSetup newUserSetup={data.new_user_setup} />
+  ) : userSetupData ? (
+    <NewUserSetup newUserSetup={userSetupData.new_user_setup} />
   ) : (
     <LoadingUser />
   );

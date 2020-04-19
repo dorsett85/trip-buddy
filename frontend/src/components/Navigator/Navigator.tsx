@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import UserDropdown from './UserDropdown';
 import CreateTripButton from './CreateTripButton';
 import ViewTripsButton from './ViewTripsButton';
-import {useAppSelector} from "../../store/hooks/useAppSelector";
+import { useUserData } from '../../store/hooks/useUser';
 
 const AppBar = styled.header(
   ({ theme }) => css`
@@ -24,15 +24,15 @@ const TitleText = styled.h2`
 `;
 
 const Navigator: React.FC = () => {
-  const show = useAppSelector(({ user }) => user.loggedIn && user.setupComplete);
-  
+  const userData = useUserData();
+
   return (
-    <Slide in={show} direction='down'>
+    <Slide in={!!userData} direction='down'>
       <AppBar>
         <TitleText>Trip Buddy</TitleText>
         <CreateTripButton color='inherit' />
         <ViewTripsButton />
-        {show && <UserDropdown />}
+        {userData && <UserDropdown user={userData} />}
       </AppBar>
     </Slide>
   );

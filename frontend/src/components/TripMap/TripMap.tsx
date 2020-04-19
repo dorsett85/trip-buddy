@@ -7,19 +7,20 @@ import TripCreatorModal from '../TripCreatorModal/TripCreatorModal';
 import TripCreatorSnackbar from '../TripCreatorSnackbar/TripCreatorSnackbar';
 import ActiveTripSnackbar from '../ActiveTripSnackbar/ActiveTripSnackbar';
 import DeleteTripSnackbar from '../DeleteTripSnackbar/DeleteTripSnackbar';
-import { useAppSelector } from '../../store/hooks/useAppSelector';
+import { useUserData } from '../../store/hooks/useUser';
 
 interface MapContainerProps {
   updatingLocation: boolean;
 }
 
+const NavigationControlContainer = styled.div``;
 const MapContainer = styled.div<MapContainerProps>(
   ({ updatingLocation }) => css`
     height: 100vh;
     > div > div {
       cursor: ${updatingLocation ? 'pointer' : 'inherit'};
     }
-    .mapNavControl {
+    ${NavigationControlContainer} {
       position: absolute;
       top: 64px;
       left: 0;
@@ -29,7 +30,7 @@ const MapContainer = styled.div<MapContainerProps>(
 );
 
 const TripMap: React.FC = () => {
-  const showControls = useAppSelector(({ user }) => user.loggedIn && user.setupComplete);
+  const userData = useUserData();
   const { viewport, updateViewport, handleClick } = useMap();
   const { tripMarkers, updatingLocation } = useMapTrips();
 
@@ -46,19 +47,23 @@ const TripMap: React.FC = () => {
           mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_API_TOKEN}
         >
           {tripMarkers}
-          {showControls && (
+          {!!userData && (
             <Slide in direction='down'>
-              <div className='mapNavControl'>
+              <NavigationControlContainer>
                 <NavigationControl />
-              </div>
+              </NavigationControlContainer>
             </Slide>
           )}
         </MapGl>
       </MapContainer>
-      <TripCreatorModal />
-      <TripCreatorSnackbar />
-      <ActiveTripSnackbar />
-      <DeleteTripSnackbar />
+      {userData && (
+        <>
+          <TripCreatorModal />
+          <TripCreatorSnackbar />
+          <ActiveTripSnackbar />
+          <DeleteTripSnackbar />
+        </>
+      )}
     </>
   );
 };

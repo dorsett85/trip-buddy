@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Popover from '@material-ui/core/Popover';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Divider from '@material-ui/core/Divider';
@@ -9,34 +8,28 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { useApolloClient } from '@apollo/react-hooks';
-import { makeStyles, Theme } from '@material-ui/core/styles';
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
+import { UserRecord } from 'common/lib/types/user';
 import { setDrawer, resetGeneralState } from '../../store/general/reducer';
 import { resetUserState } from '../../store/user/reducer';
 import { resetTripState } from '../../store/trip/reducer';
 import { removeLocalToken } from '../../utils/localToken';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import { useAppSelector } from '../../store/hooks/useAppSelector';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  userPopover: {
-    paddingTop: theme.spacing(1),
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1),
-    width: 200
+interface UserDropdownProps {
+  user: UserRecord;
+}
+
+const PopoverDropdown = styled(Popover)(({ theme }) => css`
+  .MuiPopover-paper {
+    padding: ${theme.spacing('sm')} ${theme.spacing('sm')} 0;
+    width: 200px;
   }
-}));
+`);
 
-const CircularProgressStyled = styled(CircularProgress)`
-  position: absolute;
-  color: ${props => props.theme.colors.white};
-`;
-
-const UserDropdown: React.FC = () => {
+const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
   const dispatch = useAppDispatch();
   const client = useApolloClient();
-  const user = useAppSelector(state => state.user);
-  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null as HTMLElement | null);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -62,16 +55,12 @@ const UserDropdown: React.FC = () => {
 
   return (
     <>
-      <IconButton edge='end' onClick={handleMenu} color='inherit' disabled={user.loading}>
-        {user.loading && <CircularProgressStyled color='inherit' />}
+      <IconButton edge='end' onClick={handleMenu} color='inherit'>
         <AccountCircle />
       </IconButton>
-      <Popover
+      <PopoverDropdown
         open={!!anchorEl}
         anchorEl={anchorEl}
-        classes={{
-          paper: classes.userPopover
-        }}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right'
@@ -83,23 +72,21 @@ const UserDropdown: React.FC = () => {
         onClose={handlePopoverClose}
         disableRestoreFocus
       >
-        {user.data && (
-          <div>
-            <Typography variant='h6' gutterBottom>
-              {user.data.username}
-            </Typography>
-            <Divider />
-            <List>
-              <ListItem button onClick={handlePopoverClose}>
-                <ListItemText onClick={handleAccountClick} primary='My Account' />
-              </ListItem>
-              <ListItem button onClick={handleLogoutClick}>
-                <ListItemText primary='Logout' />
-              </ListItem>
-            </List>
-          </div>
-        )}
-      </Popover>
+        <div>
+          <Typography variant='h6' gutterBottom>
+            {user.username}
+          </Typography>
+          <Divider />
+          <List>
+            <ListItem button onClick={handlePopoverClose}>
+              <ListItemText onClick={handleAccountClick} primary='My Account' />
+            </ListItem>
+            <ListItem button onClick={handleLogoutClick}>
+              <ListItemText primary='Logout' />
+            </ListItem>
+          </List>
+        </div>
+      </PopoverDropdown>
     </>
   );
 };
