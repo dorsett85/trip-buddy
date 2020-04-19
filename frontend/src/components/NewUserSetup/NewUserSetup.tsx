@@ -11,13 +11,11 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { TextField } from '@material-ui/core';
 import styled, { css } from 'styled-components';
-import {
-  useUpdateUserMutation,
-  useVerifyEmailMutation
-} from '../../api/apollo/hooks/user';
+import { useMutation } from '@apollo/react-hooks';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { setUser, setSetupCompleted } from '../../store/user/reducer';
 import { INTERNAL_SERVER_ERROR_MESSAGE } from '../../utils/constants/errors';
+import { UPDATE_USER_MUTATION, VERIFY_EMAIL_MUTATION } from '../../api/apollo/gql/user';
 
 type NewUserSetupUpdate<
   TCol extends keyof UserRecord,
@@ -190,7 +188,11 @@ const AcceptingTripInvites: React.FC<StepComponentProps> = ({ onSubmit }) => {
             value={acceptInvites}
             onChange={handleChange}
           >
-            <FormControlLabel value='no' control={<Radio color='primary' />} label='Nobody' />
+            <FormControlLabel
+              value='no'
+              control={<Radio color='primary' />}
+              label='Nobody'
+            />
             <FormControlLabel
               value='friends'
               disabled
@@ -275,8 +277,8 @@ const StepContent = styled.div(
 const NewUserSetup: React.FC<NewUserSetupProps> = ({ newUserSetup }) => {
   const dispatch = useAppDispatch();
   const [errorMsg, setErrorMsg] = useState('');
-  const [updateUserMutation] = useUpdateUserMutation();
-  const [verifyEmailMutation] = useVerifyEmailMutation();
+  const [updateUserMutation] = useMutation(UPDATE_USER_MUTATION);
+  const [verifyEmailMutation] = useMutation(VERIFY_EMAIL_MUTATION);
   const steps = getSteps(newUserSetup);
 
   // Check if all of the steps have been completed. If they have not then we'll
