@@ -13,6 +13,10 @@ export interface UserState {
    */
   loggedIn: boolean;
   /**
+   * If the websocket subscription has connected after login
+   */
+  subscriptionConnected: boolean;
+  /**
    * If the user has completed their initial setup
    */
   setupComplete: boolean;
@@ -29,6 +33,7 @@ export interface UserSliceCaseReducers extends SliceCaseReducers<UserState> {
   resetUserState: UserCaseReducer;
   setLoadingUser: UserCaseReducer<UserState['loading']>;
   setLoggedIn: UserCaseReducer<UserState['loggedIn']>;
+  setSubscriptionConnected: UserCaseReducer<UserState['subscriptionConnected']>;
   setSetupCompleted: UserCaseReducer<UserState['setupComplete']>;
   setUser: UserCaseReducer<Partial<UserRecord>>;
 }

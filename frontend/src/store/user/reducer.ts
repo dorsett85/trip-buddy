@@ -5,6 +5,7 @@ import { UserState, UserSliceCaseReducers } from './types';
 const initialState: UserState = {
   loading: false,
   loggedIn: false,
+  subscriptionConnected: false,
   setupComplete: false,
   data: undefined
 };
@@ -16,6 +17,9 @@ const reducers: UserSliceCaseReducers = {
   },
   setLoggedIn: (state, { payload }) => {
     state.loggedIn = payload;
+  },
+  setSubscriptionConnected: (state, { payload }) => {
+    state.subscriptionConnected = payload;
   },
   setSetupCompleted: (state, { payload }) => {
     state.setupComplete = payload;
@@ -38,6 +42,7 @@ export const {
   resetUserState,
   setLoadingUser,
   setLoggedIn,
+  setSubscriptionConnected,
   setSetupCompleted,
   setUser
 } = userSlice.actions;
