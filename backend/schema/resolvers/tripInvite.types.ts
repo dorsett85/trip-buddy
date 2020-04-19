@@ -1,7 +1,11 @@
 import { IResolvers } from 'apollo-server-express';
 import { TripRecord } from 'common/lib/types/trip';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
-import { AuthFieldResolver, InputResolverArg } from '../types/resolvers';
+import {
+  AuthFieldResolver,
+  AuthSubscriptionFieldResolverObj,
+  InputResolverArg
+} from '../types/resolvers';
 import { CreateTripInvitesArgs, UpdateTripInviteArgs } from '../../types/tripInvite';
 
 export interface TripInviteResolvers extends IResolvers {
@@ -29,8 +33,10 @@ export interface TripInviteResolvers extends IResolvers {
     >;
   };
   Subscription: {
-    tripInviteCreated: {
-      subscribe: AuthFieldResolver<any, {}>;
-    };
+    tripInviteCreated: AuthSubscriptionFieldResolverObj<
+      TripInviteRecord[],
+      {},
+      TripInviteRecord
+    >;
   };
 }

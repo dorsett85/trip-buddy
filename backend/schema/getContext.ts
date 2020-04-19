@@ -1,5 +1,5 @@
 import { ExpressContext } from 'apollo-server-express/dist/ApolloServer';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from 'apollo-server-express';
 import { ContextObj } from './types/contextObj';
 import { ContextDeps } from './types/contextDeps';
 import { getToken } from '../utils/getToken';
@@ -63,6 +63,7 @@ export const getContext = ({ services, models }: ContextDeps) => async ({
   });
   const tripInviteService = new TripInviteService({
     user,
+    pubsub,
     tripInviteModel: new TripInviteModel('trip_invites', qb)
   });
 

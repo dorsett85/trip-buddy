@@ -1,5 +1,5 @@
 import { UserRecord } from 'common/lib/types/user';
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub } from 'apollo-server-express';
 import AccessService from '../../services/AccessService';
 import TripService from '../../services/TripService';
 import UserService from '../../services/UserService';
