@@ -1,27 +1,11 @@
-import UserService from '../../services/UserService';
-import TripService from '../../services/TripService';
-import AccessService from '../../services/AccessService';
-import UserModel from '../../models/UserModel';
-import UserTripModel from '../../models/UserTripModel';
-import TripModel from '../../models/TripModel';
-import TripItineraryModel from '../../models/TripItineraryModel';
-import TripItineraryService from '../../services/TripItineraryService';
-import TripInviteModel from '../../models/TripInviteModel';
-import TripInviteService from "../../services/TripInviteService";
+import * as ServicesMod from '../../services';
+import * as ModelsMod from '../../models';
 
 export interface ContextDeps {
   services: {
-    AccessService: typeof AccessService;
-    UserService: typeof UserService;
-    TripService: typeof TripService;
-    TripItineraryService: typeof TripItineraryService;
-    TripInviteService: typeof TripInviteService;
+    [K in keyof typeof ServicesMod]: typeof ServicesMod[K];
   };
   models: {
-    UserModel: typeof UserModel;
-    UserTripModel: typeof UserTripModel;
-    TripModel: typeof TripModel;
-    TripItineraryModel: typeof TripItineraryModel;
-    TripInviteModel: typeof TripInviteModel;
+    [K in keyof typeof ModelsMod]: typeof ModelsMod[K];
   };
 }
