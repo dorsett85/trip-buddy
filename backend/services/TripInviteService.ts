@@ -1,23 +1,27 @@
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { UserRecord } from 'common/lib/types/user';
+import { PubSub } from 'apollo-server-express';
+import { TripRecord } from 'common/lib/types/trip';
 import {
   CreateTripInvitesArgs,
   CreateTripInvitesWithInviterIdArgs,
-  PartialTripInviteRecord, UpdateTripInviteArgs,
+  PartialTripInviteRecord,
   UpdateTripInviteOmitIdArgs
 } from '../types/tripInvite';
 import TripInviteModel from '../models/TripInviteModel';
-import { TripInviteServiceTypes } from './TripInviteService.types';
+import { TripInviteServiceDeps } from './TripInviteService.types';
 import { WhereArgs } from '../types/dbQueryUtils';
-import {TripRecord} from "common/lib/types/trip";
 
-export default class TripService {
+export default class TripInviteService {
   private readonly user: UserRecord;
+
+  private readonly pubsub: PubSub;
 
   private tripInviteModel: TripInviteModel;
 
-  constructor(dependencies: TripInviteServiceTypes) {
+  constructor(dependencies: TripInviteServiceDeps) {
     this.user = dependencies.user;
+    this.pubsub = dependencies.pubsub;
     this.tripInviteModel = dependencies.tripInviteModel;
   }
 
@@ -33,6 +37,9 @@ export default class TripService {
       }
     );
     const tripInvites = await this.tripInviteModel.createMany(invitesWithInviterId);
+
+    // Publish the results so clients receive their subscription trip invites
+    this.pubsub.publish('tripInviteCreated', tripInvites);
     return tripInvites.map(invite => invite.id);
   }
 
@@ -50,7 +57,7 @@ export default class TripService {
     const userId = role === 'admin' ? undefined : id;
     return this.tripInviteModel.updateOne(updateTripInviteInput, whereArgs, userId);
   }
-  
+
   public acceptOne(inviteId: TripInviteRecord['id']): Promise<TripRecord> {
     const whereVals = {
       inviteId,

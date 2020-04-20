@@ -4,6 +4,7 @@ import {
   NOT_FOUND_MESSAGE
 } from '../../utils/constants/errors';
 import { TripInviteResolvers } from './tripInvite.types';
+import { subscribeWithFilter } from '../../utils/subscribeWithFilter';
 
 export const tripInviteResolvers: TripInviteResolvers = {
   TripInvite: {
@@ -39,6 +40,23 @@ export const tripInviteResolvers: TripInviteResolvers = {
         throw new UserInputError(NOT_FOUND_MESSAGE);
       }
       return trip;
+    }
+  },
+  Subscription: {
+    tripInviteCreated: {
+      resolve: (tripInvites, input, { user }) => {
+        // Only send the invite that matches with the user id
+        return tripInvites.filter(invite => invite.invitee_id === user.id)[0];
+      },
+      subscribe: subscribeWithFilter<
+        TripInviteResolvers['Subscription']['tripInviteCreated']['subscribe']
+      >(
+        (_, __, { pubsub }) => pubsub.asyncIterator('tripInviteCreated'),
+        (tripInvites, __, { user }) => {
+          // Only send the invites if the user id matches any of the invitee ids
+          return tripInvites.some(invite => invite.invitee_id === user.id);
+        }
+      )
     }
   }
 };

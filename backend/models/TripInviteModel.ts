@@ -26,9 +26,7 @@ export default class TripItineraryModel extends BaseModel {
   public async createMany(
     invite: CreateTripInvitesWithInviterIdArgs
   ): Promise<TripInviteRecord[]> {
-    const inviteIds = this.db(this.tableName)
-      .insert(invite)
-      .returning(['id']);
+    const inviteIds = this.db(this.tableName).insert(invite);
     return extractRows(await inviteIds);
   }
 
