@@ -16,7 +16,7 @@ import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { addTrip } from '../../store/trip/reducer';
 import {
   ACCEPT_TRIP_INVITE_MUTATION,
-  GET_TRIP_INVITES_QUERY,
+  TRIP_INVITES_QUERY,
   UPDATE_TRIP_INVITE_MUTATION
 } from '../../api/apollo/gql/tripInvite';
 
@@ -83,7 +83,7 @@ const ThumbDownIconStyled = styled(ThumbDownIcon)(
 
 const TripInviteList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { data, refetch } = useQuery(GET_TRIP_INVITES_QUERY, { fetchPolicy: 'no-cache' });
+  const { data, refetch } = useQuery(TRIP_INVITES_QUERY, { fetchPolicy: 'no-cache' });
   const [updateTripInviteMutation] = useMutation(UPDATE_TRIP_INVITE_MUTATION);
   const [acceptTripInviteMutation] = useMutation(ACCEPT_TRIP_INVITE_MUTATION);
   const invites = data?.tripInvites;

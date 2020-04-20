@@ -11,7 +11,7 @@ export const ITINERARY_FIELDS = `
   end_time
 `;
 
-export const GET_TRIP_ITINERARIES_QUERY = gql`
+export const TRIP_ITINERARIES_QUERY = gql`
   query GetItinerary($input: FindTripItineraryInput) {
     tripItineraries(input: $input) {
       ${ITINERARY_FIELDS}

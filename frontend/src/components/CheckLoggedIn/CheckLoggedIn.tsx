@@ -10,12 +10,12 @@ import { getLocalToken } from '../../utils/localToken';
 import { setLoadingTrips, setTrips } from '../../store/trip/reducer';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { useUserLoggedInAndConnected } from '../../store/hooks/useUser';
-import { GET_LOGGED_IN_DATA_QUERY } from '../../api/apollo/gql/user';
+import { LOGGED_IN_DATA_QUERY } from '../../api/apollo/gql/user';
 
 const CheckLoggedIn: React.FC = () => {
   const dispatch = useAppDispatch();
   const userLoggedInAndConnected = useUserLoggedInAndConnected();
-  const [getLoggedInData, { loading }] = useLazyQuery(GET_LOGGED_IN_DATA_QUERY, {
+  const [getLoggedInData, { loading }] = useLazyQuery(LOGGED_IN_DATA_QUERY, {
     onCompleted: data => {
       const {
         user: { trips, ...loggedInUser }

@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { TRIP_FIELDS } from './trip';
 
-export const GET_LOGGED_IN_DATA_QUERY = gql`
+export const LOGGED_IN_DATA_QUERY = gql`
   query GetLoggedInUser {
     user {
       id
@@ -48,7 +48,7 @@ export const UPDATE_USER_MUTATION = gql`
   }
 `;
 
-export const GET_POSSIBLE_TRIP_INVITEES_QUERY = gql`
+export const POSSIBLE_TRIP_INVITEES_QUERY = gql`
   query PossibleTripInvitees($tripId: Int!) {
     possibleTripInvitees(tripId: $tripId) {
       id

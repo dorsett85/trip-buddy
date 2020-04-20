@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { TRIP_FIELDS } from './trip';
 
-export const GET_TRIP_INVITES_QUERY = gql`
+export const TRIP_INVITES_QUERY = gql`
   query TripInvites {
     tripInvites {
       id
@@ -37,12 +37,14 @@ export const ACCEPT_TRIP_INVITE_MUTATION = gql`
   }
 `;
 
-// export const GET_TRIP_INVITES_ID_QUERY = gql`
-//   query TripInvitesId {
-//    
-//   }
-// `;
-export const TRIP_INVITE_CREATED_SUBSCRIPTION = gql`      
+export const TRIP_INVITES_ID_QUERY = gql`
+  query TripInvitesId {
+    tripInvites {
+      id
+    }
+  }
+`;
+export const TRIP_INVITE_CREATED_SUBSCRIPTION = gql`
   subscription TripInviteCreated {
     tripInviteCreated {
       id

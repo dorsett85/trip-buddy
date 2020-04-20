@@ -40,7 +40,7 @@ import AppText from '../AppText/AppText';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { DELETE_TRIP_MUTATION, UPDATE_TRIP_MUTATION } from '../../api/apollo/gql/trip';
 import { CREATE_TRIP_INVITES_MUTATION } from '../../api/apollo/gql/tripInvite';
-import { GET_POSSIBLE_TRIP_INVITEES_QUERY } from '../../api/apollo/gql/user';
+import { POSSIBLE_TRIP_INVITEES_QUERY } from '../../api/apollo/gql/user';
 
 export interface TripDetailProps {
   trip: TripRecord;
@@ -103,7 +103,7 @@ const TripHeader: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
   const [possibleInvitees, setPossibleInvitees] = useState<TripInviteUser[]>([]);
   const [selectedInvitees, setSelectedInvitees] = useState<TripInviteUser[]>([]);
 
-  const [possibleTripInviteesQuery] = useLazyQuery(GET_POSSIBLE_TRIP_INVITEES_QUERY, {
+  const [possibleTripInviteesQuery] = useLazyQuery(POSSIBLE_TRIP_INVITEES_QUERY, {
     fetchPolicy: 'no-cache',
     onCompleted: data => {
       // Clear the autocomplete before setting the new possibleInvitee

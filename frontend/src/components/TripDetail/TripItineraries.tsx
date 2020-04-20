@@ -11,7 +11,7 @@ import { setTripItineraries, setTripItineraryCreator } from '../../store/trip/re
 import { useTripItineraries } from '../../store/hooks/useTrip';
 import TripItineraryCreate from './TripItineraryCreate';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
-import { GET_TRIP_ITINERARIES_QUERY } from '../../api/apollo/gql/tripItinerary';
+import { TRIP_ITINERARIES_QUERY } from '../../api/apollo/gql/tripItinerary';
 
 const ItineraryHeader = styled.div`
   display: flex;
@@ -26,7 +26,7 @@ interface TripItinerariesProps extends DispatchProp {
 const TripItineraries: React.FC<TripItinerariesProps> = ({ dispatch, tripId }) => {
   const itineraries = useTripItineraries();
   const itineraryCreator = useAppSelector(({ trip }) => trip.itineraryCreator);
-  const { data, loading } = useQuery(GET_TRIP_ITINERARIES_QUERY, {
+  const { data, loading } = useQuery(TRIP_ITINERARIES_QUERY, {
     variables: { input: { trip_id: tripId } },
     fetchPolicy: 'no-cache'
   });
