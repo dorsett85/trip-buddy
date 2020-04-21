@@ -8,7 +8,10 @@ const initialState: TripState = {
   itineraries: {},
   creator: undefined,
   itineraryCreator: undefined,
-  activeTripInfo: undefined
+  activeTripInfo: undefined,
+  notifications: {
+    tripInvites: []
+  }
 };
 
 const reducers: TripSliceCaseReducers = {
@@ -73,6 +76,15 @@ const reducers: TripSliceCaseReducers = {
   },
   deleteTripItinerary: (state, { payload }) => {
     delete state.itineraries[payload];
+  },
+  setTripInviteNotifications: ({ notifications }, { payload }) => {
+    notifications.tripInvites = payload;
+  },
+  addTripInviteNotification: ({ notifications }, { payload }) => {
+    notifications.tripInvites = [...notifications.tripInvites, payload];
+  },
+  deleteTripInviteNotification: ({ notifications }, { payload }) => {
+    notifications.tripInvites = notifications.tripInvites.filter(id => id !== payload);
   }
 };
 
@@ -95,7 +107,10 @@ export const {
   setTripItineraryCreator,
   addTripItinerary,
   updateTripItinerary,
-  deleteTripItinerary
+  deleteTripItinerary,
+  setTripInviteNotifications,
+  addTripInviteNotification,
+  deleteTripInviteNotification
 } = tripSlice.actions;
 
 export const tripReducer = tripSlice.reducer;

@@ -15,9 +15,9 @@ import { useMutation, useQuery } from '@apollo/react-hooks';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { addTrip } from '../../store/trip/reducer';
 import {
-  ACCEPT_TRIP_INVITE_MUTATION,
   TRIP_INVITES_QUERY,
-  UPDATE_TRIP_INVITE_MUTATION
+  UPDATE_TRIP_INVITE_MUTATION,
+  useAcceptTripInviteMutation
 } from '../../api/apollo/gql/tripInvite';
 
 type TripInviteStatusUpdate = Pick<TripInviteRecord, 'id' | 'status'>;
@@ -85,7 +85,7 @@ const TripInviteList: React.FC = () => {
   const dispatch = useAppDispatch();
   const { data, refetch } = useQuery(TRIP_INVITES_QUERY, { fetchPolicy: 'no-cache' });
   const [updateTripInviteMutation] = useMutation(UPDATE_TRIP_INVITE_MUTATION);
-  const [acceptTripInviteMutation] = useMutation(ACCEPT_TRIP_INVITE_MUTATION);
+  const [acceptTripInviteMutation] = useAcceptTripInviteMutation();
   const invites = data?.tripInvites;
 
   if (!invites) {
@@ -94,12 +94,13 @@ const TripInviteList: React.FC = () => {
 
   const handleNotificationClick: ListItemNotificationProps['onClick'] = async inviteUpdate => {
     try {
-      // After making the status update, make sure to refetch the data to get updated invite status
+      // After making the status update
       await updateTripInviteMutation({ variables: { input: inviteUpdate } });
-      await refetch();
     } catch (e) {
       // TODO do something with failed notified update
     }
+    // Make sure to refetch the data to get updated invite status
+    await refetch();
   };
 
   const handleStatusOnClick = (
@@ -117,16 +118,18 @@ const TripInviteList: React.FC = () => {
         const res = await acceptTripInviteMutation({
           variables: { id: input.id }
         });
-        dispatch(addTrip(res.data.acceptTripInvite));
+        if (res.data) {
+          dispatch(addTrip(res.data.acceptTripInvite));
+        }
       } else {
         // 'declined' trip invites simply need to update the trip invite record
         await updateTripInviteMutation({ variables: { input } });
       }
-      // Refresh the trip invites to update the UI
-      await refetch();
     } catch (e) {
       // TODO do something with failed status update
     }
+    // Refresh the trip invites to update the UI
+    await refetch();
   };
 
   const showInviteItems = (invite: any) => {

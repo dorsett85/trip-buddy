@@ -2,7 +2,7 @@ import { CaseReducer, PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit'
 import { TripRecord } from 'common/lib/types/trip';
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 import { LngLatArray } from 'common/lib/types/utils';
-import {PartialTripRecord} from "../../../../backend/types/trip";
+import { TripInviteRecord } from 'common/lib/types/tripInvite';
 
 // State
 export interface TripCreator {
@@ -37,6 +37,10 @@ export interface ActiveTripInfo {
   newItineraryLocation: LngLatArray | undefined;
 }
 
+export interface TripNotifications {
+  tripInvites: TripInviteRecord['id'][];
+}
+
 export interface TripState {
   loadingTrips: boolean;
   trips: {
@@ -48,10 +52,11 @@ export interface TripState {
   };
   itineraryCreator?: TripItineraryCreator;
   activeTripInfo?: ActiveTripInfo;
+  notifications: TripNotifications;
 }
 
 // Action payload args
-interface UpdateTripPayload extends PartialTripRecord {
+interface UpdateTripPayload extends Partial<TripRecord> {
   id: TripRecord['id'];
 }
 interface UpdateTripItineraryPayload extends Partial<TripItineraryRecord> {
@@ -75,4 +80,7 @@ export interface TripSliceCaseReducers extends SliceCaseReducers<TripState> {
   addTripItinerary: TripCaseReducer<TripItineraryRecord>;
   updateTripItinerary: TripCaseReducer<UpdateTripItineraryPayload>;
   deleteTripItinerary: TripCaseReducer<TripItineraryRecord['id']>;
+  setTripInviteNotifications: TripCaseReducer<TripInviteRecord['id'][]>;
+  addTripInviteNotification: TripCaseReducer<TripInviteRecord['id']>;
+  deleteTripInviteNotification: TripCaseReducer<TripInviteRecord['id']>;
 }
