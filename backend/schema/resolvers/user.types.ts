@@ -1,9 +1,9 @@
 import { IResolvers } from 'apollo-server-express';
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
-import { FieldResolver, AuthFieldResolver, InputResolverArg } from '../types/resolvers';
-import { LoginArgs, RegisterArgs } from '../../types/access';
-import { UpdateUserArgs } from '../../types/user';
+import { LoginArgs, RegisterArgs } from 'common/lib/types/gqlSchema/access';
+import { UpdateUserInputArgs } from 'common/lib/types/gqlSchema/user';
+import { FieldResolver, AuthFieldResolver } from '../types/resolvers';
 
 export interface UserResolvers extends IResolvers {
   User: {
@@ -21,10 +21,6 @@ export interface UserResolvers extends IResolvers {
     loginUser: FieldResolver<any, LoginArgs, Promise<string>>;
     registerUser: FieldResolver<any, RegisterArgs, Promise<string>>;
     verifyEmail: AuthFieldResolver<any, { token: string }, Promise<number>>;
-    updateUser: AuthFieldResolver<
-      any,
-      InputResolverArg<UpdateUserArgs>,
-      Promise<UserRecord['id']>
-    >;
+    updateUser: AuthFieldResolver<any, UpdateUserInputArgs, Promise<UserRecord['id']>>;
   };
 }

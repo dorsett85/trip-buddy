@@ -12,3 +12,5 @@ export interface TripItineraryRecord {
   end_time: string,
   created_date: Date;
 }
+
+export type PartialTripItineraryRecord = Partial<TripItineraryRecord>;

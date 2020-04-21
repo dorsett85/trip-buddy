@@ -1,13 +1,13 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { UserRecord } from 'common/lib/types/user';
+import { LoginArgs, RegisterArgs } from 'common/lib/types/gqlSchema/access';
 import {
   USER_NOT_FOUND_MESSAGE,
   INVALID_LOGIN_MESSAGE,
   USER_ALREADY_EXISTS_MESSAGE
 } from '../utils/constants/errors';
 import { AccessServiceDeps } from './AccessService.types';
-import { LoginArgs, RegisterArgs } from '../types/access';
 import UserModel from '../models/UserModel';
 
 export default class AccessService {

@@ -2,11 +2,10 @@ import { IResolvers } from 'apollo-server-express';
 import { TripRecord } from 'common/lib/types/trip';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import {
-  AuthFieldResolver,
-  AuthSubscriptionFieldResolverObj,
-  InputResolverArg
-} from '../types/resolvers';
-import { CreateTripInvitesArgs, UpdateTripInviteArgs } from '../../types/tripInvite';
+  CreateTripInvitesInputArgs,
+  UpdateTripInvitesInputArgs
+} from 'common/lib/types/gqlSchema/tripInvite';
+import { AuthFieldResolver, AuthSubscriptionFieldResolverObj } from '../types/resolvers';
 
 export interface TripInviteResolvers extends IResolvers {
   TripInvite: {
@@ -18,12 +17,12 @@ export interface TripInviteResolvers extends IResolvers {
   Mutation: {
     createTripInvites: AuthFieldResolver<
       any,
-      InputResolverArg<CreateTripInvitesArgs>,
+      CreateTripInvitesInputArgs,
       Promise<TripInviteRecord['id'][]>
     >;
     updateTripInvite: AuthFieldResolver<
       any,
-      InputResolverArg<UpdateTripInviteArgs>,
+      UpdateTripInvitesInputArgs,
       Promise<TripInviteRecord['id']>
     >;
     acceptTripInvite: AuthFieldResolver<

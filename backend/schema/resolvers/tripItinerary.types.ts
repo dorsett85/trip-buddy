@@ -1,29 +1,32 @@
 import { IResolvers } from 'apollo-server-express';
-import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
-import { AuthFieldResolver, InputResolverArg } from '../types/resolvers';
 import {
-  CreateTripItineraryArgs,
   PartialTripItineraryRecord,
-  UpdateTripItineraryArgs
-} from '../../types/tripItinerary';
+  TripItineraryRecord
+} from 'common/lib/types/tripItinerary';
+import { InputArgs } from 'common/lib/types/gqlSchema/inputArgs';
+import {
+  CreateTripItineraryInputArgs,
+  UpdateTripItineraryInputArgs
+} from 'common/lib/types/gqlSchema/tripItinerary';
+import { AuthFieldResolver } from '../types/resolvers';
 
 export interface TripItineraryResolvers extends IResolvers {
   Query: {
     tripItineraries: AuthFieldResolver<
       any,
-      InputResolverArg<PartialTripItineraryRecord>,
+      InputArgs<PartialTripItineraryRecord>,
       Promise<TripItineraryRecord[]>
     >;
   };
   Mutation: {
     createTripItinerary: AuthFieldResolver<
       any,
-      InputResolverArg<CreateTripItineraryArgs>,
+      CreateTripItineraryInputArgs,
       Promise<TripItineraryRecord>
     >;
     updateTripItinerary: AuthFieldResolver<
       any,
-      InputResolverArg<UpdateTripItineraryArgs>,
+      UpdateTripItineraryInputArgs,
       Promise<TripItineraryRecord['id']>
     >;
     deleteTripItinerary: AuthFieldResolver<

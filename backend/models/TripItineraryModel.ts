@@ -1,13 +1,13 @@
-import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
+import {
+  PartialTripItineraryRecord,
+  TripItineraryRecord
+} from 'common/lib/types/tripItinerary';
 import { UserRecord } from 'common/lib/types/user';
 import { UserTripRecord } from 'common/lib/types/userTrip';
+import { CreateTripItineraryArgs } from 'common/lib/types/gqlSchema/tripItinerary';
+import { OmitIdCreatedDate } from 'common/lib/types/utils';
 import BaseModel from './BaseModel';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
-import {
-  CreateTripItineraryArgs,
-  PartialTripItineraryRecord,
-  UpdateTripItineraryOmitIdCreatedDateArgs
-} from '../types/tripItinerary';
 
 export default class TripItineraryModel extends BaseModel {
   private readonly tableWithUserId = 'users_trips ut';
@@ -41,7 +41,7 @@ export default class TripItineraryModel extends BaseModel {
   }
 
   public updateOne(
-    updateArgs: UpdateTripItineraryOmitIdCreatedDateArgs,
+    updateArgs: OmitIdCreatedDate<PartialTripItineraryRecord>,
     whereArgs: WhereArgs<PartialTripItineraryRecord>,
     userId?: UserRecord['id']
   ): Promise<number> {

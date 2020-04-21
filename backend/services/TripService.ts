@@ -1,12 +1,9 @@
 import { UserRecord } from 'common/lib/types/user';
-import { TripRecord } from 'common/lib/types/trip';
+import { PartialTripRecord, TripRecord } from 'common/lib/types/trip';
+import { CreateTripArgs } from 'common/lib/types/gqlSchema/trip';
+import { OmitIdCreatedDate } from 'common/lib/types/utils';
 import { TripServiceDeps } from './TripService.types';
 import { WhereArgs } from '../types/dbQueryUtils';
-import {
-  CreateTripArgs,
-  PartialTripRecord,
-  UpdateTripOmitIdCreatedDateArgs
-} from '../types/trip';
 import TripModel from '../models/TripModel';
 import UserTripModel from '../models/UserTripModel';
 
@@ -51,7 +48,7 @@ export default class TripService {
   }
 
   public updateOne(
-    updateTripInput: UpdateTripOmitIdCreatedDateArgs,
+    updateTripInput: OmitIdCreatedDate<PartialTripRecord>,
     whereArgs: WhereArgs<PartialTripRecord>
   ): Promise<number> {
     const { id, role } = this.user;

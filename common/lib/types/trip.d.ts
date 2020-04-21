@@ -10,4 +10,5 @@ export interface TripRecord {
     status: typeof tripStatus[number];
     created_date: string;
 }
+export declare type PartialTripRecord = Partial<TripRecord>;
 //# sourceMappingURL=trip.d.ts.map

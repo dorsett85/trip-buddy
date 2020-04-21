@@ -10,4 +10,5 @@ export interface TripItineraryRecord {
     end_time: string;
     created_date: Date;
 }
+export declare type PartialTripItineraryRecord = Partial<TripItineraryRecord>;
 //# sourceMappingURL=tripItinerary.d.ts.map

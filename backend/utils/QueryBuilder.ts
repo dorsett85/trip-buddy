@@ -1,4 +1,5 @@
 import { Pool, QueryResult } from 'pg';
+import { KeyValue } from 'common/lib/types/utils';
 import { prefixTableName } from './dbHelpers';
 import {
   ParamQuery,
@@ -6,7 +7,6 @@ import {
   WhereArgGroup,
   WhereArgs
 } from '../types/dbQueryUtils';
-import { KeyValue } from '../types';
 
 const isParamQuery = (obj: ParamQuery | WhereArgGroup): obj is ParamQuery =>
   Object.keys(obj).some(key => key !== 'items' && key === 'text');

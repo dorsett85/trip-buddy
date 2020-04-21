@@ -1,5 +1,5 @@
 import { QueryResult } from 'pg';
-import { KeyValue } from '../types';
+import { KeyValue } from 'common/lib/types/utils';
 
 /**
  * Add table name prefix

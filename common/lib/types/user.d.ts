@@ -17,4 +17,5 @@ export interface UserRecord {
     created_date: Date;
     new_user_setup: NewUserSetup;
 }
+export declare type PartialUserRecord = Partial<UserRecord>;
 //# sourceMappingURL=user.d.ts.map

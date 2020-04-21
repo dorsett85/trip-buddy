@@ -1,13 +1,12 @@
-import { TripInviteRecord } from 'common/lib/types/tripInvite';
+import { PartialTripInviteRecord, TripInviteRecord } from 'common/lib/types/tripInvite';
 import { UserRecord } from 'common/lib/types/user';
 import { PubSub } from 'apollo-server-express';
 import { TripRecord } from 'common/lib/types/trip';
 import {
   CreateTripInvitesArgs,
-  CreateTripInvitesWithInviterIdArgs,
-  PartialTripInviteRecord,
-  UpdateTripInviteOmitIdArgs
-} from '../types/tripInvite';
+  UpdateTripInviteArgs
+} from 'common/lib/types/gqlSchema/tripInvite';
+import { OmitId } from 'common/lib/types/utils';
 import TripInviteModel from '../models/TripInviteModel';
 import { TripInviteServiceDeps } from './TripInviteService.types';
 import { WhereArgs } from '../types/dbQueryUtils';
@@ -28,14 +27,12 @@ export default class TripInviteService {
   public async createMany(
     invites: CreateTripInvitesArgs
   ): Promise<TripInviteRecord['id'][]> {
-    const invitesWithInviterId: CreateTripInvitesWithInviterIdArgs = invites.map(
-      invite => {
-        return {
-          inviter_id: this.user.id,
-          ...invite
-        };
-      }
-    );
+    const invitesWithInviterId = invites.map(invite => {
+      return {
+        inviter_id: this.user.id,
+        ...invite
+      };
+    });
     const tripInvites = await this.tripInviteModel.createMany(invitesWithInviterId);
 
     // Publish the results so clients receive their subscription trip invites
@@ -50,7 +47,7 @@ export default class TripInviteService {
   }
 
   public updateOne(
-    updateTripInviteInput: UpdateTripInviteOmitIdArgs,
+    updateTripInviteInput: OmitId<UpdateTripInviteArgs>,
     whereArgs: WhereArgs<PartialTripInviteRecord>
   ): Promise<number> {
     const { id, role } = this.user;

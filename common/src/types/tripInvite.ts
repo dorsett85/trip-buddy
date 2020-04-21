@@ -15,3 +15,5 @@ export interface TripInviteRecord {
   status: typeof tripInviteStatus[number];
   created_date: Date;
 }
+
+export type PartialTripInviteRecord = Partial<TripInviteRecord>;

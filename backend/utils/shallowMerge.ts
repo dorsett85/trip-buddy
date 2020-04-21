@@ -1,4 +1,4 @@
-import { KeyValue } from '../types';
+import { KeyValue } from 'common/lib/types/utils';
 
 /**
  * Shallow merge objects
@@ -6,7 +6,7 @@ import { KeyValue } from '../types';
  * Given an array of objects, create one object that shallow merges the properties
  * from each object.  If there is a merge conflict between two objects with the
  * same property, then spread those sub properties into the same shared property.
- * 
+ *
  * If there are conflicts within nested properties then the old property will be
  * overridden.
  */

@@ -1,4 +1,4 @@
-import { UserRecord } from 'common/lib/types/user';
+import { UserRecord } from '../user';
 
 /**
  * Arguments required when a user logs in

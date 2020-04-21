@@ -1,5 +1,5 @@
 import { withFilter } from 'apollo-server-express';
-import { ChangeReturnType } from '../types';
+import { ChangeReturnType } from 'common/lib/types/utils';
 import { FieldResolver } from '../schema/types/resolvers';
 
 /**

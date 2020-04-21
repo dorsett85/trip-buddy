@@ -8,4 +8,5 @@ export interface TripInviteRecord {
     status: typeof tripInviteStatus[number];
     created_date: Date;
 }
+export declare type PartialTripInviteRecord = Partial<TripInviteRecord>;
 //# sourceMappingURL=tripInvite.d.ts.map

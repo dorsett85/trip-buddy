@@ -1,10 +1,8 @@
 /* eslint-disable camelcase */
-import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
-import { TripRecord } from 'common/lib/types/trip';
-import { LngLatArray } from 'common/lib/types/utils';
-import { OmitCreatedDate, OmitIdCreatedDate } from './index';
-
-export type PartialTripItineraryRecord = Partial<TripItineraryRecord>;
+import { TripItineraryRecord, PartialTripItineraryRecord } from '../tripItinerary';
+import { TripRecord } from '../trip';
+import { LngLatArray, OmitCreatedDate } from '../utils';
+import { InputArgs } from './inputArgs';
 
 export type CreateTripItineraryArgs = {
   trip_id: TripRecord['id'];
@@ -14,11 +12,9 @@ export type CreateTripItineraryArgs = {
   location_address: TripItineraryRecord['location_address'];
   start_time: TripItineraryRecord['start_time'];
 };
+export type CreateTripItineraryInputArgs = InputArgs<CreateTripItineraryArgs>;
 
 export type UpdateTripItineraryArgs = OmitCreatedDate<
   PartialTripItineraryRecord & { id: TripItineraryRecord['id'] }
 >;
-
-export type UpdateTripItineraryOmitIdCreatedDateArgs = OmitIdCreatedDate<
-  PartialTripItineraryRecord
->;
+export type UpdateTripItineraryInputArgs = InputArgs<UpdateTripItineraryArgs>;

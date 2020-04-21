@@ -1,9 +1,9 @@
-import { UserRecord } from 'common/lib/types/user';
+import { PartialUserRecord, UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
+import { CreateUserArgs, UpdateUserArgs } from 'common/lib/types/gqlSchema/user';
 import BaseModel from './BaseModel';
 import { extractRows } from '../utils/dbHelpers';
 import { WhereArgs } from '../types/dbQueryUtils';
-import { CreateUserArgs, PartialUserRecord, UpdateUserArgs } from '../types/user';
 
 export default class UserModel extends BaseModel {
   public async verifyEmail(token: string, user: UserRecord): Promise<number> {

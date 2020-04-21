@@ -21,3 +21,5 @@ export interface UserRecord {
   created_date: Date;
   new_user_setup: NewUserSetup;
 }
+
+export type PartialUserRecord = Partial<UserRecord>;

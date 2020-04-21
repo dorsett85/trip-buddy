@@ -1,8 +1,8 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
+import { UpdateUserArgs } from 'common/lib/types/gqlSchema/user';
 import { UserServiceDeps } from './UserService.types';
 import UserModel from '../models/UserModel';
-import { UpdateUserArgs } from '../types/user';
 
 export default class UserService {
   private readonly user: UserRecord;

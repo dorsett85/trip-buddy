@@ -1,32 +1,20 @@
 import { IResolvers } from 'apollo-server-express';
-import { TripRecord } from 'common/lib/types/trip';
-import { AuthFieldResolver, InputResolverArg } from '../types/resolvers';
-import { CreateTripArgs, PartialTripRecord, UpdateTripArgs } from '../../types/trip';
+import { PartialTripRecord, TripRecord } from 'common/lib/types/trip';
+import { InputArgs } from 'common/lib/types/gqlSchema/inputArgs';
+import {
+  CreateTripInputArgs,
+  UpdateTripInputArgs
+} from 'common/lib/types/gqlSchema/trip';
+import { AuthFieldResolver } from '../types/resolvers';
 
 export interface TripResolvers extends IResolvers {
   Query: {
-    trip: AuthFieldResolver<
-      any,
-      InputResolverArg<PartialTripRecord>,
-      Promise<TripRecord>
-    >;
-    trips: AuthFieldResolver<
-      any,
-      InputResolverArg<PartialTripRecord>,
-      Promise<TripRecord[]>
-    >;
+    trip: AuthFieldResolver<any, InputArgs<PartialTripRecord>, Promise<TripRecord>>;
+    trips: AuthFieldResolver<any, InputArgs<PartialTripRecord>, Promise<TripRecord[]>>;
   };
   Mutation: {
-    createTrip: AuthFieldResolver<
-      any,
-      InputResolverArg<CreateTripArgs>,
-      Promise<TripRecord>
-    >;
-    updateTrip: AuthFieldResolver<
-      any,
-      InputResolverArg<UpdateTripArgs>,
-      Promise<TripRecord['id']>
-    >;
+    createTrip: AuthFieldResolver<any, CreateTripInputArgs, Promise<TripRecord>>;
+    updateTrip: AuthFieldResolver<any, UpdateTripInputArgs, Promise<TripRecord['id']>>;
     deleteTrip: AuthFieldResolver<any, Pick<TripRecord, 'id'>, Promise<TripRecord['id']>>;
   };
 }

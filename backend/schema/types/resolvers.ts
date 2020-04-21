@@ -1,6 +1,6 @@
 import { IFieldResolver } from 'apollo-server-express';
+import { ChangeReturnType } from 'common/lib/types/utils';
 import { ContextObj } from './contextObj';
-import { ChangeReturnType } from '../../types';
 
 /**
  * IFieldResolver modification that puts arguments in the correct order, specifies
@@ -22,14 +22,6 @@ export type AuthFieldResolver<
   TArgs = Record<string, any>,
   TReturn = any
 > = FieldResolver<TSource, TArgs, TReturn, true>;
-
-/**
- * Enclose a type with an object with an input property. This is used for resolver
- * args that have an input property to align with the graphql schema.
- */
-export interface InputResolverArg<T> {
-  input: T;
-}
 
 /**
  * Custom subscription field resolver that types out the resolve and subscribe

@@ -19,3 +19,5 @@ export interface TripRecord {
   status: typeof tripStatus[number];
   created_date: string;
 }
+
+export type PartialTripRecord = Partial<TripRecord>;

@@ -1,11 +1,11 @@
-import { TripInviteRecord } from 'common/lib/types/tripInvite';
+import { PartialTripInviteRecord, TripInviteRecord } from 'common/lib/types/tripInvite';
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
 import {
-  CreateTripInvitesWithInviterIdArgs,
-  PartialTripInviteRecord,
-  UpdateTripInviteOmitIdArgs
-} from '../types/tripInvite';
+  CreateTripInvites,
+  UpdateTripInviteArgs
+} from 'common/lib/types/gqlSchema/tripInvite';
+import { OmitId } from 'common/lib/types/utils';
 import { extractRow, extractRows } from '../utils/dbHelpers';
 import BaseModel from './BaseModel';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
@@ -24,14 +24,17 @@ export default class TripItineraryModel extends BaseModel {
   }
 
   public async createMany(
-    invite: CreateTripInvitesWithInviterIdArgs
+    invite: (CreateTripInvites & {
+      // eslint-disable-next-line camelcase
+      inviter_id: UserRecord['id'];
+    })[]
   ): Promise<TripInviteRecord[]> {
     const inviteIds = this.db(this.tableName).insert(invite);
     return extractRows(await inviteIds);
   }
 
   public updateOne(
-    updateArgs: UpdateTripInviteOmitIdArgs,
+    updateArgs: OmitId<UpdateTripInviteArgs>,
     whereArgs: WhereArgs<PartialTripInviteRecord>,
     userId?: UserRecord['id']
   ): Promise<number> {
