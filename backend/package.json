@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "apollo-server-express": "2.9.16",
-    "bcrypt": "^3.0.7",
+    "bcrypt": "3.0.8",
     "commander": "3.0.2",
     "common": "file:../common",
     "cookie-parser": "1.4.4",
