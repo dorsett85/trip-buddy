@@ -12,7 +12,7 @@ export const tripTypeDefs = gql`
   input CreateTripInput {
     name: String!
     description: String
-    location: [Float]!
+    location: LngLat!
     location_address: String!
     start_date: Date!
   }
@@ -21,7 +21,7 @@ export const tripTypeDefs = gql`
     id: Int
     name: String
     description: String
-    location: [Float]
+    location: LngLat
     location_address: String
     start_date: Date
     status: TripStatus
@@ -32,31 +32,31 @@ export const tripTypeDefs = gql`
     id: Int!
     name: String
     description: String
-    location: [Float]
+    location: LngLat
     location_address: String
     start_date: Date
     status: TripStatus
   }
 
   type Trip {
-    id: Int
-    name: String
+    id: Int!
+    name: String!
     description: String
-    location: [Float]
-    location_address: String
-    start_date: Date
-    status: TripStatus
-    created_date: Date
+    location: LngLat!
+    location_address: String!
+    start_date: Date!
+    status: TripStatus!
+    created_date: Date!
   }
 
   extend type Query {
-    trip(input: FindTripInput): Trip @isAuth
-    trips(input: FindTripInput): [Trip] @isAuth
+    trip(input: FindTripInput!): Trip @isAuth
+    trips(input: FindTripInput!): [Trip] @isAuth
   }
 
   extend type Mutation {
-    createTrip(input: CreateTripInput): Trip @isAuth
-    updateTrip(input: UpdateTripInput): Int @isAuth
+    createTrip(input: CreateTripInput!): Trip @isAuth
+    updateTrip(input: UpdateTripInput!): Int @isAuth
     deleteTrip(id: Int!): Int @isAuth
   }
 `;

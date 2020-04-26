@@ -1,6 +1,7 @@
 import { IFieldResolver } from 'apollo-server-express';
 import { ChangeReturnType } from 'common/lib/types/utils';
 import { ContextObj } from './contextObj';
+import { MutationResolvers, QueryResolvers } from './graphql';
 
 /**
  * IFieldResolver modification that puts arguments in the correct order, specifies
@@ -47,3 +48,25 @@ export type AuthSubscriptionFieldResolverObj<
   TArgs = Record<string, any>,
   TReturn = any
 > = SubscriptionFieldResolverObj<TSource, TArgs, TReturn, true>;
+
+/**
+ * All of our query field resolvers, which defaults to using unauthenticated
+ * context.
+ */
+export type QueryFieldResolvers<TAuth = false> = QueryResolvers<ContextObj<TAuth>>;
+
+/**
+ * Shortcut for authenticated query field resolvers
+ */
+export type AuthQueryFieldResolvers = QueryFieldResolvers<true>;
+
+/**
+ * All of our mutation field resolvers, which defaults to using unauthenticated
+ * context.
+ */
+export type MutationFieldResolvers<TAuth = false> = MutationResolvers<ContextObj<TAuth>>;
+
+/**
+ * Shortcut for authenticated mutation field resolvers
+ */
+export type AuthMutationFieldResolvers = MutationFieldResolvers<true>;

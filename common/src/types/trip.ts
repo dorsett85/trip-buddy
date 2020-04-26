@@ -12,7 +12,7 @@ export const tripStatus = [
 export interface TripRecord {
   id: number;
   name: string;
-  description: string;
+  description?: string;
   location: LngLatArray;
   location_address: string;
   start_date: string;

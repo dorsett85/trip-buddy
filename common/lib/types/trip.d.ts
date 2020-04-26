@@ -3,7 +3,7 @@ export declare const tripStatus: readonly ["pending", "confirmed", "active", "co
 export interface TripRecord {
     id: number;
     name: string;
-    description: string;
+    description?: string;
     location: LngLatArray;
     location_address: string;
     start_date: string;

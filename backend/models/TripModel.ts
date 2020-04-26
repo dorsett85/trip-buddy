@@ -1,10 +1,10 @@
 import { PartialTripRecord, TripRecord } from 'common/lib/types/trip';
 import { UserRecord } from 'common/lib/types/user';
 import { UserTripRecord } from 'common/lib/types/userTrip';
-import { CreateTripArgs } from 'common/lib/types/gqlSchema/trip';
 import { OmitIdCreatedDate } from 'common/lib/types/utils';
 import BaseModel from './BaseModel';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
+import { CreateTripInput } from '../schema/types/graphql';
 
 export default class TripModel extends BaseModel {
   private tableWithUserId = 'users_trips ut';
@@ -13,7 +13,7 @@ export default class TripModel extends BaseModel {
 
   private whereTableWithUserId = `${this.tableName}.id = ut.trip_id`;
 
-  public createOne(trip: CreateTripArgs): Promise<TripRecord> {
+  public createOne(trip: CreateTripInput): Promise<TripRecord> {
     return this.baseCreateOne<TripRecord>(trip);
   }
 

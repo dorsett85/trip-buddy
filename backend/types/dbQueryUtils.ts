@@ -1,22 +1,14 @@
-import { LngLatArray } from 'common/lib/types/utils';
-import { UserRecord } from 'common/lib/types/user';
+/**
+ * A value for a given db table column. T is a passed in type
+ * for the specific column's data type.
+ */
+export type RecordValue<T = any> = T;
 
 /**
- * All possible db value types
+ * Used for a parameterized query. Here we don't know the values
+ * for the RecordValue so we use its default (e.g., any).
  */
-export type RecordValues =
-  | string
-  | number
-  | boolean
-  | Date
-  | LngLatArray
-  | undefined
-  | Partial<UserRecord['new_user_setup']>;
-
-/**
- * Array of record value types
- */
-export type RecordValueArray = RecordValues[];
+export type RecordValueArray = RecordValue[];
 
 /**
  * Currently supported logical operators for db operations
@@ -33,7 +25,7 @@ export type ComparisonOperator = '=' | '>' | '<' | '>=' | '<=' | '!=';
  * RecordValues type.  This is helpful for modifying the comparison operator
  * between key/value pairs during db operations.
  */
-type WhereArgComparisonValue = [ComparisonOperator, RecordValues];
+type WhereArgComparisonValue<T> = [ComparisonOperator, RecordValue<T>];
 
 /**
  * A group of where arguments for where clause operations
@@ -44,7 +36,7 @@ export interface WhereArgGroup<T = any> {
    * where statements with
    */
   items: {
-    [K in keyof T]: RecordValues | WhereArgComparisonValue;
+    [K in keyof T]: RecordValue<T[K]> | WhereArgComparisonValue<T[K]>;
   };
   /**
    * Whether or not to wrap the items key/value statement(s) in parentheses

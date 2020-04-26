@@ -24,9 +24,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "type:check": "tsc --noEmit",
-    "update:common": "npm i ../common"
+    "update:common": "npm i ../common",
+    "generate": "graphql-codegen --config codegen.yml"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "1.13.3",
     "@types/bcrypt": "3.0.0",
     "@types/cookie-parser": "1.4.2",
     "@types/graphql-iso-date": "3.3.3",
@@ -46,6 +48,8 @@
     "prettier": "2.0.5",
     "ts-jest": "25.4.0",
     "ts-node": "8.9.0",
-    "typescript": "3.8.3"
+    "typescript": "3.8.3",
+    "@graphql-codegen/typescript": "1.13.3",
+    "@graphql-codegen/typescript-resolvers": "1.13.3"
   }
 }

@@ -12,7 +12,7 @@ export const TRIP_FIELDS = `
 `;
 
 export const CREATE_TRIP_MUTATION = gql`
-  mutation createTrip($input: CreateTripInput) {
+  mutation createTrip($input: CreateTripInput!) {
     createTrip(input: $input) {
       ${TRIP_FIELDS}
     }
@@ -20,7 +20,7 @@ export const CREATE_TRIP_MUTATION = gql`
 `;
 
 export const UPDATE_TRIP_MUTATION = gql`
-  mutation UpdateTrip($input: UpdateTripInput) {
+  mutation UpdateTrip($input: UpdateTripInput!) {
     updateTrip(input: $input)
   }
 `;

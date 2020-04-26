@@ -1,11 +1,11 @@
 import { UserRecord } from 'common/lib/types/user';
 import { PartialTripRecord, TripRecord } from 'common/lib/types/trip';
-import { CreateTripArgs } from 'common/lib/types/gqlSchema/trip';
 import { OmitIdCreatedDate } from 'common/lib/types/utils';
 import { TripServiceDeps } from './TripService.types';
 import { WhereArgs } from '../types/dbQueryUtils';
 import TripModel from '../models/TripModel';
 import UserTripModel from '../models/UserTripModel';
+import { CreateTripInput } from '../schema/types/graphql';
 
 export default class TripService {
   private readonly user: UserRecord;
@@ -20,7 +20,7 @@ export default class TripService {
     this.userTripModel = dependencies.userTripModel;
   }
 
-  public async createOne(createTripInput: CreateTripArgs): Promise<TripRecord> {
+  public async createOne(createTripInput: CreateTripInput): Promise<TripRecord> {
     // Create the new trip and add a record to the users_trips pivot table
     const trip = await this.tripModel.createOne(createTripInput);
     await this.userTripModel.createOne({ user_id: this.user.id, trip_id: trip.id });

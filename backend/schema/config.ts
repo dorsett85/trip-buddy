@@ -1,7 +1,7 @@
 import { ApolloServerExpressConfig } from 'apollo-server-express';
 import * as ServicesMod from '../services';
 import * as ModelsMod from '../models';
-import * as typeDefsMod from './typeDefs'
+import * as typeDefsMod from './typeDefs';
 import * as resolversMod from './resolvers';
 import { getContext } from './getContext';
 import { shallowMerge } from '../utils/shallowMerge';
@@ -19,7 +19,7 @@ const resolvers = shallowMerge(Object.values(resolversMod));
 
 const subscriptions = {
   path: '/graphql/ws'
-}
+};
 
 const schemaDirectives = {
   isAuth: IsAuthDirective
