@@ -43,7 +43,7 @@ export const VERIFY_EMAIL_MUTATION = gql`
 `;
 
 export const UPDATE_USER_MUTATION = gql`
-  mutation UpdateUser($input: UpdateUserInput) {
+  mutation UpdateUser($input: UpdateUserInput!) {
     updateUser(input: $input)
   }
 `;

@@ -1,33 +1,11 @@
-import { IFieldResolver } from 'apollo-server-express';
-import { ChangeReturnType } from 'common/lib/types/utils';
 import { ContextObj } from './contextObj';
 import {
   MutationResolvers,
   QueryResolvers,
   SubscriptionResolverObject,
-  TripInviteResolvers
+  TripInviteResolvers,
+  UserResolvers
 } from './graphql';
-
-/**
- * IFieldResolver modification that puts arguments in the correct order, specifies
- * our context object, and allows specifying a return type. The TAuth argument is
- * to let the resolver know if context object includes authorized properties.
- */
-export type FieldResolver<
-  TSource,
-  TArgs = Record<string, any>,
-  TReturn = any,
-  TAuth = false
-> = ChangeReturnType<IFieldResolver<TSource, ContextObj<TAuth>, TArgs>, TReturn>;
-
-/**
- * Shortcut for authorized field resolvers
- */
-export type AuthFieldResolver<
-  TSource,
-  TArgs = Record<string, any>,
-  TReturn = any
-> = FieldResolver<TSource, TArgs, TReturn, true>;
 
 /**
  * All of our Query field resolvers, which defaults to using unauthenticated
@@ -93,3 +71,14 @@ export type TripInviteFieldResolvers<TAuth = false> = TripInviteResolvers<
  * Shortcut for authenticated TripInvite field resolvers
  */
 export type AuthTripInviteFieldResolvers = TripInviteFieldResolvers<true>;
+
+/**
+ * All of our User field resolvers, which defaults to using unauthenticated
+ * context.
+ */
+export type UserFieldResolvers<TAuth = false> = UserResolvers<ContextObj<TAuth>>;
+
+/**
+ * Shortcut for authenticated User field resolvers
+ */
+export type AuthUserFieldResolvers = UserFieldResolvers<true>;

@@ -1,8 +1,8 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
-import { UpdateUserArgs } from 'common/lib/types/gqlSchema/user';
 import { UserServiceDeps } from './UserService.types';
 import UserModel from '../models/UserModel';
+import { UpdateUserInput } from "../schema/types/graphql";
 
 export default class UserService {
   private readonly user: UserRecord;
@@ -23,7 +23,7 @@ export default class UserService {
     return this.userModel.findOne({ items: { id } });
   }
 
-  public updateOne(updateUserInput: UpdateUserArgs): Promise<number> {
+  public updateOne(updateUserInput: UpdateUserInput): Promise<number> {
     const { id } = this.user;
     return this.userModel.updateOne(updateUserInput, { items: { id } });
   }

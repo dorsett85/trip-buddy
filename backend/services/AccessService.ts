@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { UserRecord } from 'common/lib/types/user';
-import { LoginArgs, RegisterArgs } from 'common/lib/types/gqlSchema/access';
 import {
   USER_NOT_FOUND_MESSAGE,
   INVALID_LOGIN_MESSAGE,
@@ -9,6 +8,7 @@ import {
 } from '../utils/constants/errors';
 import { AccessServiceDeps } from './AccessService.types';
 import UserModel from '../models/UserModel';
+import { MutationLoginUserArgs, MutationRegisterUserArgs } from '../schema/types/graphql';
 
 export default class AccessService {
   private userModel: UserModel;
@@ -37,7 +37,7 @@ export default class AccessService {
     return user && ((await this.userModel.findOne({ items: { id: user.id } })) || null);
   }
 
-  public async login(args: LoginArgs): Promise<string> {
+  public async login(args: MutationLoginUserArgs): Promise<string> {
     const { username, password } = args;
 
     // check if username or email exists
@@ -58,7 +58,7 @@ export default class AccessService {
     return this.sign(user);
   }
 
-  public async register(args: RegisterArgs): Promise<string> {
+  public async register(args: MutationRegisterUserArgs): Promise<string> {
     const { email, password } = args;
 
     // Check if user exists

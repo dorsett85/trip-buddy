@@ -1,9 +1,9 @@
 import { PartialUserRecord, UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
-import { CreateUserArgs, UpdateUserArgs } from 'common/lib/types/gqlSchema/user';
 import BaseModel from './BaseModel';
 import { extractRows } from '../utils/dbHelpers';
 import { WhereArgs } from '../types/dbQueryUtils';
+import { UpdateUserInput } from '../schema/types/graphql';
 
 export default class UserModel extends BaseModel {
   public async verifyEmail(token: string, user: UserRecord): Promise<number> {
@@ -20,7 +20,9 @@ export default class UserModel extends BaseModel {
     return (await query).rowCount;
   }
 
-  public createOne(user: CreateUserArgs): Promise<UserRecord> {
+  public createOne(
+    user: Pick<UserRecord, 'username' | 'password' | 'email'>
+  ): Promise<UserRecord> {
     return this.baseCreateOne<UserRecord>(user);
   }
 
@@ -31,7 +33,7 @@ export default class UserModel extends BaseModel {
   }
 
   public updateOne(
-    updateArgs: UpdateUserArgs,
+    updateArgs: UpdateUserInput,
     whereArgs: WhereArgs<PartialUserRecord>
   ): Promise<number> {
     return this.baseUpdateOne(updateArgs, whereArgs);
