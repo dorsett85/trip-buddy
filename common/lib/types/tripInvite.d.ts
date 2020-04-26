@@ -6,7 +6,7 @@ export interface TripInviteRecord {
     invitee_id?: number;
     invitee_email: string;
     status: typeof tripInviteStatus[number];
-    created_date: Date;
+    created_date: string;
 }
 export declare type PartialTripInviteRecord = Partial<TripInviteRecord>;
 //# sourceMappingURL=tripInvite.d.ts.map

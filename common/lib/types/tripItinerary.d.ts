@@ -8,7 +8,7 @@ export interface TripItineraryRecord {
     location_address: string;
     start_time: string;
     end_time: string;
-    created_date: Date;
+    created_date: string;
 }
 export declare type PartialTripItineraryRecord = Partial<TripItineraryRecord>;
 //# sourceMappingURL=tripItinerary.d.ts.map

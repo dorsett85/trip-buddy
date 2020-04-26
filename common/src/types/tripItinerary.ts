@@ -10,7 +10,7 @@ export interface TripItineraryRecord {
   location_address: string;
   start_time: string;
   end_time: string,
-  created_date: Date;
+  created_date: string;
 }
 
 export type PartialTripItineraryRecord = Partial<TripItineraryRecord>;

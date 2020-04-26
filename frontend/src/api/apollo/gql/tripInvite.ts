@@ -31,12 +31,12 @@ export const TRIP_INVITES_QUERY = gql`
 `;
 
 export const CREATE_TRIP_INVITES_MUTATION = gql`
-  mutation CreateTripInvites($input: [CreateTripInviteInput]) {
+  mutation CreateTripInvites($input: [CreateTripInviteInput!]!) {
     createTripInvites(input: $input)
   }
 `;
 export const UPDATE_TRIP_INVITE_MUTATION = gql`
-  mutation UpdateTripInvite($input: UpdateTripInviteInput) {
+  mutation UpdateTripInvite($input: UpdateTripInviteInput!) {
     updateTripInvite(input: $input)
   }
 `;
@@ -50,7 +50,7 @@ interface AcceptTripInviteMutationVariables {
   id: TripInviteRecord['id'];
 }
 export const ACCEPT_TRIP_INVITE_MUTATION = gql`
-  mutation AcceptTripInvite($id: Int) {
+  mutation AcceptTripInvite($id: Int!) {
     acceptTripInvite(id: $id) {
       ${TRIP_FIELDS}
     }

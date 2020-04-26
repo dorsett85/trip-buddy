@@ -119,17 +119,17 @@ export type MutationDeleteTripItineraryArgs = {
 
 
 export type MutationCreateTripInvitesArgs = {
-  input?: Maybe<Array<Maybe<CreateTripInviteInput>>>;
+  input: Array<CreateTripInviteInput>;
 };
 
 
 export type MutationUpdateTripInviteArgs = {
-  input?: Maybe<UpdateTripInviteInput>;
+  input: UpdateTripInviteInput;
 };
 
 
 export type MutationAcceptTripInviteArgs = {
-  id?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
 };
 
 export type Subscription = {
@@ -231,7 +231,7 @@ export type Trip = {
   id: Scalars['Int'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  location?: Maybe<Scalars['LngLat']>;
+  location: Scalars['LngLat'];
   location_address: Scalars['String'];
   start_date: Scalars['DateTime'];
   status: TripStatus;
@@ -298,7 +298,7 @@ export type CreateTripInviteInput = {
 };
 
 export type UpdateTripInviteInput = {
-  id?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
   status?: Maybe<TripInviteStatus>;
 };
 
@@ -483,9 +483,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createTripItinerary: Resolver<Maybe<ResolversTypes['TripItinerary']>, ParentType, ContextType, RequireFields<MutationCreateTripItineraryArgs, never>>,
   updateTripItinerary: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationUpdateTripItineraryArgs, never>>,
   deleteTripItinerary: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteTripItineraryArgs, 'id'>>,
-  createTripInvites: Resolver<Maybe<Array<Maybe<ResolversTypes['Int']>>>, ParentType, ContextType, RequireFields<MutationCreateTripInvitesArgs, never>>,
-  updateTripInvite: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationUpdateTripInviteArgs, never>>,
-  acceptTripInvite: Resolver<Maybe<ResolversTypes['Trip']>, ParentType, ContextType, RequireFields<MutationAcceptTripInviteArgs, never>>,
+  createTripInvites: Resolver<Maybe<Array<Maybe<ResolversTypes['Int']>>>, ParentType, ContextType, RequireFields<MutationCreateTripInvitesArgs, 'input'>>,
+  updateTripInvite: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationUpdateTripInviteArgs, 'input'>>,
+  acceptTripInvite: Resolver<Maybe<ResolversTypes['Trip']>, ParentType, ContextType, RequireFields<MutationAcceptTripInviteArgs, 'id'>>,
 };
 
 export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
@@ -523,7 +523,7 @@ export type TripResolvers<ContextType = any, ParentType extends ResolversParentT
   id: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   name: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   description: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  location: Resolver<Maybe<ResolversTypes['LngLat']>, ParentType, ContextType>,
+  location: Resolver<ResolversTypes['LngLat'], ParentType, ContextType>,
   location_address: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   start_date: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   status: Resolver<ResolversTypes['TripStatus'], ParentType, ContextType>,

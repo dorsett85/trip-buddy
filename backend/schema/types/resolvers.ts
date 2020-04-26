@@ -1,7 +1,12 @@
 import { IFieldResolver } from 'apollo-server-express';
 import { ChangeReturnType } from 'common/lib/types/utils';
 import { ContextObj } from './contextObj';
-import { MutationResolvers, QueryResolvers } from './graphql';
+import {
+  MutationResolvers,
+  QueryResolvers,
+  SubscriptionResolverObject,
+  TripInviteResolvers
+} from './graphql';
 
 /**
  * IFieldResolver modification that puts arguments in the correct order, specifies
@@ -25,20 +30,39 @@ export type AuthFieldResolver<
 > = FieldResolver<TSource, TArgs, TReturn, true>;
 
 /**
+ * All of our Query field resolvers, which defaults to using unauthenticated
+ * context.
+ */
+export type QueryFieldResolvers<TAuth = false> = QueryResolvers<ContextObj<TAuth>>;
+
+/**
+ * Shortcut for authenticated Query field resolvers
+ */
+export type AuthQueryFieldResolvers = QueryFieldResolvers<true>;
+
+/**
+ * All of our Mutation field resolvers, which defaults to using unauthenticated
+ * context.
+ */
+export type MutationFieldResolvers<TAuth = false> = MutationResolvers<ContextObj<TAuth>>;
+
+/**
+ * Shortcut for authenticated Mutation field resolvers
+ */
+export type AuthMutationFieldResolvers = MutationFieldResolvers<true>;
+
+/**
  * Custom subscription field resolver that types out the resolve and subscribe
  * properties.
  * @see GraphQLField for a baseline, but we are customizing quite a bit to take
  * advantage of the withFilter function from apollo-server-express package.
  */
-export interface SubscriptionFieldResolverObj<
+export type SubscriptionFieldResolverObj<
   TSource,
   TArgs = Record<string, any>,
   TReturn = any,
   TAuth = false
-> {
-  resolve: FieldResolver<TSource, TArgs, TReturn, TAuth>;
-  subscribe: FieldResolver<TSource, TArgs, any, TAuth>;
-}
+> = SubscriptionResolverObject<TReturn, TSource, ContextObj<TAuth>, TArgs>;
 
 /**
  * Shortcut for authorized subscription field resolvers
@@ -49,24 +73,23 @@ export type AuthSubscriptionFieldResolverObj<
   TReturn = any
 > = SubscriptionFieldResolverObj<TSource, TArgs, TReturn, true>;
 
+//
+// ----------------------------------------
+// Non-generic type resolvers
+//
+// e.g., TripInvite (as opposed to Query)
+// ----------------------------------------
+//
+
 /**
- * All of our query field resolvers, which defaults to using unauthenticated
+ * All of our TripInvite field resolvers, which defaults to using unauthenticated
  * context.
  */
-export type QueryFieldResolvers<TAuth = false> = QueryResolvers<ContextObj<TAuth>>;
+export type TripInviteFieldResolvers<TAuth = false> = TripInviteResolvers<
+  ContextObj<TAuth>
+>;
 
 /**
- * Shortcut for authenticated query field resolvers
+ * Shortcut for authenticated TripInvite field resolvers
  */
-export type AuthQueryFieldResolvers = QueryFieldResolvers<true>;
-
-/**
- * All of our mutation field resolvers, which defaults to using unauthenticated
- * context.
- */
-export type MutationFieldResolvers<TAuth = false> = MutationResolvers<ContextObj<TAuth>>;
-
-/**
- * Shortcut for authenticated mutation field resolvers
- */
-export type AuthMutationFieldResolvers = MutationFieldResolvers<true>;
+export type AuthTripInviteFieldResolvers = TripInviteFieldResolvers<true>;

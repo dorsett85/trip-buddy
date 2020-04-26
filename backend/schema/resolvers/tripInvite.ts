@@ -45,8 +45,11 @@ export const tripInviteResolvers: TripInviteResolvers = {
   Subscription: {
     tripInviteCreated: {
       resolve: (tripInvites, input, { user }) => {
-        // Only send the invite that matches with the user id
-        return tripInvites.filter(invite => invite.invitee_id === user.id)[0];
+        // Only send the invite that matches with the user id.
+        // tripInvites could technically come from anywhere with any type so
+        // we need to define the type in the anonymous function.
+        // TODO create a custom resolve function with a type guard
+        return tripInvites.filter((invite: any) => invite.invitee_id === user.id)[0];
       },
       subscribe: subscribeWithFilter<
         TripInviteResolvers['Subscription']['tripInviteCreated']['subscribe']

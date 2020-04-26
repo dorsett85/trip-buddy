@@ -1,14 +1,11 @@
 import { PartialTripInviteRecord, TripInviteRecord } from 'common/lib/types/tripInvite';
 import { UserRecord } from 'common/lib/types/user';
 import { TripRecord } from 'common/lib/types/trip';
-import {
-  CreateTripInvites,
-  UpdateTripInviteArgs
-} from 'common/lib/types/gqlSchema/tripInvite';
 import { OmitId } from 'common/lib/types/utils';
 import { extractRow, extractRows } from '../utils/dbHelpers';
 import BaseModel from './BaseModel';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
+import { CreateTripInviteInput, UpdateTripInviteInput } from '../schema/types/graphql';
 
 export default class TripItineraryModel extends BaseModel {
   public async findMany(userId?: UserRecord['id']): Promise<TripInviteRecord[]> {
@@ -24,7 +21,7 @@ export default class TripItineraryModel extends BaseModel {
   }
 
   public async createMany(
-    invite: (CreateTripInvites & {
+    invite: (CreateTripInviteInput & {
       // eslint-disable-next-line camelcase
       inviter_id: UserRecord['id'];
     })[]
@@ -34,7 +31,7 @@ export default class TripItineraryModel extends BaseModel {
   }
 
   public updateOne(
-    updateArgs: OmitId<UpdateTripInviteArgs>,
+    updateArgs: OmitId<UpdateTripInviteInput>,
     whereArgs: WhereArgs<PartialTripInviteRecord>,
     userId?: UserRecord['id']
   ): Promise<number> {

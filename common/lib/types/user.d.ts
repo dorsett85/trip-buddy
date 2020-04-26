@@ -14,7 +14,7 @@ export interface UserRecord {
     email_verification_token: string;
     role: typeof userRole[number];
     accepting_trip_invites: typeof acceptingTripInvites[number];
-    created_date: Date;
+    created_date: string;
     new_user_setup: NewUserSetup;
 }
 export declare type PartialUserRecord = Partial<UserRecord>;
