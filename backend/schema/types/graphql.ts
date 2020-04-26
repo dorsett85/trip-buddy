@@ -44,7 +44,7 @@ export type QueryTripsArgs = {
 
 
 export type QueryTripItinerariesArgs = {
-  input?: Maybe<FindTripItineraryInput>;
+  input: FindTripItineraryInput;
 };
 
 export type Mutation = {
@@ -104,12 +104,12 @@ export type MutationDeleteTripArgs = {
 
 
 export type MutationCreateTripItineraryArgs = {
-  input?: Maybe<CreateTripItineraryInput>;
+  input: CreateTripItineraryInput;
 };
 
 
 export type MutationUpdateTripItineraryArgs = {
-  input?: Maybe<UpdateTripItineraryInput>;
+  input: UpdateTripItineraryInput;
 };
 
 
@@ -242,7 +242,7 @@ export type CreateTripItineraryInput = {
   trip_id: Scalars['Int'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  location: Array<Maybe<Scalars['Float']>>;
+  location: Scalars['LngLat'];
   location_address: Scalars['String'];
   start_time: Scalars['DateTime'];
 };
@@ -252,7 +252,7 @@ export type FindTripItineraryInput = {
   trip_id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  location?: Maybe<Array<Maybe<Scalars['Float']>>>;
+  location?: Maybe<Scalars['LngLat']>;
   location_address?: Maybe<Scalars['String']>;
   start_time?: Maybe<Scalars['DateTime']>;
   end_time?: Maybe<Scalars['DateTime']>;
@@ -260,11 +260,11 @@ export type FindTripItineraryInput = {
 };
 
 export type UpdateTripItineraryInput = {
-  id?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
   trip_id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  location?: Maybe<Array<Maybe<Scalars['Float']>>>;
+  location?: Maybe<Scalars['LngLat']>;
   location_address?: Maybe<Scalars['String']>;
   start_time?: Maybe<Scalars['DateTime']>;
   end_time?: Maybe<Scalars['DateTime']>;
@@ -272,15 +272,15 @@ export type UpdateTripItineraryInput = {
 
 export type TripItinerary = {
    __typename?: 'TripItinerary';
-  id?: Maybe<Scalars['Int']>;
-  trip_id?: Maybe<Scalars['Int']>;
-  name?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
+  trip_id: Scalars['Int'];
+  name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  location?: Maybe<Array<Maybe<Scalars['Float']>>>;
-  location_address?: Maybe<Scalars['String']>;
-  start_time?: Maybe<Scalars['DateTime']>;
+  location: Scalars['LngLat'];
+  location_address: Scalars['String'];
+  start_time: Scalars['DateTime'];
   end_time?: Maybe<Scalars['DateTime']>;
-  created_date?: Maybe<Scalars['DateTime']>;
+  created_date: Scalars['DateTime'];
 };
 
 export const TripInviteStatus = {
@@ -304,13 +304,13 @@ export type UpdateTripInviteInput = {
 
 export type TripInvite = {
    __typename?: 'TripInvite';
-  id?: Maybe<Scalars['Int']>;
-  trip_id?: Maybe<Scalars['Int']>;
-  inviter_id?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
+  trip_id: Scalars['Int'];
+  inviter_id: Scalars['Int'];
   invitee_id?: Maybe<Scalars['Int']>;
-  invitee_email?: Maybe<Scalars['String']>;
-  status?: Maybe<TripInviteStatus>;
-  created_date?: Maybe<Scalars['DateTime']>;
+  invitee_email: Scalars['String'];
+  status: TripInviteStatus;
+  created_date: Scalars['DateTime'];
   trip?: Maybe<Trip>;
 };
 
@@ -414,7 +414,6 @@ export type ResolversTypes = {
   UpdateTripInput: UpdateTripInput,
   Trip: ResolverTypeWrapper<Trip>,
   CreateTripItineraryInput: CreateTripItineraryInput,
-  Float: ResolverTypeWrapper<Scalars['Float']>,
   FindTripItineraryInput: FindTripItineraryInput,
   UpdateTripItineraryInput: UpdateTripItineraryInput,
   TripItinerary: ResolverTypeWrapper<TripItinerary>,
@@ -448,7 +447,6 @@ export type ResolversParentTypes = {
   UpdateTripInput: UpdateTripInput,
   Trip: Trip,
   CreateTripItineraryInput: CreateTripItineraryInput,
-  Float: Scalars['Float'],
   FindTripItineraryInput: FindTripItineraryInput,
   UpdateTripItineraryInput: UpdateTripItineraryInput,
   TripItinerary: TripItinerary,
@@ -467,7 +465,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   possibleTripInvitees: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, RequireFields<QueryPossibleTripInviteesArgs, 'tripId'>>,
   trip: Resolver<Maybe<ResolversTypes['Trip']>, ParentType, ContextType, RequireFields<QueryTripArgs, 'input'>>,
   trips: Resolver<Maybe<Array<Maybe<ResolversTypes['Trip']>>>, ParentType, ContextType, RequireFields<QueryTripsArgs, 'input'>>,
-  tripItineraries: Resolver<Maybe<Array<Maybe<ResolversTypes['TripItinerary']>>>, ParentType, ContextType, RequireFields<QueryTripItinerariesArgs, never>>,
+  tripItineraries: Resolver<Maybe<Array<Maybe<ResolversTypes['TripItinerary']>>>, ParentType, ContextType, RequireFields<QueryTripItinerariesArgs, 'input'>>,
   tripInvites: Resolver<Maybe<Array<Maybe<ResolversTypes['TripInvite']>>>, ParentType, ContextType>,
 };
 
@@ -480,8 +478,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createTrip: Resolver<Maybe<ResolversTypes['Trip']>, ParentType, ContextType, RequireFields<MutationCreateTripArgs, 'input'>>,
   updateTrip: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationUpdateTripArgs, 'input'>>,
   deleteTrip: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteTripArgs, 'id'>>,
-  createTripItinerary: Resolver<Maybe<ResolversTypes['TripItinerary']>, ParentType, ContextType, RequireFields<MutationCreateTripItineraryArgs, never>>,
-  updateTripItinerary: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationUpdateTripItineraryArgs, never>>,
+  createTripItinerary: Resolver<Maybe<ResolversTypes['TripItinerary']>, ParentType, ContextType, RequireFields<MutationCreateTripItineraryArgs, 'input'>>,
+  updateTripItinerary: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationUpdateTripItineraryArgs, 'input'>>,
   deleteTripItinerary: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteTripItineraryArgs, 'id'>>,
   createTripInvites: Resolver<Maybe<Array<Maybe<ResolversTypes['Int']>>>, ParentType, ContextType, RequireFields<MutationCreateTripInvitesArgs, 'input'>>,
   updateTripInvite: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationUpdateTripInviteArgs, 'input'>>,
@@ -532,26 +530,26 @@ export type TripResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type TripItineraryResolvers<ContextType = any, ParentType extends ResolversParentTypes['TripItinerary'] = ResolversParentTypes['TripItinerary']> = {
-  id: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
-  trip_id: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
-  name: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  id: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  trip_id: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  name: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   description: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  location: Resolver<Maybe<Array<Maybe<ResolversTypes['Float']>>>, ParentType, ContextType>,
-  location_address: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  start_time: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>,
+  location: Resolver<ResolversTypes['LngLat'], ParentType, ContextType>,
+  location_address: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  start_time: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   end_time: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>,
-  created_date: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>,
+  created_date: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 };
 
 export type TripInviteResolvers<ContextType = any, ParentType extends ResolversParentTypes['TripInvite'] = ResolversParentTypes['TripInvite']> = {
-  id: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
-  trip_id: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
-  inviter_id: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  id: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  trip_id: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  inviter_id: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   invitee_id: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
-  invitee_email: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  status: Resolver<Maybe<ResolversTypes['TripInviteStatus']>, ParentType, ContextType>,
-  created_date: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>,
+  invitee_email: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  status: Resolver<ResolversTypes['TripInviteStatus'], ParentType, ContextType>,
+  created_date: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   trip: Resolver<Maybe<ResolversTypes['Trip']>, ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 };

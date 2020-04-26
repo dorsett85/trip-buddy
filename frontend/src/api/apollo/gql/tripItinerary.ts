@@ -12,7 +12,7 @@ export const ITINERARY_FIELDS = `
 `;
 
 export const TRIP_ITINERARIES_QUERY = gql`
-  query GetItinerary($input: FindTripItineraryInput) {
+  query GetItinerary($input: FindTripItineraryInput!) {
     tripItineraries(input: $input) {
       ${ITINERARY_FIELDS}
     }
@@ -20,7 +20,7 @@ export const TRIP_ITINERARIES_QUERY = gql`
 `;
 
 export const CREATE_TRIP_ITINERARY_MUTATION = gql`
-  mutation CreateTripItinerary($input: CreateTripItineraryInput) {
+  mutation CreateTripItinerary($input: CreateTripItineraryInput!) {
     createTripItinerary(input: $input) {
       ${ITINERARY_FIELDS}
     }
@@ -28,7 +28,7 @@ export const CREATE_TRIP_ITINERARY_MUTATION = gql`
 `;
 
 export const UPDATE_TRIP_ITINERARY_MUTATION = gql`
-  mutation UpdateTripItinerary($input: UpdateTripItineraryInput) {
+  mutation UpdateTripItinerary($input: UpdateTripItineraryInput!) {
     updateTripItinerary(input: $input)
   }
 `;

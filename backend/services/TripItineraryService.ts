@@ -1,11 +1,14 @@
 import { UserRecord } from 'common/lib/types/user';
 import { TripItineraryRecord } from 'common/src/types/tripItinerary';
-import { CreateTripItineraryArgs } from 'common/lib/types/gqlSchema/tripItinerary';
 import { PartialTripItineraryRecord } from 'common/lib/types/tripItinerary';
-import { OmitIdCreatedDate } from 'common/lib/types/utils';
+import { OmitId } from 'common/lib/types/utils';
 import { TripItineraryServiceDeps } from './TripItineraryService.types';
 import { WhereArgs } from '../types/dbQueryUtils';
 import TripItineraryModel from '../models/TripItineraryModel';
+import {
+  CreateTripItineraryInput,
+  UpdateTripItineraryInput
+} from '../schema/types/graphql';
 
 export default class TripItineraryService {
   private readonly user: UserRecord;
@@ -18,7 +21,7 @@ export default class TripItineraryService {
   }
 
   public createOne(
-    createTripItineraryInput: CreateTripItineraryArgs
+    createTripItineraryInput: CreateTripItineraryInput
   ): Promise<TripItineraryRecord> {
     return this.tripItineraryModel.createOne(createTripItineraryInput);
   }
@@ -32,7 +35,7 @@ export default class TripItineraryService {
   }
 
   public updateOne(
-    updateTripItineraryInput: OmitIdCreatedDate<PartialTripItineraryRecord>,
+    updateTripItineraryInput: OmitId<UpdateTripItineraryInput>,
     whereArgs: WhereArgs<PartialTripItineraryRecord>
   ): Promise<number> {
     const { id, role } = this.user;

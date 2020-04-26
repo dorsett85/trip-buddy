@@ -4,10 +4,13 @@ import {
 } from 'common/lib/types/tripItinerary';
 import { UserRecord } from 'common/lib/types/user';
 import { UserTripRecord } from 'common/lib/types/userTrip';
-import { CreateTripItineraryArgs } from 'common/lib/types/gqlSchema/tripItinerary';
-import { OmitIdCreatedDate } from 'common/lib/types/utils';
+import { OmitId } from 'common/lib/types/utils';
 import BaseModel from './BaseModel';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
+import {
+  CreateTripItineraryInput,
+  UpdateTripItineraryInput
+} from '../schema/types/graphql';
 
 export default class TripItineraryModel extends BaseModel {
   private readonly tableWithUserId = 'users_trips ut';
@@ -16,7 +19,9 @@ export default class TripItineraryModel extends BaseModel {
 
   private readonly whereTableWithUserId = `${this.tableName}.trip_id = ut.trip_id`;
 
-  public createOne(tripItinerary: CreateTripItineraryArgs): Promise<TripItineraryRecord> {
+  public createOne(
+    tripItinerary: CreateTripItineraryInput
+  ): Promise<TripItineraryRecord> {
     return this.baseCreateOne<TripItineraryRecord>(tripItinerary);
   }
 
@@ -41,7 +46,7 @@ export default class TripItineraryModel extends BaseModel {
   }
 
   public updateOne(
-    updateArgs: OmitIdCreatedDate<PartialTripItineraryRecord>,
+    updateArgs: OmitId<UpdateTripItineraryInput>,
     whereArgs: WhereArgs<PartialTripItineraryRecord>,
     userId?: UserRecord['id']
   ): Promise<number> {

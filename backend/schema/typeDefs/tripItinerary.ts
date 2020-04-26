@@ -5,17 +5,17 @@ export const tripItineraryTypeDefs = gql`
     trip_id: Int!
     name: String!
     description: String
-    location: [Float]!
+    location: LngLat!
     location_address: String!
     start_time: Date!
   }
-  
+
   input FindTripItineraryInput {
     id: Int
     trip_id: Int
     name: String
     description: String
-    location: [Float]
+    location: LngLat
     location_address: String
     start_time: Date
     end_time: Date
@@ -23,35 +23,35 @@ export const tripItineraryTypeDefs = gql`
   }
 
   input UpdateTripItineraryInput {
-    id: Int
+    id: Int!
     trip_id: Int
     name: String
     description: String
-    location: [Float]
+    location: LngLat
     location_address: String
     start_time: Date
     end_time: Date
   }
 
   type TripItinerary {
-    id: Int
-    trip_id: Int
-    name: String
+    id: Int!
+    trip_id: Int!
+    name: String!
     description: String
-    location: [Float]
-    location_address: String
-    start_time: Date
+    location: LngLat!
+    location_address: String!
+    start_time: Date!
     end_time: Date
-    created_date: Date
+    created_date: Date!
   }
 
   extend type Query {
-    tripItineraries(input: FindTripItineraryInput): [TripItinerary] @isAuth
+    tripItineraries(input: FindTripItineraryInput!): [TripItinerary] @isAuth
   }
 
   extend type Mutation {
-    createTripItinerary(input: CreateTripItineraryInput): TripItinerary @isAuth
-    updateTripItinerary(input: UpdateTripItineraryInput): Int @isAuth
+    createTripItinerary(input: CreateTripItineraryInput!): TripItinerary @isAuth
+    updateTripItinerary(input: UpdateTripItineraryInput!): Int @isAuth
     deleteTripItinerary(id: Int!): Int @isAuth
   }
 `;
