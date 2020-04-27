@@ -10,11 +10,12 @@ export const TRIP_ITINERARY_FIELDS = gql`
     location_address
     start_time
     end_time
+    created_date
   }
 `;
 
 export const TRIP_ITINERARIES_QUERY = gql`
-  query GetItinerary($input: FindTripItineraryInput!) {
+  query TripItineraries($input: FindTripItineraryInput!) {
     tripItineraries(input: $input) {
       ...TripItineraryFields
     }

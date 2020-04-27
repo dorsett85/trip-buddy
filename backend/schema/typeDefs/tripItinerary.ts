@@ -46,12 +46,12 @@ export const tripItineraryTypeDefs = gql`
   }
 
   extend type Query {
-    tripItineraries(input: FindTripItineraryInput!): [TripItinerary] @isAuth
+    tripItineraries(input: FindTripItineraryInput!): [TripItinerary!]! @isAuth
   }
 
   extend type Mutation {
-    createTripItinerary(input: CreateTripItineraryInput!): TripItinerary @isAuth
-    updateTripItinerary(input: UpdateTripItineraryInput!): Int @isAuth
-    deleteTripItinerary(id: Int!): Int @isAuth
+    createTripItinerary(input: CreateTripItineraryInput!): TripItinerary! @isAuth
+    updateTripItinerary(input: UpdateTripItineraryInput!): Int! @isAuth
+    deleteTripItinerary(id: Int!): Int! @isAuth
   }
 `;

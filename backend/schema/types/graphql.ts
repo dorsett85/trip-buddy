@@ -23,7 +23,7 @@ export type Query = {
   possibleTripInvitees?: Maybe<Array<Maybe<User>>>;
   trip: Trip;
   trips: Array<Trip>;
-  tripItineraries?: Maybe<Array<Maybe<TripItinerary>>>;
+  tripItineraries: Array<TripItinerary>;
   tripInvites: Array<TripInvite>;
 };
 
@@ -57,9 +57,9 @@ export type Mutation = {
   createTrip: Trip;
   updateTrip: Scalars['Int'];
   deleteTrip: Scalars['Int'];
-  createTripItinerary?: Maybe<TripItinerary>;
-  updateTripItinerary?: Maybe<Scalars['Int']>;
-  deleteTripItinerary?: Maybe<Scalars['Int']>;
+  createTripItinerary: TripItinerary;
+  updateTripItinerary: Scalars['Int'];
+  deleteTripItinerary: Scalars['Int'];
   createTripInvites: Array<Scalars['Int']>;
   updateTripInvite: Scalars['Int'];
   acceptTripInvite: Trip;
@@ -465,7 +465,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   possibleTripInvitees: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, RequireFields<QueryPossibleTripInviteesArgs, 'tripId'>>,
   trip: Resolver<ResolversTypes['Trip'], ParentType, ContextType, RequireFields<QueryTripArgs, 'input'>>,
   trips: Resolver<Array<ResolversTypes['Trip']>, ParentType, ContextType, RequireFields<QueryTripsArgs, 'input'>>,
-  tripItineraries: Resolver<Maybe<Array<Maybe<ResolversTypes['TripItinerary']>>>, ParentType, ContextType, RequireFields<QueryTripItinerariesArgs, 'input'>>,
+  tripItineraries: Resolver<Array<ResolversTypes['TripItinerary']>, ParentType, ContextType, RequireFields<QueryTripItinerariesArgs, 'input'>>,
   tripInvites: Resolver<Array<ResolversTypes['TripInvite']>, ParentType, ContextType>,
 };
 
@@ -478,9 +478,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createTrip: Resolver<ResolversTypes['Trip'], ParentType, ContextType, RequireFields<MutationCreateTripArgs, 'input'>>,
   updateTrip: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationUpdateTripArgs, 'input'>>,
   deleteTrip: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationDeleteTripArgs, 'id'>>,
-  createTripItinerary: Resolver<Maybe<ResolversTypes['TripItinerary']>, ParentType, ContextType, RequireFields<MutationCreateTripItineraryArgs, 'input'>>,
-  updateTripItinerary: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationUpdateTripItineraryArgs, 'input'>>,
-  deleteTripItinerary: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteTripItineraryArgs, 'id'>>,
+  createTripItinerary: Resolver<ResolversTypes['TripItinerary'], ParentType, ContextType, RequireFields<MutationCreateTripItineraryArgs, 'input'>>,
+  updateTripItinerary: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationUpdateTripItineraryArgs, 'input'>>,
+  deleteTripItinerary: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationDeleteTripItineraryArgs, 'id'>>,
   createTripInvites: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationCreateTripInvitesArgs, 'input'>>,
   updateTripInvite: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationUpdateTripInviteArgs, 'input'>>,
   acceptTripInvite: Resolver<ResolversTypes['Trip'], ParentType, ContextType, RequireFields<MutationAcceptTripInviteArgs, 'id'>>,

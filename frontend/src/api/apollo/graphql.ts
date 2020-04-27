@@ -24,7 +24,7 @@ export type Query = {
   possibleTripInvitees?: Maybe<Array<Maybe<User>>>;
   trip: Trip;
   trips: Array<Trip>;
-  tripItineraries?: Maybe<Array<Maybe<TripItinerary>>>;
+  tripItineraries: Array<TripItinerary>;
   tripInvites: Array<TripInvite>;
 };
 
@@ -58,9 +58,9 @@ export type Mutation = {
   createTrip: Trip;
   updateTrip: Scalars['Int'];
   deleteTrip: Scalars['Int'];
-  createTripItinerary?: Maybe<TripItinerary>;
-  updateTripItinerary?: Maybe<Scalars['Int']>;
-  deleteTripItinerary?: Maybe<Scalars['Int']>;
+  createTripItinerary: TripItinerary;
+  updateTripItinerary: Scalars['Int'];
+  deleteTripItinerary: Scalars['Int'];
   createTripInvites: Array<Scalars['Int']>;
   updateTripInvite: Scalars['Int'];
   acceptTripInvite: Trip;
@@ -433,20 +433,20 @@ export type TripInviteCreatedSubscription = (
 
 export type TripItineraryFieldsFragment = (
   { __typename?: 'TripItinerary' }
-  & Pick<TripItinerary, 'id' | 'trip_id' | 'name' | 'description' | 'location' | 'location_address' | 'start_time' | 'end_time'>
+  & Pick<TripItinerary, 'id' | 'trip_id' | 'name' | 'description' | 'location' | 'location_address' | 'start_time' | 'end_time' | 'created_date'>
 );
 
-export type GetItineraryQueryVariables = {
+export type TripItinerariesQueryVariables = {
   input: FindTripItineraryInput;
 };
 
 
-export type GetItineraryQuery = (
+export type TripItinerariesQuery = (
   { __typename?: 'Query' }
-  & { tripItineraries?: Maybe<Array<Maybe<(
+  & { tripItineraries: Array<(
     { __typename?: 'TripItinerary' }
     & TripItineraryFieldsFragment
-  )>>> }
+  )> }
 );
 
 export type CreateTripItineraryMutationVariables = {
@@ -456,10 +456,10 @@ export type CreateTripItineraryMutationVariables = {
 
 export type CreateTripItineraryMutation = (
   { __typename?: 'Mutation' }
-  & { createTripItinerary?: Maybe<(
+  & { createTripItinerary: (
     { __typename?: 'TripItinerary' }
     & TripItineraryFieldsFragment
-  )> }
+  ) }
 );
 
 export type UpdateTripItineraryMutationVariables = {
@@ -577,6 +577,7 @@ export const TripItineraryFieldsFragmentDoc = gql`
   location_address
   start_time
   end_time
+  created_date
 }
     `;
 export const CreateTripDocument = gql`
@@ -864,8 +865,8 @@ export function useTripInviteCreatedSubscription(baseOptions?: ApolloReactHooks.
       }
 export type TripInviteCreatedSubscriptionHookResult = ReturnType<typeof useTripInviteCreatedSubscription>;
 export type TripInviteCreatedSubscriptionResult = ApolloReactCommon.SubscriptionResult<TripInviteCreatedSubscription>;
-export const GetItineraryDocument = gql`
-    query GetItinerary($input: FindTripItineraryInput!) {
+export const TripItinerariesDocument = gql`
+    query TripItineraries($input: FindTripItineraryInput!) {
   tripItineraries(input: $input) {
     ...TripItineraryFields
   }
@@ -873,30 +874,30 @@ export const GetItineraryDocument = gql`
     ${TripItineraryFieldsFragmentDoc}`;
 
 /**
- * __useGetItineraryQuery__
+ * __useTripItinerariesQuery__
  *
- * To run a query within a React component, call `useGetItineraryQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetItineraryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useTripItinerariesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTripItinerariesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetItineraryQuery({
+ * const { data, loading, error } = useTripItinerariesQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useGetItineraryQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetItineraryQuery, GetItineraryQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetItineraryQuery, GetItineraryQueryVariables>(GetItineraryDocument, baseOptions);
+export function useTripItinerariesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TripItinerariesQuery, TripItinerariesQueryVariables>) {
+        return ApolloReactHooks.useQuery<TripItinerariesQuery, TripItinerariesQueryVariables>(TripItinerariesDocument, baseOptions);
       }
-export function useGetItineraryLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetItineraryQuery, GetItineraryQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetItineraryQuery, GetItineraryQueryVariables>(GetItineraryDocument, baseOptions);
+export function useTripItinerariesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TripItinerariesQuery, TripItinerariesQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<TripItinerariesQuery, TripItinerariesQueryVariables>(TripItinerariesDocument, baseOptions);
         }
-export type GetItineraryQueryHookResult = ReturnType<typeof useGetItineraryQuery>;
-export type GetItineraryLazyQueryHookResult = ReturnType<typeof useGetItineraryLazyQuery>;
-export type GetItineraryQueryResult = ApolloReactCommon.QueryResult<GetItineraryQuery, GetItineraryQueryVariables>;
+export type TripItinerariesQueryHookResult = ReturnType<typeof useTripItinerariesQuery>;
+export type TripItinerariesLazyQueryHookResult = ReturnType<typeof useTripItinerariesLazyQuery>;
+export type TripItinerariesQueryResult = ApolloReactCommon.QueryResult<TripItinerariesQuery, TripItinerariesQueryVariables>;
 export const CreateTripItineraryDocument = gql`
     mutation CreateTripItinerary($input: CreateTripItineraryInput!) {
   createTripItinerary(input: $input) {

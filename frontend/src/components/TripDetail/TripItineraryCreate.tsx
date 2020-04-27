@@ -11,7 +11,6 @@ import Button from '@material-ui/core/Button';
 import styled, { css } from 'styled-components';
 import { DispatchProp } from 'react-redux';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-import { useMutation } from '@apollo/react-hooks';
 import { TripItineraryCreator } from '../../store/trip/types';
 import {
   setTripItineraryCreator,
@@ -24,7 +23,7 @@ import { getFirstError } from '../../utils/apolloErrors';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
 import { debounce } from '../../utils/debouce';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
-import { CREATE_TRIP_ITINERARY_MUTATION } from '../../api/apollo/gql/tripItinerary';
+import { MutationCreateTripItineraryArgs, useCreateTripItineraryMutation } from "../../api/apollo/graphql";
 
 interface TripItineraryCreateProps extends DispatchProp {
   itinerary: TripItineraryCreator;
@@ -202,24 +201,21 @@ const TripItineraryCreate: React.FC<TripItineraryCreateProps> = ({
   dispatch
 }) => {
   const [errors, setErrors] = useState<JSX.Element>();
-  const [createItineraryMutation, { loading }] = useMutation(
-    CREATE_TRIP_ITINERARY_MUTATION,
-    {
-      onCompleted: ({ createTripItinerary }) => {
-        dispatch(setTripItineraryCreator());
-        dispatch(addTripItinerary(createTripItinerary));
-        dispatch(setFlyTo(createTripItinerary.location));
-        dispatch(
-          setActiveTripInfo({
-            activeMarker: `${createTripItinerary.trip_id}-${createTripItinerary.id}`
-          })
-        );
-      },
-      onError: error => {
-        setErrors(<ErrorStyled>{getFirstError(error)}</ErrorStyled>);
-      }
+  const [createItineraryMutation, { loading }] = useCreateTripItineraryMutation({
+    onCompleted: ({ createTripItinerary }) => {
+      dispatch(setTripItineraryCreator());
+      dispatch(addTripItinerary(createTripItinerary));
+      dispatch(setFlyTo(createTripItinerary.location));
+      dispatch(
+        setActiveTripInfo({
+          activeMarker: `${createTripItinerary.trip_id}-${createTripItinerary.id}`
+        })
+      );
+    },
+    onError: error => {
+      setErrors(<ErrorStyled>{getFirstError(error)}</ErrorStyled>);
     }
-  );
+  });
 
   const handleCancelClick = () => {
     dispatch(setTripItineraryCreator());
@@ -265,7 +261,7 @@ const TripItineraryCreate: React.FC<TripItineraryCreateProps> = ({
           location: itinerary.location,
           location_address: itinerary.location_address
         }
-      };
+      } as MutationCreateTripItineraryArgs;
       createItineraryMutation({ variables });
     }
   };

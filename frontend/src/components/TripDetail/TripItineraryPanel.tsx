@@ -15,7 +15,6 @@ import { DateTimePicker } from '@material-ui/pickers';
 import { DispatchProp } from 'react-redux';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
-import { useMutation } from '@apollo/react-hooks';
 import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import { getFirstError } from '../../utils/apolloErrors';
 import {
@@ -34,9 +33,9 @@ import ErrorText from '../AppText/ErrorText';
 import SuccessText from '../AppText/SuccessText';
 import FlyToButton from '../generic/FlyToButton/FlyToButton';
 import {
-  DELETE_TRIP_ITINERARY_MUTATION,
-  UPDATE_TRIP_ITINERARY_MUTATION
-} from '../../api/apollo/gql/tripItinerary';
+  useDeleteTripItineraryMutation,
+  useUpdateTripItineraryMutation
+} from '../../api/apollo/graphql';
 
 interface TripItineraryPanelProps extends DispatchProp {
   /**
@@ -107,17 +106,14 @@ const ItineraryButtonGroup: React.FC<ItineraryButtonGroupProps> = ({
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [deleteResponseText, setDeleteResponseText] = useState('');
-  const [deleteItineraryMutation, { loading }] = useMutation(
-    DELETE_TRIP_ITINERARY_MUTATION,
-    {
-      onCompleted: data => {
-        dispatch(deleteTripItinerary(data.deleteTripItinerary));
-      },
-      onError: error => {
-        setDeleteResponseText(getFirstError(error));
-      }
+  const [deleteItineraryMutation, { loading }] = useDeleteTripItineraryMutation({
+    onCompleted: data => {
+      dispatch(deleteTripItinerary(data.deleteTripItinerary));
+    },
+    onError: error => {
+      setDeleteResponseText(getFirstError(error));
     }
-  );
+  });
 
   const handleToggleDeletePopper = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : e.currentTarget);
@@ -172,18 +168,15 @@ const ItineraryNameInput: React.FC<IntineraryNameInputProps> = ({
   const [name, setName] = useState(itinerary.name);
   const [updateNameError, setUpdateNameError] = useState<JSX.Element>();
 
-  const [updateTripItineraryMutation, { loading }] = useMutation(
-    UPDATE_TRIP_ITINERARY_MUTATION,
-    {
-      onCompleted: () => {
-        dispatch(updateTripItinerary({ ...itinerary, name }));
-        onSubmitOrCancel();
-      },
-      onError: error => {
-        setUpdateNameError(<ErrorText text={getFirstError(error)} />);
-      }
+  const [updateTripItineraryMutation, { loading }] = useUpdateTripItineraryMutation({
+    onCompleted: () => {
+      dispatch(updateTripItinerary({ ...itinerary, name }));
+      onSubmitOrCancel();
+    },
+    onError: error => {
+      setUpdateNameError(<ErrorText text={getFirstError(error)} />);
     }
-  );
+  });
 
   const handleNameChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
     setName(target.value);
@@ -231,20 +224,17 @@ const ItineraryDescriptionInput: React.FC<ItineraryInputProps> = ({
   const [updateDescriptionText, setUpdateDescriptionText] = useState<JSX.Element>();
   const [updateDescriptionError, setUpdateDescriptionError] = useState<JSX.Element>();
 
-  const [updateTripItineraryMutation, { loading }] = useMutation(
-    UPDATE_TRIP_ITINERARY_MUTATION,
-    {
-      onCompleted: () => {
-        dispatch(updateTripItinerary({ ...itinerary, description }));
-        setEditingDescription(false);
-        setUpdateDescriptionError(undefined);
-        setUpdateDescriptionText(<SuccessText />);
-      },
-      onError: error => {
-        setUpdateDescriptionError(<ErrorText text={getFirstError(error)} />);
-      }
+  const [updateTripItineraryMutation, { loading }] = useUpdateTripItineraryMutation({
+    onCompleted: () => {
+      dispatch(updateTripItinerary({ ...itinerary, description }));
+      setEditingDescription(false);
+      setUpdateDescriptionError(undefined);
+      setUpdateDescriptionText(<SuccessText />);
+    },
+    onError: error => {
+      setUpdateDescriptionError(<ErrorText text={getFirstError(error)} />);
     }
-  );
+  });
 
   const handleDescriptionChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
     setEditingDescription(true);
@@ -303,19 +293,16 @@ const ItineraryStartDateSelect: React.FC<ItineraryInputProps> = ({
   const [updateStartDateText, setUpdateStartDateText] = useState<JSX.Element>();
   const [updateStartDateError, setUpdateStartDateError] = useState<JSX.Element>();
 
-  const [updateTripItineraryMutation, { loading }] = useMutation(
-    UPDATE_TRIP_ITINERARY_MUTATION,
-    {
-      onCompleted: () => {
-        dispatch(updateTripItinerary({ ...itinerary, start_time: startTime }));
-        setUpdateStartDateError(undefined);
-        setUpdateStartDateText(<SuccessText />);
-      },
-      onError: error => {
-        setUpdateStartDateError(<ErrorText text={getFirstError(error)} />);
-      }
+  const [updateTripItineraryMutation, { loading }] = useUpdateTripItineraryMutation({
+    onCompleted: () => {
+      dispatch(updateTripItinerary({ ...itinerary, start_time: startTime }));
+      setUpdateStartDateError(undefined);
+      setUpdateStartDateText(<SuccessText />);
+    },
+    onError: error => {
+      setUpdateStartDateError(<ErrorText text={getFirstError(error)} />);
     }
-  );
+  });
 
   const handleStartDateChange = (date: MaterialUiPickersDate) => {
     if (date) {
@@ -364,9 +351,7 @@ const ItineraryLocationInput: React.FC<ItineraryInputProps> = ({
   );
   const [updateLocationError, setUpdateLocationError] = useState<JSX.Element>();
 
-  const [updateLocationMutation, { loading }] = useMutation(
-    UPDATE_TRIP_ITINERARY_MUTATION
-  );
+  const [updateLocationMutation, { loading }] = useUpdateTripItineraryMutation();
 
   // Listener for updating the itinerary location. This will fire after a location
   // is selected on the map and the newLocation lng/lat is set
