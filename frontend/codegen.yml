@@ -11,6 +11,7 @@ generates:
       withHooks: true
       withHOC: false
       withComponent: false
+      maybeValue: T | undefined
       enumsAsConst: true
       avoidOptionals: true
       scalars:

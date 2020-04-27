@@ -11,14 +11,13 @@ import DoneIcon from '@material-ui/icons/Done';
 import styled, { css } from 'styled-components';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { Radio, ListItemIcon } from '@material-ui/core';
-import { useMutation, useQuery } from '@apollo/react-hooks';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { addTrip } from '../../store/trip/reducer';
 import {
-  TRIP_INVITES_QUERY,
-  UPDATE_TRIP_INVITE_MUTATION,
-  useAcceptTripInviteMutation
-} from '../../api/apollo/gql/tripInvite';
+  useAcceptTripInviteMutation,
+  useTripInvitesQuery,
+  useUpdateTripInviteMutation
+} from '../../api/apollo/graphql';
 
 type TripInviteStatusUpdate = Pick<TripInviteRecord, 'id' | 'status'>;
 
@@ -83,8 +82,8 @@ const ThumbDownIconStyled = styled(ThumbDownIcon)(
 
 const TripInviteList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { data, refetch } = useQuery(TRIP_INVITES_QUERY, { fetchPolicy: 'no-cache' });
-  const [updateTripInviteMutation] = useMutation(UPDATE_TRIP_INVITE_MUTATION);
+  const { data, refetch } = useTripInvitesQuery({ fetchPolicy: 'no-cache' });
+  const [updateTripInviteMutation] = useUpdateTripInviteMutation();
   const [acceptTripInviteMutation] = useAcceptTripInviteMutation();
   const invites = data?.tripInvites;
 
@@ -115,11 +114,11 @@ const TripInviteList: React.FC = () => {
         // For 'accepted' trip invites, we need to make a different gql mutation call that will
         // not just update the trip invite status, but also create a new users_trips record and
         // return the entire trip record so we can update the ui.
-        const res = await acceptTripInviteMutation({
+        const { data: tripData } = await acceptTripInviteMutation({
           variables: { id: input.id }
         });
-        if (res.data) {
-          dispatch(addTrip(res.data.acceptTripInvite));
+        if (tripData) {
+          dispatch(addTrip(tripData.acceptTripInvite));
         }
       } else {
         // 'declined' trip invites simply need to update the trip invite record
