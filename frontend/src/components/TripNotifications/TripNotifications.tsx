@@ -1,14 +1,14 @@
 import React, { memo, useEffect } from 'react';
 import { useUserData } from '../../store/hooks/useUser';
-import {
-  useTripInviteCreatedSubscription,
-  useTripInvitesIdQuery
-} from '../../api/apollo/gql/tripInvite';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import {
   setTripInviteNotifications,
   addTripInviteNotification
 } from '../../store/trip/reducer';
+import {
+  useTripInviteCreatedSubscription,
+  useTripInvitesIdQuery
+} from '../../api/apollo/graphql';
 
 /**
  * Component to fetch all trip related notifications

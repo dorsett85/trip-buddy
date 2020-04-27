@@ -31,16 +31,16 @@ export const tripInviteTypeDefs = gql`
   }
 
   extend type Query {
-    tripInvites: [TripInvite] @isAuth
+    tripInvites: [TripInvite!]! @isAuth
   }
 
   extend type Mutation {
-    createTripInvites(input: [CreateTripInviteInput!]!): [Int] @isAuth
-    updateTripInvite(input: UpdateTripInviteInput!): Int @isAuth
-    acceptTripInvite(id: Int!): Trip @isAuth
+    createTripInvites(input: [CreateTripInviteInput!]!): [Int!]! @isAuth
+    updateTripInvite(input: UpdateTripInviteInput!): Int! @isAuth
+    acceptTripInvite(id: Int!): Trip! @isAuth
   }
 
   extend type Subscription {
-    tripInviteCreated: TripInvite @isAuth
+    tripInviteCreated: TripInvite! @isAuth
   }
 `;

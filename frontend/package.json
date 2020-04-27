@@ -39,7 +39,8 @@
     "eject": "react-scripts eject",
     "type:check": "tsc --noEmit",
     "type:check:watch": "npm run type:check -- --watch",
-    "update:common": "npm i ../common"
+    "update:common": "npm i ../common",
+    "generate": "graphql-codegen --config codegen.yml"
   },
   "browserslist": {
     "production": [
@@ -55,6 +56,7 @@
   },
   "devDependencies": {
     "@apollo/react-testing": "3.1.4",
+    "@graphql-codegen/cli": "1.13.3",
     "@testing-library/jest-dom": "5.5.0",
     "@testing-library/react": "9.5.0",
     "@types/jest": "24.9.1",
@@ -73,6 +75,9 @@
     "eslint-plugin-react-hooks": "2.5.1",
     "prettier": "1.19.1",
     "ts-node": "8.8.2",
-    "typescript": "3.8.3"
+    "typescript": "3.8.3",
+    "@graphql-codegen/typescript": "1.13.3",
+    "@graphql-codegen/typescript-operations": "1.13.3",
+    "@graphql-codegen/typescript-react-apollo": "1.13.3"
   }
 }

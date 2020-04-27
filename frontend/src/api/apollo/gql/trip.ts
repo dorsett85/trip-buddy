@@ -1,22 +1,25 @@
 import gql from 'graphql-tag';
 
-export const TRIP_FIELDS = `
-  id
-  name
-  description
-  location
-  location_address
-  start_date
-  status
-  created_date
+export const TRIP_FIELDS = gql`
+  fragment TripFields on Trip {
+    id
+    name
+    description
+    location
+    location_address
+    start_date
+    status
+    created_date
+  }
 `;
 
 export const CREATE_TRIP_MUTATION = gql`
-  mutation createTrip($input: CreateTripInput!) {
+  mutation CreateTrip($input: CreateTripInput!) {
     createTrip(input: $input) {
-      ${TRIP_FIELDS}
+      ...TripFields
     }
   }
+  ${TRIP_FIELDS}
 `;
 
 export const UPDATE_TRIP_MUTATION = gql`

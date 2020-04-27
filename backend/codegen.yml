@@ -14,13 +14,3 @@ generates:
       scalars:
         DateTime: string
         LngLat: '[number, number]'
-#  src/generated/client.tsx:
-#    documents: "../frontend/src/api/apollo/gql/trip.ts"
-#    plugins:
-#      - "typescript"
-#      - "typescript-operations"
-#      - "typescript-react-apollo"
-#    config:
-#      withHOC: false
-#      withHooks: true
-#      withComponent: false

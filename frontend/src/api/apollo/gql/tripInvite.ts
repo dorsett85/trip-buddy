@@ -1,16 +1,9 @@
 import gql from 'graphql-tag';
 import { TripInviteRecord } from 'common/lib/types/tripInvite';
-import {
-  MutationHookOptions,
-  QueryHookOptions,
-  SubscriptionHookOptions,
-  useMutation,
-  useQuery,
-  useSubscription
-} from '@apollo/react-hooks';
+import { MutationHookOptions, useMutation } from '@apollo/react-hooks';
 import { TripRecord } from 'common/lib/types/trip';
-import { TRIP_FIELDS } from './trip';
 import { GQLTypename } from './types';
+import { TRIP_FIELDS } from './trip';
 
 //
 
@@ -52,9 +45,10 @@ interface AcceptTripInviteMutationVariables {
 export const ACCEPT_TRIP_INVITE_MUTATION = gql`
   mutation AcceptTripInvite($id: Int!) {
     acceptTripInvite(id: $id) {
-      ${TRIP_FIELDS}
+      ...TripFields
     }
   }
+  ${TRIP_FIELDS}
 `;
 export const useAcceptTripInviteMutation = (
   options?: MutationHookOptions<
@@ -68,10 +62,6 @@ export const useAcceptTripInviteMutation = (
   );
 
 //
-
-interface TripInvitesIdQueryData {
-  tripInvites: (Pick<TripInviteRecord, 'id'> & GQLTypename)[];
-}
 const TRIP_INVITES_ID_QUERY = gql`
   query TripInvitesId {
     tripInvites {
@@ -79,14 +69,8 @@ const TRIP_INVITES_ID_QUERY = gql`
     }
   }
 `;
-export const useTripInvitesIdQuery = (options?: QueryHookOptions) =>
-  useQuery<TripInvitesIdQueryData>(TRIP_INVITES_ID_QUERY, options);
 
 //
-
-interface TripInviteCreatedSubscriptionData {
-  tripInviteCreated: Pick<TripInviteRecord, 'id'> & GQLTypename;
-}
 const TRIP_INVITE_CREATED_SUBSCRIPTION = gql`
   subscription TripInviteCreated {
     tripInviteCreated {
@@ -95,8 +79,3 @@ const TRIP_INVITE_CREATED_SUBSCRIPTION = gql`
     }
   }
 `;
-export const useTripInviteCreatedSubscription = (options?: SubscriptionHookOptions) =>
-  useSubscription<TripInviteCreatedSubscriptionData>(
-    TRIP_INVITE_CREATED_SUBSCRIPTION,
-    options
-  );

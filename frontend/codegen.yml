@@ -1,0 +1,18 @@
+overwrite: true
+schema: http://localhost:4001/graphql
+documents: src/api/apollo/gql/*.ts
+generates:
+  src/api/apollo/graphql.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      withHooks: true
+      withHOC: false
+      withComponent: false
+      enumsAsConst: true
+      avoidOptionals: true
+      scalars:
+        DateTime: string
+        LngLat: '[number, number]'
