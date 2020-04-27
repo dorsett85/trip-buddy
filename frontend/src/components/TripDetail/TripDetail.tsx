@@ -16,7 +16,7 @@ import styled, { css } from 'styled-components';
 import { DispatchProp } from 'react-redux';
 import { TripRecord, tripStatus } from 'common/lib/types/trip';
 import { UserRecord } from 'common/lib/types/user';
-import { useLazyQuery, useMutation } from '@apollo/react-hooks';
+import { useLazyQuery } from '@apollo/react-hooks';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import {
@@ -38,9 +38,12 @@ import ErrorText from '../AppText/ErrorText';
 import FlyToButton from '../generic/FlyToButton/FlyToButton';
 import AppText from '../AppText/AppText';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import { DELETE_TRIP_MUTATION, UPDATE_TRIP_MUTATION } from '../../api/apollo/gql/trip';
-import { CREATE_TRIP_INVITES_MUTATION } from '../../api/apollo/gql/tripInvite';
 import { POSSIBLE_TRIP_INVITEES_QUERY } from '../../api/apollo/gql/user';
+import {
+  Trip, useCreateTripInvitesMutation,
+  useDeleteTripMutation,
+  useUpdateTripMutation
+} from "../../api/apollo/graphql";
 
 export interface TripDetailProps {
   trip: TripRecord;
@@ -112,9 +115,7 @@ const TripHeader: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
     }
   });
 
-  const [createTripInvitesMutation, { loading }] = useMutation(
-    CREATE_TRIP_INVITES_MUTATION
-  );
+  const [createTripInvitesMutation, { loading }] = useCreateTripInvitesMutation();
 
   const handleFlyToClick = () => {
     dispatch(setDrawer({ open: false }));
@@ -232,7 +233,7 @@ const TripNameInput: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
   const [updateNameText, setUpdateNameText] = useState<JSX.Element>();
   const [updateNameError, setUpdateNameError] = useState<JSX.Element>();
 
-  const [updateTripMutation, { loading }] = useMutation(UPDATE_TRIP_MUTATION, {
+  const [updateTripMutation, { loading }] = useUpdateTripMutation({
     onCompleted: () => {
       setEditingName(false);
       dispatch(updateTrip({ id: trip.id, name }));
@@ -293,7 +294,7 @@ const TripDescriptionInput: React.FC<TripDetailInputProps> = ({ dispatch, trip }
   const [updateDescriptionText, setUpdateDescriptionText] = useState<JSX.Element>();
   const [updateDescriptionError, setUpdateDescriptionError] = useState<JSX.Element>();
 
-  const [updateTripMutation, { loading }] = useMutation(UPDATE_TRIP_MUTATION, {
+  const [updateTripMutation, { loading }] = useUpdateTripMutation({
     onCompleted: () => {
       setEditingDescription(false);
       dispatch(updateTrip({ ...trip, description }));
@@ -357,7 +358,7 @@ const TripStartDateSelect: React.FC<TripDetailInputProps> = ({ dispatch, trip })
   const [updateStartDateText, setUpdateStartDateText] = useState<JSX.Element>();
   const [updateStartDateError, setUpdateStartDateError] = useState<JSX.Element>();
 
-  const [updateTripMutation, { loading }] = useMutation(UPDATE_TRIP_MUTATION, {
+  const [updateTripMutation, { loading }] = useUpdateTripMutation({
     onCompleted: () => {
       dispatch(updateTrip({ ...trip, start_date: startDate }));
       setUpdateStartDateError(undefined);
@@ -409,7 +410,7 @@ const TripLocationInput: React.FC<TripDetailInputProps> = ({ dispatch, trip }) =
   );
   const [updateLocationError, setUpdateLocationError] = useState<JSX.Element>();
 
-  const [updateLocationMutation, { loading }] = useMutation(UPDATE_TRIP_MUTATION);
+  const [updateLocationMutation, { loading }] = useUpdateTripMutation();
 
   // Listener for updating the trip location. This will fire after a location
   // is selected on the map and the newLocation lng/lat is set
@@ -560,10 +561,12 @@ const TripStatusSelect: React.FC<TripDetailInputProps> = ({ dispatch, trip }) =>
   const [updateStatusText, setUpdateStatusText] = useState<JSX.Element>();
   const [updateStatusError, setUpdateStatusError] = useState<JSX.Element>();
 
-  const [updateTripMutation, { loading }] = useMutation(UPDATE_TRIP_MUTATION);
+  const [updateTripMutation, { loading }] = useUpdateTripMutation();
 
   const handleStatusChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-    updateTripMutation({ variables: { input: { id: trip.id, status: target.value } } })
+    updateTripMutation({
+      variables: { input: { id: trip.id, status: target.value as Trip['status'] } }
+    })
       .then(() => {
         dispatch(updateTrip({ ...trip, status: target.value as any }));
         setUpdateStatusError(undefined);
@@ -619,7 +622,7 @@ const TripDelete: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [deleteResponseText, setDeleteResponseText] = useState<React.ReactNode>();
 
-  const [deleteTripMutation, { loading }] = useMutation(DELETE_TRIP_MUTATION, {
+  const [deleteTripMutation, { loading }] = useDeleteTripMutation({
     onCompleted: data => {
       dispatch(setDrawer({ open: false }));
       dispatch(deleteTrip(data.deleteTrip));

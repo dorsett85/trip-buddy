@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const TRIP_FIELDS = gql`
-  fragment TripFields on Trip {
+  fragment TripFields! on Trip {
     id
     name
     description

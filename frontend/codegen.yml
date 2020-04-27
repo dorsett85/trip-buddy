@@ -13,7 +13,6 @@ generates:
       withComponent: false
       maybeValue: T | undefined
       enumsAsConst: true
-      avoidOptionals: true
       scalars:
         DateTime: string
         LngLat: '[number, number]'

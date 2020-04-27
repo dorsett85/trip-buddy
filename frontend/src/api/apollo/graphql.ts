@@ -19,12 +19,12 @@ export type Scalars = {
 
 export type Query = {
    __typename?: 'Query';
-  default: Maybe<Scalars['Boolean']>;
-  user: Maybe<User>;
-  possibleTripInvitees: Maybe<Array<Maybe<User>>>;
-  trip: Maybe<Trip>;
-  trips: Maybe<Array<Maybe<Trip>>>;
-  tripItineraries: Maybe<Array<Maybe<TripItinerary>>>;
+  default?: Maybe<Scalars['Boolean']>;
+  user?: Maybe<User>;
+  possibleTripInvitees?: Maybe<Array<Maybe<User>>>;
+  trip: Trip;
+  trips: Array<Trip>;
+  tripItineraries?: Maybe<Array<Maybe<TripItinerary>>>;
   tripInvites: Array<TripInvite>;
 };
 
@@ -50,17 +50,17 @@ export type QueryTripItinerariesArgs = {
 
 export type Mutation = {
    __typename?: 'Mutation';
-  default: Maybe<Scalars['Boolean']>;
-  loginUser: Maybe<Scalars['String']>;
-  registerUser: Maybe<Scalars['String']>;
-  verifyEmail: Maybe<Scalars['Int']>;
-  updateUser: Maybe<Scalars['Int']>;
-  createTrip: Maybe<Trip>;
-  updateTrip: Maybe<Scalars['Int']>;
-  deleteTrip: Maybe<Scalars['Int']>;
-  createTripItinerary: Maybe<TripItinerary>;
-  updateTripItinerary: Maybe<Scalars['Int']>;
-  deleteTripItinerary: Maybe<Scalars['Int']>;
+  default?: Maybe<Scalars['Boolean']>;
+  loginUser?: Maybe<Scalars['String']>;
+  registerUser?: Maybe<Scalars['String']>;
+  verifyEmail?: Maybe<Scalars['Int']>;
+  updateUser?: Maybe<Scalars['Int']>;
+  createTrip: Trip;
+  updateTrip: Scalars['Int'];
+  deleteTrip: Scalars['Int'];
+  createTripItinerary?: Maybe<TripItinerary>;
+  updateTripItinerary?: Maybe<Scalars['Int']>;
+  deleteTripItinerary?: Maybe<Scalars['Int']>;
   createTripInvites: Array<Scalars['Int']>;
   updateTripInvite: Scalars['Int'];
   acceptTripInvite: Trip;
@@ -135,7 +135,7 @@ export type MutationAcceptTripInviteArgs = {
 
 export type Subscription = {
    __typename?: 'Subscription';
-  default: Maybe<Scalars['Boolean']>;
+  default?: Maybe<Scalars['Boolean']>;
   tripInviteCreated: TripInvite;
 };
 
@@ -178,15 +178,15 @@ export type User = {
   accepting_trip_invites: AcceptingTripInvites;
   created_date: Scalars['DateTime'];
   new_user_setup: NewUserSetup;
-  trips: Maybe<Array<Maybe<Trip>>>;
+  trips?: Maybe<Array<Maybe<Trip>>>;
 };
 
 export type UpdateUserInput = {
-  username: Maybe<Scalars['String']>;
-  email: Maybe<Scalars['String']>;
-  password: Maybe<Scalars['String']>;
-  accepting_trip_invites: Maybe<AcceptingTripInvites>;
-  new_user_setup: Maybe<NewUserSetupInput>;
+  username?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  password?: Maybe<Scalars['String']>;
+  accepting_trip_invites?: Maybe<AcceptingTripInvites>;
+  new_user_setup?: Maybe<NewUserSetupInput>;
 };
 
 export const TripStatus = {
@@ -200,38 +200,38 @@ export const TripStatus = {
 export type TripStatus = typeof TripStatus[keyof typeof TripStatus];
 export type CreateTripInput = {
   name: Scalars['String'];
-  description: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
   location: Scalars['LngLat'];
   location_address: Scalars['String'];
   start_date: Scalars['DateTime'];
 };
 
 export type FindTripInput = {
-  id: Maybe<Scalars['Int']>;
-  name: Maybe<Scalars['String']>;
-  description: Maybe<Scalars['String']>;
-  location: Maybe<Scalars['LngLat']>;
-  location_address: Maybe<Scalars['String']>;
-  start_date: Maybe<Scalars['DateTime']>;
-  status: Maybe<TripStatus>;
-  created_date: Maybe<Scalars['DateTime']>;
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['LngLat']>;
+  location_address?: Maybe<Scalars['String']>;
+  start_date?: Maybe<Scalars['DateTime']>;
+  status?: Maybe<TripStatus>;
+  created_date?: Maybe<Scalars['DateTime']>;
 };
 
 export type UpdateTripInput = {
   id: Scalars['Int'];
-  name: Maybe<Scalars['String']>;
-  description: Maybe<Scalars['String']>;
-  location: Maybe<Scalars['LngLat']>;
-  location_address: Maybe<Scalars['String']>;
-  start_date: Maybe<Scalars['DateTime']>;
-  status: Maybe<TripStatus>;
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['LngLat']>;
+  location_address?: Maybe<Scalars['String']>;
+  start_date?: Maybe<Scalars['DateTime']>;
+  status?: Maybe<TripStatus>;
 };
 
 export type Trip = {
    __typename?: 'Trip';
   id: Scalars['Int'];
   name: Scalars['String'];
-  description: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
   location: Scalars['LngLat'];
   location_address: Scalars['String'];
   start_date: Scalars['DateTime'];
@@ -242,33 +242,33 @@ export type Trip = {
 export type CreateTripItineraryInput = {
   trip_id: Scalars['Int'];
   name: Scalars['String'];
-  description: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
   location: Scalars['LngLat'];
   location_address: Scalars['String'];
   start_time: Scalars['DateTime'];
 };
 
 export type FindTripItineraryInput = {
-  id: Maybe<Scalars['Int']>;
-  trip_id: Maybe<Scalars['Int']>;
-  name: Maybe<Scalars['String']>;
-  description: Maybe<Scalars['String']>;
-  location: Maybe<Scalars['LngLat']>;
-  location_address: Maybe<Scalars['String']>;
-  start_time: Maybe<Scalars['DateTime']>;
-  end_time: Maybe<Scalars['DateTime']>;
-  created_date: Maybe<Scalars['DateTime']>;
+  id?: Maybe<Scalars['Int']>;
+  trip_id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['LngLat']>;
+  location_address?: Maybe<Scalars['String']>;
+  start_time?: Maybe<Scalars['DateTime']>;
+  end_time?: Maybe<Scalars['DateTime']>;
+  created_date?: Maybe<Scalars['DateTime']>;
 };
 
 export type UpdateTripItineraryInput = {
   id: Scalars['Int'];
-  trip_id: Maybe<Scalars['Int']>;
-  name: Maybe<Scalars['String']>;
-  description: Maybe<Scalars['String']>;
-  location: Maybe<Scalars['LngLat']>;
-  location_address: Maybe<Scalars['String']>;
-  start_time: Maybe<Scalars['DateTime']>;
-  end_time: Maybe<Scalars['DateTime']>;
+  trip_id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['LngLat']>;
+  location_address?: Maybe<Scalars['String']>;
+  start_time?: Maybe<Scalars['DateTime']>;
+  end_time?: Maybe<Scalars['DateTime']>;
 };
 
 export type TripItinerary = {
@@ -276,11 +276,11 @@ export type TripItinerary = {
   id: Scalars['Int'];
   trip_id: Scalars['Int'];
   name: Scalars['String'];
-  description: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
   location: Scalars['LngLat'];
   location_address: Scalars['String'];
   start_time: Scalars['DateTime'];
-  end_time: Maybe<Scalars['DateTime']>;
+  end_time?: Maybe<Scalars['DateTime']>;
   created_date: Scalars['DateTime'];
 };
 
@@ -294,13 +294,13 @@ export const TripInviteStatus = {
 export type TripInviteStatus = typeof TripInviteStatus[keyof typeof TripInviteStatus];
 export type CreateTripInviteInput = {
   trip_id: Scalars['Int'];
-  invitee_id: Maybe<Scalars['Int']>;
+  invitee_id?: Maybe<Scalars['Int']>;
   invitee_email: Scalars['String'];
 };
 
 export type UpdateTripInviteInput = {
   id: Scalars['Int'];
-  status: Maybe<TripInviteStatus>;
+  status?: Maybe<TripInviteStatus>;
 };
 
 export type TripInvite = {
@@ -308,11 +308,11 @@ export type TripInvite = {
   id: Scalars['Int'];
   trip_id: Scalars['Int'];
   inviter_id: Scalars['Int'];
-  invitee_id: Maybe<Scalars['Int']>;
+  invitee_id?: Maybe<Scalars['Int']>;
   invitee_email: Scalars['String'];
   status: TripInviteStatus;
   created_date: Scalars['DateTime'];
-  trip: Maybe<Trip>;
+  trip?: Maybe<Trip>;
 };
 
 export const CacheControlScope = {
@@ -335,10 +335,10 @@ export type CreateTripMutationVariables = {
 
 export type CreateTripMutation = (
   { __typename?: 'Mutation' }
-  & { createTrip: Maybe<(
+  & { createTrip: (
     { __typename?: 'Trip' }
     & TripFieldsFragment
-  )> }
+  ) }
 );
 
 export type UpdateTripMutationVariables = {
@@ -369,7 +369,7 @@ export type TripInvitesQuery = (
   & { tripInvites: Array<(
     { __typename?: 'TripInvite' }
     & Pick<TripInvite, 'id' | 'trip_id' | 'status' | 'created_date'>
-    & { trip: Maybe<(
+    & { trip?: Maybe<(
       { __typename?: 'Trip' }
       & Pick<Trip, 'name' | 'location_address' | 'start_date'>
     )> }
@@ -443,7 +443,7 @@ export type GetItineraryQueryVariables = {
 
 export type GetItineraryQuery = (
   { __typename?: 'Query' }
-  & { tripItineraries: Maybe<Array<Maybe<(
+  & { tripItineraries?: Maybe<Array<Maybe<(
     { __typename?: 'TripItinerary' }
     & TripItineraryFieldsFragment
   )>>> }
@@ -456,7 +456,7 @@ export type CreateTripItineraryMutationVariables = {
 
 export type CreateTripItineraryMutation = (
   { __typename?: 'Mutation' }
-  & { createTripItinerary: Maybe<(
+  & { createTripItinerary?: Maybe<(
     { __typename?: 'TripItinerary' }
     & TripItineraryFieldsFragment
   )> }
@@ -487,13 +487,13 @@ export type GetLoggedInUserQueryVariables = {};
 
 export type GetLoggedInUserQuery = (
   { __typename?: 'Query' }
-  & { user: Maybe<(
+  & { user?: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'username' | 'email' | 'password' | 'email_verified' | 'role' | 'accepting_trip_invites' | 'created_date'>
     & { new_user_setup: (
       { __typename?: 'NewUserSetup' }
       & Pick<NewUserSetup, 'email_verified' | 'username' | 'accepting_trip_invites'>
-    ), trips: Maybe<Array<Maybe<(
+    ), trips?: Maybe<Array<Maybe<(
       { __typename?: 'Trip' }
       & TripFieldsFragment
     )>>> }
@@ -549,7 +549,7 @@ export type PossibleTripInviteesQueryVariables = {
 
 export type PossibleTripInviteesQuery = (
   { __typename?: 'Query' }
-  & { possibleTripInvitees: Maybe<Array<Maybe<(
+  & { possibleTripInvitees?: Maybe<Array<Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'email'>
   )>>> }

@@ -50,13 +50,13 @@ export const tripTypeDefs = gql`
   }
 
   extend type Query {
-    trip(input: FindTripInput!): Trip @isAuth
-    trips(input: FindTripInput!): [Trip] @isAuth
+    trip(input: FindTripInput!): Trip! @isAuth
+    trips(input: FindTripInput!): [Trip!]! @isAuth
   }
 
   extend type Mutation {
-    createTrip(input: CreateTripInput!): Trip @isAuth
-    updateTrip(input: UpdateTripInput!): Int @isAuth
-    deleteTrip(id: Int!): Int @isAuth
+    createTrip(input: CreateTripInput!): Trip! @isAuth
+    updateTrip(input: UpdateTripInput!): Int! @isAuth
+    deleteTrip(id: Int!): Int! @isAuth
   }
 `;
