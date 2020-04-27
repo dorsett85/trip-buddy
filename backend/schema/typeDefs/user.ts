@@ -35,7 +35,7 @@ export const userTypeDefs = gql`
     accepting_trip_invites: AcceptingTripInvites!
     created_date: Date!
     new_user_setup: NewUserSetup!
-    trips: [Trip]
+    trips: [Trip!]
   }
 
   input UpdateUserInput {
@@ -47,14 +47,14 @@ export const userTypeDefs = gql`
   }
 
   extend type Query {
-    user: User @isAuth
-    possibleTripInvitees(tripId: Int!): [User] @isAuth
+    user: User! @isAuth
+    possibleTripInvitees(tripId: Int!): [User!]! @isAuth
   }
 
   extend type Mutation {
-    loginUser(username: String!, password: String!): String
-    registerUser(email: String!, password: String!): String
-    verifyEmail(token: String!): Int @isAuth
-    updateUser(input: UpdateUserInput!): Int @isAuth
+    loginUser(username: String!, password: String!): String!
+    registerUser(email: String!, password: String!): String!
+    verifyEmail(token: String!): Int! @isAuth
+    updateUser(input: UpdateUserInput!): Int! @isAuth
   }
 `;

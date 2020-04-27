@@ -20,8 +20,8 @@ export type Scalars = {
 export type Query = {
    __typename?: 'Query';
   default?: Maybe<Scalars['Boolean']>;
-  user?: Maybe<User>;
-  possibleTripInvitees?: Maybe<Array<Maybe<User>>>;
+  user: User;
+  possibleTripInvitees: Array<User>;
   trip: Trip;
   trips: Array<Trip>;
   tripItineraries: Array<TripItinerary>;
@@ -51,10 +51,10 @@ export type QueryTripItinerariesArgs = {
 export type Mutation = {
    __typename?: 'Mutation';
   default?: Maybe<Scalars['Boolean']>;
-  loginUser?: Maybe<Scalars['String']>;
-  registerUser?: Maybe<Scalars['String']>;
-  verifyEmail?: Maybe<Scalars['Int']>;
-  updateUser?: Maybe<Scalars['Int']>;
+  loginUser: Scalars['String'];
+  registerUser: Scalars['String'];
+  verifyEmail: Scalars['Int'];
+  updateUser: Scalars['Int'];
   createTrip: Trip;
   updateTrip: Scalars['Int'];
   deleteTrip: Scalars['Int'];
@@ -178,7 +178,7 @@ export type User = {
   accepting_trip_invites: AcceptingTripInvites;
   created_date: Scalars['DateTime'];
   new_user_setup: NewUserSetup;
-  trips?: Maybe<Array<Maybe<Trip>>>;
+  trips?: Maybe<Array<Trip>>;
 };
 
 export type UpdateUserInput = {
@@ -487,17 +487,17 @@ export type GetLoggedInUserQueryVariables = {};
 
 export type GetLoggedInUserQuery = (
   { __typename?: 'Query' }
-  & { user?: Maybe<(
+  & { user: (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'username' | 'email' | 'password' | 'email_verified' | 'role' | 'accepting_trip_invites' | 'created_date'>
     & { new_user_setup: (
       { __typename?: 'NewUserSetup' }
       & Pick<NewUserSetup, 'email_verified' | 'username' | 'accepting_trip_invites'>
-    ), trips?: Maybe<Array<Maybe<(
+    ), trips?: Maybe<Array<(
       { __typename?: 'Trip' }
       & TripFieldsFragment
-    )>>> }
-  )> }
+    )>> }
+  ) }
 );
 
 export type LoginUserMutationVariables = {
@@ -549,10 +549,10 @@ export type PossibleTripInviteesQueryVariables = {
 
 export type PossibleTripInviteesQuery = (
   { __typename?: 'Query' }
-  & { possibleTripInvitees?: Maybe<Array<Maybe<(
+  & { possibleTripInvitees: Array<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'email'>
-  )>>> }
+  )> }
 );
 
 export const TripFieldsFragmentDoc = gql`

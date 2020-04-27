@@ -4,12 +4,11 @@ import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
-import { useMutation } from '@apollo/react-hooks';
 import { setLoggedIn } from '../../store/user/reducer';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setLocalToken } from '../../utils/localToken';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import { LOGIN_USER_MUTATION } from '../../api/apollo/gql/user';
+import { useLoginUserMutation } from '../../api/apollo/graphql';
 
 enum LoginFormInputs {
   username = '',
@@ -23,7 +22,7 @@ const LoginForm: React.FC = () => {
   const [loginError, setLoginError] = useState('');
 
   // Define login mutation and handlers
-  const [loginUserMutation, { loading }] = useMutation(LOGIN_USER_MUTATION, {
+  const [loginUserMutation, { loading }] = useLoginUserMutation({
     onCompleted: data => {
       setLoginError('');
       setLocalToken(data.loginUser);

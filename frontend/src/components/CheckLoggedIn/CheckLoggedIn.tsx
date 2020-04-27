@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useLazyQuery } from '@apollo/react-hooks';
 import {
   setLoadingUser,
   setUser,
@@ -10,12 +9,12 @@ import { getLocalToken } from '../../utils/localToken';
 import { setLoadingTrips, setTrips } from '../../store/trip/reducer';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { useUserLoggedInAndConnected } from '../../store/hooks/useUser';
-import { LOGGED_IN_DATA_QUERY } from '../../api/apollo/gql/user';
+import { useGetLoggedInUserLazyQuery } from '../../api/apollo/graphql';
 
 const CheckLoggedIn: React.FC = () => {
   const dispatch = useAppDispatch();
   const userLoggedInAndConnected = useUserLoggedInAndConnected();
-  const [getLoggedInData, { loading }] = useLazyQuery(LOGGED_IN_DATA_QUERY, {
+  const [getLoggedInData, { loading }] = useGetLoggedInUserLazyQuery({
     onCompleted: data => {
       const {
         user: { trips, ...loggedInUser }
@@ -32,7 +31,9 @@ const CheckLoggedIn: React.FC = () => {
           dispatch(setSetupCompleted(true));
         }
         dispatch(setUser(loggedInUser));
-        dispatch(setTrips(trips));
+        if (trips) {
+          dispatch(setTrips(trips));
+        }
       }, 500);
     }
   });

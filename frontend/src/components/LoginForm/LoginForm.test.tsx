@@ -7,14 +7,14 @@ import { ApolloError } from 'apollo-client';
 import { GraphQLError } from 'graphql';
 import LoginForm from './LoginForm';
 import store from '../../store';
-import { LOGIN_USER_MUTATION } from '../ApolloProvider/gql/user';
+import { LoginUserDocument } from "../../api/apollo/graphql";
 
 let loginMutationCalled = false;
 const ERROR_MESSAGE = 'User does not exist';
 const mocks = [
   {
     request: {
-      query: LOGIN_USER_MUTATION,
+      query: LoginUserDocument,
       variables: {
         username: 'clayton',
         password: 'password123'
@@ -31,7 +31,7 @@ const mocks = [
   },
   {
     request: {
-      query: LOGIN_USER_MUTATION,
+      query: LoginUserDocument,
       variables: {
         username: 'invalid',
         password: 'user'

@@ -19,8 +19,8 @@ export type Scalars = {
 export type Query = {
    __typename?: 'Query';
   default?: Maybe<Scalars['Boolean']>;
-  user?: Maybe<User>;
-  possibleTripInvitees?: Maybe<Array<Maybe<User>>>;
+  user: User;
+  possibleTripInvitees: Array<User>;
   trip: Trip;
   trips: Array<Trip>;
   tripItineraries: Array<TripItinerary>;
@@ -50,10 +50,10 @@ export type QueryTripItinerariesArgs = {
 export type Mutation = {
    __typename?: 'Mutation';
   default?: Maybe<Scalars['Boolean']>;
-  loginUser?: Maybe<Scalars['String']>;
-  registerUser?: Maybe<Scalars['String']>;
-  verifyEmail?: Maybe<Scalars['Int']>;
-  updateUser?: Maybe<Scalars['Int']>;
+  loginUser: Scalars['String'];
+  registerUser: Scalars['String'];
+  verifyEmail: Scalars['Int'];
+  updateUser: Scalars['Int'];
   createTrip: Trip;
   updateTrip: Scalars['Int'];
   deleteTrip: Scalars['Int'];
@@ -177,7 +177,7 @@ export type User = {
   accepting_trip_invites: AcceptingTripInvites;
   created_date: Scalars['DateTime'];
   new_user_setup: NewUserSetup;
-  trips?: Maybe<Array<Maybe<Trip>>>;
+  trips?: Maybe<Array<Trip>>;
 };
 
 export type UpdateUserInput = {
@@ -461,8 +461,8 @@ export type ResolversParentTypes = {
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   default: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>,
-  user: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>,
-  possibleTripInvitees: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, RequireFields<QueryPossibleTripInviteesArgs, 'tripId'>>,
+  user: Resolver<ResolversTypes['User'], ParentType, ContextType>,
+  possibleTripInvitees: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryPossibleTripInviteesArgs, 'tripId'>>,
   trip: Resolver<ResolversTypes['Trip'], ParentType, ContextType, RequireFields<QueryTripArgs, 'input'>>,
   trips: Resolver<Array<ResolversTypes['Trip']>, ParentType, ContextType, RequireFields<QueryTripsArgs, 'input'>>,
   tripItineraries: Resolver<Array<ResolversTypes['TripItinerary']>, ParentType, ContextType, RequireFields<QueryTripItinerariesArgs, 'input'>>,
@@ -471,10 +471,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   default: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>,
-  loginUser: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'username' | 'password'>>,
-  registerUser: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationRegisterUserArgs, 'email' | 'password'>>,
-  verifyEmail: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationVerifyEmailArgs, 'token'>>,
-  updateUser: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'input'>>,
+  loginUser: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'username' | 'password'>>,
+  registerUser: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationRegisterUserArgs, 'email' | 'password'>>,
+  verifyEmail: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationVerifyEmailArgs, 'token'>>,
+  updateUser: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'input'>>,
   createTrip: Resolver<ResolversTypes['Trip'], ParentType, ContextType, RequireFields<MutationCreateTripArgs, 'input'>>,
   updateTrip: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationUpdateTripArgs, 'input'>>,
   deleteTrip: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationDeleteTripArgs, 'id'>>,
@@ -513,7 +513,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   accepting_trip_invites: Resolver<ResolversTypes['AcceptingTripInvites'], ParentType, ContextType>,
   created_date: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   new_user_setup: Resolver<ResolversTypes['NewUserSetup'], ParentType, ContextType>,
-  trips: Resolver<Maybe<Array<Maybe<ResolversTypes['Trip']>>>, ParentType, ContextType>,
+  trips: Resolver<Maybe<Array<ResolversTypes['Trip']>>, ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 };
 

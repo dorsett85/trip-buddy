@@ -4,12 +4,11 @@ import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
-import { useMutation } from '@apollo/react-hooks';
 import { setLoggedIn } from '../../store/user/reducer';
 import { getFirstError } from '../../utils/apolloErrors';
 import { setLocalToken } from '../../utils/localToken';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import { REGISTER_USER_MUTATION } from '../../api/apollo/gql/user';
+import { useRegisterUserMutation } from '../../api/apollo/graphql';
 
 enum RegisterFormInputs {
   email = '',
@@ -37,7 +36,7 @@ const RegisterForm: React.FC = () => {
   const [registerError, setRegisterError] = useState('');
 
   // Define registration mutation and handlers
-  const [registerUserMutation, { loading }] = useMutation(REGISTER_USER_MUTATION, {
+  const [registerUserMutation, { loading }] = useRegisterUserMutation({
     onCompleted: data => {
       setRegisterError('');
       setLocalToken(data.registerUser);

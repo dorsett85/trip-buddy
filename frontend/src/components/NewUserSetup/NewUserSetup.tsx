@@ -11,11 +11,10 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { TextField } from '@material-ui/core';
 import styled, { css } from 'styled-components';
-import { useMutation } from '@apollo/react-hooks';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { setUser, setSetupCompleted } from '../../store/user/reducer';
 import { INTERNAL_SERVER_ERROR_MESSAGE } from '../../utils/constants/errors';
-import { UPDATE_USER_MUTATION, VERIFY_EMAIL_MUTATION } from '../../api/apollo/gql/user';
+import { useUpdateUserMutation, useVerifyEmailMutation } from '../../api/apollo/graphql';
 
 type NewUserSetupUpdate<
   TCol extends keyof UserRecord,
@@ -277,8 +276,8 @@ const StepContent = styled.div(
 const NewUserSetup: React.FC<NewUserSetupProps> = ({ newUserSetup }) => {
   const dispatch = useAppDispatch();
   const [errorMsg, setErrorMsg] = useState('');
-  const [updateUserMutation] = useMutation(UPDATE_USER_MUTATION);
-  const [verifyEmailMutation] = useMutation(VERIFY_EMAIL_MUTATION);
+  const [updateUserMutation] = useUpdateUserMutation();
+  const [verifyEmailMutation] = useVerifyEmailMutation();
   const steps = getSteps(newUserSetup);
 
   // Check if all of the steps have been completed. If they have not then we'll
@@ -298,7 +297,7 @@ const NewUserSetup: React.FC<NewUserSetupProps> = ({ newUserSetup }) => {
         .then(({ data }) => {
           // Check if data returns anything, meaning it was able to successfully verify
           // the email address and update the user record
-          if (data.verifyEmail) {
+          if (data?.verifyEmail) {
             setErrorMsg('');
             dispatch(
               setUser({
@@ -342,7 +341,7 @@ const NewUserSetup: React.FC<NewUserSetupProps> = ({ newUserSetup }) => {
         .then(({ data }) => {
           // Check if data returns anything, meaning it was able to successfully
           // update the user record
-          if (data.updateUser) {
+          if (data?.updateUser) {
             setErrorMsg('');
             dispatch(setUser(input));
           } else {

@@ -16,7 +16,6 @@ import styled, { css } from 'styled-components';
 import { DispatchProp } from 'react-redux';
 import { TripRecord, tripStatus } from 'common/lib/types/trip';
 import { UserRecord } from 'common/lib/types/user';
-import { useLazyQuery } from '@apollo/react-hooks';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import {
@@ -38,12 +37,13 @@ import ErrorText from '../AppText/ErrorText';
 import FlyToButton from '../generic/FlyToButton/FlyToButton';
 import AppText from '../AppText/AppText';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import { POSSIBLE_TRIP_INVITEES_QUERY } from '../../api/apollo/gql/user';
 import {
-  Trip, useCreateTripInvitesMutation,
+  Trip,
+  useCreateTripInvitesMutation,
   useDeleteTripMutation,
+  usePossibleTripInviteesLazyQuery,
   useUpdateTripMutation
-} from "../../api/apollo/graphql";
+} from '../../api/apollo/graphql';
 
 export interface TripDetailProps {
   trip: TripRecord;
@@ -106,7 +106,7 @@ const TripHeader: React.FC<TripDetailInputProps> = ({ dispatch, trip }) => {
   const [possibleInvitees, setPossibleInvitees] = useState<TripInviteUser[]>([]);
   const [selectedInvitees, setSelectedInvitees] = useState<TripInviteUser[]>([]);
 
-  const [possibleTripInviteesQuery] = useLazyQuery(POSSIBLE_TRIP_INVITEES_QUERY, {
+  const [possibleTripInviteesQuery] = usePossibleTripInviteesLazyQuery({
     fetchPolicy: 'no-cache',
     onCompleted: data => {
       // Clear the autocomplete before setting the new possibleInvitee
