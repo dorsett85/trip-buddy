@@ -9,17 +9,17 @@ import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import DoneIcon from '@material-ui/icons/Done';
 import styled, { css } from 'styled-components';
-import { TripInviteRecord } from 'common/lib/types/tripInvite';
 import { Radio, ListItemIcon } from '@material-ui/core';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { addTrip } from '../../store/trip/reducer';
 import {
+  TripInvite,
   useAcceptTripInviteMutation,
   useTripInvitesQuery,
   useUpdateTripInviteMutation
-} from '../../api/apollo/graphql';
+} from "../../api/apollo/graphql";
 
-type TripInviteStatusUpdate = Pick<TripInviteRecord, 'id' | 'status'>;
+type TripInviteStatusUpdate = Pick<TripInvite, 'id' | 'status'>;
 
 interface ListItemNotificationProps {
   notificationInfo: TripInviteStatusUpdate;

@@ -3,7 +3,6 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
-import { UserRecord } from 'common/lib/types/user';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -14,14 +13,14 @@ import styled, { css } from 'styled-components';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { setUser, setSetupCompleted } from '../../store/user/reducer';
 import { INTERNAL_SERVER_ERROR_MESSAGE } from '../../utils/constants/errors';
-import { useUpdateUserMutation, useVerifyEmailMutation } from '../../api/apollo/graphql';
+import { User, useUpdateUserMutation, useVerifyEmailMutation } from "../../api/apollo/graphql";
 
 type NewUserSetupUpdate<
-  TCol extends keyof UserRecord,
-  TNewUserSetup extends keyof UserRecord['new_user_setup']
-> = Pick<UserRecord, TCol> & {
+  TCol extends keyof User,
+  TNewUserSetup extends keyof User['new_user_setup']
+> = Pick<User, TCol> & {
   // eslint-disable-next-line camelcase
-  new_user_setup: Pick<UserRecord['new_user_setup'], TNewUserSetup>;
+  new_user_setup: Pick<User['new_user_setup'], TNewUserSetup>;
 };
 
 type EmailVerification = NewUserSetupUpdate<'email_verification_token', 'email_verified'>;
@@ -37,7 +36,7 @@ const isEmailVerification = (obj: any): obj is EmailVerification =>
   'email_verification_token' in obj;
 
 interface NewUserSetupProps {
-  newUserSetup: UserRecord['new_user_setup'];
+  newUserSetup: User['new_user_setup'];
 }
 
 interface NewUserSteps {
@@ -156,11 +155,11 @@ const UpdateUsername: React.FC<StepComponentProps> = ({ onSubmit, errorMsg }) =>
 
 const AcceptingTripInvites: React.FC<StepComponentProps> = ({ onSubmit }) => {
   const [acceptInvites, setAcceptInvites] = useState<
-    UserRecord['accepting_trip_invites']
+    User['accepting_trip_invites']
   >('all');
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = ({ target }) => {
-    setAcceptInvites(target.value as UserRecord['accepting_trip_invites']);
+    setAcceptInvites(target.value as User['accepting_trip_invites']);
   };
 
   const handleSubmit: React.FormEventHandler = e => {
@@ -252,8 +251,10 @@ const stepMap: StepMap = {
   }
 };
 
-const getSteps = (newUserSetup: UserRecord['new_user_setup']): NewUserSteps[] => {
-  return Object.entries(newUserSetup).map(([key, value]) => {
+const getSteps = (newUserSetup: User['new_user_setup']): NewUserSteps[] => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { __typename, ...restNewUserSetup } = { ...newUserSetup }
+  return Object.entries(restNewUserSetup).map(([key, value]) => {
     const step = stepMap[key];
     return {
       stepKey: key,

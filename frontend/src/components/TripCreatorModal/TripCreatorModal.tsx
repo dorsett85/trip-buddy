@@ -13,7 +13,6 @@ import red from '@material-ui/core/colors/red';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import styled from 'styled-components';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { TripRecord } from 'common/lib/types/trip';
 import { setTripCreator, addTrip, setActiveTripInfo } from '../../store/trip/reducer';
 import { debounce } from '../../utils/debouce';
 import { MapboxService } from '../../api/mapbox/MapBoxService';
@@ -23,7 +22,7 @@ import { setFlyTo } from '../../store/general/reducer';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
 import LocationInputAdornment from '../generic/LocationInputAdornment/LocationInputAdornment';
-import { MutationCreateTripArgs, useCreateTripMutation } from "../../api/apollo/graphql";
+import { MutationCreateTripArgs, useCreateTripMutation } from '../../api/apollo/graphql';
 
 const ErrorStyled = styled.div`
   font-weight: bold;
@@ -43,7 +42,7 @@ const TripCreatorModal: React.FC = () => {
 
   // Final form submit graphlql mutation
   const [createTripMutation, { loading }] = useCreateTripMutation({
-    onCompleted: (data: { createTrip: TripRecord }) => {
+    onCompleted: data => {
       dispatch(addTrip(data.createTrip));
       dispatch(setTripCreator());
 

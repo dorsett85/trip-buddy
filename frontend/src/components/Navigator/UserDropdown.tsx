@@ -8,24 +8,26 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { useApolloClient } from '@apollo/react-hooks';
-import styled, {css} from 'styled-components';
-import { UserRecord } from 'common/lib/types/user';
+import styled, { css } from 'styled-components';
 import { setDrawer, resetGeneralState } from '../../store/general/reducer';
 import { resetUserState } from '../../store/user/reducer';
 import { resetTripState } from '../../store/trip/reducer';
 import { removeLocalToken } from '../../utils/localToken';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
+import { User } from '../../api/apollo/graphql';
 
 interface UserDropdownProps {
-  user: UserRecord;
+  user: User;
 }
 
-const PopoverDropdown = styled(Popover)(({ theme }) => css`
-  .MuiPopover-paper {
-    padding: ${theme.spacing('sm')} ${theme.spacing('sm')} 0;
-    width: 200px;
-  }
-`);
+const PopoverDropdown = styled(Popover)(
+  ({ theme }) => css`
+    .MuiPopover-paper {
+      padding: ${theme.spacing('sm')} ${theme.spacing('sm')} 0;
+      width: 200px;
+    }
+  `
+);
 
 const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
   const dispatch = useAppDispatch();

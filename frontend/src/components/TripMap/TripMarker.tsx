@@ -3,20 +3,19 @@ import { Marker } from 'react-map-gl';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import styled from 'styled-components';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
-import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
-import { TripRecord } from 'common/lib/types/trip';
 import { setActiveTripInfo } from '../../store/trip/reducer';
 import { setDrawer } from '../../store/general/reducer';
 import { isTrip } from '../../utils/isTrip';
 import { TripMarkerPopupProps } from './TripMarkerPopup';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { useAppSelector } from '../../store/hooks/useAppSelector';
+import { Trip, TripItinerary } from "../../api/apollo/graphql";
 
 export interface TripMarkerProps {
   /**
    * Data for the trip marker
    */
-  markerData: TripRecord | TripItineraryRecord;
+  markerData: Trip | TripItinerary;
   /**
    * Popup for the marker
    */

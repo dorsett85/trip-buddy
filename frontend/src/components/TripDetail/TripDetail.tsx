@@ -14,8 +14,6 @@ import { DateTimePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import styled, { css } from 'styled-components';
 import { DispatchProp } from 'react-redux';
-import { TripRecord, tripStatus } from 'common/lib/types/trip';
-import { UserRecord } from 'common/lib/types/user';
 import EditableTextField from '../generic/EditableTextField/EditableTextField';
 import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import {
@@ -39,14 +37,15 @@ import AppText from '../AppText/AppText';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import {
   Trip,
+  TripStatus,
   useCreateTripInvitesMutation,
   useDeleteTripMutation,
-  usePossibleTripInviteesLazyQuery,
+  usePossibleTripInviteesLazyQuery, User,
   useUpdateTripMutation
-} from '../../api/apollo/graphql';
+} from "../../api/apollo/graphql";
 
 export interface TripDetailProps {
-  trip: TripRecord;
+  trip: Trip;
 }
 
 interface TripDetailInputProps extends TripDetailProps, DispatchProp {}
@@ -95,7 +94,7 @@ const Header = styled.div(
   `
 );
 
-type TripInviteUser = Pick<UserRecord, 'id' | 'email'>;
+type TripInviteUser = Pick<User, 'id' | 'email'>;
 
 const inviteHelperText = <AppText text='List includes only users accepting invites' />;
 
@@ -591,7 +590,7 @@ const TripStatusSelect: React.FC<TripDetailInputProps> = ({ dispatch, trip }) =>
       fullWidth
       margin='normal'
     >
-      {tripStatus.map(option => (
+      {Object.values(TripStatus).map(option => (
         <MenuItem key={option} value={option}>
           {option}
         </MenuItem>

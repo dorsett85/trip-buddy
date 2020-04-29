@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { DispatchProp } from 'react-redux';
-import { UserRecord, acceptingTripInvites } from 'common/lib/types/user';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import { setUser } from '../../store/user/reducer';
@@ -11,10 +10,14 @@ import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import SuccessText from '../AppText/SuccessText';
 import ErrorText from '../AppText/ErrorText';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import { useUpdateUserMutation } from '../../api/apollo/graphql';
+import {
+  AcceptingTripInvites,
+  User,
+  useUpdateUserMutation
+} from '../../api/apollo/graphql';
 
 interface UserAccountProps {
-  user: UserRecord;
+  user: User;
 }
 
 type UserAccountInputProps = UserAccountProps & DispatchProp;
@@ -155,7 +158,7 @@ const AcceptingTripInvitesSelect: React.FC<UserAccountInputProps> = ({
   const [updateUser, { loading }] = useUpdateUserMutation();
 
   const handleOnChange: React.ChangeEventHandler<HTMLInputElement> = ({ target }) => {
-    const newValue = target.value as UserRecord['accepting_trip_invites'];
+    const newValue = target.value as User['accepting_trip_invites'];
     updateUser({ variables: { input: { accepting_trip_invites: newValue } } })
       .then(() => {
         dispatch(setUser({ accepting_trip_invites: newValue }));
@@ -180,7 +183,7 @@ const AcceptingTripInvitesSelect: React.FC<UserAccountInputProps> = ({
       fullWidth
       margin='normal'
     >
-      {acceptingTripInvites.map(option => (
+      {Object.values(AcceptingTripInvites).map(option => (
         <MenuItem key={option} value={option}>
           {option}
         </MenuItem>

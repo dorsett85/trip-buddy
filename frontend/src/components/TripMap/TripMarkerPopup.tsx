@@ -1,11 +1,10 @@
 import React, { memo } from 'react';
 import { Popup } from 'react-map-gl';
 import styled from 'styled-components';
-import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
-import { TripRecord } from 'common/lib/types/trip';
 import { isTrip } from '../../utils/isTrip';
+import { Trip, TripItinerary } from "../../api/apollo/graphql";
 
-export interface TripItineraryWithPosition extends TripItineraryRecord {
+export interface TripItineraryWithPosition extends TripItinerary {
   /**
    * To display the itinerary position order in the popup
    */
@@ -16,7 +15,7 @@ export interface TripMarkerPopupProps {
   /**
    * Data for popup
    */
-  popupData: TripRecord | TripItineraryWithPosition;
+  popupData: Trip | TripItineraryWithPosition;
 }
 
 const BEM_MARKER_POPUP = 'markerPopup';

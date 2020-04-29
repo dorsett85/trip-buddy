@@ -1,5 +1,4 @@
 import React from 'react';
-import { TripRecord } from 'common/lib/types/trip';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -9,13 +8,14 @@ import { setDrawer, setFlyTo } from '../../store/general/reducer';
 import FlyToButton from '../generic/FlyToButton/FlyToButton';
 import { useTrips } from '../../store/hooks/useTrip';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
+import { Trip } from "../../api/apollo/graphql";
 
 const TripList: React.FC = () => {
   const dispatch = useAppDispatch();
   const trips = useTrips();
   const tripArray = Object.values(trips);
 
-  const handleActiveTripClick = (id: TripRecord['id']) => () => {
+  const handleActiveTripClick = (id: Trip['id']) => () => {
     dispatch(setActiveTripInfo({ id, activeMarker: `${id}` }));
   };
 

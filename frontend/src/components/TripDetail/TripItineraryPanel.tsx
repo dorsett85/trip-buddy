@@ -14,7 +14,6 @@ import styled, { css } from 'styled-components';
 import { DateTimePicker } from '@material-ui/pickers';
 import { DispatchProp } from 'react-redux';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 import { UPDATING_MESSAGE } from '../../utils/constants/messages';
 import { getFirstError } from '../../utils/apolloErrors';
 import {
@@ -33,15 +32,16 @@ import ErrorText from '../AppText/ErrorText';
 import SuccessText from '../AppText/SuccessText';
 import FlyToButton from '../generic/FlyToButton/FlyToButton';
 import {
+  TripItinerary,
   useDeleteTripItineraryMutation,
   useUpdateTripItineraryMutation
-} from '../../api/apollo/graphql';
+} from "../../api/apollo/graphql";
 
 interface TripItineraryPanelProps extends DispatchProp {
   /**
    * Itinerary of the active trip
    */
-  itinerary: TripItineraryRecord;
+  itinerary: TripItinerary;
   /**
    * Index of the active trip itineraries, used for display
    */
