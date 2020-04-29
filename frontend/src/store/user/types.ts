@@ -1,5 +1,5 @@
 import { CaseReducer, SliceCaseReducers, PayloadAction } from '@reduxjs/toolkit';
-import { UserRecord } from 'common/lib/types/user';
+import { User } from "../../api/apollo/graphql";
 
 // State
 export interface UserState {
@@ -23,7 +23,7 @@ export interface UserState {
   /**
    * Record of the logged in user
    */
-  data: UserRecord | undefined;
+  data: User | undefined;
 }
 
 // Reducer
@@ -35,5 +35,5 @@ export interface UserSliceCaseReducers extends SliceCaseReducers<UserState> {
   setLoggedIn: UserCaseReducer<UserState['loggedIn']>;
   setSubscriptionConnected: UserCaseReducer<UserState['subscriptionConnected']>;
   setSetupCompleted: UserCaseReducer<UserState['setupComplete']>;
-  setUser: UserCaseReducer<Partial<UserRecord>>;
+  setUser: UserCaseReducer<Partial<User>>;
 }

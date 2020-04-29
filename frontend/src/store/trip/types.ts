@@ -1,54 +1,41 @@
 import { CaseReducer, PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
-import { TripRecord } from 'common/lib/types/trip';
-import { TripItineraryRecord } from 'common/lib/types/tripItinerary';
 import { LngLatArray } from 'common/lib/types/utils';
-import { TripInviteRecord } from 'common/lib/types/tripInvite';
+import {
+  CreateTripInput,
+  CreateTripItineraryInput,
+  Trip,
+  TripInvite,
+  TripItinerary
+} from '../../api/apollo/graphql';
 
 // State
-export interface TripCreator {
+export interface TripCreator extends Partial<CreateTripInput> {
   openModal?: boolean;
-  name?: TripRecord['name'];
-  description?: TripRecord['description'];
-  // eslint-disable-next-line camelcase
-  start_date?: string;
-  location?: TripRecord['location'];
-  // eslint-disable-next-line camelcase
-  location_address?: TripRecord['location_address'];
 }
 
-export interface TripItineraryCreator {
-  // eslint-disable-next-line camelcase
-  trip_id?: TripRecord['id'];
-  name?: TripItineraryRecord['name'];
-  description?: TripItineraryRecord['description'];
-  // eslint-disable-next-line camelcase
-  start_time?: TripItineraryRecord['start_time'];
-  location?: TripItineraryRecord['location'];
-  // eslint-disable-next-line camelcase
-  location_address?: TripItineraryRecord['location_address'];
-}
+export type TripItineraryCreator = Partial<CreateTripItineraryInput>;
 
 export interface ActiveTripInfo {
-  id: TripRecord['id'];
+  id: Trip['id'];
   activeMarker: string;
   updatingLocation: boolean;
   newLocation: LngLatArray | undefined;
-  updatingItineraryLocationId: TripItineraryRecord['id'] | undefined;
+  updatingItineraryLocationId: TripItinerary['id'] | undefined;
   newItineraryLocation: LngLatArray | undefined;
 }
 
 export interface TripNotifications {
-  tripInvites: TripInviteRecord['id'][];
+  tripInvites: TripInvite['id'][];
 }
 
 export interface TripState {
   loadingTrips: boolean;
   trips: {
-    [key in TripRecord['id']]: TripRecord;
+    [key in Trip['id']]: Trip;
   };
   creator?: TripCreator;
   itineraries: {
-    [key in TripItineraryRecord['id']]: TripItineraryRecord;
+    [key in TripItinerary['id']]: TripItinerary;
   };
   itineraryCreator?: TripItineraryCreator;
   activeTripInfo?: ActiveTripInfo;
@@ -56,11 +43,11 @@ export interface TripState {
 }
 
 // Action payload args
-interface UpdateTripPayload extends Partial<TripRecord> {
-  id: TripRecord['id'];
+interface UpdateTripPayload extends Partial<Trip> {
+  id: Trip['id'];
 }
-interface UpdateTripItineraryPayload extends Partial<TripItineraryRecord> {
-  id: TripItineraryRecord['id'];
+interface UpdateTripItineraryPayload extends Partial<TripItinerary> {
+  id: TripItinerary['id'];
 }
 
 // Reducer
@@ -69,18 +56,18 @@ type TripCaseReducer<TPayload = void> = CaseReducer<TripState, PayloadAction<TPa
 export interface TripSliceCaseReducers extends SliceCaseReducers<TripState> {
   resetTripState: TripCaseReducer;
   setLoadingTrips: TripCaseReducer<TripState['loadingTrips']>;
-  setTrips: TripCaseReducer<TripRecord[]>;
+  setTrips: TripCaseReducer<Trip[]>;
   setTripCreator: TripCaseReducer<TripState['creator']>;
-  addTrip: TripCaseReducer<TripRecord>;
+  addTrip: TripCaseReducer<Trip>;
   updateTrip: TripCaseReducer<UpdateTripPayload>;
-  deleteTrip: TripCaseReducer<TripRecord['id']>;
+  deleteTrip: TripCaseReducer<Trip['id']>;
   setActiveTripInfo: TripCaseReducer<Partial<ActiveTripInfo> | undefined>;
   setTripItineraryCreator: TripCaseReducer<TripState['itineraryCreator']>;
-  setTripItineraries: TripCaseReducer<TripItineraryRecord[] | undefined>;
-  addTripItinerary: TripCaseReducer<TripItineraryRecord>;
+  setTripItineraries: TripCaseReducer<TripItinerary[] | undefined>;
+  addTripItinerary: TripCaseReducer<TripItinerary>;
   updateTripItinerary: TripCaseReducer<UpdateTripItineraryPayload>;
-  deleteTripItinerary: TripCaseReducer<TripItineraryRecord['id']>;
-  setTripInviteNotifications: TripCaseReducer<TripInviteRecord['id'][]>;
-  addTripInviteNotification: TripCaseReducer<TripInviteRecord['id']>;
-  deleteTripInviteNotification: TripCaseReducer<TripInviteRecord['id']>;
+  deleteTripItinerary: TripCaseReducer<TripItinerary['id']>;
+  setTripInviteNotifications: TripCaseReducer<TripInvite['id'][]>;
+  addTripInviteNotification: TripCaseReducer<TripInvite['id']>;
+  deleteTripInviteNotification: TripCaseReducer<TripInvite['id']>;
 }
