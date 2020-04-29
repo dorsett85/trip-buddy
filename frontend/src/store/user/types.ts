@@ -1,5 +1,5 @@
 import { CaseReducer, SliceCaseReducers, PayloadAction } from '@reduxjs/toolkit';
-import { User } from "../../api/apollo/graphql";
+import { User } from '../../api/apollo/graphql';
 
 // State
 export interface UserState {
