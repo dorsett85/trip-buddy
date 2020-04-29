@@ -1,12 +1,15 @@
-import { PartialTripInviteRecord, TripInviteRecord } from 'common/lib/types/tripInvite';
-import { UserRecord } from 'common/lib/types/user';
 import { PubSub } from 'apollo-server-express';
-import { TripRecord } from 'common/lib/types/trip';
 import { OmitId } from 'common/lib/types/utils';
 import TripInviteModel from '../models/TripInviteModel';
 import { TripInviteServiceDeps } from './TripInviteService.types';
 import { WhereArgs } from '../types/dbQueryUtils';
 import { CreateTripInviteInput, UpdateTripInviteInput } from '../schema/types/graphql';
+import { UserRecord } from '../models/UserModel.types';
+import {
+  PartialTripInviteRecord,
+  TripInviteRecord
+} from '../models/TripInviteModel.types';
+import { TripRecord } from '../models/TripModel.types';
 
 export default class TripInviteService {
   private readonly user: UserRecord;

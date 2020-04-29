@@ -1,11 +1,11 @@
-import { PartialTripInviteRecord, TripInviteRecord } from 'common/lib/types/tripInvite';
-import { UserRecord } from 'common/lib/types/user';
-import { TripRecord } from 'common/lib/types/trip';
 import { OmitId } from 'common/lib/types/utils';
 import { extractRow, extractRows } from '../utils/dbHelpers';
 import BaseModel from './BaseModel';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
 import { CreateTripInviteInput, UpdateTripInviteInput } from '../schema/types/graphql';
+import { UserRecord } from './UserModel.types';
+import { PartialTripInviteRecord, TripInviteRecord } from './TripInviteModel.types';
+import { TripRecord } from './TripModel.types';
 
 export default class TripItineraryModel extends BaseModel {
   public async findMany(userId?: UserRecord['id']): Promise<TripInviteRecord[]> {

@@ -1,11 +1,11 @@
-import { UserRecord } from 'common/lib/types/user';
-import { PartialTripRecord, TripRecord } from 'common/lib/types/trip';
 import { OmitIdCreatedDate } from 'common/lib/types/utils';
 import { TripServiceDeps } from './TripService.types';
 import { WhereArgs } from '../types/dbQueryUtils';
 import TripModel from '../models/TripModel';
 import UserTripModel from '../models/UserTripModel';
 import { CreateTripInput } from '../schema/types/graphql';
+import { UserRecord } from '../models/UserModel.types';
+import { PartialTripRecord, TripRecord } from '../models/TripModel.types';
 
 export default class TripService {
   private readonly user: UserRecord;

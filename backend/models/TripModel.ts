@@ -1,10 +1,10 @@
-import { PartialTripRecord, TripRecord } from 'common/lib/types/trip';
-import { UserRecord } from 'common/lib/types/user';
-import { UserTripRecord } from 'common/lib/types/userTrip';
 import { OmitIdCreatedDate } from 'common/lib/types/utils';
 import BaseModel from './BaseModel';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
 import { CreateTripInput } from '../schema/types/graphql';
+import { PartialTripRecord, TripRecord } from './TripModel.types';
+import { UserRecord } from './UserModel.types';
+import { PartialUserTripRecord } from './UserTripModel.types';
 
 export default class TripModel extends BaseModel {
   private tableWithUserId = 'users_trips ut';
@@ -63,7 +63,7 @@ export default class TripModel extends BaseModel {
       return this.baseUpdateOne(updateArgs, whereArgs);
     }
 
-    const userIdWhereGroup: WhereArgs<Partial<UserTripRecord>> = [
+    const userIdWhereGroup: WhereArgs<PartialUserTripRecord> = [
       { text: this.whereTableWithUserId },
       {
         items: { user_id: userId },

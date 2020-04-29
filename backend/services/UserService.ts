@@ -1,8 +1,8 @@
-import { UserRecord } from 'common/lib/types/user';
-import { TripRecord } from 'common/lib/types/trip';
 import { UserServiceDeps } from './UserService.types';
 import UserModel from '../models/UserModel';
 import { UpdateUserInput } from "../schema/types/graphql";
+import { UserRecord } from "../models/UserModel.types";
+import { TripRecord } from "../models/TripModel.types";
 
 export default class UserService {
   private readonly user: UserRecord;

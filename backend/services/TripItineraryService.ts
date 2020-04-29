@@ -1,6 +1,3 @@
-import { UserRecord } from 'common/lib/types/user';
-import { TripItineraryRecord } from 'common/src/types/tripItinerary';
-import { PartialTripItineraryRecord } from 'common/lib/types/tripItinerary';
 import { OmitId } from 'common/lib/types/utils';
 import { TripItineraryServiceDeps } from './TripItineraryService.types';
 import { WhereArgs } from '../types/dbQueryUtils';
@@ -9,6 +6,11 @@ import {
   CreateTripItineraryInput,
   UpdateTripItineraryInput
 } from '../schema/types/graphql';
+import { UserRecord } from '../models/UserModel.types';
+import {
+  PartialTripItineraryRecord,
+  TripItineraryRecord
+} from '../models/TripItineraryModel.types';
 
 export default class TripItineraryService {
   private readonly user: UserRecord;

@@ -1,9 +1,9 @@
-import { PartialUserRecord, UserRecord } from 'common/lib/types/user';
-import { TripRecord } from 'common/lib/types/trip';
 import BaseModel from './BaseModel';
 import { extractRows } from '../utils/dbHelpers';
 import { WhereArgs } from '../types/dbQueryUtils';
 import { UpdateUserInput } from '../schema/types/graphql';
+import { PartialUserRecord, UserRecord } from './UserModel.types';
+import { TripRecord } from './TripModel.types';
 
 export default class UserModel extends BaseModel {
   public async verifyEmail(token: string, user: UserRecord): Promise<number> {

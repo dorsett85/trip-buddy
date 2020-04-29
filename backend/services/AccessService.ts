@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { UserRecord } from 'common/lib/types/user';
 import {
   USER_NOT_FOUND_MESSAGE,
   INVALID_LOGIN_MESSAGE,
@@ -9,6 +8,7 @@ import {
 import { AccessServiceDeps } from './AccessService.types';
 import UserModel from '../models/UserModel';
 import { MutationLoginUserArgs, MutationRegisterUserArgs } from '../schema/types/graphql';
+import { UserRecord } from "../models/UserModel.types";
 
 export default class AccessService {
   private userModel: UserModel;
