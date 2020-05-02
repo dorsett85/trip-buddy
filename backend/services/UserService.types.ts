@@ -1,4 +1,4 @@
-import { UserRecord } from 'common/lib/types/user';
+import { UserRecord } from '../models/UserModel.types';
 import UserModel from '../models/UserModel';
 
 export interface UserServiceDeps {

@@ -1,4 +1,4 @@
-import { UserRecord } from 'common/lib/types/user';
+import { UserRecord } from '../models/UserModel.types';
 import TripModel from '../models/TripModel';
 import UserTripModel from '../models/UserTripModel';
 

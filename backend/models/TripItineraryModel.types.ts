@@ -1,4 +1,4 @@
-import { LngLatArray } from "./utils";
+import { LngLatArray } from 'common/lib/types/utils';
 
 /* eslint-disable camelcase */
 export interface TripItineraryRecord {
@@ -9,7 +9,7 @@ export interface TripItineraryRecord {
   location: LngLatArray;
   location_address: string;
   start_time: string;
-  end_time?: string,
+  end_time?: string;
   created_date: string;
 }
 

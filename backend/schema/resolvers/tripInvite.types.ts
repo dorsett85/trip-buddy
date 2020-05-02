@@ -1,5 +1,5 @@
 import { IResolvers } from 'apollo-server-express';
-import { TripInviteRecord } from 'common/lib/types/tripInvite';
+import { TripInviteRecord } from '../../models/TripInviteModel.types';
 import {
   AuthMutationFieldResolvers,
   AuthQueryFieldResolvers,

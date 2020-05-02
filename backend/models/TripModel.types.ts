@@ -1,4 +1,4 @@
-import { LngLatArray } from './utils';
+import { LngLatArray } from 'common/lib/types/utils';
 
 export const tripStatus = [
   'pending',
