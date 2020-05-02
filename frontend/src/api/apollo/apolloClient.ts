@@ -27,7 +27,9 @@ const middlewareLink = new ApolloLink((operation, forward) => {
 
 const cache = new InMemoryCache();
 
-type ApolloSubscriptionClient<TLoggedIn extends boolean> = TLoggedIn extends true ? SubscriptionClient : undefined;
+type ApolloSubscriptionClient<TLoggedIn extends boolean> = TLoggedIn extends true
+  ? SubscriptionClient
+  : never;
 
 /**
  * Function to create our apollo client. After login we want to add subscriptions
@@ -46,7 +48,7 @@ export const generateApolloClient = <TLoggedIn extends boolean>(
       reconnect: true,
       connectionParams: () => ({ authorization: localStorage.getItem('token') })
     });
-    
+
     const wsLink = new WebSocketLink(subscriptionClient);
 
     // using the ability to split links, you can send data to each link
@@ -64,7 +66,7 @@ export const generateApolloClient = <TLoggedIn extends boolean>(
       link
     );
   }
-  
+
   const apolloClient = new ApolloClient({ link, cache });
 
   return [apolloClient, subscriptionClient as ApolloSubscriptionClient<TLoggedIn>];
