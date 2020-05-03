@@ -51,7 +51,7 @@ export const tripTypeDefs = gql`
 
   extend type Query {
     trip(input: FindTripInput!): Trip! @isAuth
-    trips(input: FindTripInput!): [Trip!]! @isAuth
+    trips(input: FindTripInput): [Trip!]! @isAuth
   }
 
   extend type Mutation {

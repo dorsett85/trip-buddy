@@ -20,5 +20,16 @@ export declare type OmitCreatedDate<T> = Omit<T, 'created_date'>;
  * Omit both id and created_date properties
  */
 export declare type OmitIdCreatedDate<T> = OmitId<T> & OmitCreatedDate<T>;
+/**
+ * Helper function to add an optional userId property. This is helpful for
+ * service methods that check for a userId before passing arguments to the
+ * model layer.
+ */
+export declare type WithOptionalUserId<T extends object> = T & {
+    userId?: number;
+};
+/**
+ * Data type for longitude/latitude points
+ */
 export declare type LngLatArray = [number, number];
 //# sourceMappingURL=utils.d.ts.map

@@ -8,11 +8,8 @@ import { subscribeWithFilter } from '../../utils/subscribeWithFilter';
 
 export const tripInviteResolvers: TripInviteResolvers = {
   TripInvite: {
-    trip: async (tripInviteRecord, __, { tripService }) => {
-      const trip = await tripService.findOne(
-        { items: { id: tripInviteRecord.trip_id } },
-        false
-      );
+    trip: async (tripInvite, __, { tripService }) => {
+      const trip = await tripService.findOne({ id: tripInvite.trip_id }, false);
       if (!trip) {
         throw new UserInputError(NOT_FOUND_MESSAGE);
       }

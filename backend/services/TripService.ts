@@ -1,4 +1,4 @@
-import { OmitIdCreatedDate } from 'common/lib/types/utils';
+import { OmitIdCreatedDate, WithOptionalUserId } from 'common/lib/types/utils';
 import { TripServiceDeps } from './TripService.types';
 import { WhereArgs } from '../types/dbQueryUtils';
 import TripModel from '../models/TripModel';
@@ -29,21 +29,44 @@ export default class TripService {
   }
 
   public findOne(
-    whereArgs: WhereArgs<PartialTripRecord>,
-    restrictUser = true
+    findOneArgs: WithOptionalUserId<PartialTripRecord>,
+    joinUser = true
   ): Promise<TripRecord | undefined> {
+    // eslint-disable-next-line prefer-const
+    let { userId, ...partialTripRecord } = findOneArgs;
     const { id, role } = this.user;
-    // If the findOne method is called from within a nested gql query, we can safely
-    // query just the trip table without needing to join another table to get the user
-    // id. If the 'restrictUser' argument is false, the tripModel.findOne method will
-    // query the trip table directly.
-    const userId = role === 'admin' || !restrictUser ? undefined : id;
+    // If userId is undefined we can query the trip table directly (if joinUser
+    // arg is false) without needing to join another table to get the user id.
+    // This is useful inside of a nested query requesting a trip where we don't
+    // need to worry about admin access.
+    // Outside of a nested query we still need the check for admin privileges to
+    // see if the user is restricted or not.
+    if (!userId) {
+      userId = !joinUser || role === 'admin' ? undefined : id;
+    }
+
+    const whereArgs = { items: partialTripRecord };
+
     return this.tripModel.findOne(whereArgs, userId);
   }
 
-  public findMany(whereArgs?: WhereArgs<PartialTripRecord>): Promise<TripRecord[]> {
+  public findMany(
+    findManyArgs?: WithOptionalUserId<PartialTripRecord>,
+    joinUser = true
+  ): Promise<TripRecord[]> {
+    let userId: number | undefined;
+    let partialTripRecord: PartialTripRecord | undefined;
+    if (findManyArgs) {
+      ({ userId, ...partialTripRecord } = findManyArgs);
+    }
     const { id, role } = this.user;
-    const userId = role === 'admin' ? undefined : id;
+
+    if (!userId) {
+      userId = !joinUser || role === 'admin' ? undefined : id;
+    }
+
+    const whereArgs = partialTripRecord && { items: partialTripRecord };
+
     return this.tripModel.findMany(whereArgs, userId);
   }
 

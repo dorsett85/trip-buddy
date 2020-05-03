@@ -9,8 +9,8 @@ import {
 
 export const userResolvers: UserResolvers = {
   User: {
-    trips: (_, __, { tripService }) => {
-      return tripService.findMany();
+    trips: (user, __, { tripService }) => {
+      return tripService.findMany({ userId: user.id });
     }
   },
   Query: {

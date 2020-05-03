@@ -40,7 +40,7 @@ export type QueryTripArgs = {
 
 
 export type QueryTripsArgs = {
-  input: FindTripInput;
+  input?: Maybe<FindTripInput>;
 };
 
 

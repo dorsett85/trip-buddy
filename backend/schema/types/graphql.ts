@@ -39,7 +39,7 @@ export type QueryTripArgs = {
 
 
 export type QueryTripsArgs = {
-  input: FindTripInput;
+  input?: Maybe<FindTripInput>;
 };
 
 
@@ -464,7 +464,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   user: Resolver<ResolversTypes['User'], ParentType, ContextType>,
   possibleTripInvitees: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryPossibleTripInviteesArgs, 'tripId'>>,
   trip: Resolver<ResolversTypes['Trip'], ParentType, ContextType, RequireFields<QueryTripArgs, 'input'>>,
-  trips: Resolver<Array<ResolversTypes['Trip']>, ParentType, ContextType, RequireFields<QueryTripsArgs, 'input'>>,
+  trips: Resolver<Array<ResolversTypes['Trip']>, ParentType, ContextType, RequireFields<QueryTripsArgs, never>>,
   tripItineraries: Resolver<Array<ResolversTypes['TripItinerary']>, ParentType, ContextType, RequireFields<QueryTripItinerariesArgs, 'input'>>,
   tripInvites: Resolver<Array<ResolversTypes['TripInvite']>, ParentType, ContextType>,
 };

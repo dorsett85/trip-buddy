@@ -8,14 +8,14 @@ import {
 export const tripResolvers: TripResolvers = {
   Query: {
     trip: async (_, { input }, { tripService }) => {
-      const trip = await tripService.findOne({ items: input });
+      const trip = await tripService.findOne(input);
       if (!trip) {
         throw new UserInputError(NOT_FOUND_MESSAGE);
       }
       return trip;
     },
     trips: (_, { input }, { tripService }) => {
-      return tripService.findMany({ items: input });
+      return tripService.findMany(input);
     }
   },
   Mutation: {

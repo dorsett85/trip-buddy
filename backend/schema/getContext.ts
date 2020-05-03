@@ -34,6 +34,18 @@ export const getContext = ({ services, models }: ContextDeps) => async ({
   });
   const user = token ? await accessService.getActiveUser(token) : null;
 
+  // Last step is to check if the request is coming from the app url. If it is
+  // then admin users will be changed to 'customers' so the UI will display data
+  // as if they had a customer role. Admin users making requests through other
+  // means (Postman, Graphiql, etc.) will still be able to access all of the
+  // data.
+  // TODO add restriction for referer url when the app is deployed
+  if (user) {
+    const restrictUser = req?.get('Referrer') === 'http://localhost:3000/' || !!connection;
+    user.role = restrictUser ? 'customer' : user.role;
+  }
+  
+
   // If there's no user, then don't provide additional services!
   if (!user) {
     return {

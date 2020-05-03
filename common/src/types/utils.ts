@@ -14,7 +14,7 @@ export interface KeyValue<T = any> {
  */
 export type ChangeReturnType<TFunction, TReturn> = TFunction extends (
   ...a: infer A
-  ) => any
+) => any
   ? (...a: A) => TReturn
   : never;
 
@@ -36,5 +36,14 @@ export type OmitCreatedDate<T> = Omit<T, 'created_date'>;
  */
 export type OmitIdCreatedDate<T> = OmitId<T> & OmitCreatedDate<T>;
 
+/**
+ * Helper function to add an optional userId property. This is helpful for
+ * service methods that check for a userId before passing arguments to the
+ * model layer.
+ */
+export type WithOptionalUserId<T extends object> = T & { userId?: number };
 
+/**
+ * Data type for longitude/latitude points
+ */
 export type LngLatArray = [number, number];
