@@ -46,7 +46,7 @@ export const tripItineraryTypeDefs = gql`
   }
 
   extend type Query {
-    tripItineraries(input: FindTripItineraryInput!): [TripItinerary!]! @isAuth
+    tripItineraries(input: FindTripItineraryInput): [TripItinerary!]! @isAuth
   }
 
   extend type Mutation {

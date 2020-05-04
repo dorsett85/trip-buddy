@@ -4,7 +4,7 @@ import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
 import { CreateTripInput } from '../schema/types/graphql';
 import { PartialTripRecord, TripRecord } from './TripModel.types';
 import { UserRecord } from './UserModel.types';
-import { PartialUserTripRecord } from './UserTripModel.types';
+import { UserTripRecord } from './UserTripModel.types';
 
 export default class TripModel extends BaseModel {
   private tableWithUserId = 'users_trips ut';
@@ -32,13 +32,11 @@ export default class TripModel extends BaseModel {
     // If a user id exists we need to create a WhereArgs array containing
     // WhereArgGroup objects (one for the users_trips table and one for the
     // trips table).
-    const userIdWhereGroup: WhereArgGroup<PartialUserTripRecord> = {
+    const userIdWhereGroup: WhereArgGroup<Pick<UserTripRecord, 'user_id'>> = {
       items: { user_id: userId },
       prefixTableName: false
     };
-    const whereArgsWithUserId: WhereArgGroup<
-      PartialTripRecord & PartialUserTripRecord
-    >[] = [whereArgs, userIdWhereGroup];
+    const whereArgsWithUserId: WhereArgGroup[] = [whereArgs, userIdWhereGroup];
 
     return this.baseFindOne(whereArgsWithUserId, this.joinTableWithUserId);
   }
@@ -55,13 +53,14 @@ export default class TripModel extends BaseModel {
       return this.baseFindMany(whereArgs);
     }
 
-    const userIdWhereGroup: WhereArgGroup<PartialUserTripRecord> = {
+    const userIdWhereGroup: WhereArgGroup<Pick<UserTripRecord, 'user_id'>> = {
       items: { user_id: userId },
       prefixTableName: false
     };
     const whereArgsWithUserId: WhereArgs = !whereArgs
       ? userIdWhereGroup
       : [whereArgs, userIdWhereGroup];
+
     return this.baseFindMany(whereArgsWithUserId, this.joinTableWithUserId);
   }
 
@@ -70,13 +69,13 @@ export default class TripModel extends BaseModel {
     updateWhere: RequireId<PartialTripRecord>,
     userId?: UserRecord['id']
   ): Promise<number> {
-    const whereArgs: WhereArgGroup<PartialTripRecord> = { items: updateWhere };
+    const whereArgs: WhereArgGroup<RequireId<PartialTripRecord>> = { items: updateWhere };
 
     if (!userId) {
       return this.baseUpdateOne(updateArgs, whereArgs);
     }
 
-    const userIdWhereGroup: WhereArgs<PartialUserTripRecord> = [
+    const userIdWhereGroup: WhereArgs<Pick<UserTripRecord, 'user_id'>> = [
       { text: this.whereTableWithUserId },
       {
         items: { user_id: userId },
@@ -89,12 +88,12 @@ export default class TripModel extends BaseModel {
   }
 
   public deleteOne(tripId: TripRecord['id'], userId?: UserRecord['id']): Promise<number> {
-    const whereArgs: WhereArgs<PartialTripRecord> = { items: { id: tripId } };
+    const whereArgs: WhereArgGroup<Pick<TripRecord, 'id'>> = { items: { id: tripId } };
     if (!userId) {
       return this.baseDeleteOne(whereArgs);
     }
 
-    const userIdWhereArgs: WhereArgs = {
+    const userIdWhereArgs: WhereArgGroup = {
       items: { user_id: userId },
       prefixTableName: false
     };

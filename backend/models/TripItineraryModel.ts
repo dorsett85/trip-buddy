@@ -1,4 +1,4 @@
-import { OmitId } from 'common/lib/types/utils';
+import { OmitId, RequireId } from 'common/lib/types/utils';
 import BaseModel from './BaseModel';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
 import {
@@ -10,7 +10,7 @@ import {
   TripItineraryRecord
 } from './TripItineraryModel.types';
 import { UserRecord } from './UserModel.types';
-import { PartialUserTripRecord } from './UserTripModel.types';
+import { UserTripRecord } from './UserTripModel.types';
 
 export default class TripItineraryModel extends BaseModel {
   private readonly tableWithUserId = 'users_trips ut';
@@ -26,44 +26,50 @@ export default class TripItineraryModel extends BaseModel {
   }
 
   public findMany(
-    whereArgs: WhereArgs<PartialTripItineraryRecord>,
+    findManyArgs?: PartialTripItineraryRecord,
     userId?: UserRecord['id']
   ): Promise<TripItineraryRecord[]> {
+    const whereArgs:
+      | WhereArgGroup<PartialTripItineraryRecord>
+      | undefined = findManyArgs && { items: findManyArgs };
+
     if (!userId) {
       return this.baseFindMany(whereArgs);
     }
 
-    const userIdWhereGroup: WhereArgGroup = {
+    const userIdWhereGroup: WhereArgGroup<Pick<UserTripRecord, 'user_id'>> = {
       items: { user_id: userId },
       prefixTableName: false
     };
     const whereArgsWithUserId: WhereArgs = !whereArgs
       ? userIdWhereGroup
-      : Array.isArray(whereArgs)
-      ? [...whereArgs, userIdWhereGroup]
       : [whereArgs, userIdWhereGroup];
+
     return this.baseFindMany(whereArgsWithUserId, this.joinTableWithUserId);
   }
 
   public updateOne(
     updateArgs: OmitId<UpdateTripItineraryInput>,
-    whereArgs: WhereArgs<PartialTripItineraryRecord>,
+    updateWhere: RequireId<PartialTripItineraryRecord>,
     userId?: UserRecord['id']
   ): Promise<number> {
+    const whereArgs: WhereArgGroup<RequireId<PartialTripItineraryRecord>> = {
+      items: updateWhere
+    };
+
     if (!userId) {
       return this.baseUpdateOne(updateArgs, whereArgs);
     }
 
-    const userIdWhereGroup: WhereArgs<PartialUserTripRecord> = [
+    const userIdWhereGroup: WhereArgs<Pick<UserTripRecord, 'user_id'>> = [
       { text: this.whereTableWithUserId },
       {
         items: { user_id: userId },
         prefixTableName: false
       }
     ];
-    const whereArgsWithUserId: WhereArgs = Array.isArray(whereArgs)
-      ? [...userIdWhereGroup, ...whereArgs]
-      : [...userIdWhereGroup, whereArgs];
+    const whereArgsWithUserId: WhereArgs = [...userIdWhereGroup, whereArgs];
+
     return this.baseUpdateOne(updateArgs, whereArgsWithUserId, this.tableWithUserId);
   }
 
@@ -71,7 +77,7 @@ export default class TripItineraryModel extends BaseModel {
     itineraryId: TripItineraryRecord['id'],
     userId?: UserRecord['id']
   ): Promise<number> {
-    const whereArgs: WhereArgs<PartialTripItineraryRecord> = {
+    const whereArgs: WhereArgGroup<Pick<TripItineraryRecord, 'id'>> = {
       items: { id: itineraryId }
     };
     if (!userId) {

@@ -45,7 +45,7 @@ export type QueryTripsArgs = {
 
 
 export type QueryTripItinerariesArgs = {
-  input: FindTripItineraryInput;
+  input?: Maybe<FindTripItineraryInput>;
 };
 
 export type Mutation = {

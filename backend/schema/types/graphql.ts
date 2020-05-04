@@ -44,7 +44,7 @@ export type QueryTripsArgs = {
 
 
 export type QueryTripItinerariesArgs = {
-  input: FindTripItineraryInput;
+  input?: Maybe<FindTripItineraryInput>;
 };
 
 export type Mutation = {
@@ -465,7 +465,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   possibleTripInvitees: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryPossibleTripInviteesArgs, 'tripId'>>,
   trip: Resolver<ResolversTypes['Trip'], ParentType, ContextType, RequireFields<QueryTripArgs, 'input'>>,
   trips: Resolver<Array<ResolversTypes['Trip']>, ParentType, ContextType, RequireFields<QueryTripsArgs, never>>,
-  tripItineraries: Resolver<Array<ResolversTypes['TripItinerary']>, ParentType, ContextType, RequireFields<QueryTripItinerariesArgs, 'input'>>,
+  tripItineraries: Resolver<Array<ResolversTypes['TripItinerary']>, ParentType, ContextType, RequireFields<QueryTripItinerariesArgs, never>>,
   tripInvites: Resolver<Array<ResolversTypes['TripInvite']>, ParentType, ContextType>,
 };
 

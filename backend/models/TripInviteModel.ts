@@ -1,25 +1,13 @@
 import { OmitId, RequireId } from 'common/lib/types/utils';
 import { extractRow, extractRows } from '../utils/dbHelpers';
 import BaseModel from './BaseModel';
-import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
+import { WhereArgGroup } from '../types/dbQueryUtils';
 import { CreateTripInviteInput, UpdateTripInviteInput } from '../schema/types/graphql';
 import { UserRecord } from './UserModel.types';
 import { PartialTripInviteRecord, TripInviteRecord } from './TripInviteModel.types';
 import { TripRecord } from './TripModel.types';
 
 export default class TripItineraryModel extends BaseModel {
-  public async findMany(userId?: UserRecord['id']): Promise<TripInviteRecord[]> {
-    if (!userId) {
-      return this.baseFindMany();
-    }
-    const whereArgs: WhereArgGroup = {
-      items: {
-        invitee_id: userId
-      }
-    };
-    return this.baseFindMany(whereArgs);
-  }
-
   public async createMany(
     invite: (CreateTripInviteInput & {
       // eslint-disable-next-line camelcase
@@ -30,12 +18,24 @@ export default class TripItineraryModel extends BaseModel {
     return extractRows(await inviteIds);
   }
 
+  public async findMany(userId?: UserRecord['id']): Promise<TripInviteRecord[]> {
+    if (!userId) {
+      return this.baseFindMany();
+    }
+    const whereArgs: WhereArgGroup<Pick<TripInviteRecord, 'invitee_id'>> = {
+      items: { invitee_id: userId }
+    };
+    return this.baseFindMany<TripInviteRecord>(whereArgs);
+  }
+
   public updateOne(
     updateArgs: OmitId<UpdateTripInviteInput>,
     updateWhere: RequireId<PartialTripInviteRecord>,
     userId?: UserRecord['id']
   ): Promise<number> {
-    const whereArgs: WhereArgGroup<PartialTripInviteRecord> = { items: updateWhere };
+    const whereArgs: WhereArgGroup<RequireId<PartialTripInviteRecord>> = {
+      items: updateWhere
+    };
 
     if (!userId) {
       return this.baseUpdateOne(updateArgs, whereArgs);
@@ -43,10 +43,13 @@ export default class TripItineraryModel extends BaseModel {
 
     // For non-admin users we want them to only update trip invites where
     // they are the invitee.
-    const inviteeIdWhereGroup: WhereArgGroup<PartialTripInviteRecord> = {
+    const inviteeIdWhereGroup: WhereArgGroup<Pick<TripInviteRecord, 'invitee_id'>> = {
       items: { invitee_id: userId }
     };
-    const whereArgsWithInviteeId: WhereArgs = [inviteeIdWhereGroup, whereArgs];
+    const whereArgsWithInviteeId: WhereArgGroup<PartialTripInviteRecord>[] = [
+      inviteeIdWhereGroup,
+      whereArgs
+    ];
 
     return this.baseUpdateOne(updateArgs, whereArgsWithInviteeId);
   }

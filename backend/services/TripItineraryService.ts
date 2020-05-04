@@ -1,6 +1,5 @@
-import { OmitId } from 'common/lib/types/utils';
+import { OmitId, RequireId } from 'common/lib/types/utils';
 import { TripItineraryServiceDeps } from './TripItineraryService.types';
-import { WhereArgs } from '../types/dbQueryUtils';
 import TripItineraryModel from '../models/TripItineraryModel';
 import {
   CreateTripItineraryInput,
@@ -11,6 +10,7 @@ import {
   PartialTripItineraryRecord,
   TripItineraryRecord
 } from '../models/TripItineraryModel.types';
+import { determineUserId } from '../utils/determineUserId';
 
 export default class TripItineraryService {
   private readonly user: UserRecord;
@@ -29,25 +29,22 @@ export default class TripItineraryService {
   }
 
   public findMany(
-    whereArgs: WhereArgs<PartialTripItineraryRecord>
+    findManyArgs?: PartialTripItineraryRecord
   ): Promise<TripItineraryRecord[]> {
-    const { id, role } = this.user;
-    const userId = role === 'admin' ? undefined : id;
-    return this.tripItineraryModel.findMany(whereArgs, userId);
+    const userId = determineUserId(this.user);
+    return this.tripItineraryModel.findMany(findManyArgs, userId);
   }
 
   public updateOne(
-    updateTripItineraryInput: OmitId<UpdateTripItineraryInput>,
-    whereArgs: WhereArgs<PartialTripItineraryRecord>
+    updateOneArgs: OmitId<UpdateTripItineraryInput>,
+    updateWhere: RequireId<PartialTripItineraryRecord>
   ): Promise<number> {
-    const { id, role } = this.user;
-    const userId = role === 'admin' ? undefined : id;
-    return this.tripItineraryModel.updateOne(updateTripItineraryInput, whereArgs, userId);
+    const userId = determineUserId(this.user);
+    return this.tripItineraryModel.updateOne(updateOneArgs, updateWhere, userId);
   }
 
   public deleteOne(itineraryId: TripItineraryRecord['id']): Promise<number> {
-    const { id, role } = this.user;
-    const userId = role === 'admin' ? undefined : id;
+    const userId = determineUserId(this.user);
     return this.tripItineraryModel.deleteOne(itineraryId, userId);
   }
 }
