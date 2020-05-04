@@ -1,6 +1,5 @@
-import { OmitIdCreatedDate, WithOptionalUserId } from 'common/lib/types/utils';
+import { OmitIdCreatedDate, RequireId, WithOptionalUserId } from 'common/lib/types/utils';
 import { TripServiceDeps } from './TripService.types';
-import { WhereArgs } from '../types/dbQueryUtils';
 import TripModel from '../models/TripModel';
 import UserTripModel from '../models/UserTripModel';
 import { CreateTripInput } from '../schema/types/graphql';
@@ -45,9 +44,7 @@ export default class TripService {
       userId = !joinUser || role === 'admin' ? undefined : id;
     }
 
-    const whereArgs = { items: partialTripRecord };
-
-    return this.tripModel.findOne(whereArgs, userId);
+    return this.tripModel.findOne(partialTripRecord, userId);
   }
 
   public findMany(
@@ -65,18 +62,16 @@ export default class TripService {
       userId = !joinUser || role === 'admin' ? undefined : id;
     }
 
-    const whereArgs = partialTripRecord && { items: partialTripRecord };
-
-    return this.tripModel.findMany(whereArgs, userId);
+    return this.tripModel.findMany(partialTripRecord, userId);
   }
 
   public updateOne(
-    updateTripInput: OmitIdCreatedDate<PartialTripRecord>,
-    whereArgs: WhereArgs<PartialTripRecord>
+    updateOneArgs: OmitIdCreatedDate<PartialTripRecord>,
+    updateWhere: RequireId<PartialTripRecord>
   ): Promise<number> {
     const { id, role } = this.user;
     const userId = role === 'admin' ? undefined : id;
-    return this.tripModel.updateOne(updateTripInput, whereArgs, userId);
+    return this.tripModel.updateOne(updateOneArgs, updateWhere, userId);
   }
 
   public deleteOne(tripId: TripRecord['id']): Promise<number> {

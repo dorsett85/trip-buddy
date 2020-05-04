@@ -18,47 +18,60 @@ export default class TripModel extends BaseModel {
   }
 
   public findOne(
-    whereArgs: WhereArgs<PartialTripRecord>,
+    findArgs: PartialTripRecord,
     userId?: UserRecord['id']
   ): Promise<TripRecord | undefined> {
+    const whereArgs: WhereArgGroup<PartialTripRecord> = { items: findArgs };
+
+    // No user id means we can query for trips without joining a table with a
+    // user id.
     if (!userId) {
-      return this.baseFindOne(whereArgs);
+      return this.baseFindOne<TripRecord>(whereArgs);
     }
-    const userIdWhereGroup: WhereArgGroup = {
+
+    // If a user id exists we need to create a WhereArgs array containing
+    // WhereArgGroup objects (one for the users_trips table and one for the
+    // trips table).
+    const userIdWhereGroup: WhereArgGroup<PartialUserTripRecord> = {
       items: { user_id: userId },
       prefixTableName: false
     };
-    const whereArgsWithUserId: WhereArgs = Array.isArray(whereArgs)
-      ? [...whereArgs, userIdWhereGroup]
-      : [whereArgs, userIdWhereGroup];
+    const whereArgsWithUserId: WhereArgGroup<
+      PartialTripRecord & PartialUserTripRecord
+    >[] = [whereArgs, userIdWhereGroup];
+
     return this.baseFindOne(whereArgsWithUserId, this.joinTableWithUserId);
   }
 
   public findMany(
-    whereArgs?: WhereArgs<PartialTripRecord>,
+    findArgs?: PartialTripRecord,
     userId?: UserRecord['id']
   ): Promise<TripRecord[]> {
+    const whereArgs: WhereArgGroup<PartialTripRecord> | undefined = findArgs && {
+      items: findArgs
+    };
+
     if (!userId) {
       return this.baseFindMany(whereArgs);
     }
 
-    const userIdWhereGroup: WhereArgGroup = {
+    const userIdWhereGroup: WhereArgGroup<PartialUserTripRecord> = {
       items: { user_id: userId },
       prefixTableName: false
     };
     const whereArgsWithUserId: WhereArgs = !whereArgs
       ? userIdWhereGroup
-      : Array.isArray(whereArgs)
-      ? [...whereArgs, userIdWhereGroup]
       : [whereArgs, userIdWhereGroup];
     return this.baseFindMany(whereArgsWithUserId, this.joinTableWithUserId);
   }
 
   public updateOne(
     updateArgs: OmitIdCreatedDate<PartialTripRecord>,
-    whereArgs: WhereArgs<PartialTripRecord>,
+    updateWhere: PartialTripRecord,
     userId?: UserRecord['id']
   ): Promise<number> {
+    const whereArgs: WhereArgGroup<PartialTripRecord> = { items: updateWhere };
+
     if (!userId) {
       return this.baseUpdateOne(updateArgs, whereArgs);
     }
@@ -70,9 +83,8 @@ export default class TripModel extends BaseModel {
         prefixTableName: false
       }
     ];
-    const whereArgsWithUserId: WhereArgs = Array.isArray(whereArgs)
-      ? [...userIdWhereGroup, ...whereArgs]
-      : [...userIdWhereGroup, whereArgs];
+    const whereArgsWithUserId: WhereArgs = [...userIdWhereGroup, whereArgs];
+    
     return this.baseUpdateOne(updateArgs, whereArgsWithUserId, this.tableWithUserId);
   }
 

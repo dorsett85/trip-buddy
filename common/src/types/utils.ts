@@ -44,6 +44,12 @@ export type OmitIdCreatedDate<T> = OmitId<T> & OmitCreatedDate<T>;
 export type WithOptionalUserId<T extends object> = T & { userId?: number };
 
 /**
+ * An object that must have an id property. Useful for our updateOne args where
+ * we require an id to make an update on a single record.
+ */
+export type RequireId<T extends object> = T & { id: number }
+
+/**
  * Data type for longitude/latitude points
  */
 export type LngLatArray = [number, number];

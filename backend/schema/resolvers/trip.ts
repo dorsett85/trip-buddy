@@ -24,7 +24,7 @@ export const tripResolvers: TripResolvers = {
     },
     updateTrip: async (_, { input }, { tripService }) => {
       const { id, ...rest } = input;
-      const updatedCount = await tripService.updateOne(rest, { items: { id } });
+      const updatedCount = await tripService.updateOne(rest, { id });
       if (!updatedCount) {
         throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
       }
