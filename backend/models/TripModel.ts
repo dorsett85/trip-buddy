@@ -1,4 +1,4 @@
-import { OmitIdCreatedDate } from 'common/lib/types/utils';
+import { OmitIdCreatedDate, RequireId } from 'common/lib/types/utils';
 import BaseModel from './BaseModel';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
 import { CreateTripInput } from '../schema/types/graphql';
@@ -67,7 +67,7 @@ export default class TripModel extends BaseModel {
 
   public updateOne(
     updateArgs: OmitIdCreatedDate<PartialTripRecord>,
-    updateWhere: PartialTripRecord,
+    updateWhere: RequireId<PartialTripRecord>,
     userId?: UserRecord['id']
   ): Promise<number> {
     const whereArgs: WhereArgGroup<PartialTripRecord> = { items: updateWhere };
@@ -84,7 +84,7 @@ export default class TripModel extends BaseModel {
       }
     ];
     const whereArgsWithUserId: WhereArgs = [...userIdWhereGroup, whereArgs];
-    
+
     return this.baseUpdateOne(updateArgs, whereArgsWithUserId, this.tableWithUserId);
   }
 

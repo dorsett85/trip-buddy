@@ -1,8 +1,7 @@
 import { PubSub } from 'apollo-server-express';
-import { OmitId } from 'common/lib/types/utils';
+import { OmitId, RequireId } from 'common/lib/types/utils';
 import TripInviteModel from '../models/TripInviteModel';
 import { TripInviteServiceDeps } from './TripInviteService.types';
-import { WhereArgs } from '../types/dbQueryUtils';
 import { CreateTripInviteInput, UpdateTripInviteInput } from '../schema/types/graphql';
 import { UserRecord } from '../models/UserModel.types';
 import {
@@ -10,6 +9,7 @@ import {
   TripInviteRecord
 } from '../models/TripInviteModel.types';
 import { TripRecord } from '../models/TripModel.types';
+import { determineUserId } from '../utils/determineUserId';
 
 export default class TripInviteService {
   private readonly user: UserRecord;
@@ -41,25 +41,20 @@ export default class TripInviteService {
   }
 
   public findMany(): Promise<TripInviteRecord[]> {
-    const { id, role } = this.user;
-    const userId = role === 'admin' ? undefined : id;
+    const userId = determineUserId(this.user);
     return this.tripInviteModel.findMany(userId);
   }
 
   public updateOne(
-    updateTripInviteInput: OmitId<UpdateTripInviteInput>,
-    whereArgs: WhereArgs<PartialTripInviteRecord>
+    updateOneArgs: OmitId<UpdateTripInviteInput>,
+    updateWhere: RequireId<PartialTripInviteRecord>
   ): Promise<number> {
-    const { id, role } = this.user;
-    const userId = role === 'admin' ? undefined : id;
-    return this.tripInviteModel.updateOne(updateTripInviteInput, whereArgs, userId);
+    const userId = determineUserId(this.user);
+    return this.tripInviteModel.updateOne(updateOneArgs, updateWhere, userId);
   }
 
-  public acceptOne(inviteId: TripInviteRecord['id']): Promise<TripRecord> {
-    const whereVals = {
-      inviteId,
-      userId: this.user.role === 'admin' ? undefined : this.user.id
-    };
-    return this.tripInviteModel.acceptOne(whereVals);
+  public acceptOne(id: TripInviteRecord['id']): Promise<TripRecord> {
+    const userId = determineUserId(this.user);
+    return this.tripInviteModel.acceptOne(id, userId);
   }
 }

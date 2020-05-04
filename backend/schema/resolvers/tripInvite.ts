@@ -25,7 +25,7 @@ export const tripInviteResolvers: TripInviteResolvers = {
     },
     updateTripInvite: async (_, { input }, { tripInviteService }) => {
       const { id, ...rest } = input;
-      const updatedCount = await tripInviteService.updateOne(rest, { items: { id } });
+      const updatedCount = await tripInviteService.updateOne(rest, { id });
       if (!updatedCount) {
         throw new UserInputError(INTERNAL_SERVER_ERROR_MESSAGE);
       }

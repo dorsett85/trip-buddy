@@ -1,4 +1,4 @@
-import { OmitId } from 'common/lib/types/utils';
+import { OmitId, RequireId } from 'common/lib/types/utils';
 import { extractRow, extractRows } from '../utils/dbHelpers';
 import BaseModel from './BaseModel';
 import { WhereArgGroup, WhereArgs } from '../types/dbQueryUtils';
@@ -32,38 +32,36 @@ export default class TripItineraryModel extends BaseModel {
 
   public updateOne(
     updateArgs: OmitId<UpdateTripInviteInput>,
-    whereArgs: WhereArgs<PartialTripInviteRecord>,
+    updateWhere: RequireId<PartialTripInviteRecord>,
     userId?: UserRecord['id']
   ): Promise<number> {
+    const whereArgs: WhereArgGroup<PartialTripInviteRecord> = { items: updateWhere };
+
     if (!userId) {
       return this.baseUpdateOne(updateArgs, whereArgs);
     }
 
     // For non-admin users we want them to only update trip invites where
     // they are the invitee.
-    const inviteeIdWhereGroup: WhereArgs<PartialTripInviteRecord> = {
+    const inviteeIdWhereGroup: WhereArgGroup<PartialTripInviteRecord> = {
       items: { invitee_id: userId }
     };
-    const whereArgsWithInviteeId: WhereArgs = Array.isArray(whereArgs)
-      ? [inviteeIdWhereGroup, ...whereArgs]
-      : [inviteeIdWhereGroup, whereArgs];
+    const whereArgsWithInviteeId: WhereArgs = [inviteeIdWhereGroup, whereArgs];
+
     return this.baseUpdateOne(updateArgs, whereArgsWithInviteeId);
   }
 
-  public async acceptOne({
-    inviteId,
-    userId
-  }: {
-    inviteId: TripInviteRecord['id'];
-    userId?: TripInviteRecord['invitee_id'];
-  }): Promise<TripRecord> {
-    const values = [inviteId];
+  public async acceptOne(
+    id: TripInviteRecord['id'],
+    inviteeId?: TripInviteRecord['invitee_id']
+  ): Promise<TripRecord> {
+    const values = [id];
 
     // Only add invitee filter if userId is defined
     let inviteeFilter = '';
-    if (userId) {
+    if (inviteeId) {
       inviteeFilter = 'AND ti.invitee_id = ?';
-      values.push(userId);
+      values.push(inviteeId);
     }
 
     // We'll need to do three thing with this query, update the trip_invites table,
