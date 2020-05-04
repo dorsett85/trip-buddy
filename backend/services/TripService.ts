@@ -5,6 +5,7 @@ import UserTripModel from '../models/UserTripModel';
 import { CreateTripInput } from '../schema/types/graphql';
 import { UserRecord } from '../models/UserModel.types';
 import { PartialTripRecord, TripRecord } from '../models/TripModel.types';
+import { determineUserId } from '../utils/determineUserId';
 
 export default class TripService {
   private readonly user: UserRecord;
@@ -33,15 +34,8 @@ export default class TripService {
   ): Promise<TripRecord | undefined> {
     // eslint-disable-next-line prefer-const
     let { userId, ...partialTripRecord } = findOneArgs;
-    const { id, role } = this.user;
-    // If userId is undefined we can query the trip table directly (if joinUser
-    // arg is false) without needing to join another table to get the user id.
-    // This is useful inside of a nested query requesting a trip where we don't
-    // need to worry about admin access.
-    // Outside of a nested query we still need the check for admin privileges to
-    // see if the user is restricted or not.
     if (!userId) {
-      userId = !joinUser || role === 'admin' ? undefined : id;
+      userId = determineUserId(this.user, joinUser);
     }
 
     return this.tripModel.findOne(partialTripRecord, userId);
@@ -56,10 +50,9 @@ export default class TripService {
     if (findManyArgs) {
       ({ userId, ...partialTripRecord } = findManyArgs);
     }
-    const { id, role } = this.user;
 
     if (!userId) {
-      userId = !joinUser || role === 'admin' ? undefined : id;
+      userId = determineUserId(this.user, joinUser);
     }
 
     return this.tripModel.findMany(partialTripRecord, userId);
@@ -69,14 +62,12 @@ export default class TripService {
     updateOneArgs: OmitIdCreatedDate<PartialTripRecord>,
     updateWhere: RequireId<PartialTripRecord>
   ): Promise<number> {
-    const { id, role } = this.user;
-    const userId = role === 'admin' ? undefined : id;
+    const userId = determineUserId(this.user);
     return this.tripModel.updateOne(updateOneArgs, updateWhere, userId);
   }
 
   public deleteOne(tripId: TripRecord['id']): Promise<number> {
-    const { id, role } = this.user;
-    const userId = role === 'admin' ? undefined : id;
+    const userId = determineUserId(this.user);
     return this.tripModel.deleteOne(tripId, userId);
   }
 }
