@@ -8,7 +8,7 @@ import {
 import { AccessServiceDeps } from './AccessService.types';
 import UserModel from '../models/UserModel';
 import { MutationLoginUserArgs, MutationRegisterUserArgs } from '../schema/types/graphql';
-import { UserRecord } from "../models/UserModel.types";
+import { UserRecord } from '../models/UserModel.types';
 
 export default class AccessService {
   private userModel: UserModel;
@@ -34,16 +34,16 @@ export default class AccessService {
 
   public async getActiveUser(token: string): Promise<UserRecord | null> {
     const user = this.verify(token);
-    return user && ((await this.userModel.findOne({ items: { id: user.id } })) || null);
+    return user && ((await this.userModel.findOne({ id: user.id })) || null);
   }
 
   public async login(args: MutationLoginUserArgs): Promise<string> {
     const { username, password } = args;
 
     // check if username or email exists
-    const user = await this.userModel.findOne({
-      items: { username, email: username },
-      logicalOperator: 'OR'
+    const user = await this.userModel.findByUsernameOrEmail({
+      username,
+      email: username
     });
     if (!user) {
       return USER_NOT_FOUND_MESSAGE;
@@ -62,7 +62,7 @@ export default class AccessService {
     const { email, password } = args;
 
     // Check if user exists
-    const user = await this.userModel.findOne({ items: { email } });
+    const user = await this.userModel.findOne({ email });
     if (user) {
       return USER_ALREADY_EXISTS_MESSAGE;
     }

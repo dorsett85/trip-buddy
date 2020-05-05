@@ -1,8 +1,8 @@
 import { UserServiceDeps } from './UserService.types';
 import UserModel from '../models/UserModel';
-import { UpdateUserInput } from "../schema/types/graphql";
-import { UserRecord } from "../models/UserModel.types";
-import { TripRecord } from "../models/TripModel.types";
+import { UpdateUserInput } from '../schema/types/graphql';
+import { UserRecord } from '../models/UserModel.types';
+import { TripRecord } from '../models/TripModel.types';
 
 export default class UserService {
   private readonly user: UserRecord;
@@ -20,12 +20,12 @@ export default class UserService {
 
   public findOne(): Promise<UserRecord | undefined> {
     const { id } = this.user;
-    return this.userModel.findOne({ items: { id } });
+    return this.userModel.findOne({ id });
   }
 
   public updateOne(updateUserInput: UpdateUserInput): Promise<number> {
     const { id } = this.user;
-    return this.userModel.updateOne(updateUserInput, { items: { id } });
+    return this.userModel.updateOne(updateUserInput, { id });
   }
 
   public possibleTripInvitees(tripId: TripRecord['id']): Promise<UserRecord[]> {

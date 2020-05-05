@@ -1,6 +1,7 @@
+import { RequireId } from 'common/lib/types/utils';
 import BaseModel from './BaseModel';
 import { extractRows } from '../utils/dbHelpers';
-import { WhereArgs } from '../types/dbQueryUtils';
+import { WhereArgGroup } from '../types/dbQueryUtils';
 import { UpdateUserInput } from '../schema/types/graphql';
 import { PartialUserRecord, UserRecord } from './UserModel.types';
 import { TripRecord } from './TripModel.types';
@@ -26,16 +27,26 @@ export default class UserModel extends BaseModel {
     return this.baseCreateOne<UserRecord>(user);
   }
 
-  public findOne(
-    whereArgs: WhereArgs<PartialUserRecord>
-  ): Promise<UserRecord | undefined> {
+  public findOne(findOneArgs: PartialUserRecord): Promise<UserRecord | undefined> {
+    const whereArgs: WhereArgGroup<PartialUserRecord> = { items: findOneArgs };
     return this.baseFindOne(whereArgs);
+  }
+
+  public findByUsernameOrEmail(
+    findArgs: Pick<UserRecord, 'username' | 'email'>
+  ): Promise<UserRecord | undefined> {
+    const whereArgs: WhereArgGroup<Pick<UserRecord, 'username' | 'email'>> = {
+      items: findArgs,
+      logicalOperator: 'OR'
+    };
+    return this.baseFindOne<UserRecord>(whereArgs);
   }
 
   public updateOne(
     updateArgs: UpdateUserInput,
-    whereArgs: WhereArgs<PartialUserRecord>
+    updateWhere: RequireId<PartialUserRecord>
   ): Promise<number> {
+    const whereArgs: WhereArgGroup<RequireId<PartialUserRecord>> = { items: updateWhere };
     return this.baseUpdateOne(updateArgs, whereArgs);
   }
 

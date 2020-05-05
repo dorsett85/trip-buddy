@@ -26,8 +26,8 @@ export const userResolvers: UserResolvers = {
     }
   },
   Mutation: {
-    loginUser: async (_, args, { accessService }) => {
-      const token = await accessService.login(args);
+    loginUser: async (_, loginArgs, { accessService }) => {
+      const token = await accessService.login(loginArgs);
 
       if (token === USER_NOT_FOUND_MESSAGE) {
         throw new UserInputError(USER_NOT_FOUND_MESSAGE);
@@ -39,8 +39,8 @@ export const userResolvers: UserResolvers = {
 
       return token;
     },
-    registerUser: async (_, args, { accessService }) => {
-      const token = await accessService.register(args);
+    registerUser: async (_, registerArgs, { accessService }) => {
+      const token = await accessService.register(registerArgs);
 
       if (token === USER_ALREADY_EXISTS_MESSAGE) {
         throw new UserInputError(USER_ALREADY_EXISTS_MESSAGE);
