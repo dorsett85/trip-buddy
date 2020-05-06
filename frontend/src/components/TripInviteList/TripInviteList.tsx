@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
+import {
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  IconButton,
+  Radio
+} from '@material-ui/core';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import DoneIcon from '@material-ui/icons/Done';
 import styled, { css } from 'styled-components';
-import { Radio, ListItemIcon } from '@material-ui/core';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
-import { addTrip } from '../../store/trip/reducer';
+import { addTrip, deleteTripInviteNotification } from '../../store/trip/reducer';
 import {
   TripInvite,
   useAcceptTripInviteMutation,
   useTripInvitesQuery,
   useUpdateTripInviteMutation
-} from "../../api/apollo/graphql";
+} from '../../api/apollo/graphql';
 
 type TripInviteStatusUpdate = Pick<TripInvite, 'id' | 'status'>;
 
@@ -28,8 +31,8 @@ interface ListItemNotificationProps {
 
 const NotificationRadio = styled(Radio)(
   ({ theme }) => css`
-    &.MuiRadio-colorPrimary {
-      color: ${theme.colors.primary};
+    &.MuiRadio-colorSecondary {
+      color: ${theme.colors.secondary};
     }
     &.Mui-checked {
       color: ${theme.colors.primary};
@@ -61,7 +64,7 @@ const ListItemNotification: React.FC<ListItemNotificationProps> = ({
         onClick={handleOnClick}
         icon={<NotificationsIcon />}
         checkedIcon={<DoneIcon />}
-        color='primary'
+        color='secondary'
         inputProps={{ 'aria-label': 'notified' }}
       />
     </ListItemIcon>
@@ -91,10 +94,14 @@ const TripInviteList: React.FC = () => {
     return null;
   }
 
+  // Sort the array by start date ascending (trips starting sooner appear first)
+  invites.sort((a: any, b: any) => (a.trip.start_date < b.trip.start_date ? -1 : 1));
+
   const handleNotificationClick: ListItemNotificationProps['onClick'] = async inviteUpdate => {
     try {
-      // After making the status update
+      // Change the status to 'notified' and remove the notification
       await updateTripInviteMutation({ variables: { input: inviteUpdate } });
+      dispatch(deleteTripInviteNotification(inviteUpdate.id));
     } catch (e) {
       // TODO do something with failed notified update
     }
@@ -124,6 +131,8 @@ const TripInviteList: React.FC = () => {
         // 'declined' trip invites simply need to update the trip invite record
         await updateTripInviteMutation({ variables: { input } });
       }
+      // Remember to remove the trip notification
+      dispatch(deleteTripInviteNotification(input.id));
     } catch (e) {
       // TODO do something with failed status update
     }

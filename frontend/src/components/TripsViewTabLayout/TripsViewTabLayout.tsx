@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import { Tab, Tabs } from '@material-ui/core';
+import { Tab, Tabs, Badge } from '@material-ui/core';
 import TripList from '../TripList/TripList';
 import TripInviteList from '../TripInviteList/TripInviteList';
+import { useAppSelector } from "../../store/hooks/useAppSelector";
 
 const TRIPS = 'trips';
 const LIST = 'list';
@@ -22,6 +23,7 @@ const TabPanel = styled.div(
 );
 
 const TripTabLayout: React.FC = () => {
+  const notificationsCount = useAppSelector(({ trip }) => trip.notifications.tripInvites.length);
   const [tab, setTab] = useState<TabsValue>(LIST);
 
   const handleOnChange = (e: React.ChangeEvent<{}>, value: TabsValue) => {
@@ -47,7 +49,12 @@ const TripTabLayout: React.FC = () => {
         />
         <Tab
           id={TRIPS_TAB_INVITES}
-          label='Invites'
+          label={
+            <Badge badgeContent={notificationsCount} color='secondary'>
+              Invites
+              {!!notificationsCount && <>&nbsp;&nbsp;</>}
+            </Badge>
+          }
           value={INVITES}
           aria-controls={TRIPS_TAB_PANEL_INVITES}
         />
