@@ -40,9 +40,9 @@ export default class TripInviteService {
     return tripInvites.map(invite => invite.id);
   }
 
-  public findMany(): Promise<TripInviteRecord[]> {
+  public findMany(findManyArgs?: PartialTripInviteRecord): Promise<TripInviteRecord[]> {
     const userId = determineUserId(this.user);
-    return this.tripInviteModel.findMany(userId);
+    return this.tripInviteModel.findMany(findManyArgs, userId);
   }
 
   public updateOne(

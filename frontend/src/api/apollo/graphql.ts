@@ -48,6 +48,11 @@ export type QueryTripItinerariesArgs = {
   input?: Maybe<FindTripItineraryInput>;
 };
 
+
+export type QueryTripInvitesArgs = {
+  input?: Maybe<FindTripInviteInput>;
+};
+
 export type Mutation = {
    __typename?: 'Mutation';
   default?: Maybe<Scalars['Boolean']>;
@@ -298,6 +303,16 @@ export type CreateTripInviteInput = {
   invitee_email: Scalars['String'];
 };
 
+export type FindTripInviteInput = {
+  id?: Maybe<Scalars['Int']>;
+  trip_id?: Maybe<Scalars['Int']>;
+  inviter_id?: Maybe<Scalars['Int']>;
+  invitee_id?: Maybe<Scalars['Int']>;
+  invitee_email?: Maybe<Scalars['String']>;
+  status?: Maybe<TripInviteStatus>;
+  created_date?: Maybe<Scalars['DateTime']>;
+};
+
 export type UpdateTripInviteInput = {
   id: Scalars['Int'];
   status?: Maybe<TripInviteStatus>;
@@ -409,10 +424,10 @@ export type AcceptTripInviteMutation = (
   ) }
 );
 
-export type TripInvitesIdQueryVariables = {};
+export type TripInitiatedInvitesIdQueryVariables = {};
 
 
-export type TripInvitesIdQuery = (
+export type TripInitiatedInvitesIdQuery = (
   { __typename?: 'Query' }
   & { tripInvites: Array<(
     { __typename?: 'TripInvite' }
@@ -804,38 +819,38 @@ export function useAcceptTripInviteMutation(baseOptions?: ApolloReactHooks.Mutat
 export type AcceptTripInviteMutationHookResult = ReturnType<typeof useAcceptTripInviteMutation>;
 export type AcceptTripInviteMutationResult = ApolloReactCommon.MutationResult<AcceptTripInviteMutation>;
 export type AcceptTripInviteMutationOptions = ApolloReactCommon.BaseMutationOptions<AcceptTripInviteMutation, AcceptTripInviteMutationVariables>;
-export const TripInvitesIdDocument = gql`
-    query TripInvitesId {
-  tripInvites {
+export const TripInitiatedInvitesIdDocument = gql`
+    query TripInitiatedInvitesId {
+  tripInvites(input: {status: initiated}) {
     id
   }
 }
     `;
 
 /**
- * __useTripInvitesIdQuery__
+ * __useTripInitiatedInvitesIdQuery__
  *
- * To run a query within a React component, call `useTripInvitesIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useTripInvitesIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useTripInitiatedInvitesIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTripInitiatedInvitesIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useTripInvitesIdQuery({
+ * const { data, loading, error } = useTripInitiatedInvitesIdQuery({
  *   variables: {
  *   },
  * });
  */
-export function useTripInvitesIdQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TripInvitesIdQuery, TripInvitesIdQueryVariables>) {
-        return ApolloReactHooks.useQuery<TripInvitesIdQuery, TripInvitesIdQueryVariables>(TripInvitesIdDocument, baseOptions);
+export function useTripInitiatedInvitesIdQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TripInitiatedInvitesIdQuery, TripInitiatedInvitesIdQueryVariables>) {
+        return ApolloReactHooks.useQuery<TripInitiatedInvitesIdQuery, TripInitiatedInvitesIdQueryVariables>(TripInitiatedInvitesIdDocument, baseOptions);
       }
-export function useTripInvitesIdLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TripInvitesIdQuery, TripInvitesIdQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<TripInvitesIdQuery, TripInvitesIdQueryVariables>(TripInvitesIdDocument, baseOptions);
+export function useTripInitiatedInvitesIdLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TripInitiatedInvitesIdQuery, TripInitiatedInvitesIdQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<TripInitiatedInvitesIdQuery, TripInitiatedInvitesIdQueryVariables>(TripInitiatedInvitesIdDocument, baseOptions);
         }
-export type TripInvitesIdQueryHookResult = ReturnType<typeof useTripInvitesIdQuery>;
-export type TripInvitesIdLazyQueryHookResult = ReturnType<typeof useTripInvitesIdLazyQuery>;
-export type TripInvitesIdQueryResult = ApolloReactCommon.QueryResult<TripInvitesIdQuery, TripInvitesIdQueryVariables>;
+export type TripInitiatedInvitesIdQueryHookResult = ReturnType<typeof useTripInitiatedInvitesIdQuery>;
+export type TripInitiatedInvitesIdLazyQueryHookResult = ReturnType<typeof useTripInitiatedInvitesIdLazyQuery>;
+export type TripInitiatedInvitesIdQueryResult = ApolloReactCommon.QueryResult<TripInitiatedInvitesIdQuery, TripInitiatedInvitesIdQueryVariables>;
 export const TripInviteCreatedDocument = gql`
     subscription TripInviteCreated {
   tripInviteCreated {

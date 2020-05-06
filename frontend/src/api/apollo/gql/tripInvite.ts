@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { TRIP_FIELDS } from './trip';
+import { TRIP_FIELDS_FRAGMENT } from './trip';
 
 export const TRIP_INVITES_QUERY = gql`
   query TripInvites {
@@ -35,12 +35,12 @@ export const ACCEPT_TRIP_INVITE_MUTATION = gql`
       ...TripFields
     }
   }
-  ${TRIP_FIELDS}
+  ${TRIP_FIELDS_FRAGMENT}
 `;
 
 export const TRIP_INVITES_ID_QUERY = gql`
-  query TripInvitesId {
-    tripInvites {
+  query TripInitiatedInvitesId {
+    tripInvites(input: { status: initiated }) {
       id
     }
   }

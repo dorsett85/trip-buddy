@@ -56,12 +56,16 @@ export default class UserModel extends BaseModel {
       `
       SELECT u.* FROM users u
       WHERE u.id NOT IN (
-          SELECT t.invitee_id
-          FROM trip_invites t
-          WHERE t.trip_id = ?
-      ) AND u.accepting_trip_invites = 'all'
+          SELECT ti.invitee_id
+          FROM trip_invites ti
+          WHERE ti.trip_id = ?
+      ) AND u.id NOT IN (
+          SELECT ut.user_id
+          FROM users_trips ut
+          WHERE ut.trip_id = ?
+      ) AND u.accepting_trip_invites = 'all';
     `,
-      [tripId]
+      [tripId, tripId]
     );
     return extractRows(await query);
   }

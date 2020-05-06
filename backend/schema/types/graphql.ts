@@ -47,6 +47,11 @@ export type QueryTripItinerariesArgs = {
   input?: Maybe<FindTripItineraryInput>;
 };
 
+
+export type QueryTripInvitesArgs = {
+  input?: Maybe<FindTripInviteInput>;
+};
+
 export type Mutation = {
    __typename?: 'Mutation';
   default?: Maybe<Scalars['Boolean']>;
@@ -297,6 +302,16 @@ export type CreateTripInviteInput = {
   invitee_email: Scalars['String'];
 };
 
+export type FindTripInviteInput = {
+  id?: Maybe<Scalars['Int']>;
+  trip_id?: Maybe<Scalars['Int']>;
+  inviter_id?: Maybe<Scalars['Int']>;
+  invitee_id?: Maybe<Scalars['Int']>;
+  invitee_email?: Maybe<Scalars['String']>;
+  status?: Maybe<TripInviteStatus>;
+  created_date?: Maybe<Scalars['DateTime']>;
+};
+
 export type UpdateTripInviteInput = {
   id: Scalars['Int'];
   status?: Maybe<TripInviteStatus>;
@@ -419,6 +434,7 @@ export type ResolversTypes = {
   TripItinerary: ResolverTypeWrapper<TripItinerary>,
   TripInviteStatus: TripInviteStatus,
   CreateTripInviteInput: CreateTripInviteInput,
+  FindTripInviteInput: FindTripInviteInput,
   UpdateTripInviteInput: UpdateTripInviteInput,
   TripInvite: ResolverTypeWrapper<TripInvite>,
   CacheControlScope: CacheControlScope,
@@ -452,6 +468,7 @@ export type ResolversParentTypes = {
   TripItinerary: TripItinerary,
   TripInviteStatus: TripInviteStatus,
   CreateTripInviteInput: CreateTripInviteInput,
+  FindTripInviteInput: FindTripInviteInput,
   UpdateTripInviteInput: UpdateTripInviteInput,
   TripInvite: TripInvite,
   CacheControlScope: CacheControlScope,
@@ -466,7 +483,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   trip: Resolver<ResolversTypes['Trip'], ParentType, ContextType, RequireFields<QueryTripArgs, 'input'>>,
   trips: Resolver<Array<ResolversTypes['Trip']>, ParentType, ContextType, RequireFields<QueryTripsArgs, never>>,
   tripItineraries: Resolver<Array<ResolversTypes['TripItinerary']>, ParentType, ContextType, RequireFields<QueryTripItinerariesArgs, never>>,
-  tripInvites: Resolver<Array<ResolversTypes['TripInvite']>, ParentType, ContextType>,
+  tripInvites: Resolver<Array<ResolversTypes['TripInvite']>, ParentType, ContextType, RequireFields<QueryTripInvitesArgs, never>>,
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {

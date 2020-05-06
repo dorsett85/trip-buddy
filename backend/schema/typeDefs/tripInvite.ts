@@ -13,6 +13,16 @@ export const tripInviteTypeDefs = gql`
     invitee_id: Int
     invitee_email: String!
   }
+  
+  input FindTripInviteInput {
+    id: Int
+    trip_id: Int
+    inviter_id: Int
+    invitee_id: Int
+    invitee_email: String
+    status: TripInviteStatus
+    created_date: Date
+  }
 
   input UpdateTripInviteInput {
     id: Int!
@@ -31,7 +41,7 @@ export const tripInviteTypeDefs = gql`
   }
 
   extend type Query {
-    tripInvites: [TripInvite!]! @isAuth
+    tripInvites(input: FindTripInviteInput): [TripInvite!]! @isAuth
   }
 
   extend type Mutation {

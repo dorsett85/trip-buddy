@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export const TRIP_ITINERARY_FIELDS = gql`
+export const TRIP_ITINERARY_FIELDS_FRAGMENT = gql`
   fragment TripItineraryFields on TripItinerary {
     id
     trip_id
@@ -20,7 +20,7 @@ export const TRIP_ITINERARIES_QUERY = gql`
       ...TripItineraryFields
     }
   }
-  ${TRIP_ITINERARY_FIELDS}
+  ${TRIP_ITINERARY_FIELDS_FRAGMENT}
 `;
 
 export const CREATE_TRIP_ITINERARY_MUTATION = gql`
@@ -29,7 +29,7 @@ export const CREATE_TRIP_ITINERARY_MUTATION = gql`
       ...TripItineraryFields
     }
   }
-  ${TRIP_ITINERARY_FIELDS}
+  ${TRIP_ITINERARY_FIELDS_FRAGMENT}
 `;
 
 export const UPDATE_TRIP_ITINERARY_MUTATION = gql`

@@ -17,7 +17,8 @@ export const tripInviteResolvers: TripInviteResolvers = {
     }
   },
   Query: {
-    tripInvites: (_, __, { tripInviteService }) => tripInviteService.findMany()
+    tripInvites: (_, { input }, { tripInviteService }) =>
+      tripInviteService.findMany(input)
   },
   Mutation: {
     createTripInvites: (_, { input }, { tripInviteService }) => {

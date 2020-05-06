@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export const TRIP_FIELDS = gql`
+export const TRIP_FIELDS_FRAGMENT = gql`
   fragment TripFields on Trip {
     id
     name
@@ -19,7 +19,7 @@ export const CREATE_TRIP_MUTATION = gql`
       ...TripFields
     }
   }
-  ${TRIP_FIELDS}
+  ${TRIP_FIELDS_FRAGMENT}
 `;
 
 export const UPDATE_TRIP_MUTATION = gql`

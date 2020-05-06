@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { TRIP_FIELDS } from "./trip";
+import { TRIP_FIELDS_FRAGMENT } from "./trip";
 
 export const LOGGED_IN_DATA_QUERY = gql`
   query GetLoggedInUser {
@@ -22,7 +22,7 @@ export const LOGGED_IN_DATA_QUERY = gql`
       }
     }
   }
-  ${TRIP_FIELDS}
+  ${TRIP_FIELDS_FRAGMENT}
 `;
 
 export const LOGIN_USER_MUTATION = gql`

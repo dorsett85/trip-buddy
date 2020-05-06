@@ -6,8 +6,8 @@ import {
   addTripInviteNotification
 } from '../../store/trip/reducer';
 import {
-  useTripInviteCreatedSubscription,
-  useTripInvitesIdQuery
+  useTripInitiatedInvitesIdQuery,
+  useTripInviteCreatedSubscription
 } from '../../api/apollo/graphql';
 
 /**
@@ -15,7 +15,7 @@ import {
  */
 const GetTripNotifications: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { data: queryData } = useTripInvitesIdQuery();
+  const { data: queryData } = useTripInitiatedInvitesIdQuery();
   const { data: subscriptionData } = useTripInviteCreatedSubscription();
 
   useEffect(() => {

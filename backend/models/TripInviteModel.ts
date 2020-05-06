@@ -1,7 +1,7 @@
 import { OmitId, RequireId } from 'common/lib/types/utils';
 import { extractRow, extractRows } from '../utils/dbHelpers';
 import BaseModel from './BaseModel';
-import { WhereArgGroup } from '../types/dbQueryUtils';
+import { WhereArgGroup, WhereArgs } from "../types/dbQueryUtils";
 import { CreateTripInviteInput, UpdateTripInviteInput } from '../schema/types/graphql';
 import { UserRecord } from './UserModel.types';
 import { PartialTripInviteRecord, TripInviteRecord } from './TripInviteModel.types';
@@ -18,14 +18,27 @@ export default class TripItineraryModel extends BaseModel {
     return extractRows(await inviteIds);
   }
 
-  public async findMany(userId?: UserRecord['id']): Promise<TripInviteRecord[]> {
+  public async findMany(
+    findArgs?: PartialTripInviteRecord,
+    userId?: UserRecord['id']
+  ): Promise<TripInviteRecord[]> {
+    const whereArgs: WhereArgGroup<PartialTripInviteRecord> | undefined = findArgs && {
+      items: findArgs
+    };
+
     if (!userId) {
-      return this.baseFindMany();
+      return this.baseFindMany(whereArgs);
     }
-    const whereArgs: WhereArgGroup<Pick<TripInviteRecord, 'invitee_id'>> = {
+
+    const inviteeIdwhereArgs: WhereArgGroup<Pick<TripInviteRecord, 'invitee_id'>> = {
       items: { invitee_id: userId }
     };
-    return this.baseFindMany<TripInviteRecord>(whereArgs);
+
+    const whereArgsWithInviteeId: WhereArgs<PartialTripInviteRecord> = !whereArgs
+      ? inviteeIdwhereArgs
+      : [whereArgs, inviteeIdwhereArgs];
+
+    return this.baseFindMany<TripInviteRecord>(whereArgsWithInviteeId);
   }
 
   public updateOne(
