@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   List,
   ListItem,
   ListItemText,
   ListItemIcon,
   ListItemSecondaryAction,
-  IconButton,
-  Radio
+  IconButton
 } from '@material-ui/core';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import DoneIcon from '@material-ui/icons/Done';
 import styled, { css } from 'styled-components';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { addTrip, deleteTripInviteNotification } from '../../store/trip/reducer';
@@ -24,50 +22,43 @@ import {
 
 type TripInviteStatusUpdate = Pick<TripInvite, 'id' | 'status'>;
 
+const HIDE_NOTIFICATION_ICON_CLASS = 'hideNotificationIcon';
+
+const NotificationListItemIcon = styled(ListItemIcon)`
+  width: 48px;
+  min-width: 0;
+  margin-left: -16px;
+  transition: width 0.5s ease-out, margin-left 0.5s ease-out;
+  &.${HIDE_NOTIFICATION_ICON_CLASS} {
+    width: 0;
+    margin-left: 0;
+    visibility: hidden;
+  }
+`;
+
 interface ListItemNotificationProps {
   notificationInfo: TripInviteStatusUpdate;
   onClick: (inviteUpdate: TripInviteStatusUpdate) => void;
 }
-
-const NotificationRadio = styled(Radio)(
-  ({ theme }) => css`
-    &.MuiRadio-colorSecondary {
-      color: ${theme.colors.secondary};
-    }
-    &.Mui-checked {
-      color: ${theme.colors.primary};
-    }
-  `
-);
 
 const ListItemNotification: React.FC<ListItemNotificationProps> = ({
   notificationInfo,
   onClick
 }) => {
   const notified = notificationInfo.status !== 'initiated';
-  const [checked, setChecked] = useState(notified);
-
-  if (notified) {
-    return null;
-  }
 
   const handleOnClick = () => {
-    setChecked(true);
     onClick({ id: notificationInfo.id, status: 'notified' });
   };
 
   return (
-    <ListItemIcon>
-      <NotificationRadio
-        edge='start'
-        checked={checked}
-        onClick={handleOnClick}
-        icon={<NotificationsIcon />}
-        checkedIcon={<DoneIcon />}
-        color='secondary'
-        inputProps={{ 'aria-label': 'notified' }}
-      />
-    </ListItemIcon>
+    <NotificationListItemIcon
+      className={notified ? HIDE_NOTIFICATION_ICON_CLASS : undefined}
+    >
+      <IconButton onClick={handleOnClick} title='Remove Notification' color='secondary'>
+        <NotificationsIcon />
+      </IconButton>
+    </NotificationListItemIcon>
   );
 };
 
