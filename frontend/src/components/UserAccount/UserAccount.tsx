@@ -15,6 +15,7 @@ import {
   User,
   useUpdateUserMutation
 } from '../../api/apollo/graphql';
+import { isValidEmail } from '../../utils/isValidEmail';
 
 interface UserAccountProps {
   user: User;
@@ -47,17 +48,21 @@ const UserNameInput: React.FC<UserAccountInputProps> = ({ dispatch, user }) => {
     }
   });
 
-  const handleUsernameChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUsernameChange: React.ChangeEventHandler<HTMLInputElement> = ({
+    target
+  }) => {
     setEditingUsername(true);
-    if (target.value.length >= 4) {
-      setUsername(target.value);
-    }
+    setUsername(target.value);
   };
 
   const handleSubmitUsername = () => {
-    setUpdateUsernameError(undefined);
-    setUpdateUsernameText(undefined);
-    updateUser({ variables: { input: { username } } });
+    if (username.length < 5) {
+      setUpdateUsernameError(<ErrorText text='Must be at least 4 characters' />);
+    } else {
+      setUpdateUsernameError(undefined);
+      setUpdateUsernameText(undefined);
+      updateUser({ variables: { input: { username } } });
+    }
   };
 
   const handleCancelUsername = () => {
@@ -107,17 +112,20 @@ const UserEmailInput: React.FC<UserAccountInputProps> = ({ dispatch, user }) => 
     }
   });
 
-  const handleEmailChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEmailChange: React.ChangeEventHandler<HTMLInputElement> = ({ target }) => {
     setEditingEmail(true);
-    if (target.value.length >= 4) {
-      setEmail(target.value);
-    }
+    setEmail(target.value);
   };
 
   const handleSubmitEmail = () => {
-    setUpdateEmailError(undefined);
-    setUpdateEmailText(undefined);
-    updateUser({ variables: { input: { email } } });
+    // Check if the new email is valid
+    if (!isValidEmail(email)) {
+      setUpdateEmailError(<ErrorText text='Please enter a valid email address' />);
+    } else {
+      setUpdateEmailError(undefined);
+      setUpdateEmailText(undefined);
+      updateUser({ variables: { input: { email } } });
+    }
   };
 
   const handleCancelEmail = () => {

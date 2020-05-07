@@ -9,6 +9,7 @@ import { getFirstError } from '../../utils/apolloErrors';
 import { setLocalToken } from '../../utils/localToken';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { useRegisterUserMutation } from '../../api/apollo/graphql';
+import { isValidEmail } from '../../utils/isValidEmail';
 
 enum RegisterFormInputs {
   email = '',
@@ -56,7 +57,13 @@ const RegisterForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    registerUserMutation({ variables: { email, password } });
+
+    // Check that the email is valid
+    if (!isValidEmail(email)) {
+      setRegisterError('Please enter a valid email address');
+    } else {
+      registerUserMutation({ variables: { email, password } });
+    }
   };
 
   return (

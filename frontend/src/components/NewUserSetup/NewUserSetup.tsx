@@ -13,7 +13,12 @@ import styled, { css } from 'styled-components';
 import { useAppDispatch } from '../../store/hooks/useAppDispatch';
 import { setUser, setSetupCompleted } from '../../store/user/reducer';
 import { INTERNAL_SERVER_ERROR_MESSAGE } from '../../utils/constants/errors';
-import { User, useUpdateUserMutation, useVerifyEmailMutation } from "../../api/apollo/graphql";
+import {
+  User,
+  useUpdateUserMutation,
+  useVerifyEmailMutation
+} from '../../api/apollo/graphql';
+import { useAppSelector } from '../../store/hooks/useAppSelector';
 
 type NewUserSetupUpdate<
   TCol extends keyof User,
@@ -102,7 +107,6 @@ const EmailVerified: React.FC<StepComponentProps> = ({ onSubmit, errorMsg }) => 
 
 const UpdateUsername: React.FC<StepComponentProps> = ({ onSubmit, errorMsg }) => {
   const [username, setUsername] = useState('');
-  const [inputError, setInputError] = useState(false);
   const [helperText, setHelperText] = useState('Create a username for your account');
 
   useEffect(() => {
@@ -117,19 +121,12 @@ const UpdateUsername: React.FC<StepComponentProps> = ({ onSubmit, errorMsg }) =>
 
   const handleSubmit: React.FormEventHandler = e => {
     e.preventDefault();
-    if (username.length < 4) {
-      setInputError(true);
-      setHelperText('Must be at least 4 characters');
-    } else {
-      setInputError(false);
-      setHelperText('Create a username for your account');
-      onSubmit({
-        username,
-        new_user_setup: {
-          username: true
-        }
-      });
-    }
+    onSubmit({
+      username,
+      new_user_setup: {
+        username: true
+      }
+    });
   };
 
   return (
@@ -141,11 +138,12 @@ const UpdateUsername: React.FC<StepComponentProps> = ({ onSubmit, errorMsg }) =>
           onInput={handleOnInput}
           variant='outlined'
           size='small'
+          required
           inputProps={{
             minLength: 4
           }}
-          error={!!errorMsg || inputError}
-          helperText={inputError ? helperText : errorMsg || helperText}
+          error={!!errorMsg}
+          helperText={errorMsg || helperText}
         />
       </div>
       <SubmitButton>Submit</SubmitButton>
@@ -154,9 +152,9 @@ const UpdateUsername: React.FC<StepComponentProps> = ({ onSubmit, errorMsg }) =>
 };
 
 const AcceptingTripInvites: React.FC<StepComponentProps> = ({ onSubmit }) => {
-  const [acceptInvites, setAcceptInvites] = useState<
-    User['accepting_trip_invites']
-  >('all');
+  const [acceptInvites, setAcceptInvites] = useState<User['accepting_trip_invites']>(
+    'all'
+  );
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = ({ target }) => {
     setAcceptInvites(target.value as User['accepting_trip_invites']);
@@ -253,7 +251,7 @@ const stepMap: StepMap = {
 
 const getSteps = (newUserSetup: User['new_user_setup']): NewUserSteps[] => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { __typename, ...restNewUserSetup } = { ...newUserSetup }
+  const { __typename, ...restNewUserSetup } = { ...newUserSetup };
   return Object.entries(restNewUserSetup).map(([key, value]) => {
     const step = stepMap[key];
     return {
@@ -276,6 +274,7 @@ const StepContent = styled.div(
 
 const NewUserSetup: React.FC<NewUserSetupProps> = ({ newUserSetup }) => {
   const dispatch = useAppDispatch();
+  const userEmail = useAppSelector(({ user }) => user.data?.email);
   const [errorMsg, setErrorMsg] = useState('');
   const [updateUserMutation] = useUpdateUserMutation();
   const [verifyEmailMutation] = useVerifyEmailMutation();
@@ -374,6 +373,7 @@ const NewUserSetup: React.FC<NewUserSetupProps> = ({ newUserSetup }) => {
   return (
     <div>
       <h2>New User Setup</h2>
+      {userEmail && <div>{userEmail}</div>}
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map(({ stepLabel, completed }) => {
           return (
