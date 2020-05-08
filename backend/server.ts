@@ -17,13 +17,17 @@ const httpServer = createServer(app);
 // Apollo server
 const server = new ApolloServer(config);
 server.applyMiddleware({ app });
+
+// Apollo server subscriptions are currently not consistently publishing to the
+// client, but leaving in until a resolution is found
+// https://github.com/apollographql/graphql-subscriptions/issues/187
 server.installSubscriptionHandlers(httpServer);
 
 // Serve static assets in production
 if (env === 'production') {
   app.use('/', express.static(path.resolve(__dirname, '../frontend/build')));
-  app.use('/', (req: any, res: any) => {
-    res.sendFile(path.resolve(__dirname, '../frontend/build/index.html'));
+  app.use('/', (_, res) => {
+    return res.sendFile(path.resolve(__dirname, '../frontend/build/index.html'));
   });
 }
 

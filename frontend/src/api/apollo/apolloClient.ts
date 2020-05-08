@@ -44,10 +44,13 @@ export const generateApolloClient = <TLoggedIn extends boolean>(
   // Only apply our subscription client when the user is logged in
   let subscriptionClient: SubscriptionClient | undefined;
   if (loggedIn) {
-    subscriptionClient = new SubscriptionClient('ws://localhost:4001/graphql/ws', {
-      reconnect: true,
-      connectionParams: () => ({ authorization: localStorage.getItem('token') })
-    });
+    subscriptionClient = new SubscriptionClient(
+      process.env.REACT_APP_WS_SUBSCRIPTION_URL as string,
+      {
+        reconnect: true,
+        connectionParams: () => ({ authorization: localStorage.getItem('token') })
+      }
+    );
 
     const wsLink = new WebSocketLink(subscriptionClient);
 

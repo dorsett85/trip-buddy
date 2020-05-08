@@ -1,4 +1,4 @@
 {
   "ext": "ts json",
-  "exec": "ts-node -P tsconfig.json ./server.ts"
+  "exec": "ts-node ./server.ts"
 }
