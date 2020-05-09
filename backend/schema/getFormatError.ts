@@ -16,7 +16,7 @@ export const getFormatError = (/* ADD DEPENDENCIES AS NEEDED */) => (
 
   if (extensions) {
     console.log(err);
-    console.log('\n', extensions.exception.stacktrace.join('\n'));
+    console.log('\n', extensions.exception?.stacktrace?.join('\n'));
 
     // Define production overrides for errors sent to the client
     if (env === 'production') {
