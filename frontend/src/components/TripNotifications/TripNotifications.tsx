@@ -19,7 +19,7 @@ const GetTripNotifications: React.FC = () => {
     // Subscriptions not currently working in production, so we'll use polling
     // instead. (waiting on resolution).
     // https://github.com/apollographql/graphql-subscriptions/issues/187
-    pollInterval: process.env.NODE_ENV === 'production' ? 2000 : 0
+    // pollInterval: process.env.NODE_ENV === 'production' ? 2000 : 0
   });
   const { data: subscriptionData } = useTripInviteCreatedSubscription();
 
@@ -31,6 +31,7 @@ const GetTripNotifications: React.FC = () => {
   }, [dispatch, queryData]);
 
   useEffect(() => {
+    console.log(subscriptionData);
     if (subscriptionData) {
       dispatch(addTripInviteNotification(subscriptionData.tripInviteCreated.id));
     }
