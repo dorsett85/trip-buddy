@@ -1,6 +1,6 @@
 # Trip Buddy
 
-Create and track workouts with React and Postgres
+Collaborative trip building application with Typescript/React/Express/Graphql/Postgres
 
 ## setup
 
