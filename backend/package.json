@@ -10,7 +10,7 @@
     "cookie-parser": "1.4.5",
     "core-js": "3.6.5",
     "exact": "0.8.0",
-    "express": "4.17.1",
+    "express": "4.17.3",
     "graphql": "15.0.0",
     "graphql-iso-date": "3.6.1",
     "jsonwebtoken": "8.5.1",
